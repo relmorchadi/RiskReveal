@@ -4,7 +4,9 @@ import com.scor.rr.domain.dto.ExposureManagerParamsDto;
 import com.scor.rr.service.abstraction.ExposureManagerService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -36,4 +38,21 @@ public class ExposureManagerResource {
             return new ResponseEntity<>("Operation failed", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    @PostMapping("exposure-manager-export-data")
+    public ResponseEntity<?> exportData(@RequestBody ExposureManagerParamsDto params) {
+        try {
+            byte[] bytes = exposureManagerService.exportExposureManagerData(params);
+            HttpHeaders header = new HttpHeaders();
+            header.setContentType(new MediaType("application", "vnd.openxmlformats-officedocument.spreadsheetml.sheet"));
+            header.set(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + exposureManagerService.exposureManagerDataExport(params));
+            header.setContentLength(bytes.length);
+            return new ResponseEntity<>(bytes, header, HttpStatus.OK);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return new ResponseEntity<>("Operation failed", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+
 }

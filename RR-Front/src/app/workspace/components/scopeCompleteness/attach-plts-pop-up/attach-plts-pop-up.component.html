@@ -127,8 +127,11 @@
                      [(ngModel)]="showApplicablePlts"
               >Show Applicable PLTs Only</label>
           </div>
-          <p-table [value]="filterData()" [columns]="columns" scrollable="true"
-                   [scrollHeight]="'calc(100% - 100px)'">
+          <p-table [value]="filterData() | tableSortAndFilter: [sortData, filteredData]" [columns]="columns" scrollable="true"
+                   [scrollHeight]="'calc(100% - 100px)'"
+                   [resizableColumns]="true"
+                   [columnResizeMode]="'expand'"
+          >
               <ng-template pTemplate="colgroup" let-columns>
                   <colgroup>
                       <ng-container  *ngFor="let col of columns">
@@ -139,7 +142,7 @@
               <ng-template pTemplate="header" let-columns>
                   <tr>
                       <ng-container *ngFor="let col of columns">
-                          <th class="header-cnt" >
+                          <th class="header-cnt" pResizableColumn>
                               <ng-container [ngTemplateOutlet]="TableHeader" [ngTemplateOutletContext]="{$implicit: columns, col: col}"></ng-container>
                           </th>
                       </ng-container>
@@ -154,10 +157,28 @@
 
               <ng-template let-col="col" #TableHeader>
                   <div *ngIf="col.type === 'boolean'">
-                      {{col?.topHeader}}
+                      <span>{{col?.topHeader}}</span>
                   </div>
                   <div *ngIf="col.type === 'text'">
-                      {{col?.header}}
+                      <div class="flex-horizontal-sb-layout">
+                          <span>{{col?.header}}</span>
+                          <span>
+                              <ng-container [ngSwitch]="sortData[col?.field]">
+                                <i *ngSwitchCase="'asc'" class="icon-keyboard_arrow_up_24px"
+                                   (click)="sortChange(col?.field, sortData[col.field])" style="font-size: 1.4em;"></i>
+                                <i *ngSwitchCase="'desc'" class="icon-keyboard_arrow_down_24px"
+                                   (click)="sortChange(col?.field,sortData[col.field])" style="font-size: 1.4em;"></i>
+                                <i *ngSwitchDefault class="icon-direction" style="font-size: 1.4em;"
+                                   (click)="sortChange(col?.field,sortData[col.field])"></i>
+                              </ng-container>
+                          </span>
+                      </div>
+                      <div>
+                          <div class="search-bar-table" >
+                              <i class="fa fa-search" style="margin: 6px 4px 4px 6px"></i>
+                              <input pInputText type="text" (input)="filterChange(col?.field, $event.target.value)">
+                          </div>
+                      </div>
                   </div>
               </ng-template>
 
@@ -165,12 +186,24 @@
                   <ng-container *ngFor="let col of columns; let i = index" >
                       <th *ngIf="col.type === 'boolean'">
                           <div *ngIf="col.selection === 'single'" class="center-checkbox">
-                              <label *ngIf="attachable(rowData, col)" [nzChecked]="selectedForAttachment[rowData.pltHeaderId + col.id]"
-                                     (nzCheckedChange)="selectPLTByDiv(rowData, col, $event)" nz-checkbox></label>
+                              <ng-container *ngIf="showApplicablePlts">
+                                  <label *ngIf="attachable(rowData, col)" [nzChecked]="selectedForAttachment[rowData.pltHeaderId + col.id]"
+                                         (nzCheckedChange)="selectPLTByDiv(rowData, col, $event)" nz-checkbox></label>
+                              </ng-container>
+                              <ng-container *ngIf="!showApplicablePlts">
+                                  <label [nzChecked]="selectedForAttachment[rowData.pltHeaderId + col.id]"
+                                         (nzCheckedChange)="selectPLTByDiv(rowData, col, $event)" nz-checkbox></label>
+                              </ng-container>
                           </div>
                           <div *ngIf="col.selection === 'line'" class="center-checkbox">
-                              <label *ngIf="attachableMulti(rowData)" [nzChecked]="checkedRow(rowData)"
-                                     (nzCheckedChange)="selectPLTByRow(rowData, $event)" nz-checkbox></label>
+                              <ng-container *ngIf="showApplicablePlts">
+                                  <label *ngIf="attachableMulti(rowData)" [nzChecked]="checkedRow(rowData)"
+                                         (nzCheckedChange)="selectPLTByRow(rowData, $event)" nz-checkbox></label>
+                              </ng-container>
+                              <ng-container *ngIf="!showApplicablePlts">
+                                  <label [nzChecked]="checkedRowNC(rowData)"
+                                         (nzCheckedChange)="selectPLTByRowNC(rowData, $event)" nz-checkbox></label>
+                              </ng-container>
                           </div>
                       </th>
                       <th *ngIf="col.type === 'text'">

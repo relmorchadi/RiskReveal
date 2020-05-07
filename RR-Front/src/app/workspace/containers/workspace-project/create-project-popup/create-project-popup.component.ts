@@ -139,6 +139,11 @@ export class CreateProjectPopupComponent extends BaseContainer implements OnInit
     }
   }
 
+  formatUsers() {
+    const userList = _.orderBy(this.users, ['firstName', 'lastName']);
+    return [..._.filter(userList, item => item === 'Unassigned'), ..._.filter(userList, item => item !== 'Unassigned')];
+  }
+
   @HostListener('document: keydown.enter', ['$event']) keyBoardEnter() {
     if (!this.editCreateBLock) {
       this.editCreateBLock = true;

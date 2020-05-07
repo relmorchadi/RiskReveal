@@ -1,21 +1,19 @@
 package com.scor.rr.configuration.excel.util;
 
-import com.scor.rr.configuration.excel.ErrorExcelFile;
-import org.apache.commons.io.IOUtils;
-import org.apache.poi.hssf.usermodel.HSSFPalette;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.formula.functions.T;
-import org.apache.poi.ss.usermodel.*;
-import org.apache.poi.xssf.usermodel.XSSFCellStyle;
-import org.apache.poi.xssf.usermodel.XSSFFont;
-import org.apache.poi.xssf.usermodel.XSSFFormulaEvaluator;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.springframework.core.io.ClassPathResource;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 
 public class ExcelUtil {
@@ -57,7 +55,7 @@ public class ExcelUtil {
                             cell.setCellValue((Integer) value);
                         } else if (value instanceof Double) {
                             cell.setCellValue((Double) value);
-                        }else if(value instanceof Date){
+                        } else if (value instanceof Date) {
                             cell.setCellValue((Date) value);
                         }
                     }
