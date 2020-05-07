@@ -26,7 +26,8 @@ export class ExposuresHeaderService {
             ({
                 ...headerConfigApi,
                 exposureViews: HEADERCONFIG.exposureViews,
-                financialUnits:HEADERCONFIG.financialUnits
+                financialUnits:HEADERCONFIG.financialUnits,
+                financialPersp:['GU']
             })
         ))
     }

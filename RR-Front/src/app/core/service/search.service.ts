@@ -55,8 +55,8 @@ export class SearchService {
     return this._http.get(`${this.api}shortcuts`);
   }
 
-  getMostRecentSearch() {
-    return this._http.get(`${this.api}recent?userId=1`);
+  getMostRecentSearch(payload) {
+    return this._http.get(`${this.api}recent`, { params: payload });
   }
 
   getSavedSearch(payload) : Observable<any> {

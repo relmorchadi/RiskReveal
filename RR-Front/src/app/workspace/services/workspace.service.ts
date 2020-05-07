@@ -143,13 +143,15 @@ export class WorkspaceService {
               targetRaps: [],
               regionPerils: [],
             },
-            overrideAll: false,
-            overrideRow: false,
-            overrideInit: false,
-            overrideCancelAll: false,
-            overrideCancelRow: false,
-            overrideCancelStart: false,
-            removeOverrideUnable: false,
+            override: {
+              overrideAll: false,
+              overrideRow: false,
+              overrideInit: false,
+              overrideCancelAll: false,
+              overrideCancelRow: false,
+              overrideCancelStart: false,
+              removeOverrideUnable: false
+            },
             overriddenRows: [],
             projects: [],
             plts: [],
@@ -183,19 +185,6 @@ export class WorkspaceService {
   openWorkspace(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.OpenWS) {
     const {wsId, uwYear, route, type} = payload;
     const carSelected = _.get(payload, 'carSelected', null);
-    // const state = ctx.getState();
-    // const wsIdentifier = wsId + '-' + uwYear;
-    //
-    // if (state.content[wsIdentifier]) {
-    //   if (carSelected !== null) {
-    //     ctx.patchState(produce(ctx.getState(), draft =>  {
-    //       draft.content[wsIdentifier].projects = _.map(draft.content[wsIdentifier].projects, (prj, index: any) => {
-    //         prj.selected = prj.projectId === carSelected;
-    //         return prj;
-    //       });
-    //     }));
-    //   }
-    // }
 
     return ctx.dispatch(new fromWS.InitWorkspace({wsId, uwYear, route, type, carSelected}));
   }
@@ -203,8 +192,6 @@ export class WorkspaceService {
   openMultipleWorkspaces(ctx: StateContext<WorkspaceModel>, {payload: {workspaces, tabs , carSelected}}: fromWS.OpenMultiWS) {
     let screenByTab = {};
     let selectedTab: any = null;
-
-    console.log('multi:', workspaces, tabs);
 
     ctx.patchState(produce(ctx.getState(), draft => {
       draft.loading = true;
@@ -296,16 +283,20 @@ export class WorkspaceService {
                 scopeContext: null
               },
               pendingData: {
+                accumulationPackageId: 0,
+                accumulationPackageStatus: "",
                 targetRaps: [],
                 regionPerils: [],
               },
-              overrideAll: false,
-              overrideRow: false,
-              overrideInit: false,
-              overrideCancelAll: false,
-              overrideCancelRow: false,
-              overrideCancelStart: false,
-              removeOverrideUnable: false,
+              override: {
+                overrideAll: false,
+                overrideRow: false,
+                overrideInit: false,
+                overrideCancelAll: false,
+                overrideCancelRow: false,
+                overrideCancelStart: false,
+                removeOverrideUnable: false
+              },
               overriddenRows: [],
               projects: [],
               plts: [],
@@ -330,7 +321,7 @@ export class WorkspaceService {
 
     if(carSelected && selectedTab && selectedTab.wsIdentifier && ctx.getState().content[selectedTab.wsIdentifier].projects) {
       ctx.patchState(produce(ctx.getState(), draft => {
-        draft.content[selectedTab.wsIdentifier].projects = _.map(draft.content[selectedTab.wsIdentifier].projects.reverse(), (prj, index: any) => {
+        draft.content[selectedTab.wsIdentifier].projects = _.map(draft.content[selectedTab.wsIdentifier].projects, (prj, index: any) => {
           prj.selected = carSelected !== null ? prj.projectId === carSelected : index === 0;
           prj.projectType = prj.carRequestId === null ? 'TREATY' : 'FAC';
           return prj;
@@ -422,9 +413,13 @@ export class WorkspaceService {
     }));
   }
 
-  toggleWsLeftMenu(ctx: StateContext<WorkspaceModel>, {wsId}: fromWS.ToggleWsLeftMenu) {
+  toggleWsLeftMenu(ctx: StateContext<WorkspaceModel>, { payload }: fromWS.ToggleWsLeftMenu) {
+    const {
+      wsId,
+      isCollapsed
+    } = payload;
     return ctx.patchState(produce(ctx.getState(), draft => {
-      draft.content[wsId].leftNavbarCollapsed = !draft.content[wsId].leftNavbarCollapsed;
+      draft.content[wsId].leftNavbarCollapsed = isCollapsed;
     }));
   }
 

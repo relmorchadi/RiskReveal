@@ -66,7 +66,7 @@ export class NavbarComponent extends BaseContainer implements OnInit {
           );
         } else {
           return this.notificationService.createNotification('Information',
-            'There is no Opened Workspaces please try searching for some before!',
+            'You have no opened workspaces to display.',
             'error', 'bottomRight', 4000);
         }
       });

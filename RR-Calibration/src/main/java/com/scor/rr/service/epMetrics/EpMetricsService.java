@@ -1,12 +1,14 @@
 package com.scor.rr.service.epMetrics;
 
 import com.scor.rr.configuration.security.UserPrincipal;
+import com.scor.rr.domain.SummaryStatisticHeaderEntity;
 import com.scor.rr.domain.UserRPEntity;
 import com.scor.rr.domain.UserRrEntity;
 import com.scor.rr.domain.dto.SaveOrDeleteListOfRPsRequest;
 import com.scor.rr.domain.dto.ValidateEpMetricResponse;
 import com.scor.rr.domain.enums.CurveType;
 import com.scor.rr.repository.DefaultReturnPeriodRepository;
+import com.scor.rr.repository.PltHeaderRepository;
 import com.scor.rr.repository.SummaryStatisticHeaderRepository;
 import com.scor.rr.repository.UserRPRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +33,9 @@ public class EpMetricsService {
 
     @Autowired
     SummaryStatisticHeaderRepository summaryStatisticHeaderRepository;
+
+    @Autowired
+    PltHeaderRepository pltHeaderRepository;
 
     public ResponseEntity<?> validateEpMetric(Integer rp) {
         return ResponseEntity.ok(
@@ -169,11 +174,8 @@ public class EpMetricsService {
         }
     }
 
-    public ResponseEntity<?> getSinglePLTSummaryStats(Long pltHeaderId) {
-        try {
-            return ResponseEntity.ok(this.summaryStatisticHeaderRepository.findByLossDataIdAndLossDataType(pltHeaderId, "PLT"));
-        } catch(Exception e) {
-            throw new RuntimeException(e.getMessage());
-        }
+    public Optional<SummaryStatisticHeaderEntity> getSinglePLTSummaryStats(Long pltHeaderId) {
+        Long summaryStatId= pltHeaderRepository.getSummaryStatHeaderIdById(pltHeaderId);
+        return this.summaryStatisticHeaderRepository.findById(summaryStatId);
     }
 }

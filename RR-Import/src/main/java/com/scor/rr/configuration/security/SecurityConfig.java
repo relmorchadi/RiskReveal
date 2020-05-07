@@ -13,6 +13,8 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.core.context.SecurityContextHolder;
+
 
 @Configuration
 @EnableWebSecurity()
@@ -25,13 +27,19 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private AuthenticationEntryPoint unauthorizedHandler;
 
+    public SecurityConfig(){
+        super();
+        SecurityContextHolder.setStrategyName(SecurityContextHolder.MODE_INHERITABLETHREADLOCAL);
+    }
+
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf().disable().exceptionHandling()
                 .authenticationEntryPoint(unauthorizedHandler).and()
                 .cors().and().authorizeRequests()
                 .antMatchers("/api/**")
-                .authenticated().and()
+               // .authenticated().and()
+                .permitAll().and()//moi
                 .addFilterBefore(getJwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
     }
 

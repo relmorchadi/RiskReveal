@@ -1,8 +1,6 @@
 package com.scor.rr.service.batch;
 
 import com.google.common.base.Joiner;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import com.scor.rr.configuration.security.UserPrincipal;
 import com.scor.rr.domain.*;
 import com.scor.rr.domain.dto.ImportLossDataParams;
@@ -10,7 +8,7 @@ import com.scor.rr.domain.enums.JobPriority;
 import com.scor.rr.domain.enums.JobStatus;
 import com.scor.rr.repository.*;
 import com.scor.rr.service.JobManagerImpl;
-import com.scor.rr.service.abstraction.JobManagerAbstraction;
+import com.scor.rr.service.batch.abstraction.JobManagerAbstraction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.Job;
@@ -21,8 +19,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.lang.reflect.Type;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -157,20 +155,40 @@ public class BatchExecution {
         return true;
     }
 
+    @Transactional(transactionManager = "theTransactionManager")
     public void submitPendingAndRunningTasksToTheQueueAtStartUp() {
+
         List<JobEntity> jobs = jobEntityRepository.findAllByStatusAndDate();
+        for (JobEntity job : jobs)
+            createParamsAndSubmitToQueueAfterSpecificAction(job, "shutdown", JobPriority.HIGH);
+    }
 
-        for (JobEntity job : jobs) {
-            for (TaskEntity task : job.getTasks().stream()
-                    .filter(t -> t.getStatus().equalsIgnoreCase(JobStatus.PENDING.getCode()) || t.getStatus().equalsIgnoreCase(JobStatus.RUNNING.getCode()))
-                    .collect(Collectors.toList())) {
-                Gson gson = new Gson();
-                Type paramType = new TypeToken<Map<String, String>>() {
-                }.getType();
-                Map<String, String> params = gson.fromJson(task.getTaskParams(), paramType);
+    //@Transactional(transactionManager = "theTransactionManager")
+    public void resumeJobAfterPausing(Long jobId) {
+        jobEntityRepository.findById(jobId).ifPresent(j -> {
+            this.createParamsAndSubmitToQueueAfterSpecificAction(j, "restart", JobPriority.MEDIUM);
+            jobManager.resumeJob(jobId);
+        });
+    }
 
-                this.submitJobsAndTasksToQueueAfterShutDown(params, task);
-            }
+    private void createParamsAndSubmitToQueueAfterSpecificAction(JobEntity job, String action, JobPriority priority) {
+        Map<String, String> params = new HashMap<>();
+
+        job.getParams().forEach(e -> {
+            if (!e.getParameterName().equalsIgnoreCase("sourceResultIdsInput") && !e.getParameterName().equalsIgnoreCase("rlPortfolioSelectionIds"))
+                params.put(e.getParameterName(), e.getParameterValue());
+        });
+
+        List<TaskEntity> tasks = new ArrayList<>();
+        if (action.equalsIgnoreCase("restart"))
+            tasks = job.getTasks().stream().filter(t -> t.getStatus().equalsIgnoreCase(JobStatus.PAUSED.getCode())).collect(Collectors.toList());
+        else
+            tasks = job.getTasks().stream()
+                    .filter(t -> t.getStatus().equalsIgnoreCase(JobStatus.PENDING.getCode()) || t.getStatus().equalsIgnoreCase(JobStatus.RUNNING.getCode())).collect(Collectors.toList());
+        ;
+        for (TaskEntity task : tasks) {
+            task.getParams().forEach(e -> params.put(e.getParameterName(), e.getParameterValue()));
+            this.submitJobsAndTasksToQueueAfterShutDownOrResume(params, task, priority);
         }
     }
 
@@ -212,20 +230,21 @@ public class BatchExecution {
 
         ModellingSystemInstanceEntity modellingSystemInstance = modellingSystemInstanceRepository.findById(instanceId).orElse(null);
 
-        ProjectConfigurationForeWriterContract projectConfigurationForeWriterContract = null;
+        //ProjectConfigurationForeWriterContract projectConfigurationForeWriterContract = null;
 
-        if (workspaceMarketChannel.equalsIgnoreCase("Fac")) {
-            projectConfigurationForeWriterContract = projectConfigurationForeWriterContractRepository
-                    .findByProjectConfigurationForeWriterId(projectConfigurationForeWriter.getProjectConfigurationForeWriterId());
-        }
+        //if (workspaceMarketChannel.equalsIgnoreCase("Fac")) {
+        //    projectConfigurationForeWriterContract = projectConfigurationForeWriterContractRepository
+        //            .findByProjectConfigurationForeWriterId(projectConfigurationForeWriter.getProjectConfigurationForeWriterId());
+        //}
         // TODO: Review this
 //        String prefix = myWorkspace.getWorkspaceContextFlag().getValue();
-        String contractId = projectConfigurationForeWriterContract != null ? projectConfigurationForeWriterContract.getContractId() : contractSearchResult != null ? contractSearchResult.getId() : "";
-        String clientName = projectConfigurationForeWriterContract != null ? projectConfigurationForeWriterContract.getClient() : contractSearchResult != null ? contractSearchResult.getCedantName() : "";
-        String clientId = contractSearchResult != null ? contractSearchResult.getCedantCode() : "1";
+        String contractId = myWorkspace.getContractId();
+        String clientName = myWorkspace.getClientName();
+        String clientId = myWorkspace.getClientId();
+        String workspaceName = contractSearchResult != null ? contractSearchResult.getWorkspaceName() : "";
         String carId = projectConfigurationForeWriter != null ? projectConfigurationForeWriter.getCaRequestId() : "carId";
         String reinsuranceType = myWorkspace.getWorkspaceMarketChannel().equals("TTY") ? "T" : myWorkspace.getWorkspaceMarketChannel().equals("FAC") ? "F" : "";
-        String lob = projectConfigurationForeWriterContract != null ? projectConfigurationForeWriterContract.getLineOfBusiness() : "";
+        String lob = myWorkspace.getLob();
         String division = "1"; // fixed for TT
         String periodBasis = "FT"; // fixed for TT
         String sourceVendor = "RMS";
@@ -254,6 +273,7 @@ public class BatchExecution {
         map.put("prefix", prefix);
         map.put("clientName", clientName);
         map.put("clientId", clientId);
+        map.put("workspaceName", workspaceName);
         map.put("contractId", workspaceCode); // use code instead of contract Id
         map.put("division", division);
         map.put("uwYear", uwYear);
@@ -287,8 +307,14 @@ public class BatchExecution {
                 Map<String, String> jobParams = new HashMap<>(params);
                 Joiner joiner = Joiner.on("; ").skipNulls();
 
-                jobParams.put("sourceResultIdsInput", joiner.join(";", rlImportSelections));
-                jobParams.put("rlPortfolioSelectionIds", joiner.join(";", rlPortfolioSelections));
+                jobParams.put("sourceResultIdsInput", rlImportSelections.stream()
+                        .map(Object::toString)
+                        .collect(Collectors.joining(";")));
+
+                jobParams.put("rlPortfolioSelectionIds", rlPortfolioSelections.stream()
+                        .map(Object::toString)
+                        .collect(Collectors.joining(";")));
+
                 JobEntity job = jobManager.createJob(jobParams, JobPriority.MEDIUM.getCode(), userId);
 
                 JobParametersBuilder builder = new JobParametersBuilder();
@@ -324,7 +350,7 @@ public class BatchExecution {
                             .addString("rlPortfolioSelectionIds", params.get("rlPortfolioSelectionIds"))
                             .addString("taskId", String.valueOf(task.getTaskId()));
 
-                    ((JobManagerImpl) jobManager).submitJob(importLossDataAnalysis, JobPriority.MEDIUM, builder.toJobParameters());
+                    jobManager.submitTask(importLossDataAnalysis, JobPriority.MEDIUM, builder.toJobParameters(), task);
                 }
 
                 for (Long rlPortfolioSelection : rlPortfolioSelections) {
@@ -339,15 +365,15 @@ public class BatchExecution {
                             .addString("taskId", String.valueOf(task.getTaskId()));
 
                     if (params.get("marketChannel").equalsIgnoreCase("Treaty"))
-                        ((JobManagerImpl) jobManager).submitJob(importLossDataPortfolio, JobPriority.MEDIUM, builder.toJobParameters());
+                        jobManager.submitTask(importLossDataPortfolio, JobPriority.MEDIUM, builder.toJobParameters(), task);
                     else
-                        ((JobManagerImpl) jobManager).submitJob(importLossDataPortfolioFac, JobPriority.MEDIUM, builder.toJobParameters());
+                        jobManager.submitTask(importLossDataPortfolioFac, JobPriority.MEDIUM, builder.toJobParameters(), task);
                 }
             }
         }
     }
 
-    private void submitJobsAndTasksToQueueAfterShutDown(Map<String, String> params, TaskEntity task) {
+    private void submitJobsAndTasksToQueueAfterShutDownOrResume(Map<String, String> params, TaskEntity task, JobPriority priority) {
 
         if (params != null) {
 
@@ -379,14 +405,14 @@ public class BatchExecution {
 
             if (task.getTaskType().equalsIgnoreCase(TaskType.IMPORT_ANALYSIS.getCode())) {
 
-                ((JobManagerImpl) jobManager).submitJob(importLossDataAnalysis, JobPriority.HIGH, builder.toJobParameters());
+                jobManager.submitTask(importLossDataAnalysis, priority, builder.toJobParameters(), task);
 
             } else if (task.getTaskType().equalsIgnoreCase(TaskType.IMPORT_PORTFOLIO.getCode())) {
 
                 if (params.get("marketChannel").equalsIgnoreCase("Treaty"))
-                    ((JobManagerImpl) jobManager).submitJob(importLossDataPortfolio, JobPriority.HIGH, builder.toJobParameters());
+                    jobManager.submitTask(importLossDataPortfolio, priority, builder.toJobParameters(), task);
                 else
-                    ((JobManagerImpl) jobManager).submitJob(importLossDataPortfolioFac, JobPriority.HIGH, builder.toJobParameters());
+                    jobManager.submitTask(importLossDataPortfolioFac, priority, builder.toJobParameters(), task);
             }
         }
     }

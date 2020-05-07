@@ -12,4 +12,17 @@ public enum JobPriority {
     public int getCode() {
         return code;
     }
+
+    public static String getStringValue(int code) {
+        switch (code) {
+            case 1:
+                return "LOW";
+            case 2:
+                return "MEDIUM";
+            case 3:
+                return "HIGH";
+            default:
+                return "";
+        }
+    }
 }

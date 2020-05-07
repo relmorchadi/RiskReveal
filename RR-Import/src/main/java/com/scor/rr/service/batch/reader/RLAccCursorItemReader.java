@@ -73,7 +73,6 @@ public class RLAccCursorItemReader extends JdbcCursorItemReader<RLAccRow> {
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        log.info("nothing to see...");
         TaskEntity task = taskRepository.findById(Long.valueOf(taskId)).orElse(null);
         if (task != null && task.getSteps().stream().noneMatch(s -> s.getStepName().equalsIgnoreCase("ExtractACC"))) {
             step = jobManager.createStep(Long.valueOf(taskId), "ExtractACC", 15);

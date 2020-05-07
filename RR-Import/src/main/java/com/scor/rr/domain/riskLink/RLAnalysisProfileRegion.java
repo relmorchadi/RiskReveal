@@ -9,7 +9,7 @@ import javax.persistence.*;
 import java.math.BigDecimal;
 
 @Entity
-@Table(name = "ZZ_RLAnalysisProfileRegion")
+@Table(name = "RLAnalysisProfileRegion")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

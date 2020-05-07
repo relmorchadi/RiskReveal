@@ -461,10 +461,12 @@ export class PltRightMenuComponent extends BaseContainer implements OnInit, OnDe
     this.loadTab(index);
   }
 
-  closeDrawer() {
-    this.actionDispatcher.emit({
-      type: this.inputs['visible'] ? rightMenuStore.closeDrawer : rightMenuStore.openDrawer
-    })
+  closeDrawer(outside) {
+    if(outside || this.inputs.visible) {
+      this.actionDispatcher.emit({
+        type: rightMenuStore.closeDrawer
+      })
+    }
   }
 
   popupActionHandler(action: Message) {
@@ -646,7 +648,8 @@ export class PltRightMenuComponent extends BaseContainer implements OnInit, OnDe
               this.unsubscribeOnDestroy
           )
           .subscribe(losses => {
-            this.epMetricsLosses[pltHeaderId]= _.get(losses, '0');
+            console.log(losses);
+            this.epMetricsLosses[pltHeaderId]= losses;
             this.detectChanges();
           })
 

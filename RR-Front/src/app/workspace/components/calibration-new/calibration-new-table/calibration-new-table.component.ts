@@ -6,7 +6,7 @@ import {
   EventEmitter,
   Input, OnChanges,
   OnInit,
-  Output, SimpleChanges
+  Output, SimpleChanges, ViewChild
 } from '@angular/core';
 import {Message} from "../../../../shared/message";
 import * as fromWorkspaceStore from "../../../store";
@@ -80,7 +80,11 @@ export class CalibrationNewTableComponent implements OnInit, AfterViewInit, Afte
 
   contextMenuItem : any[];
 
-  constructor(private _baseStore: Store) { }
+  constructor(private _baseStore: Store) {
+    setInterval(() => {
+      console.log("Table width: "+ this.tableWidth)
+    }, 1000)
+  }
 
   ngOnInit() {
     this.contextMenuItem = [

@@ -17,6 +17,7 @@ public class ExposureManagerData {
     private String admin1;
     private BigDecimal totalTiv;
     private BigDecimal expectedTiv;
+    private BigDecimal tivDiff;
 
     private Map<String, Object> regionPerils;
 

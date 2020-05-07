@@ -11,7 +11,7 @@ import java.util.Date;
 import java.util.List;
 
 @Entity
-@Table(name = "ZZ_RecentSearch")
+@Table(name = "RecentSearch")
 @Data
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = false)
@@ -19,11 +19,18 @@ public class RecentSearch {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    private Integer userId;
+    @Column(name = "RecentSearchId")
+    private Long recentSearchId;
 
+    @Column(name = "UserId")
+    private Long userId;
+
+    @Column(name = "SearchDate")
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
-    Date searchDate;
+    private Date searchDate;
+
+    @Column(name = "Type")
+    private String type;
 
     @OneToMany(mappedBy = "recentSearchId", cascade = CascadeType.ALL, orphanRemoval = true)
     List<RecentSearchItem> items;
