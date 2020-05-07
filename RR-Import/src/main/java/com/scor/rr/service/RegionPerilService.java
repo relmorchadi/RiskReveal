@@ -1,7 +1,7 @@
 package com.scor.rr.service;
 
-import com.scor.rr.domain.RegionPerilMapping;
 import com.scor.rr.domain.RegionPerilEntity;
+import com.scor.rr.domain.RegionPerilMapping;
 import com.scor.rr.repository.RegionPerilMappingRepository;
 import com.scor.rr.repository.RegionPerilRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -34,22 +34,22 @@ public class RegionPerilService {
         return result;
     }
 
-
-    public RegionPerilMapping findRegionPerilMappingByCountryCodeAdmin1CodePerilCode(String countryCode,String admin1Code,String perilCode)
-    {
-        if(!admin1Code.equals(""))
+    public RegionPerilMapping findRegionPerilMappingByCountryCodeAdmin1CodePerilCode(String countryCode, String admin1Code, String perilCode) {
+        if (!admin1Code.equals(""))
             return regionPerilMappingRepository.findByCountryCodeAndAdmin1CodeAndPerilCode(countryCode, admin1Code, perilCode).orElse(null);
         else
-            return regionPerilMappingRepository.findByCountryCodeAndAdmin1CodeAndPerilCode(countryCode,null, perilCode).orElse(null);
+            return regionPerilMappingRepository.findByCountryCodeAndAdmin1CodeAndPerilCode(countryCode, null, perilCode).orElse(null);
     }
 
-    public RegionPerilEntity findRegionPerilByRegionPerilID(Long regionPerilID)
-    {
+    public RegionPerilEntity findRegionPerilByRegionPerilID(Long regionPerilID) {
         return regionPerilRepository.findById(regionPerilID).orElse(null);
     }
 
-    public RegionPerilEntity findRegionPerilByRegionPerilCode(String rpCode)
-    {
+    public RegionPerilEntity findRegionPerilByRegionPerilCode(String rpCode) {
         return regionPerilRepository.findByRegionPerilCode(rpCode);
+    }
+
+    public String getRegionPerilDescription(String regionPerilCode) {
+        return regionPerilRepository.findDescriptionByCode(regionPerilCode);
     }
 }
