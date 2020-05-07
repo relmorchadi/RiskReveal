@@ -248,11 +248,22 @@
 
 .left-slider {
   border: 1px solid rgba(0,0,0,0.3);
+  margin-top: 1px;
   height: 100%;
 }
 
 .right-slider {
+  border: 1px solid rgba(0,0,0,0.3);
+  padding-top: 10px;
+  margin-top: 1px;
   margin-left: 8px;
+  height: 100%;
+  overflow: hidden;
+
+  p-table{
+    margin: 5px;
+    display: flex;
+  }
 
   .flex-end-Checkbox {
     width: 100%;

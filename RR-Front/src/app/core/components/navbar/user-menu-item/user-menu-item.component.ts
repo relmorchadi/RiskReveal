@@ -22,7 +22,7 @@ export class UserMenuItemComponent implements OnInit {
   defaultImport;
   isVisible = false;
   isOkLoading = false;
-  searchTarget = 'treaty';
+  searchTarget = 'TREATY';
 
   constructor( private _searchService: SearchService, private route: ActivatedRoute, private router: Router) {}
 
@@ -36,7 +36,7 @@ export class UserMenuItemComponent implements OnInit {
     this.user$.pipe().subscribe(value => {
       this.user = value;
       let initials = value.match(/\b\w/g) || [];
-      initials = ((initials.shift() || '') + '.' + (initials.pop() || '')).toUpperCase();
+      initials = ((initials.shift() || '') + ' ' + (initials.pop() || '')).toUpperCase();
       this.userInitials = initials;
     });
   }

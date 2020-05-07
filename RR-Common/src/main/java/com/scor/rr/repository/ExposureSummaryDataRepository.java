@@ -18,9 +18,11 @@ public interface ExposureSummaryDataRepository extends JpaRepository<ExposureSum
             "@fp=:fp," +
             "@pageNumber=:pageNumber," +
             "@pageSize=:pageSize," +
-            "@RegionPerilCodeFilter=:regionPerilCodeFilter", nativeQuery = true)
+            "@paginate=:paginate," +
+            "@RegionPerilCodeFilter=:regionPerilCodeFilter," +
+            "@Type=:dataType", nativeQuery = true)
     List<Map<String, Object>> getExposureData(Long projectId, String portfolioName, String summaryType, Integer division,
-                                              String currency, String fp, Integer pageNumber, Integer pageSize, String regionPerilCodeFilter);
+                                              String currency, String fp, Integer pageNumber, Integer pageSize, String regionPerilCodeFilter, Boolean paginate, String dataType);
 
     @Query(value = "EXEC dbo.usp_ExposureManagerTotalRow " +
             "@projectId=:projectId," +
@@ -28,7 +30,8 @@ public interface ExposureSummaryDataRepository extends JpaRepository<ExposureSum
             "@division=:division," +
             "@summaryTitle=:summaryType," +
             "@currency=:currency," +
-            "@fp=:fp", nativeQuery = true)
+            "@fp=:fp," +
+            "@Type=:dataType", nativeQuery = true)
     Map<String, Object> getTotalRowExposureData(Long projectId, String portfolioName, String summaryType, Integer division,
-                                              String currency, String fp);
+                                              String currency, String fp, String dataType);
 }

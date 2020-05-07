@@ -32,7 +32,7 @@ export class ExposuresRightMenuComponent implements OnInit, OnDestroy {
     ngOnDestroy(): void {
 
     }
-    
+
 
     closeRightMenu() {
         if (this.first) {

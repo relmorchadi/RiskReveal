@@ -43,7 +43,7 @@ public class AccumulationPackageAttachedPLTService {
 
     public AccumulationPackageResponse attachSelectedPlts(AttachPLTRequest request) throws RRException {
         AccumulationPackageResponse response = new AccumulationPackageResponse();
-        WorkspaceEntity ws = workspaceEntityRepository.findByWorkspaceNameAndWorkspaceUwYear(request.getWorkspaceName(),request.getUwYear());
+        WorkspaceEntity ws = workspaceEntityRepository.findByWorkspaceContextCodeAndWorkspaceUwYear(request.getWorkspaceName(),request.getUwYear());
 
         if(ws == null ) throw new WorkspaceNotFoundException(request.getWorkspaceName(),request.getUwYear());
 
@@ -58,11 +58,12 @@ public class AccumulationPackageAttachedPLTService {
                 accumulationPackageAttachedPLT.setAccumulationPackageId(accumulationPackage.getAccumulationPackageId());
                 accumulationPackageAttachedPLT.setContractSectionId(String.valueOf(row.getContractSectionId()));
                 accumulationPackageAttachedPLT.setPLTHeaderId(row.getPltHeaderId());
+                accumulationPackageAttachedPLT.setEntity(1);
                 listToSave.add(accumulationPackageAttachedPLT);
             }
             accumulationPackageAttachedPLTRepository.saveAll(listToSave);
 
-            response.setScopeObject(accumulationPackageService.getScopeOnly(request.getWorkspaceName(), request.getUwYear()));
+            response.setScopeObject(accumulationPackageService.getScopeOnly(request.getWorkspaceName(), request.getUwYear(),request.getProjectId(),accumulationPackage.getAccumulationPackageId()));
             response.setAttachedPLTs(getAttachedPLTs(accumulationPackage.getAccumulationPackageId()));
             response.setOverriddenSections(accumulationPackageOverrideSectionService.getOverriddenSections(accumulationPackage.getAccumulationPackageId()));
 
@@ -104,9 +105,8 @@ public class AccumulationPackageAttachedPLTService {
             if (accumulationPackage == null) throw new AccumulationPackageNotFoundException(accumulationPackageId);
             return accumulationPackage;
 
-
         } else {
-            return accumulationPackageRepository.saveAndFlush(new AccumulationPackage(workspaceId,projectId));
+            return accumulationPackageRepository.saveAndFlush(new AccumulationPackage(workspaceId,projectId,1));
         }
     }
 

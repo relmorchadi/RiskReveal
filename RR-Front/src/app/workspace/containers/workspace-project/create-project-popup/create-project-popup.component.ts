@@ -134,11 +134,14 @@ export class CreateProjectPopupComponent extends BaseContainer implements OnInit
   patchNewProject() {
     this.editCreateBLock = false;
     this.newProject && this.newProjectForm.patchValue(this.newProject);
-    console.log(this.currentUser, this.projectForm, this.newProject);
     if (this.editOption) {
-      this.projectForm.assignedTo = _.toInteger(this.projectForm.assignedTo);
       this.projectFormInit = {...this.projectForm};
     }
+  }
+
+  formatUsers() {
+    const userList = _.orderBy(this.users, ['firstName', 'lastName']);
+    return [..._.filter(userList, item => item === 'Unassigned'), ..._.filter(userList, item => item !== 'Unassigned')];
   }
 
   @HostListener('document: keydown.enter', ['$event']) keyBoardEnter() {

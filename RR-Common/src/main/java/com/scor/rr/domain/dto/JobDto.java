@@ -1,11 +1,11 @@
 package com.scor.rr.domain.dto;
 
 import com.scor.rr.domain.enums.JobStatus;
-import com.scor.rr.domain.enums.JobType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -17,28 +17,36 @@ public class JobDto {
     private Long jobId;
     private Long submittedByUser;
     private Date submittedDate;
-    private Integer priority;
+    private String priority;
     private String status;
     private Date startedDate;
     private Date finishedDate;
-    private JobType jobTypeCode;
+    private String jobTypeCode;
 
     private List<TaskDto> tasks;
-
     private Long percent;
 
-    public JobDto(Long jobId, Long submittedByUser, Date submittedDate, Integer priority, String status, Date startedDate, Date finishedDate, JobType jobTypeCode, List<TaskDto> tasks) {
-        this.jobId = jobId;
-        this.submittedByUser = submittedByUser;
-        this.submittedDate = submittedDate;
-        this.priority = priority;
-        this.status = status;
-        this.startedDate = startedDate;
-        this.finishedDate = finishedDate;
-        this.jobTypeCode = jobTypeCode;
-        this.tasks = tasks;
+    /**
+     * Import Job Parameters
+     **/
+
+    private Integer uwYear;
+    private Long projectId;
+    private String clientName;
+    private String contractCode;
+    private String workspaceName;
+
+    public void calculatePercentage() {
         if (tasks != null)
-            this.percent = tasks.stream().filter(t -> t.getStatus().equalsIgnoreCase(JobStatus.SUCCEEDED.getCode())).count() /
-                    tasks.size();
+            this.percent = (tasks.stream().filter(t -> t.getStatus().equalsIgnoreCase(JobStatus.SUCCEEDED.getCode())).count() /
+                    tasks.size()) * 100;
+    }
+
+    public void addTask(TaskDto taskdto) {
+        if (tasks == null) {
+            tasks = new ArrayList<>();
+            tasks.add(taskdto);
+        } else
+            tasks.add(taskdto);
     }
 }

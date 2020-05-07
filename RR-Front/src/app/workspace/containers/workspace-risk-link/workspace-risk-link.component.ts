@@ -587,7 +587,8 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
                         instanceId: this.state.financialValidator.rmsInstance.selected.instanceId,
                         projectId: p.projectId,
                         analysis,
-                        portfolios
+                        portfolios,
+                        fp: this.state.financialValidator.financialPerspectiveELT.selected.code
                     })]);
             });
     }
@@ -705,14 +706,14 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
     }
 
     sortPortfolio({field, order}) {
-        if(field == 'imported')
+        if (field == 'imported')
             return;
         this.sortParams.portfolio = {[field]: order};
         this.getRiskLinkPortfolio();
     }
 
     sortAnalysis({field, order}) {
-        if(field == 'imported')
+        if (field == 'imported')
             return;
         this.sortParams.analysis = {[field]: order};
         this.getRiskLinkAnalysis();
@@ -750,7 +751,7 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
         return finalFilter;
     }
 
-    updateAllChecked(scope,nextValue) {
+    updateAllChecked(scope, nextValue) {
         const selectedInChunk = 0; // _.filter(this.filterData(this.getTableData()), item => item.selected).length;
         if (scope === 'analysis') {
             this.allCheckedAnalysis = nextValue;
@@ -767,7 +768,7 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
             }
         } else if (scope === 'portfolio') {
             this.allCheckedPortolfios = nextValue;
-            if (nextValue && !this.indeterminatePortfolio ) {
+            if (nextValue && !this.indeterminatePortfolio) {
                 this.dispatch(new fromWs.ToggleRiskLinkPortfolioAction({
                     action: 'selectChunk',
                     data: _.map(this.state.portfolios.data, p => p.rlPortfolioId)
@@ -886,7 +887,7 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
         }))
     }
 
-    saveConfiguration(type: string) {
+    saveConfiguration(type?: string) {
         const projectId = this.selectedProject.projectId;
         if (type == 'ANALYSIS') {
             this.analysisSummary$
@@ -907,6 +908,24 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
                     }))
                 });
         } else {
+            forkJoin([
+                this.analysisSummary$,
+                this.portfolioSummary$
+            ].map(item => item.pipe(take(1))))
+                .pipe(this.unsubscribeOnDestroy)
+                .subscribe(([analysisConfig, portfolioConfig]) => {
+                    console.log('This is the config', analysisConfig, portfolioConfig);
+                    if(! _.isEmpty(analysisConfig))
+                        this.dispatch(new fromWs.SaveImportConfigurationAction({
+                            type: 'ANALYSIS',
+                            analysisConfig: this.transformAnalysisResultForImport(analysisConfig, projectId, this.analysisConfigFields)
+                        }));
+                    if(! _.isEmpty(portfolioConfig))
+                        this.dispatch(new fromWs.SaveImportConfigurationAction({
+                            type: 'PORTFOLIO',
+                            portfolioConfig: this.transformPortfolioResultForImport(portfolioConfig, projectId, this.portfolioConfigFields)
+                        }))
+                });
             console.error('Unknown configuration type :', type);
         }
     }
@@ -926,6 +945,10 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
                     alert('You cannot import multiple Analysis Region Peril for the same divisions !');
                     return;
                 }
+                if (this.tabStatus == 'FAC' && !this._isSummaryExpectedFinancialPerspectives(summary.analysis)) {
+                    alert('You cannot import Analysis with non expected Financial Perspectives !');
+                    return;
+                }
                 this.dispatch(new fromWs.TriggerImportAction({
                     instanceId: this.state.financialValidator.rmsInstance.selected.instanceId,
                     projectId,
@@ -936,9 +959,12 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
             });
     }
 
+    private _isSummaryExpectedFinancialPerspectives(analysis): boolean {
+        return _.every(_.values(analysis), item => item.isExpectedFp == true);
+    };
     private _nonUniqDivisionPerAnalysis(analysis): boolean {
         let data = {};
-        for (let a of analysis) {
+        for (let a of _.values(analysis) ) {
             if (data[a.rpCode])
                 data[a.rpCode].push(...a.divisions);
             else
@@ -946,6 +972,7 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
             if (_.size(data[a.rpCode]) > 1)
                 return true;
         }
+        console.log('This is the Groupping', data);
         return false;
     }
 

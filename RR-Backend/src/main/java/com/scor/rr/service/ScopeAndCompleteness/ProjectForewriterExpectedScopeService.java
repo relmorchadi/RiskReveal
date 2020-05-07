@@ -28,9 +28,9 @@ public class ProjectForewriterExpectedScopeService {
     private ModelMapper modelMapper = new ModelMapper();
 
     //@Value(value = "${application.expectedScope.path}")
-    private String path;
-   // @Value(value = "${application.expectedScope.separator}")
-    private String separator;
+    private String path="";
+    //@Value(value = "${application.expectedScope.separator}")
+    private String separator="/";
 
     public List<String> getFileNames() {
         File file = new File(path);
@@ -99,6 +99,7 @@ public class ProjectForewriterExpectedScopeService {
                             currency));
                 }
             }
+            sc.close();
 
             return listOfExpectedScopes;
         } catch (IOException | NoSuchElementException e) {

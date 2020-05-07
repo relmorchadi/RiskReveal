@@ -54,8 +54,9 @@ public class AccumulationPackage {
     public AccumulationPackage() {
     }
 
-    public AccumulationPackage(long workspaceId,long projectId) {
+    public AccumulationPackage(long workspaceId,long projectId,int entity) {
         this.workspaceId = workspaceId;
         this.projectId = projectId;
+        this.entity = 1;
     }
 }

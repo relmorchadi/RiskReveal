@@ -1,23 +1,26 @@
 package com.scor.rr.domain.entities.Search;
 
-
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
+
 @Entity
-@Table(name = "ZZ_TreatySearchItem")
+@Table(name = "SavedSearchItem")
 @NoArgsConstructor
 @Data
 @EqualsAndHashCode(callSuper = false)
-public class TreatySearchItem extends SearchItem {
-    private Long treatySearchId;
+public class SavedSearchItem extends SearchItem {
 
-    public TreatySearchItem(SearchItem searchItem, Long treatySearchId){
+    @Column(name = "SavedSearchId")
+    private Long savedSearchId;
+
+    public SavedSearchItem(SearchItem searchItem, Long savedSearchId){
         super(searchItem);
-        this.treatySearchId= treatySearchId;
+        this.savedSearchId = savedSearchId;
     }
 }
