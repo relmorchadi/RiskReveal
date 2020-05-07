@@ -32,7 +32,7 @@ export class ExposuresTableService {
 
 
     exportTable(headerConfig) {
-        this._api.exportTable(this.constructHeaderConfig(headerConfig));
+        return this._api.exportTable(this.constructHeaderConfig(headerConfig));
     }
 
     filterRowRegionPeril(tableConfig,rowData: any) {
