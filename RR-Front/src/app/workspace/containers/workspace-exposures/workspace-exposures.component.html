@@ -21,6 +21,7 @@
       <div class="exposures-main-table">
         <exposures-main-table (actionDispatcher)="mainTableActionDispatcher($event)"
                               [sortConfig]="sortConfig"
+                              [numberConfig]="numberConfig"
                               [tableConfig]="tableConfig$ | async">
         </exposures-main-table>
       </div>
