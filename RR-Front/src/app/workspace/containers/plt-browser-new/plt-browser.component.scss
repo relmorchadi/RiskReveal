@@ -1,0 +1,224 @@
+:host {
+  display: flex;
+  width: 100%;
+
+  .PLTs-content {
+    padding: 0 !important;
+    position: relative;
+    flex: 1 1 auto;
+  }
+
+  ::ng-deep {
+    .ant-tabs-nav .ant-tabs-tab {
+      margin: 0;
+    }
+  }
+
+  ::ng-deep {
+
+    .my-tabs {
+      display: flex;
+      flex-direction: row;
+      width: 100%;
+    }
+
+    .plt-browser-wrapper {
+      display: flex;
+      flex-direction: row;
+      background-color: #f0f0ff;
+      width: 100%;
+      height: calc(100vh - 196px);
+
+      .tabset-right {
+        background: #fff;
+        display: flex;
+        flex-flow: column;
+        height: calc(100vh - 282px);
+
+        .title-as-tab {
+          display: flex;
+          flex: 0 1 auto;
+          justify-content: space-between;
+          position: relative;
+
+          .div-title {
+            display: flex;
+
+            .title {
+              padding: 12px 20px 12px 35px;
+              font-size: 15px;
+              border-top: 3px solid #0700e4;
+              font-weight: bold;
+              width: 90%;
+            }
+
+            .single-col-button {
+              display: flex;
+              align-items: center;
+
+              button {
+                white-space: nowrap;
+              }
+            }
+          }
+
+          .right {
+            display: flex;
+            flex-direction: row;
+            margin-right: 25px;
+            align-items: center;
+            div {
+              width: max-content;
+              margin-right: 16px;
+            }
+
+            nz-dropdown {
+              display: flex;
+              align-items: center;
+              cursor: pointer;
+              font-size: 2em;
+              height: 27px;
+            }
+
+          }
+        }
+
+        ::ng-deep .ant-tabs-ink-bar {
+          position: absolute;
+          top: 1px;
+          background-color: #0700CF;
+        }
+      }
+
+      .plt-table {
+        background-color: #FFFFFF;
+        min-height: 350px;
+        max-height: 750px;
+      }
+
+      .tags-title-section {
+        color: #646464;
+        font-size: 14.54px;
+        font-weight: bold;
+        letter-spacing: 0.25px;
+        line-height: 41px;
+        padding-left: 18px;
+        display: flex;
+        font-family: rubik;
+        flex: 1;
+
+        i {
+          padding: 15px 15px 0px 15px;
+        }
+      }
+
+      .title-section {
+        color: rgba(0, 0, 0, 0.87);
+        font-size: 34.54px;
+        font-weight: 300;
+        letter-spacing: 0.25px;
+        line-height: 41px;
+        display: flex;
+        align-items: center;
+        flex: 1;
+
+        h3 {
+          color: rgba(0, 0, 0, 0.38);
+          font-family: Rubik;
+          font-size: 24.38px;
+          line-height: 29px;
+        }
+      }
+
+      .right-column {
+        background-color: #FFFFFF;
+        height: 100%;
+
+        .navigation-icons {
+          display: flex;
+          flex-direction: column;
+          padding: 47px 0px 0px 0px;
+          margin: 7px;
+          min-width: 38px;
+
+          i {
+            padding: 5px;
+            border-radius: 25px;
+            border: 2px solid #F5F5F5;
+            color: #9C99EC;
+            font-size: 24px;
+            cursor: pointer;
+            margin-bottom: 20px;
+          }
+        }
+      }
+    }
+
+    ::ng-deep {
+      .ant-tabs-tab.ant-tabs-tab-active.ng-star-inserted {
+        background-color: #fff !important;
+      }
+    }
+
+    .active-tag {
+      border: 2px solid #666666;
+      border-radius: 25px;
+    }
+  }
+
+  ::ng-deep .ant-select-dropdown-menu-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    ::ng-deep {
+      .ant-checkbox-inner {
+        background-color: white;
+      }
+
+      .ant-checkbox-inner, .ant-checkbox-checked .ant-checkbox-inner, .ant-checkbox-checked::after {
+        border-color: #00ffaa;
+        border-radius: 50px;
+      }
+
+      .ant-checkbox-checked .ant-checkbox-inner, .ant-checkbox-checked::after {
+        background-color: #00ffaa;
+        border-radius: 50px;
+      }
+
+    }
+  }
+
+  .ml-1 {
+    margin-left: 0.75rem !important;
+  }
+
+  .mr-1 {
+    margin-right: 0.75rem !important;
+  }
+
+  .a-chips-input-filled-textonly {
+    padding: 1px 0 0 10px;
+    max-width: 150px;
+    width: max-content;
+    color: #fff;
+    font-family: Rubik;
+    border-radius: 10px;
+    font-size: .9em;
+    display: flex;
+
+    .chips-content {
+      cursor: pointer;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      overflow: hidden;
+    }
+  }
+
+
+  .a-app-wrapper {
+    margin: 20px 16px 20px 12px !important;
+  }
+
+}
+

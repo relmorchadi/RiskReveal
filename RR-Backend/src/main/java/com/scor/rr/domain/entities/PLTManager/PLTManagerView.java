@@ -1,4 +1,4 @@
-package com.scor.rr.domain.entities;
+package com.scor.rr.domain.entities.PLTManager;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -8,11 +8,10 @@ import javax.persistence.*;
 import java.util.Date;
 import java.util.Set;
 
-@Entity
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "vw_PltManagerView")
+@MappedSuperclass
 public class PLTManagerView {
 
     @Id
@@ -21,9 +20,6 @@ public class PLTManagerView {
 
     @Column(name = "pltName")
     private String pltName;
-
-    @Column(name = "pltType")
-    private String pltType;
 
     @Column(name = "pltStatus", length = 25)
     private String pltStatus;

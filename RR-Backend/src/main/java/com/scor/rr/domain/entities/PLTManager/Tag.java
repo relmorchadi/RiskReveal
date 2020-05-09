@@ -1,4 +1,4 @@
-package com.scor.rr.domain.entities;
+package com.scor.rr.domain.entities.PLTManager;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

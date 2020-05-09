@@ -1,6 +1,6 @@
-package com.scor.rr.repository;
+package com.scor.rr.repository.PLTManager;
 
-import com.scor.rr.domain.entities.UserTag;
+import com.scor.rr.domain.entities.PLTManager.UserTag;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
