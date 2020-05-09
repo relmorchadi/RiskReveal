@@ -131,8 +131,8 @@ public class JobManagerImpl extends JobManagerAbstraction {
             // If the task was already running
 //            if (task != null && task.getJobExecutionId() != null && jobOperator.getRunningExecutions("importLossData").contains(task.getJobExecutionId())) {
 //                jobOperator.stop(task.getJobExecutionId());
-//                cancelTaskSteps(task);
-//                // If the task is still in queue
+////                cancelTaskSteps(task);
+////                // If the task is still in queue
 //            } else
             if (task != null && task.getJobExecutionId() == null) {
                 RRJob runnable = (RRJob) executor.getQueue().stream().filter(e -> ((RRJob) e).getTask().getTaskId().equals(task.getTaskId())).findFirst().orElse(null);
@@ -248,9 +248,9 @@ public class JobManagerImpl extends JobManagerAbstraction {
 
                 if (taskdto.getTaskType().equalsIgnoreCase(TaskType.IMPORT_PORTFOLIO.getCode())) {
                     if (task.get("PortfolioDivision") != null)
-                        taskdto.setDivision(Integer.valueOf((String) task.get("PortfolioDivision")));
+                        taskdto.setDivision((Integer) task.get("PortfolioDivision"));
                     if (task.get("PortfolioProject") != null)
-                        taskdto.setProjectId(Long.valueOf((String) task.get("PortfolioProject")));
+                        taskdto.setProjectId(((BigInteger) task.get("PortfolioProject")).longValue());
                     taskdto.setName((String) task.get("PortfolioNumber"));
                 }
 
