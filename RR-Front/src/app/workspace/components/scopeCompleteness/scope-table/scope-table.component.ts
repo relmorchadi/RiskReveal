@@ -248,29 +248,25 @@ export class ScopeTableComponent extends BaseContainer implements OnInit {
 
   checkColumnAttached(column, index) {
     let checked = true;
+    let overriddenOnly = true;
     let holder = [];
     if (this.sortBy === 'Minimum Grain / RAP') {
       _.forEach(this.pendingData.regionPerils, rp => {
-        _.forEach(rp.targetRaps, tr => {
-          if (_.includes(tr.scopeContext, column.columnContext)) {
-            holder.push(this.checkChildExpected(tr, rp, column, index + 1));
-          }
-        })
+        holder.push(this.checkExpected(rp, column, index));
       })
     } else {
       _.forEach(this.pendingData.targetRaps, tr => {
-        _.forEach(tr.regionPerils, rp => {
-          if (_.includes(tr.scopeContext, column.columnContext)) {
-            holder.push(this.checkChildExpected(tr, rp, column, index + 1));
-          }
-        })
+        holder.push(this.checkExpected(tr, column, index));
       })
     }
+    holder = _.compact(holder);
+    _.forEach(holder, item => { if (item !== 'overridden') {
+      overriddenOnly = false;
+    }});
     _.forEach(holder, item => { if (item !== 'attached' && item !== 'overridden') {
       checked = false;
     }});
-    return checked;
-
+    return checked && !overriddenOnly;
   }
 
   overrideRow(row, col) {
@@ -799,6 +795,132 @@ export class ScopeTableComponent extends BaseContainer implements OnInit {
     const overrideActive = this.overrideAll || (this.rowOverrideInit[rowData.id] && this.overrideRows);
     const removeOverrideActive = this.removeOverrideAccess(rowData, row);
     return !overrideActive && !removeOverrideActive;
+  }
+
+  filterData() {
+    const scopeOfData = this.accumulationStatus === 'Pending' ? this.pendingData : this.scopeData;
+    const draftData = this.sortBy == 'RAP / Minimum Grain' ? _.get(scopeOfData, 'targetRaps', []) : _.get(scopeOfData , 'regionPerils', []);
+    if (this.filterBy === 'All') {
+      return draftData;
+    } else if (this.filterBy === 'Incomplete Only') {
+      if (this.sortBy === 'Minimum Grain / RAP') {
+        return _.compact(_.map(draftData, item => {
+          let filteredData = [];
+          _.forEach(item.targetRaps, tr => {
+            if (!this.checkRowAttached(item, tr)) {
+              filteredData = [...filteredData, tr];
+            }
+          });
+          if (filteredData.length === 0) {
+            return null;
+          } else {
+            return {...item, targetRaps: filteredData};
+          }
+        }));
+      } else {
+        return _.map(draftData, item => {
+          let filteredData = [];
+          _.forEach(item.regionPerils, rp => {
+            if (!this.checkRowAttached(item, rp)) {
+              filteredData = [...filteredData, rp];
+            }
+          });
+          if (filteredData.length === 0) {
+            return null;
+          } else {
+            return {...item, regionPerils: filteredData};
+          }
+        });
+      }
+    } else if (this.filterBy === 'Overridden Only') {
+      return _.filter(draftData, item => {
+        let filtered = false;
+        if (this.sortBy === 'Minimum Grain / RAP') {
+          _.forEach(item.targetRaps, tr => {
+            if (_.includes( _.map(_.values(tr.override), itemOver => itemOver.overridden), false)) {
+              filtered = true;
+            }
+          });
+        } else {
+          _.forEach(item.regionPerils, tr => {
+            if (_.includes( _.map(_.values(tr.override), itemOver => itemOver.overridden), false)) {
+              filtered = true;
+            }
+          });
+        }
+        return filtered;
+      })
+    } else if (this.filterBy === 'Synthetic PLTs Only') {
+      return draftData;
+    } else if (this.filterBy === 'Expected Only') {
+      return _.filter(draftData, item => {
+        let filtered = false;
+        if (this.sortBy === 'Minimum Grain / RAP') {
+          _.forEach(item.targetRaps, tr => {
+            if (_.includes(_.values(tr.expected), false)) {
+              filtered = true;
+            }
+          });
+        } else {
+          _.forEach(item.regionPerils, tr => {
+            if (_.includes(_.values(tr.expected), false)) {
+              filtered = true;
+            }
+          });
+        }
+        return filtered;
+      })
+    } else if (this.filterBy === 'Unexpected Only') {
+      return _.filter(draftData, item => {
+        let filtered = true;
+        if (this.sortBy === 'Minimum Grain / RAP') {
+          _.forEach(item.targetRaps, tr => {
+            if (_.includes(_.values(tr.expected), false)) {
+              filtered = false;
+            }
+          });
+        } else {
+          _.forEach(item.regionPerils, tr => {
+            if (_.includes(_.values(tr.expected), false)) {
+              filtered = false;
+            }
+          });
+        }
+        return filtered;
+      })
+    }
+  }
+
+  filterColumn(column, index) {
+    if (column.type === 'contractCol') {
+      if (this.filterBy === 'Incomplete Only') {
+        return !this.checkColumnAttached(column, index);
+      } else if(this.filterBy === '') {
+
+      } else {
+        return true;
+      }
+    } else {
+      return true;
+    }
+  }
+
+  checkUnexpected(rowData, col) {
+    let unexpected = false;
+    if (this.sortBy === 'Minimum Grain / RAP') {
+      _.forEach(rowData.targetRaps, item => {
+        if (!item.expected[col.columnContext]) {
+          unexpected = true;
+        }
+      })
+    } else {
+      _.forEach(rowData.regionPerils, item => {
+        if (!item.expected[col.columnContext]) {
+          unexpected = true;
+        }
+      })
+    }
+    return unexpected;
   }
 
   onHide() {
