@@ -13,6 +13,9 @@ public class GridDataRequest<T> {
     // row group columns
     private List<ColumnVO> rowGroupCols;
 
+    // what groups the user is viewing
+    private List<String> groupKeys;
+
     // value columns
     private List<ColumnVO> valueCols;
 
@@ -21,9 +24,6 @@ public class GridDataRequest<T> {
 
     // true if pivot mode is one, otherwise false
     private boolean pivotMode;
-
-    // what groups the user is viewing
-    private List<String> groupKeys;
 
     // if filtering, what the filter model is
     private T filterModel;

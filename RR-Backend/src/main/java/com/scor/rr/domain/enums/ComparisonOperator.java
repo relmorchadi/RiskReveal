@@ -1,6 +1,6 @@
 package com.scor.rr.domain.enums;
 
-public enum ComparaisonOperator {
+public enum ComparisonOperator {
     //BOTH
     EQ("equals"),
     NOT_EQUAL("notEqual"),
@@ -22,7 +22,7 @@ public enum ComparaisonOperator {
 
     private String value;
 
-    ComparaisonOperator(String v) {
+    ComparisonOperator(String v) {
         this.value = v;
     }
 

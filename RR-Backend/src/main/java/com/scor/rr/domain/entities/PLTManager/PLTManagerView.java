@@ -21,6 +21,9 @@ public class PLTManagerView {
     @Column(name = "pltName")
     private String pltName;
 
+    @Column(name = "pltType")
+    private String pltType;
+
     @Column(name = "pltStatus", length = 25)
     private String pltStatus;
 
@@ -202,6 +205,11 @@ public class PLTManagerView {
 
     private Long targetRapId;
     private Long regionPerilId;
+
+    PLTManagerView(PLTManagerView view) {
+        this.workspaceContextCode = view.getWorkspaceContextCode();
+        this.uwYear = view.getUwYear();
+    }
 
 
 }
