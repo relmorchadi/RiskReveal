@@ -85,7 +85,8 @@ import {NumberCellRenderer} from "../shared/components/grid/number-cell-renderer
     jsPlumbToolkitModule,
     jsPlumbToolkitDragDropModule,
     ResizableModule,
-    ContextMenuModule
+    ContextMenuModule,
+
   ],
   exports: [
     RouterModule

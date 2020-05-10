@@ -15,7 +15,7 @@ import java.util.List;
 public class JobDto {
 
     private Long jobId;
-    private Long submittedByUser;
+    private String submittedByUser;
     private Date submittedDate;
     private String priority;
     private String status;

@@ -38,31 +38,22 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
     "By": "Huw Parry",
     "Note": "Information about why those modifications were applied"
   };
-  selectionForOverride = [];
+
   filterBy: string = 'All';
-  selectionForCancelOverride = [];
 
   showPendingOption: boolean = false;
   accumulationStatus: string = 'Scope Only';
-  overrideReasonExplained: string = '';
-  attachArray: any;
-  deleteArray: any;
   removeOverride: boolean = false;
   treatySectionContainer: any;
 
-  selectedDropDown: any;
-  dataSource: any;
   workspaceId: any;
   keys: any = {};
   uwy: any;
-  grains = {};
-  regionCodes = {};
   selectedSortBy: string = 'Minimum Grain / RAP';
 
   treatySections: any;
-
   workspaceInfo: any;
-  serviceSubscription: any;
+
 
   @Select(WorkspaceState.getScopeCompletenessData) state$;
   state: any;
@@ -95,12 +86,9 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
   workspaceUrl: any;
   rowInformation: any;
 
-  wsType: any;
-
   constructor(private route: ActivatedRoute, private actions$: Actions, _baseStore: Store, _baseRouter: Router, _baseCdr: ChangeDetectorRef) {
     super(_baseRouter, _baseCdr, _baseStore);
   }
-
 
   ngOnInit() {
     this.treatySections = _.toArray(trestySections);
@@ -169,6 +157,7 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
     this.scopeContext$.pipe().subscribe(value => {
       this.selectedSortBy = _.get(value, 'sortBy');
       this.accumulationStatus = _.get(value, 'accumulationStatus');
+      this.filterBy = _.get(value, 'filterBy')
       this.detectChanges();
     });
 
