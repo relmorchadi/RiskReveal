@@ -80,8 +80,8 @@
             </ul>
           </nz-dropdown>
 
-          <ng-container *ngIf="tabStatus === 'fac' && showPackage()">
-            <div style="margin-left: 10px" *ngIf="checkNonImport(selectedProject)">
+          <ng-container *ngIf="tabStatus === 'fac' && accumulationStatus === 'Pricing'">
+            <div style="margin-left: 10px">
               <button (click)="publishFacToPricing()" class="a-buttons-outlined">Publish To Pricing</button>
             </div>
             <div class="published-dataInfo" *ngIf="checkImport(selectedProject)">
@@ -102,7 +102,7 @@
           <button class="a-buttons-linked" (click)="cancelRemoveOverride()">Cancel</button>
         </div>
 
-        <ng-container *ngIf="tabStatus === 'treaty'">
+<!--        <ng-container *ngIf="tabStatus === 'treaty'">
           <div style="display: flex; flex-direction: column" *ngIf="showPackage()">
             <button class="a-buttons-contained-micro">Publish Package</button>
             <button class="a-buttons-linked">Delete Pending Package</button>
@@ -124,7 +124,7 @@
           </div>
 
           <div style="width: 40%;" *ngIf="!showPackage()"></div>
-        </ng-container>
+        </ng-container>-->
 
         <div class="divider-right">
           <nz-dropdown [nzTrigger]="'click'" [nzPlacement]="'bottomRight'"
