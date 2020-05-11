@@ -9,12 +9,10 @@
   <div class="app-header">
     <p-contextMenu #cm [model]="changeContext()"></p-contextMenu>
     <div class="app-title-manager">
-      <span style="flex: 1">JOB Manager 1-50 of 348 results</span>
+      <span style="flex: 1">JOB Manager - {{savedTask.length}} results</span>
       <label class="label-wrapper">User :</label>
-      <nz-select (ngModelChange)="filterByUser($event)" class="jobs-for a-dropdown-label" style="width: 140px;" nzShowSearch [(ngModel)]="Users">
-        <nz-option nzLabel="All Users" nzValue="all"></nz-option>
-        <nz-option nzLabel="Amina Cheref" nzValue="Amina Cheref"></nz-option>
-        <nz-option nzLabel="Rim Benabbes" nzValue="Rim Benabbes"></nz-option>
+      <nz-select [nzDisabled]="true" (ngModelChange)="filterByUser($event)" class="jobs-for a-dropdown-label" style="width: 140px;" nzShowSearch [(ngModel)]="Users">
+        <nz-option [nzLabel]="Users" [nzValue]="Users"></nz-option>
       </nz-select>
         <button class="mx-4 pine-btn  d-flex justify-content-center align-items-center"
               nz-button nzType="primary" nzSize="default" nzShape="circle">
@@ -63,40 +61,46 @@
                 <span [title]="rowData[col?.field]" class="text-wrapper">{{rowData[col?.field]}}</span>
               </div>
             </td>
+
             <td *ngIf="col?.type === 'progress'" (click)="multiSelectRow(rowData, i)">
               <div class="td-wrapper status-border" style="display:flex; align-items: center">
-                <ng-container *ngIf="rowData.pending">
-                  <i class="icon-clock pause-icon-status"></i>
-                  <span style="padding-left: 5px">Pending 4/12</span>
-                </ng-container>
-                <ng-container *ngIf="!rowData.pending">
-                  <ng-container *ngIf="!rowData.isPaused">
-                    <nz-progress [nzWidth]="35" [nzPercent]="rowData[col?.field]" nzType="circle"></nz-progress>
-                    <span style="padding-left: 5px">In Progress</span>
+                  <ng-container *ngIf="rowData.status == 'PENDING'">
+                      <i class="icon-clock pause-icon-status"></i>
+                      <span style="padding-left: 5px">Pending 4/12</span>
                   </ng-container>
-                  <ng-container *ngIf="rowData.isPaused">
-                    <i class="icon-pause_circle_outline_24px pause-icon-status"></i>
-                    <span style="padding-left: 5px">Paused</span>
+                  <ng-container *ngIf="rowData.status == 'INPROGRESS'">
+                      <nz-progress [nzWidth]="35" [nzPercent]="rowData.percent" nzType="circle"></nz-progress>
+                      <span style="padding-left: 5px">In Progress</span>
                   </ng-container>
-                </ng-container>
+                  <ng-container *ngIf="rowData.status == 'PAUSED'">
+                      <i class="icon-pause_circle_outline_24px pause-icon-status"></i>
+                      <span style="padding-left: 5px">Paused</span>
+                  </ng-container>
+                  <ng-container *ngIf="rowData.status == 'FAILED'">
+                      <i style="color: red" class="icon-close_24px pause-icon-status"></i>
+                      <span style="padding-left: 5px">Failed</span>
+                  </ng-container>
+                  <ng-container *ngIf="rowData.status == 'SUCCEEDED'">
+                      <i style="color: #1ad21f" class="icon-check_circle_outline_24px pause-icon-status"></i>
+                      <span style="padding-left: 5px">Succeeded</span>
+                  </ng-container>
               </div>
             </td>
             <td *ngIf="col?.type === 'object'" (click)="multiSelectRow(rowData, i)">
               <div class="td-wrapper context-wrapper">
-                <span class="context-title">{{rowData.context.data}}</span>
-                <span class="context-subtitle">{{rowData.context.year}} - {{rowData.context.program}}</span>
+                <span class="context-title">{{rowData.workspaceName}} - {{rowData.uwYear}}</span>
               </div>
             </td>
             <td *ngIf="col?.type === 'status'" (click)="multiSelectRow(rowData, i)">
-              <div class="td-wrapper" style="display: flex" *ngIf="rowData[col?.field] === 'high'">
+              <div class="td-wrapper" style="display: flex" *ngIf="rowData[col?.field] === 'HIGH'">
                 <span class="status-high"></span>
                 <span>High</span>
               </div>
-              <div class="td-wrapper" style="display: flex" *ngIf="rowData[col?.field] === 'medium'">
+              <div class="td-wrapper" style="display: flex" *ngIf="rowData[col?.field] === 'MEDIUM'">
                 <span class="status-medium"></span>
                 <span>Medium</span>
               </div>
-              <div class="td-wrapper" style="display: flex" *ngIf="rowData[col?.field] === 'low'">
+              <div class="td-wrapper" style="display: flex" *ngIf="rowData[col?.field] === 'LOW'">
                 <span class="status-low"></span>
                 <span>Low</span>
               </div>
@@ -107,24 +111,24 @@
                   <i nz-dropdown style="margin-top: 7px" class="icon-menu_24px"></i>
                   <ul nz-menu class="dropdown-menu-selector">
                     <li style="display:flex; align-items: center;" nz-menu-item
-                        *ngIf="!rowData.isPaused"
+                        *ngIf="rowData.status !== 'PAUSED'"
                         nz-popconfirm
                         nzTitle="Are you sure you want to pause this Job?"
                         nzOkText="PAUSE"
                         nzCancelText="CANCEL"
-                        (nzOnConfirm)="pauseJob(rowData.id)"
+                        (nzOnConfirm)="pauseJob(rowData.jobId)"
                         (nzOnCancel)="cancel()"
                         nzPlacement="bottom"><i
                       class="pi pi-times"></i><span
                       class="dropdown-title">Pause</span></li>
 
                     <li style="display:flex; align-items: center;" nz-menu-item
-                        *ngIf="rowData.isPaused"
+                        *ngIf="rowData.status == 'PAUSED'"
                         nz-popconfirm
                         nzTitle="Are you sure you want to resume this Job?"
                         nzOkText="RESUME"
                         nzCancelText="CANCEL"
-                        (nzOnConfirm)="resumeJob(rowData.id)"
+                        (nzOnConfirm)="resumeJob(rowData.jobId)"
                         (nzOnCancel)="cancel()"
                         nzPlacement="bottom"><i
                       class="pi pi-check"></i><span
@@ -135,7 +139,7 @@
                         nzOkText="ABORT"
                         nzCancelText="CANCEL"
                         nzTitle="Are you sure you want to Abort this Job?"
-                        (nzOnConfirm)="deleteJob(rowData.id)"
+                        (nzOnConfirm)="deleteJob(rowData.jobId)"
                         (nzOnCancel)="cancel()"
                         nzPlacement="bottom"><i
                       class="pi pi-trash"></i><span
@@ -172,24 +176,24 @@
           <td [attr.colspan]="columns.length">
             <div class="td-wrapper td-wrapper-append" style="">
               <ul class="data-append-list">
-                <li class="data-append-item" *ngFor="let item of rowData.content">
+                <li class="data-append-item" *ngFor="let item of rowData.tasks">
                   <div class="list-item-left">
                     <nz-progress style="display: flex; align-items: center; margin-right: 5px;"
                                  class="circular-progress-bar"
-                                 [nzPercent]="item.progress"
+                                 [nzPercent]="item.percent"
                                  [nzFormat]="formatter"
                                  [nzStrokeWidth]="8"
                                  nzType="circle" [nzWidth]="15">
                     </nz-progress>
                     <div class="list-item-title-wrapper">
-                      <span class="item-list-title">{{item.contentId}}</span>
-                      <span class="item-list-subtitle">{{item.projectId}} | {{item.createdBy}}</span>
+<!--                      <span class="item-list-title">{{item.contentId}}</span>-->
+                      <span class="item-list-subtitle">{{item.jobExecutionId}} | {{item.taskType}}</span>
                     </div>
                   </div>
                   <div class="list-item-info">
-                    <span class="task-duration">{{item.duration}}</span>
-                    <i *ngIf="item.progress === 100" class="icon-file-check-alt"></i>
-                    <i *ngIf="item.progress < 100" nz-icon [nzType]="'loading'"></i>
+                    <span class="task-duration">1 min remaining</span>
+                    <i *ngIf="item.percent === 100" class="icon-file-check-alt"></i>
+                    <i *ngIf="item.percent < 100" nz-icon [nzType]="'loading'"></i>
                   </div>
                 </li>
               </ul>

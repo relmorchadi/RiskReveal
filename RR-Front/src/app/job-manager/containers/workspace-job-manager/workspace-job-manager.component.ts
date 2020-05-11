@@ -1,21 +1,25 @@
-import {Component, HostListener, OnInit, ViewChild} from '@angular/core';
+import {ChangeDetectorRef, Component, HostListener, OnInit, ViewChild} from '@angular/core';
 import {Location} from '@angular/common';
 import {LazyLoadEvent} from 'primeng/api';
 import * as _ from 'lodash';
 import {SearchService} from '../../../core/service';
 import {Select, Store} from '@ngxs/store';
-import {HeaderState} from '../../../core/store/states';
+import {AuthState, HeaderState} from '../../../core/store/states';
 import {Observable} from 'rxjs';
 import {HelperService} from '../../../shared/helper.service';
 import {ActivatedRoute, Router} from '@angular/router';
 import {DeleteTask, PauseTask, ResumeTask} from '../../../core/store/actions/header.action';
 import * as workspaceActions from '../../../workspace/store/actions/workspace.actions';
 import {WorkspaceState} from "../../../workspace/store/states";
+import {JobManagerService} from "../../../core/service/jobManager.service";
+import {first, map} from "rxjs/operators";
+import {AuthModel} from "../../../core/model/auth.model";
 
 @Component({
   selector: 'app-workspace-job-manager',
   templateUrl: './workspace-job-manager.component.html',
-  styleUrls: ['./workspace-job-manager.component.scss']
+  styleUrls: ['./workspace-job-manager.component.scss'],
+  providers:[JobManagerService]
 })
 export class WorkspaceJobManagerComponent implements OnInit {
   loading = false;
@@ -67,7 +71,7 @@ export class WorkspaceJobManagerComponent implements OnInit {
     },
   ];
 
-  savedTask: any;
+  savedTask: any =[];
 
   tableColumn = [
     {
@@ -81,7 +85,7 @@ export class WorkspaceJobManagerComponent implements OnInit {
       class: 'icon-check_24px',
     },
     {
-      field: 'progress',
+      field: 'status',
       header: 'State',
       width: '90px',
       display: true,
@@ -101,7 +105,7 @@ export class WorkspaceJobManagerComponent implements OnInit {
       filterParam: 'job'
     },
     {
-      field: 'jobOwner',
+      field: 'submittedByUser',
       header: 'Job Owner',
       width: '90px',
       display: true,
@@ -111,7 +115,7 @@ export class WorkspaceJobManagerComponent implements OnInit {
       filterParam: 'jobOwner'
     },
     {
-      field: 'jobType',
+      field: 'jobTypeCode',
       header: 'Job Type',
       width: '70px',
       display: true,
@@ -141,7 +145,7 @@ export class WorkspaceJobManagerComponent implements OnInit {
       filterParam: 'innerCedantCode'
     },
     {
-      field: 'submittedTime',
+      field: 'submittedDate',
       header: 'Submitted Time',
       width: '110px',
       display: true,
@@ -151,7 +155,7 @@ export class WorkspaceJobManagerComponent implements OnInit {
       filterParam: 'submittedTime'
     },
     {
-      field: 'startTime',
+      field: 'startedDate',
       header: 'Start Time',
       width: '110px',
       display: true,
@@ -171,7 +175,7 @@ export class WorkspaceJobManagerComponent implements OnInit {
       filterParam: 'elapsedTime'
     },
     {
-      field: 'completionTime',
+      field: 'finishedDate',
       header: 'Completion Time',
       width: '110px',
       display: true,
@@ -194,18 +198,32 @@ export class WorkspaceJobManagerComponent implements OnInit {
 
 
   @Select(HeaderState.getJobs) jobs$;
+  @Select(AuthState.getUser) user$;
   jobs: any;
 
-  constructor(public location: Location, private _searchService: SearchService, private store: Store,
+  constructor(private cdref : ChangeDetectorRef,public location: Location, private _searchService: SearchService, private store: Store,private jobManagerService:JobManagerService,
               private helperService: HelperService, private route: ActivatedRoute, private router: Router) {
   }
 
   ngOnInit() {
-    this.jobs$.subscribe(value => {
-      this.jobs = _.toArray(_.merge({}, value));
-      this.savedTask = [..._.sortBy(_.filter(this.jobs, (dt) => !dt.pending), (dt) => dt.isPaused),
-        ..._.filter(this.jobs, (dt) => dt.pending)];
+
+    this.jobManagerService.getAllJobs().subscribe((jobs:any) => {
+      console.log(jobs);
+      this.savedTask = jobs.map(row => ({
+        ...row,
+        append:false
+      }));
+      this.cdref.detectChanges();
     });
+
+    this.user$.pipe(first()).subscribe( value => {
+      this.Users = value;
+    })
+    // this.jobs$.subscribe(value => {
+    //   this.jobs = _.toArray(_.merge({}, value));
+    //   this.savedTask = [..._.sortBy(_.filter(this.jobs, (dt) => !dt.pending), (dt) => dt.isPaused),
+    //     ..._.filter(this.jobs, (dt) => dt.pending)];
+    // });
   }
 
   expandRow(row, expand) {
