@@ -1,4 +1,4 @@
-<div [style.width]="tableWidth" #dtContainer>
+
    <p-table
           [dataKey]="'pltId'"
           [value]="data | filterGroupedPlts : tableConfig.filterData | sortGroupedPlts : tableConfig.sortData"
@@ -37,12 +37,12 @@
 
     <!-- Frozen columns ( "side" is to tell wish header to call) -->
     <ng-template pTemplate="frozenheader" let-columns *ngIf="!tableConfig.isExpanded">
-      <ng-container [ngTemplateOutlet]="unexpandedHeader" [ngTemplateOutletContext]="{$implicit: columns, side: leftHeader}"></ng-container>
+      <ng-container [ngTemplateOutlet]="unexpandedHeader" [ngTemplateOutletContext]="{$implicit: columns, side: 'left'}"></ng-container>
     </ng-template>
 
     <!-- others columns -->
     <ng-template pTemplate="header" let-columns>
-      <ng-container *ngIf="!tableConfig.isExpanded" [ngTemplateOutlet]="unexpandedHeader" [ngTemplateOutletContext]="{$implicit: columns, side: rightHeader}"></ng-container>
+      <ng-container *ngIf="!tableConfig.isExpanded" [ngTemplateOutlet]="unexpandedHeader" [ngTemplateOutletContext]="{$implicit: columns, side: 'right', cnt: dtContainer}"></ng-container>
       <ng-container *ngIf="tableConfig.isExpanded" [ngTemplateOutlet]="expandedHeader" [ngTemplateOutletContext]="{$implicit: columns}"></ng-container>
     </ng-template>
 
@@ -70,27 +70,26 @@
     <!--
     Header Template
     -->
-    <ng-template #unexpandedHeader let-columns let-side="side">
+    <ng-template #unexpandedHeader let-columns let-side="side" let-container="cnt">
 
-      <ng-container *ngIf="side == leftHeader">
+      <ng-container *ngIf="side == 'left'">
         <tr >
           <th   class="header-cnt" [attr.colspan]="(columnsConfig?.frozenColumns | frozenColumnsFilter).length" [style.height]="'120px'">
             <ng-container [ngTemplateOutlet]="leftHeader"></ng-container>
           </th>
 
-          <th   class="header-cnt" style="position:fixed; z-index: 999;" [attr.colspan]="columnsConfig?.columns.length" [style.height]="'120px'"
-                [ngStyle]="{ width: 'calc( ' + dtContainer.offsetWidth + 'px - ' + columnsConfig.frozenWidth + ' )'}">
-            <ng-container [ngTemplateOutlet]="rightHeader" ></ng-container>
+          <th   class="header-cnt"
+                [style.height]="'120px'"
+                [ngStyle]="{ position: 'fixed', zIndex: 999, width: 'calc('+ tableWidth + ' - ' + columnsConfig?.frozenWidth +')'}">
+            <ng-container [ngTemplateOutlet]="rightHeader" [ngTemplateOutletContext]="{$implicit: false}"></ng-container>
           </th>
         </tr>
       </ng-container>
 
-      <ng-container *ngIf="side == rightHeader">
+      <ng-container *ngIf="side == 'right'">
         <tr>
-          <th  class="header-cnt" [attr.colspan]="columns.length" *ngIf="columns">
-
-          </th>
-          <th class="header-cnt" *ngIf="!(columns | frozenColsLength)" [attr.colspan]="columns.length" [ngStyle]="{ height: '120px', background: 'transparent'}" ></th>
+          <th  class="header-cnt" *ngIf="columns"></th>
+          <th class="header-cnt" *ngIf="!(columns | frozenColsLength)" [ngStyle]="{ height: '120px', background: 'transparent'}" ></th>
         </tr>
       </ng-container>
       <ng-container [ngTemplateOutlet]="headerFields" [ngTemplateOutletContext]="{ $implicit: columns }"></ng-container>
@@ -103,7 +102,7 @@
           <ng-container [ngTemplateOutlet]="leftHeader"></ng-container>
         </th>
 
-        <th   class="header-cnt" [attr.colspan]="columns.length - (columns | frozenColsLength)" [style.height]="'120px'">
+        <th  class="header-cnt" [attr.colspan]="columns.length - (columns | frozenColsLength)" [style.height]="'120px'">
           <ng-container [ngTemplateOutlet]="rightHeader" ></ng-container>
         </th>
       </tr>
@@ -383,11 +382,13 @@
       </div>
     </ng-template>
 
-    <ng-template #rightHeader >
+    <ng-template #rightHeader let-expanded>
 
 
-      <div class="table-header-right-container" >
-        <div class="table-header-right"   style="background-color: #fff">
+      <div class="table-header-right-container"
+           [style.width]="700"
+      >
+        <div class="table-header-right"  style="background-color: #fff">
           <div *ngIf="tableConfig?.view == 'epMetrics'"
                class="title-as-tab" style="height: 58px">
           <span class="title" style="margin-right: 16px">
@@ -522,7 +523,6 @@
     </ng-template>
 
   </p-table>
-</div>
 
 <p-contextMenu #contmenu [model]="contextMenuItem" appendTo="body"></p-contextMenu>
 

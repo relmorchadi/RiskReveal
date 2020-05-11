@@ -88,9 +88,12 @@ public class ProjectService {
                 );
     }
 
-    public ProjectEntity addNewProject(String wsId, Integer uwy, ProjectEntity p) {
+    public ProjectCardView addNewProject(String wsId, Integer uwy, ProjectEntity p) {
         return workspaceEntityRepository.findByWorkspaceContextCodeAndWorkspaceUwYear(wsId, uwy)
-                .map(ws -> projectEntityRepository.save(this.prePersistProject(p, ws.getWorkspaceId(), false)))
+                .map(ws -> {
+                    ProjectEntity project = projectEntityRepository.saveAndFlush(this.prePersistProject(p, ws.getWorkspaceId(), false));
+                    return projectCardViewRepository.findByProjectId(project.getProjectId());
+                })
                 .orElseGet(() ->
                         contractSearchResultRepository.findTop1ByWorkSpaceIdAndUwYearOrderByWorkSpaceIdAscUwYearAsc(wsId, uwy)
                                 .map(targetContract -> workspaceEntityRepository.save(
@@ -105,7 +108,10 @@ public class ProjectService {
                                                 targetContract.getId()
                                         )
                                 ))
-                                .map(newWs -> projectEntityRepository.save(this.prePersistProject(p, newWs.getWorkspaceId(), false)))
+                                .map(newWs -> {
+                                    ProjectEntity project = projectEntityRepository.save(this.prePersistProject(p, newWs.getWorkspaceId(), false));
+                                    return projectCardViewRepository.findByProjectId(project.getProjectId());
+                                })
                                 .orElseThrow(() -> new RuntimeException("No available Workspace with ID : " + wsId + "-" + uwy))
                 );
     }

@@ -31,13 +31,13 @@ public class AccumulationPackageService {
     private AccumulationPackageOverrideSectionService accumulationPackageOverrideSectionService;
 
 
-    public List<ScopeAndCompletenessResponse> getScopeOnly(String workspaceName, int uwYear) {
+    public List<ScopeAndCompletenessResponse> getScopeOnly(String workspaceName, int uwYear, long projectId,long accumulationPackageId) {
 
         List<ScopeAndCompletenessResponse> response = new ArrayList<>();
         ModelMapper mapper = new ModelMapper();
         mapper.getConfiguration().setFieldMatchingEnabled(true);
 
-        List<ExpectedScopeDBResponse> expectedScope = accumulationPackageRepository.getExpectedScopeOnly(workspaceName, uwYear)
+        List<ExpectedScopeDBResponse> expectedScope = accumulationPackageRepository.getPLTsForPricing(workspaceName, uwYear, projectId,accumulationPackageId)
                 .stream()
                 .map(exScope -> mapper.map(exScope, ExpectedScopeDBResponse.class))
                 .collect(Collectors.toList());
@@ -65,6 +65,7 @@ public class AccumulationPackageService {
                         InsideObject object = new InsideObject();
                         object.setId(row.getAccumulationRapCode());
                         object.setDescription(row.getAccumulationRapDesc());
+                        object.setExpected(row.isExpected());
                         insideList.add(object);
                     }
                     regionPeril.setTargetRaps(insideList);
@@ -80,7 +81,8 @@ public class AccumulationPackageService {
                             List<InsideObject> insideList = new ArrayList<>();
                             for (ExpectedScopeDBResponse row : value) {
                                 InsideObject object = new InsideObject();
-                                object.setId(row.getMinimumGrainRegionPerilCode());
+                                object.setId(row.getExpectedRegionPerilCode());
+                                object.setExpected(row.isExpected());
                                 //object.setDescription(row.getAccumulationRapDesc());
                                 insideList.add(object);
                             }
@@ -140,14 +142,14 @@ public class AccumulationPackageService {
     public Map<String, List<ExpectedScopeDBResponse>> groupByMinimumGrain(List<ExpectedScopeDBResponse> requeteResponse) {
         Map<String, List<ExpectedScopeDBResponse>> returnMap = new TreeMap<>();
         for (ExpectedScopeDBResponse row : requeteResponse) {
-            List<ExpectedScopeDBResponse> workList = returnMap.get(row.getMinimumGrainRegionPerilCode());
+            List<ExpectedScopeDBResponse> workList = returnMap.get(row.getExpectedRegionPerilCode());
             if (workList == null) {
                 List<ExpectedScopeDBResponse> newList = new ArrayList<>();
                 newList.add(row);
-                returnMap.put(row.getMinimumGrainRegionPerilCode(), newList);
+                returnMap.put(row.getExpectedRegionPerilCode(), newList);
             } else {
                 workList.add(row);
-                returnMap.put(row.getMinimumGrainRegionPerilCode(), workList);
+                returnMap.put(row.getExpectedRegionPerilCode(), workList);
             }
         }
         return returnMap;
@@ -169,12 +171,12 @@ public class AccumulationPackageService {
         return returnMap;
     }
 
-    public AccumulationPackageResponse getAccumulationPackageDetails(String workspaceName,int UWYear, long accumulationPackageId) throws RRException{
+    public AccumulationPackageResponse getAccumulationPackageDetails(String workspaceName,int UWYear, long accumulationPackageId,long projectId) throws RRException{
         AccumulationPackage accumulationPackage = accumulationPackageRepository.findByAccumulationPackageId(accumulationPackageId);
         if(accumulationPackage == null ) throw new AccumulationPackageNotFoundException(accumulationPackageId);
 
         AccumulationPackageResponse response = new AccumulationPackageResponse();
-        response.setScopeObject(getScopeOnly(workspaceName,UWYear));
+        response.setScopeObject(getScopeOnly(workspaceName,UWYear,projectId,accumulationPackageId));
         response.setAttachedPLTs(accumulationPackageAttachedPLTService.getAttachedPLTs(accumulationPackageId));
         response.setOverriddenSections(accumulationPackageOverrideSectionService.getOverriddenSections(accumulationPackageId));
 

@@ -209,6 +209,7 @@ public class RegionPerilExtractor implements RegionPerilExtractorInterface {
                     modelAnalysisEntity.setCreationDate(new Date());
                     modelAnalysisEntity.setRunDate(sourceResult.getRlAnalysis().getRunDate());
                     modelAnalysisEntity.setImportStatus(TrackingStatus.INPROGRESS.toString());
+                    modelAnalysisEntity.setImportedDate(new Date());
                     modelAnalysisEntity.setProjectImportRunId(projectImportRunEntity.getProjectImportRunId());
 
                     TransformationBundle bundle = new TransformationBundle();

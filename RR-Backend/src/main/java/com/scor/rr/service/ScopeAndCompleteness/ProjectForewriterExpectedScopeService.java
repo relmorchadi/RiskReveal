@@ -99,6 +99,7 @@ public class ProjectForewriterExpectedScopeService {
                             currency));
                 }
             }
+            sc.close();
 
             return listOfExpectedScopes;
         } catch (IOException | NoSuchElementException e) {

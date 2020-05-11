@@ -11,9 +11,11 @@ public class ExpectedScopeDBResponse {
 
     private String accumulationRapCode;
 
-    private boolean expectedRegionPeril;
+    private String expectedRegionPerilCode;
 
     private String accumulationRapDesc;
+
+    private boolean isExpected;
 
     public ExpectedScopeDBResponse() {
     }

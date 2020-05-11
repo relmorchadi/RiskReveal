@@ -986,8 +986,8 @@ export class RiskLinkStateService {
     }
 
     runDetailedScan(ctx: StateContext<WorkspaceModel>, payload) {
-        const {projectId, analysis, portfolios, instanceId} = payload;
-        return this.riskApi.runDetailedScan(instanceId, projectId, analysis, portfolios)
+        const {projectId, analysis, portfolios, instanceId, fp} = payload;
+        return this.riskApi.runDetailedScan(instanceId, projectId, analysis, portfolios, fp)
             .pipe(
                 mergeMap(({analysis, portfolios}: any) => {
                     ctx.patchState(produce(ctx.getState(), draft => {
@@ -1004,6 +1004,7 @@ export class RiskLinkStateService {
                                 'occurrenceBasis',
                                 null
                             );
+                            draft.content[wsIdentifier].riskLink.summary.analysis[a.rlAnalysisId].isExpectedFp= _.find(a.expectedFinancialPerspectives, ({fpCode}) => _.first(financialPerspectives) == fpCode) != null;
                         });
                         _.forEach(portfolios, p => {
                             draft.content[wsIdentifier].riskLink.summary.portfolios[p.rlPortfolioId].isScanning = false;
@@ -1322,6 +1323,8 @@ export class RiskLinkStateService {
             const wsIdentifier = draft.currentTab.wsIdentifier;
             _.forEach(payload, (item, key) => {
                 draft.content[wsIdentifier].riskLink.summary.analysis[key].financialPerspectives = item.financialPerspectives;
+                const {expectedFinancialPerspectives}=draft.content[wsIdentifier].riskLink.summary.analysis[key];
+                draft.content[wsIdentifier].riskLink.summary.analysis[key].isExpectedFp= _.find(expectedFinancialPerspectives, ({fpCode}) => _.first(item.financialPerspectives) == fpCode) != null;
             });
         }))
     }
@@ -1489,7 +1492,8 @@ export class RiskLinkStateService {
                                     rpOccurrenceBasis: null,
                                     isScanning: false,
                                     rpCode: item.targetRegionPeril,
-                                    analysisCurrency: item.sourceCurrency
+                                    analysisCurrency: item.sourceCurrency,
+                                    isExpectedFp: _.find(item.expectedFinancialPerspectives, ({fpCode}) => _.first(item.financialPerspectives) == fpCode) != null
                                 }
                             }))
                         );

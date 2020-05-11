@@ -18,6 +18,9 @@ public interface PltHeaderRepository extends JpaRepository<PltHeaderEntity, Long
             ")")
     WorkspaceEntity findParentWorkspace(@Param("pltHeaderId") Integer pltHeaderId);
 
+    @Query("select plt.summaryStatisticHeaderId from PltHeaderEntity plt where plt.pltHeaderId= :pltId")
+    Long getSummaryStatHeaderIdById(@Param("pltId") Long pltId);
+
     @Modifying
     @Transactional
     @Query("update PltHeaderEntity set summaryStatisticHeaderId= :summaryStatisticHeaderId " +

@@ -400,8 +400,7 @@ export class SearchNavBarState implements NgxsOnInit {
   @Action(LoadSavedSearch)
   loadSavedSearch(ctx: StateContext<SearchNavBar>, {payload}: LoadSavedSearch) {
     return this._searchService.getSavedSearch({
-      searchType: "TREATY",
-      userId: 1
+      searchType: _.upperCase(ctx.getState().searchTarget)
     })
       .pipe(
         tap( savedSearch => {
@@ -415,8 +414,6 @@ export class SearchNavBarState implements NgxsOnInit {
   @Action(DeleteSearchItem)
   deleteSavedSearch(ctx: StateContext<SearchNavBar>, {payload}: DeleteSearchItem) {
     return this._searchService.deleteSavedSearch({
-      searchType: "TREATY",
-      userId: 1,
       id: payload.id
     }).pipe(
       mergeMap( () => ctx.dispatch(new LoadSavedSearch()))
@@ -425,10 +422,16 @@ export class SearchNavBarState implements NgxsOnInit {
 
   @Action(LoadRecentSearch)
   loadRecentSearch(ctx: StateContext<SearchNavBar>, {payload}: LoadRecentSearch) {
-    return this._searchService.getMostRecentSearch()
+    const {
+      searchTarget
+    } = payload;
+    return this._searchService.getMostRecentSearch({
+      searchType: _.upperCase(searchTarget)
+    })
       .pipe(
         tap(
           (recentSearch: any) => ctx.patchState({
+            searchTarget,
             recentSearch: recentSearch
           })
         )
@@ -438,8 +441,7 @@ export class SearchNavBarState implements NgxsOnInit {
   @Action(LoadMostUsedSavedSearch)
   loadMostUsedSavedSearch(ctx: StateContext<SearchNavBar>, {payload}: LoadMostUsedSavedSearch) {
     return this._searchService.getMostUsedSavedSearch({
-      searchType: "TREATY",
-      userId: 1
+      searchType: _.upperCase(ctx.getState().searchTarget)
     })
       .pipe(
         tap( mostUsedSavedSearch => {
@@ -461,7 +463,6 @@ export class SearchNavBarState implements NgxsOnInit {
     return this._searchService.saveSearch({...payload, userId: 1})
       .pipe(
         tap( searchItem => {
-          console.log(searchItem);
           ctx.patchState(produce(ctx.getState(), draft => {
             draft.savedSearch = [...draft.savedSearch, {..._.pick(searchItem, ['label', 'userId', 'id']), badges: searchItem.items}];
           }))
@@ -471,7 +472,6 @@ export class SearchNavBarState implements NgxsOnInit {
 
   @Action(toggleSavedSearch)
   toggleSavedSearch(ctx: StateContext<SearchNavBar>, {payload}: toggleSavedSearch) {
-    const search = payload;
     ctx.patchState(produce(ctx.getState(), draft => {
       draft.showSavedSearch = !draft.showSavedSearch
     }));
