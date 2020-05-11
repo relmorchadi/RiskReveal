@@ -64,7 +64,7 @@
           <nz-dropdown [nzTrigger]="'click'">
             <div class="dropdown-wrap" nz-dropdown>
               <div class="dropdown-wrap-title">
-                <span class="dropdown-title">Accumulation status</span>
+                <span class="dropdown-title">Accumulation Package Status</span>
                 <span class="dropdown-item-selected">
                 {{accumulationStatus}}
               </span>
@@ -82,7 +82,7 @@
 
           <ng-container *ngIf="accumulationStatus === 'Pricing'">
             <div style="margin-left: 10px">
-              <button (click)="publishFacToPricing()" class="a-buttons-outlined">Publish To Pricing</button>
+              <button (click)="publishFacToPricing()" class="a-buttons-outlined">Publish to Pricing</button>
             </div>
             <div class="published-dataInfo" *ngIf="checkImport(selectedProject)">
               <div><span class="font-weight-bold">Published:</span> {{selectedProject?.publishedDate | date: 'dd/MM/yyyy'}}</div>

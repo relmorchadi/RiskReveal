@@ -163,7 +163,7 @@
                 </div>
               </div>
               <ng-template #attached>
-                Qualifying PLTs Attached
+                Qualifying PLTs Attached <span *ngIf="checkUnexpected(rowData, col)">Where not expected</span>
               </ng-template>
             </ng-container>
 
@@ -260,7 +260,7 @@
                 </div>
               </div>
               <ng-template #attached>
-                Qualifying PLTs Attached
+                Qualifying PLTs Attached <span *ngIf="checkUnexpected(rowData, col)">Where not expected</span>
               </ng-template>
 
 
@@ -343,7 +343,7 @@
                     </div>
                   </div>
                   <ng-template #attached>
-                    Qualifying PLTs Attached
+                    Qualifying PLTs Attached <span *ngIf="!row.expected[col.columnContext]">Where not expected</span>
                   </ng-template>
 
                   <div *ngIf="checkChildExpected(row, rowData, col, i)  == 'dispoWs'" class="icon-holder" nz-tooltip
@@ -396,7 +396,7 @@
                 </th>
                 <th *ngIf="col.type === 'contractCol'" class="divided-col">
                   <div class="icon-holder" *ngIf="attachedPLTToDivision(plt, pltIndex)">
-                    <i class="icon-check_circle_24px" [ngStyle]="{'color': row.expected[col.columnContext] ? '#60E7DA' : 'orange'}" style="font-size: 20px;"></i>
+                    <i class="icon-check_circle_24px" [ngStyle]="{'color': row.expected[col.columnContext] ? '#60E7DA' : 'orange'}" style="font-size: 24px;"></i>
                   </div>
                 </th>
                 <th *ngIf="col.type === 'commentary'" class="divided-col"></th>
@@ -479,7 +479,7 @@
                     </div>
                   </div>
                   <ng-template #attached>
-                    Qualifying PLTs Attached
+                    Qualifying PLTs Attached <span *ngIf="!row.expected[col.columnContext]">Where not expected</span>
                   </ng-template>
 
                   <div *ngIf="checkChildExpected(row, rowData, col, i)  == 'dispoWs'" class="icon-holder" nz-tooltip
@@ -532,7 +532,7 @@
                 </th>
                 <th *ngIf="col.type === 'contractCol'" class="divided-col">
                   <div class="icon-holder" *ngIf="attachedPLTToDivision(plt, pltIndex)">
-                    <i class="icon-check_circle_24px" [ngStyle]="{'color': row.expected[col.columnContext] ? '#60E7DA' : 'orange'}" style="font-size: 20px;"></i>
+                    <i class="icon-check_circle_24px" [ngStyle]="{'color': row.expected[col.columnContext] ? '#60E7DA' : 'orange'}" style="font-size: 24px;"></i>
                   </div>
                 </th>
                 <th *ngIf="col.type === 'commentary'" class="divided-col"></th>
