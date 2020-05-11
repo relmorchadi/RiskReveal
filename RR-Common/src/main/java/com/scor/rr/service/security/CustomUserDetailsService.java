@@ -41,6 +41,16 @@ public class CustomUserDetailsService implements org.springframework.security.co
         UserRrEntity user = userRepo.findByUserCode(id).orElseThrow(
                 () -> new UsernameNotFoundException("User not found with id : " + id)
         );
+        return UserPrincipal.create(user);
+    }
+
+    public UserDetails loadUserByIdAndSetToken(String id, String token) {
+        UserRrEntity user = userRepo.findByUserCode(id).map(u -> {
+            u.setJwtToken(token);
+            return u;
+        }).orElseThrow(
+                () -> new UsernameNotFoundException("User not found with id : " + id)
+        );
 
         return UserPrincipal.create(user);
     }

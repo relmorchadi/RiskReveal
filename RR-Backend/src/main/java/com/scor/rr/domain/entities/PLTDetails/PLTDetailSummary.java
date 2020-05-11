@@ -1,7 +1,7 @@
 package com.scor.rr.domain.entities.PLTDetails;
 
 
-import com.scor.rr.domain.entities.Tag;
+import com.scor.rr.domain.entities.PLTManager.Tag;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

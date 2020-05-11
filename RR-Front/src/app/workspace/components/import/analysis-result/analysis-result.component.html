@@ -94,14 +94,15 @@
                     <tr>
                         <ng-container *ngFor="let col of columns">
                             <th *ngIf="col.type != 'selection'" pResizableColumn>
-                                <div class="search-bar-table" *ngIf="col.filtered && col.type !== 'icon' && col.type !== 'check'">
+                                <div class="search-bar-table"
+                                     *ngIf="col.filtered && col.type !== 'icon' && col.type !== 'check'">
                                     <i class="fa fa-search" style="margin: 6px 4px 4px 6px"></i>
                                     <input pInputText type="text"
                                            (input)="onFilter($event.target.value, col.field, col.filterMatchMode)">
                                 </div>
                             </th>
                             <th *ngIf="col.type === 'selection'" pResizableColumn [pSortableColumn]="col.field">
-                                <div style="white-space: nowrap;" >
+                                <div style="white-space: nowrap;">
                                     <p-sortIcon style="color: #848484 !important;"
                                                 [field]="col.field"
                                                 ariaLabel="Activate to sort"
@@ -113,7 +114,8 @@
                     </tr>
                 </ng-template>
                 <ng-template pTemplate="body" let-i="rowIndex" let-rowData let-columns="columns">
-                    <tr [pSelectableRow]="rowData" [pSelectableRowIndex]="i" [pContextMenuRow]="rowData" [ngClass]="{'frozenRow': rowData.isScanning}">
+                    <tr [pSelectableRow]="rowData" [pSelectableRowIndex]="i" [pContextMenuRow]="rowData"
+                        [ngClass]="{'frozenRow': rowData.isScanning}">
                         <ng-container *ngFor="let col of columns">
                             <th *ngIf="col.visible && !col.edit" class="ui-resizable-column"
                                 [ngClass]="{'selected-item': rowData?.selected}">
@@ -122,8 +124,11 @@
                                            (ngModelChange)="checkRow(rowData?.rlAnalysisId)"
                                            [ngModel]="rowData.selected"></label>
                                 </div>
-                                <div class="text-data" *ngIf="col.type === 'scan'" (click)="updateSelection(rowData?.rlAnalysisId)"><i class="icon-loop_24px"></i></div>
-                                <div class="text-data" *ngIf="col.type === 'progress'" (click)="updateSelection(rowData?.rlAnalysisId)">
+                                <div class="text-data" *ngIf="col.type === 'scan'"
+                                     (click)="updateSelection(rowData?.rlAnalysisId)"><i class="icon-loop_24px"></i>
+                                </div>
+                                <div class="text-data" *ngIf="col.type === 'progress'"
+                                     (click)="updateSelection(rowData?.rlAnalysisId)">
                                     <ng-container *ngIf="!rowData.isScanning; else scanning">
                                         <nz-progress [nzPercent]="100" [ngClass]="{'hidden-text': true }"
                                                      [nzWidth]="20" nzType="circle"></nz-progress>
@@ -134,12 +139,14 @@
                                     </ng-template>
                                 </div>
                                 <div class="text-data" (click)="openFinancialP(rowData)"
-                                     [ngClass]="{'highlight-temp': col.highlight}"
+                                     style="display: flex; justify-content: center"
                                      *ngIf="col.type === 'multiple'">
-                                    <span nz-tooltip [nzTitle]="infoFP"
-                                          *ngIf="rowData?.financialPerspectives?.length > 1">M*</span>
-                                    <span *ngIf="rowData?.financialPerspectives?.length === 1">{{rowData?.financialPerspectives[0]}}</span>
-                                    <span *ngIf="rowData?.financialPerspectives?.length === 0">Nan</span>
+                                    <div [ngClass]="{'highlight-temp': col.highlight}" style="height: 70%">
+                                        <span nz-tooltip [nzTitle]="infoFP" *ngIf="rowData?.financialPerspectives?.length > 1">M*</span>
+                                        <span *ngIf="rowData?.financialPerspectives?.length === 1">{{rowData?.financialPerspectives[0]}}</span>
+                                        <span *ngIf="rowData?.financialPerspectives?.length === 0">Nan</span>
+                                    </div>
+                                    <i *ngIf="!rowData?.isExpectedFp" class="icon-exclamation-triangle" style="border-bottom: none !important;"></i>
 
                                     <!--                  <span nzPlacement="top" nz-tooltip-->
                                     <!--                        *ngIf="rowData?.financialPerspective?.length == 0">Nan</span>-->
@@ -148,13 +155,14 @@
                                             <ul style="margin-bottom: 0">
                                                 <li *ngFor="let item of rowData?.financialPerspectives"
                                                     style="border: none;">
-                          <span style="display: flex; width: 100%;">
-                            <span style="display: inline-flex; width: 23px;">{{item}}</span>: {{refs.financialPerspective[item]}}</span>
+                                                <span style="display: flex; width: 100%;">
+                                                <span style="display: inline-flex; width: 23px;">{{item}}</span>: {{refs.financialPerspective[item]}}</span>
                                                 </li>
                                             </ul>
                                         </div>
                                     </ng-template>
                                 </div>
+
                                 <div class="text-data" (click)="updateSelection(rowData?.rlAnalysisId)"
                                      [ngClass]="{'highlight-temp': col.highlight}"
                                      *ngIf="col.type === 'number'">
@@ -282,9 +290,9 @@
                 </ng-template>
             </p-table>
         </div>
-<!--        <div *ngIf="!isCollapsed" class="button-container">-->
-<!--            <button (click)="saveAnalysisSelection()" class="a-buttons-contained-mini">SAVE</button>-->
-<!--        </div>-->
+        <!--        <div *ngIf="!isCollapsed" class="button-container">-->
+        <!--            <button (click)="saveAnalysisSelection()" class="a-buttons-contained-mini">SAVE</button>-->
+        <!--        </div>-->
     </div>
     <p-contextMenu appendTo="body" #cmR [model]="itemCm"></p-contextMenu>
 </div>

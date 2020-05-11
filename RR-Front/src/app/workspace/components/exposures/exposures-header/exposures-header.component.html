@@ -60,7 +60,7 @@
                     </div>
                 </div>
                 <ul nz-menu>
-                    <li *ngFor="let financialPerspectives of headerConfig?.financialPerspectives" nz-menu-item
+                    <li *ngFor="let financialPerspectives of headerConfig?.financialPersp" nz-menu-item
                         (click)="changeFinancialPerspecctive(financialPerspectives)">
                         {{financialPerspectives}}
                     </li>
@@ -87,32 +87,6 @@
                 </ul>
             </nz-dropdown>
         </div>
-        <div *ngIf="headerConfig"  class="body-wrap-dropDowns">
-            <nz-dropdown  *ngIf="headerConfig.portfolios.length > 0"
-                          [nzTrigger]="'click'" [nzOverlayStyle]="{ 'max-height': '136px','overflow': 'auto'}"
-                          style="margin-left: 10px;margin-top: 15px;">
-                <div class="dropdown-wrap" [style.width]="'95px'" nz-dropdown>
-                    <div class="dropdown-wrap-title">
-                        <span class="dropdown-title">Portfolio</span>
-                        <span class="dropdown-item-selected">
-                         {{selectedHeaderConfig.portfolio ?  selectedHeaderConfig.portfolio :"choose"}}
-                      </span>
-                    </div>
-                    <div class="dropdown-icon">
-                        <i nz-icon type="down"></i>
-                    </div>
-                </div>
-                <ul nz-menu>
-                    <li *ngFor="let portfolio of headerConfig?.portfolios"  nz-menu-item
-                        (click)="changePortfolio(portfolio)">
-                        {{portfolio}}
-                    </li>
-                </ul>
-            </nz-dropdown>
-        </div>
-        <div *ngIf="headerConfig &&  headerConfig.portfolios.length > 0" class="view-details">
-            <i class="icon-info_24px info-icon"  (click)="openPortfolioDetails()"></i>
-        </div>
         <div *ngIf="headerConfig else spinner"  class="body-wrap-dropDowns">
             <nz-dropdown *ngIf="headerConfig.divisions.length > 0"
                          [nzTrigger]="'click'" [nzOverlayStyle]="{ 'max-height': '136px','overflow': 'auto'}"
@@ -138,6 +112,32 @@
         </div>
         <div  *ngIf="headerConfig && headerConfig.divisions.length > 0" class="view-details">
             <i class="icon-info_24px info-icon" (click)="openDivisionDetails()"></i>
+        </div>
+        <div *ngIf="headerConfig"  class="body-wrap-dropDowns">
+            <nz-dropdown  *ngIf="headerConfig.portfolios.length > 0"
+                          [nzTrigger]="'click'" [nzOverlayStyle]="{ 'max-height': '136px','overflow': 'auto'}"
+                          style="margin-left: 10px;margin-top: 15px;">
+                <div class="dropdown-wrap" [style.width]="'95px'" nz-dropdown>
+                    <div class="dropdown-wrap-title">
+                        <span class="dropdown-title">Portfolio</span>
+                        <span class="dropdown-item-selected">
+                         {{selectedHeaderConfig.portfolio ?  selectedHeaderConfig.portfolio :"choose"}}
+                      </span>
+                    </div>
+                    <div class="dropdown-icon">
+                        <i nz-icon type="down"></i>
+                    </div>
+                </div>
+                <ul nz-menu>
+                    <li *ngFor="let portfolio of headerConfig?.portfolios"  nz-menu-item
+                        (click)="changePortfolio(portfolio)">
+                        {{portfolio}}
+                    </li>
+                </ul>
+            </nz-dropdown>
+        </div>
+        <div *ngIf="headerConfig &&  headerConfig.portfolios.length > 0" class="view-details">
+            <i class="icon-info_24px info-icon"  (click)="openPortfolioDetails()"></i>
         </div>
         <nz-dropdown [nzTrigger]="'click'" [nzPlacement]="'bottomRight'" class="top-right-menu-dropdown">
             <a style="max-height: 28px;display: flex;" nz-dropdown>

@@ -14,6 +14,12 @@ import {SummaryEpMetricsComponent} from "./plt/summary-ep-metrics/summary-ep-met
 import {EpChartComponent} from "./plt/ep-chart/ep-chart.component";
 import {GlobalTableComponent} from "./global-table/global-table.component";
 import {GlobalManageColumnsComponent} from "./global-manage-columns/global-manage-columns.component";
+import {CustomBooleanFloatingFilter} from "./grid/custom-boolean-floating-filter/custom-boolean-floating-filter.component";
+import {CustomBooleanFilter} from "./grid/custom-boolean-filter/custom-boolean-filter.component";
+import {StatusCellRenderer} from "./grid/status-cell-renderer/status-cell-renderer.component";
+import {BooleanCellRenderer} from "./grid/boolean-cell-renderer/boolean-cell-renderer.component";
+import {NumberCellRenderer} from "./grid/number-cell-renderer/number-cell-renderer.component";
+import {DateCellRenderer} from "./grid/date-cell-renderer/date-cell-renderer.component";
 
 export const COMPONENTS = [
   ChipTagComponent,
@@ -31,7 +37,13 @@ export const COMPONENTS = [
   SummaryEpMetricsComponent,
   EpChartComponent,
   GlobalTableComponent,
-  GlobalManageColumnsComponent
+  GlobalManageColumnsComponent,
+  CustomBooleanFloatingFilter,
+  CustomBooleanFilter,
+  StatusCellRenderer,
+  BooleanCellRenderer,
+  NumberCellRenderer,
+  DateCellRenderer
 ];
 
 export * from './table/table.component';

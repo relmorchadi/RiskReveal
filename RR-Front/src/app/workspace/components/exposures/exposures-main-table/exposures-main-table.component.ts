@@ -31,6 +31,7 @@ export class ExposuresMainTableComponent implements OnInit, AfterViewInit, OnDes
     @Input('tableConfig') tableConfig: ExposuresMainTableConfig;
     @Output('actionDispatcher') actionDispatcher: EventEmitter<any> = new EventEmitter<any>();
     @Input('sortConfig') sortConfig: any;
+    @Input('numberConfig') numberConfig: any;
     private selectedRowRegionPeril: any;
     private hoveredRow: any;
     private filteredColumn: string;

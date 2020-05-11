@@ -3,23 +3,23 @@ package com.scor.rr.service;
 import com.scor.rr.configuration.security.UserPrincipal;
 import com.scor.rr.domain.UserRrEntity;
 import com.scor.rr.domain.dto.*;
-import com.scor.rr.domain.entities.GroupedPLTs;
-import com.scor.rr.domain.entities.PLTManagerView;
-import com.scor.rr.domain.PltHeaderEntity;
-import com.scor.rr.domain.entities.Tag;
+import com.scor.rr.domain.entities.PLTManager.GroupedPLTs;
+import com.scor.rr.domain.entities.PLTManager.PLTManagerView;
+import com.scor.rr.domain.entities.PLTManager.Tag;
 import com.scor.rr.domain.WorkspaceEntity;
-import com.scor.rr.domain.dto.TargetBuild.PLTHeaderDeleteRequest;
 import com.scor.rr.domain.dto.TargetBuild.PLTManagerViewRequest;
 import com.scor.rr.domain.dto.TargetBuild.PLTManagerViewHelperResponse;
 import com.scor.rr.domain.dto.TargetBuild.PLTManagerViewResponse;
 import com.scor.rr.domain.entities.ViewContextColumns;
 import com.scor.rr.repository.*;
+import com.scor.rr.repository.PLTManager.PLTHeaderTagRepository;
+import com.scor.rr.repository.PLTManager.PLTManagerViewRepositoryold;
+import com.scor.rr.repository.PLTManager.TagRepository;
+import com.scor.rr.repository.PLTManager.UserTagRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.procedure.ProcedureOutputs;
-import org.hibernate.sql.Update;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
@@ -44,7 +44,7 @@ public class PltBrowserService {
     UserRrRepository userRrRepository;
 
     @Autowired
-    PLTManagerViewRepository pltManagerViewRepository;
+    PLTManagerViewRepositoryold pltManagerViewRepository;
     @Autowired
     TagRepository tagRepository;
     @Autowired

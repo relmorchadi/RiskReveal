@@ -22,7 +22,7 @@ import static java.util.Optional.ofNullable;
 public class DashboardSpecification extends BaseSpecification<DashboardView, DashBoardFilter> {
 
     @Override
-    public Specification<DashboardView> getFilter(DashBoardFilter filter) {
+    public Specification<DashboardView> getData(DashBoardFilter filter) {
         return Specification
                 .where(ofNullable(filter.getCarRequestId()).map(id -> assertIsLike(DashboardView_.carRequestId, id)).orElse(null))
                 .and(ofNullable(filter.getContractName()).map(contractName -> assertIsLike(DashboardView_.contractName, contractName)).orElse(null))

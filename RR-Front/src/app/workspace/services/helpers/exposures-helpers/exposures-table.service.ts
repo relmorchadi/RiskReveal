@@ -31,8 +31,8 @@ export class ExposuresTableService {
     }
 
 
-    exportTable() {
-        this._api.exportTable()
+    exportTable(headerConfig) {
+        return this._api.exportTable(this.constructHeaderConfig(headerConfig));
     }
 
     filterRowRegionPeril(tableConfig,rowData: any) {
@@ -71,7 +71,8 @@ export class ExposuresTableService {
             projectId:headerConfig.projectId,
             requestTotalRow:true,
             summaryType:'Summary By Country',
-            regionPerilFilter: headerConfig.regionPerilFilter ? headerConfig.regionPerilFilter : null
+            regionPerilFilter: headerConfig.regionPerilFilter ? headerConfig.regionPerilFilter : null,
+            type:headerConfig.exposureView
         }
     }
 }

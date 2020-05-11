@@ -34,7 +34,7 @@ export class WorkspaceExposuresComponent extends BaseContainer implements OnInit
     sortConfig: any;
     selectedHeaderConfig: any;
     projectId: any;
-    regionPerilFilter:string;
+    regionPerilFilter: string;
 
     constructor(_baseStore: Store, _baseRouter: Router, _baseCdr: ChangeDetectorRef,
                 private exposuresTableService: ExposuresTableService,
@@ -50,7 +50,7 @@ export class WorkspaceExposuresComponent extends BaseContainer implements OnInit
             divisions: [],
             portfolios: [],
             summariesDefinitions: [],
-            financialUnits:[]
+            financialUnits: []
         });
         this.sortConfig = {};
         this.selectedHeaderConfig = {
@@ -59,12 +59,13 @@ export class WorkspaceExposuresComponent extends BaseContainer implements OnInit
             currency: null,
             exposureView: null,
             financialPerspective: null,
-            financialUnits:null
+            financialUnits: null
         }
         this.tableConfig = new ExposuresMainTableConfig();
     }
 
     ngOnInit() {
+        super.ngOnInit();
         this.selectedProject$.pipe(this.unsubscribeOnDestroy).subscribe(project => {
             if (project != undefined) {
                 this.projectId = project.projectId;
@@ -82,11 +83,14 @@ export class WorkspaceExposuresComponent extends BaseContainer implements OnInit
                 })
             }
         });
+
         /*this.tableConfig$.pipe(first()).subscribe(tableConfig => {
             _.forEach([...tableConfig.frozenColumns, ...tableConfig.columns], column => {
                 this.sortConfig[column.field] = 0;
             })
         })*/
+
+
     }
 
     patchState({wsIdentifier, data}: any): void {
@@ -115,9 +119,9 @@ export class WorkspaceExposuresComponent extends BaseContainer implements OnInit
             division: headerConfig.divisions[0],
             portfolio: headerConfig.portfolios[0],
             currency: headerConfig.divisions[0].currency,
-            exposureView: 'TIV',
+            exposureView: 'Tiv',
             financialPerspective: 'GU',
-            financialUnits:'Unit'
+            financialUnits: 'Unit'
         }
     }
 
@@ -132,7 +136,7 @@ export class WorkspaceExposuresComponent extends BaseContainer implements OnInit
                 this.tableConfig$ = this.exposuresTableService.sortTableColumn({
                     ...this.selectedHeaderConfig,
                     regionPerilFilter: this.regionPerilFilter,
-                    projectId:this.projectId
+                    projectId: this.projectId
                 });
                 break;
             }
@@ -142,7 +146,7 @@ export class WorkspaceExposuresComponent extends BaseContainer implements OnInit
                     regionPerilFilter: this.regionPerilFilter,
                     projectId: this.projectId
                 }).pipe(map((tableConfig: any) =>
-                   this.exposuresTableService.filterRowRegionPeril(tableConfig, $event.payload)
+                    this.exposuresTableService.filterRowRegionPeril(tableConfig, $event.payload)
                 ));
                 break;
             }
@@ -189,13 +193,13 @@ export class WorkspaceExposuresComponent extends BaseContainer implements OnInit
                 break;
             }
             case 'changeFinancialPerspecctive' : {
-               /* this.selectedHeaderConfig.financialPerspective = $event.payload;
-                this.tableConfig$ = this.exposuresTableService.loadTableConfig(
-                    {
-                        ...this.selectedHeaderConfig,
-                        projectId: this.projectId
-                    }
-                );*/
+                /* this.selectedHeaderConfig.financialPerspective = $event.payload;
+                 this.tableConfig$ = this.exposuresTableService.loadTableConfig(
+                     {
+                         ...this.selectedHeaderConfig,
+                         projectId: this.projectId
+                     }
+                 );*/
                 break;
             }
             case 'changeDivision' : {
@@ -219,8 +223,13 @@ export class WorkspaceExposuresComponent extends BaseContainer implements OnInit
                 break;
             }
             case 'changeView' : {
-                this.selectedHeaderConfig.exposureView = $event.payload.header;
-                // this.tableConfig$ = this.exposuresHeaderService.changeView($event.payload);
+                this.selectedHeaderConfig.exposureView = $event.payload.value;
+                this.tableConfig$ = this.exposuresTableService.loadTableConfig(
+                    {
+                        ...this.selectedHeaderConfig,
+                        projectId: this.projectId
+                    }
+                );
                 break;
             }
             case 'openPortfolioDetails': {
@@ -228,11 +237,30 @@ export class WorkspaceExposuresComponent extends BaseContainer implements OnInit
                 break;
             }
             case 'openDivisionDetails' : {
-                this.rightMenuConfig$ = this.exposuresRightMenuService.constructRightMenuConfig('division',this.selectedHeaderConfig.division);
+                this.rightMenuConfig$ = this.exposuresRightMenuService.constructRightMenuConfig('division', this.selectedHeaderConfig.division);
                 break;
             }
             case 'exportExposuresTable' : {
-                this.exposuresTableService.exportTable();
+                console.log('here');
+                this.exposuresTableService.exportTable({
+                    ...this.selectedHeaderConfig,
+                    projectId: this.projectId
+                }).subscribe(
+                    (response: any) => {
+                        let contentType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+                        let blob = new Blob([response.body], {type: contentType});
+                        let fileName = response.headers.get('Content-Disposition')
+                            .split(';')[1].trim().split('=')[1];
+                        let url = window.URL.createObjectURL(blob);
+                        let anchor = document.createElement("a");
+                        anchor.download = fileName;
+                        anchor.href = url;
+                        anchor.click();
+                    },
+                    (err) => {
+
+                    }
+                );
                 break;
             }
         }

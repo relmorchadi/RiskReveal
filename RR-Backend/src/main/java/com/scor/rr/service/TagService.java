@@ -6,10 +6,13 @@ import com.scor.rr.domain.UserRrEntity;
 import com.scor.rr.domain.WorkspaceEntity;
 import com.scor.rr.domain.dto.TargetBuild.AssignTagToPltsRequest;
 import com.scor.rr.domain.dto.TargetBuild.SaveOrUpdateTagRequest;
-import com.scor.rr.domain.entities.PLTHeaderTag;
-import com.scor.rr.domain.entities.Tag;
-import com.scor.rr.domain.entities.UserTag;
+import com.scor.rr.domain.entities.PLTManager.PLTHeaderTag;
+import com.scor.rr.domain.entities.PLTManager.Tag;
+import com.scor.rr.domain.entities.PLTManager.UserTag;
 import com.scor.rr.repository.*;
+import com.scor.rr.repository.PLTManager.PLTHeaderTagRepository;
+import com.scor.rr.repository.PLTManager.TagRepository;
+import com.scor.rr.repository.PLTManager.UserTagRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

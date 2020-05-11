@@ -945,6 +945,10 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
                     alert('You cannot import multiple Analysis Region Peril for the same divisions !');
                     return;
                 }
+                if (this.tabStatus == 'FAC' && !this._isSummaryExpectedFinancialPerspectives(summary.analysis)) {
+                    alert('You cannot import Analysis with non expected Financial Perspectives !');
+                    return;
+                }
                 this.dispatch(new fromWs.TriggerImportAction({
                     instanceId: this.state.financialValidator.rmsInstance.selected.instanceId,
                     projectId,
@@ -955,9 +959,11 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
             });
     }
 
+    private _isSummaryExpectedFinancialPerspectives(analysis): boolean {
+        return _.every(_.values(analysis), item => item.isExpectedFp == true);
+    };
     private _nonUniqDivisionPerAnalysis(analysis): boolean {
         let data = {};
-        console.log('This is analysis config', analysis);
         for (let a of _.values(analysis) ) {
             if (data[a.rpCode])
                 data[a.rpCode].push(...a.divisions);

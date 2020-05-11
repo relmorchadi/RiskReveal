@@ -80,7 +80,8 @@ export class ExposuresApi {
         return of<ExposuresMainTableConfig>(this.fakeTableConfig);
     }
 
-    exportTable() {
-        console.log('reached API ==> Export Table');
+    exportTable(headerConfig) {
+        console.log(headerConfig);
+        return this._http.post(this.URL + 'exposure-manager-export-data',headerConfig, { observe: 'response',responseType: 'blob' });
     }
 }
