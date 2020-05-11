@@ -1,7 +1,5 @@
 package com.scor.rr.service;
 
-import com.google.common.base.Predicates;
-import com.google.common.collect.Iterables;
 import com.scor.rr.configuration.security.UserPrincipal;
 import com.scor.rr.domain.ProjectConfigurationForeWriter;
 import com.scor.rr.domain.dto.ExposureManagerData;
@@ -12,7 +10,6 @@ import com.scor.rr.repository.*;
 import com.scor.rr.service.abstraction.DivisionService;
 import com.scor.rr.service.abstraction.ExposureManagerService;
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.PredicateUtils;
 import org.apache.poi.hssf.usermodel.HSSFDataFormat;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.FillPatternType;
@@ -26,6 +23,7 @@ import org.springframework.stereotype.Service;
 import java.io.ByteArrayOutputStream;
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toMap;
 
@@ -38,8 +36,6 @@ import static java.util.stream.Collectors.toMap;
 @Service
 public class ExposureManagerServiceImpl implements ExposureManagerService {
 
-    @Autowired
-    private CurrencyRepository currencyRepository;
 
     @Autowired
     private FinancialPerspectiveRepository financialPerspectiveRepository;
@@ -70,7 +66,6 @@ public class ExposureManagerServiceImpl implements ExposureManagerService {
         exposureManagerRefDto.setCurrencies(Arrays.asList("USD", "CAD", "GBP", "EUR", "SGD"));
         exposureManagerRefDto.setFinancialPerspectives(financialPerspectiveRepository.findSelectableCodes());
         ProjectConfigurationForeWriter pcfw = projectConfigurationForeWriterRepository.findByProjectId(projectId);
-        exposureManagerRefDto.setDivisions(divisionService.getDivisions(pcfw != null ? pcfw.getCaRequestId() : null));
         exposureManagerRefDto.setSummariesDefinitions(exposureViewDefinitionRepository.findExposureViewDefinitionsAliases());
         exposureManagerRefDto.setPortfolios(modelPortfolioRepository.findPortfolioNamesByProjectId(projectId));
 
@@ -86,6 +81,10 @@ public class ExposureManagerServiceImpl implements ExposureManagerService {
                         portfoliosAndCurrenciesByDivision.put(division, portfolioCurrency);
                     });
         }
+
+        exposureManagerRefDto.setDivisions(
+                divisionService.getDivisions(pcfw != null ? pcfw.getCaRequestId() : null)
+                        .stream().filter(e -> divisions.contains(e.getDivisionNumber())).collect(Collectors.toList()));
 
         exposureManagerRefDto.setPortfoliosAndCurrenciesByDivision(portfoliosAndCurrenciesByDivision);
         return exposureManagerRefDto;
@@ -115,6 +114,7 @@ public class ExposureManagerServiceImpl implements ExposureManagerService {
                     exposureManagerData.getExpectedTiv().subtract(exposureManagerData.getTotalTiv()) : null);
             Map<String, Object> map = new HashMap<>(totalRow);
             map.remove("Unmapped");
+            map.remove("expectedTIV");
             CollectionUtils.filter(map.values(), Objects::nonNull);
 
             exposureManagerData.setRegionPerils(map);
