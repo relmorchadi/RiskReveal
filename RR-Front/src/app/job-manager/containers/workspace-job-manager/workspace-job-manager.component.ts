@@ -1,23 +1,29 @@
-import {Component, HostListener, OnInit, ViewChild} from '@angular/core';
+import {ChangeDetectorRef, Component, HostListener, OnInit, ViewChild} from '@angular/core';
 import {Location} from '@angular/common';
 import {LazyLoadEvent} from 'primeng/api';
 import * as _ from 'lodash';
 import {SearchService} from '../../../core/service';
 import {Select, Store} from '@ngxs/store';
-import {HeaderState} from '../../../core/store/states';
+import {AuthState, HeaderState} from '../../../core/store/states';
 import {Observable} from 'rxjs';
 import {HelperService} from '../../../shared/helper.service';
 import {ActivatedRoute, Router} from '@angular/router';
 import {DeleteTask, PauseTask, ResumeTask} from '../../../core/store/actions/header.action';
 import * as workspaceActions from '../../../workspace/store/actions/workspace.actions';
 import {WorkspaceState} from "../../../workspace/store/states";
+import {JobManagerService} from "../../../core/service/jobManager.service";
+import {first, map} from "rxjs/operators";
+import {AuthModel} from "../../../core/model/auth.model";
+import {BaseContainer} from "../../../shared/base";
 
 @Component({
   selector: 'app-workspace-job-manager',
   templateUrl: './workspace-job-manager.component.html',
-  styleUrls: ['./workspace-job-manager.component.scss']
+  styleUrls: ['./workspace-job-manager.component.scss'],
+  providers:[JobManagerService]
 })
-export class WorkspaceJobManagerComponent implements OnInit {
+export class WorkspaceJobManagerComponent extends BaseContainer
+    implements OnInit {
   loading = false;
   contextSelectedItem = null;
   lastSelectedIndex = null;
@@ -67,7 +73,7 @@ export class WorkspaceJobManagerComponent implements OnInit {
     },
   ];
 
-  savedTask: any;
+  savedTask: any =[];
 
   tableColumn = [
     {
@@ -81,7 +87,7 @@ export class WorkspaceJobManagerComponent implements OnInit {
       class: 'icon-check_24px',
     },
     {
-      field: 'progress',
+      field: 'status',
       header: 'State',
       width: '90px',
       display: true,
@@ -101,7 +107,7 @@ export class WorkspaceJobManagerComponent implements OnInit {
       filterParam: 'job'
     },
     {
-      field: 'jobOwner',
+      field: 'submittedByUser',
       header: 'Job Owner',
       width: '90px',
       display: true,
@@ -111,7 +117,7 @@ export class WorkspaceJobManagerComponent implements OnInit {
       filterParam: 'jobOwner'
     },
     {
-      field: 'jobType',
+      field: 'jobTypeCode',
       header: 'Job Type',
       width: '70px',
       display: true,
@@ -141,23 +147,23 @@ export class WorkspaceJobManagerComponent implements OnInit {
       filterParam: 'innerCedantCode'
     },
     {
-      field: 'submittedTime',
+      field: 'submittedDate',
       header: 'Submitted Time',
       width: '110px',
       display: true,
       sorted: false,
       filtered: true,
-      type: 'text',
+      type: 'date',
       filterParam: 'submittedTime'
     },
     {
-      field: 'startTime',
+      field: 'startedDate',
       header: 'Start Time',
       width: '110px',
       display: true,
       sorted: false,
       filtered: true,
-      type: 'text',
+      type: 'date',
       filterParam: 'innerYear'
     },
     {
@@ -167,17 +173,17 @@ export class WorkspaceJobManagerComponent implements OnInit {
       display: true,
       sorted: false,
       filtered: true,
-      type: 'text',
+      type: 'date',
       filterParam: 'elapsedTime'
     },
     {
-      field: 'completionTime',
+      field: 'finishedDate',
       header: 'Completion Time',
       width: '110px',
       display: true,
       sorted: false,
       filtered: true,
-      type: 'text',
+      type: 'date',
       filterParam: 'completionTime'
     },
     {
@@ -192,105 +198,61 @@ export class WorkspaceJobManagerComponent implements OnInit {
     }
   ];
 
-  tableColumnDetail = [
-    {
-      field: 'taskNumber',
-      header: 'Task N°',
-      width: '50px',
-      display: true,
-      sorted: false,
-      filtered: false,
-      type: 'text',
-      filterParam: 'state'
-    },
-    {
-      field: 'taskName',
-      header: 'Task Name',
-      width: '200px',
-      display: true,
-      sorted: false,
-      filtered: false,
-      type: 'text',
-      filterParam: 'job'
-    },
-    {
-      field: 'status',
-      header: 'Status',
-      width: '120px',
-      display: true,
-      sorted: false,
-      filtered: false,
-      type: 'text',
-      filterParam: 'jobOwner'
-    },
-    {
-      field: 'startDate',
-      header: 'Start Date',
-      width: '120px',
-      display: true,
-      sorted: false,
-      filtered: false,
-      type: 'text',
-      filterParam: 'jobType'
-    },
-    {
-      field: 'completedDate',
-      header: 'Completed Date',
-      width: '120px',
-      display: true,
-      sorted: false,
-      filtered: false,
-      type: 'text',
-      filterParam: 'completedDate'
-    },
-  ];
-  detailData = [
-    {
-      taskNumber: '1',
-      taskName: 'Import Portfolio XYZ from "EDM Name"',
-      status: 'In progress',
-      startDate: '2019-01-03 T 09:57:10',
-      completedDate: '2019-01-03 T 09:57:10',
-    },
-    {
-      taskNumber: '2',
-      taskName: 'Import Analysis ABC (ID 30) from "RDM Name"',
-      status: 'Pending',
-      startDate: '2019-01-03 T 09:57:10',
-      completedDate: '2019-01-03 T 09:57:10',
-    }
-  ];
 
   @Select(HeaderState.getJobs) jobs$;
+  @Select(AuthState.getUser) user$;
   jobs: any;
 
-  constructor(public location: Location, private _searchService: SearchService, private store: Store,
+  constructor(private cdref : ChangeDetectorRef,public location: Location, private _searchService: SearchService, private store: Store,private jobManagerService:JobManagerService,
               private helperService: HelperService, private route: ActivatedRoute, private router: Router) {
+    super(router,cdref,store)
   }
 
   ngOnInit() {
-    this.jobs$.subscribe(value => {
-      this.jobs = _.toArray(_.merge({}, value));
-      this.savedTask = [..._.sortBy(_.filter(this.jobs, (dt) => !dt.pending), (dt) => dt.isPaused),
-        ..._.filter(this.jobs, (dt) => dt.pending)];
+    super.ngOnInit();
+    this.jobManagerService.getAllJobs().subscribe((jobs:any) => {
+      console.log(jobs);
+      this.savedTask = jobs.map(row => ({
+        ...row,
+        append:false,
+        selected:false,
+      }));
+      this.savedTask = [
+          ...this.savedTask.filter(row => row.status =='RUNNING'),
+        ...this.savedTask.filter(row => row.status == 'PAUSED'),
+        ...this.savedTask.filter(row => row.status == 'PENDING'),
+        ...this.savedTask.filter(row => row.status == 'SUCCEEDED'),
+        ...this.savedTask.filter(row => row.status == 'FAILED')
+      ]
+      this.detectChanges();
     });
+
+    this.user$.subscribe( value => {
+      this.Users = value;
+    })
+    // this.jobs$.subscribe(value => {
+    //   this.jobs = _.toArray(_.merge({}, value));
+    //   this.savedTask = [..._.sortBy(_.filter(this.jobs, (dt) => !dt.pending), (dt) => dt.isPaused),
+    //     ..._.filter(this.jobs, (dt) => dt.pending)];
+    // });
   }
 
   expandRow(row, expand) {
+    console.log(expand);
     row.append = !row.append;
-    return true;
+    return row.append;
   }
 
   resumeJob(id) {
-    this.store.dispatch(new ResumeTask({id: id}));
+    this.jobManagerService.resumeJob(id);
   }
 
   deleteJob(id) {
-    this.store.dispatch(new DeleteTask({id: id}));
+    this.jobManagerService.deleteJob(id);
   }
 
   pauseJob(id): void {
-    this.store.dispatch(new PauseTask({id: id}));
+    this.jobManagerService.pauseJob(id);
   }
 
   filterByUser(event) {
@@ -300,7 +262,7 @@ export class WorkspaceJobManagerComponent implements OnInit {
 
   uncheckRow(row) {
     row.selected = !row.selected;
-    this.selectedRows = this.jobs.filter(ws => ws.selected === true);
+    this.selectedRows = this.savedTask.filter(ws => ws.selected === true);
   }
 
   openWorkspace(wsId, year, routerLink) {
@@ -321,11 +283,11 @@ export class WorkspaceJobManagerComponent implements OnInit {
         row.selected = true;
       }
     } else {
-      this.jobs.forEach(res => res.selected = false);
+      this.savedTask.forEach(res => res.selected = false);
       this.lastSelectedIndex = index;
       row.selected = true;
     }
-    this.selectedRows = this.jobs.filter(ws => ws.selected === true);
+    this.selectedRows = this.savedTask.filter(ws => ws.selected === true);
   }
 
   private selectSection(from, to) {
@@ -359,9 +321,6 @@ export class WorkspaceJobManagerComponent implements OnInit {
 
   navigateBack() {
     this.location.back();
-  }
-
-  loadDataOnScroll(event: LazyLoadEvent) {
   }
 
   @HostListener('wheel', ['$event']) onElementScroll(event) {
