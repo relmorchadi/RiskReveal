@@ -43,10 +43,11 @@
 
                 [columnDefs]="gridParams?.columnDefs"
                 [defaultColDef]="gridParams?.defaultColDef"
+                [autoGroupColumnDef]="gridParams?.autoGroupColumnDef"
 
+                [rowSelection]="gridParams?.rowSelection"
                 [multiSortKey]="'ctrl'"
                 [animateRows]="true"
-                [autoGroupColumnDef]="gridParams?.autoGroupColumnDef"
                 [cacheBlockSize]="50"
                 [getChildCount]="gridParams?.getChildCount"
 

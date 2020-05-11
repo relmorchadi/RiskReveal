@@ -18,79 +18,79 @@ import java.util.List;
 @RequestMapping("api/plt")
 public class PltBrowserResource {
 
-//    @Autowired
-//    PltBrowserService pltBrowserService;
-//
-//    @Autowired
-//    TagService tagService;
-//
-//    @GetMapping
-//    public PLTManagerViewResponse getPLTHeaderView(PLTManagerViewRequest request) { return pltBrowserService.getPLTHeaderView(request); }
-//
-//    @GetMapping("/grouped")
-//    public List<GroupedPLTs> getGroupedPLT(PLTManagerViewRequest request) { return pltBrowserService.getPLTManagerGroupedPLTs(request); }
-//
-//    @GetMapping("ids")
-//    public ResponseEntity<?> getIDs(PLTManagerIDsRequest request) { return ResponseEntity.ok(pltBrowserService.getIDs(request));}
-//
-//    @GetMapping("columns")
-//    public ResponseEntity<?> getColumns() { return ResponseEntity.ok(pltBrowserService.getColumns());}
-//
-//    @PostMapping("columns/width")
-//    public ResponseEntity<?> updateColumnWidth(@RequestBody UpdateColumnWidthRequest request) {
-//        this.pltBrowserService.updateColumnWidth(request);
-//        return ResponseEntity.ok().build();
-//    }
-//
-//    @PostMapping("columns/sort")
-//    public ResponseEntity<?> updateColumnSort(@RequestBody UpdateColumnSortRequest request) {
-//        this.pltBrowserService.updateColumnSort(request);
-//        return ResponseEntity.ok().build();
-//    }
-//
-//    @PostMapping("columns/sort/reset")
-//    public ResponseEntity<?> resetColumnSort(@RequestBody ResetColumnSortRequest request) {
-//        this.pltBrowserService.resetColumnSort(request);
-//        return ResponseEntity.ok().build();
-//    }
-//
-//    @PostMapping("columns/filter")
-//    public ResponseEntity<?> updateColumnFilterCriteria(@RequestBody UpdateColumnFilterCriteriaRequest request) {
-//        this.pltBrowserService.updateColumnFilterCriteria(request);
-//        return ResponseEntity.ok().build();
-//    }
-//
-//    @PostMapping("columns/filter/project")
-//    public ResponseEntity<?> filterByProjectId(@RequestBody UpdateColumnFilterCriteriaRequest request) {
-//        this.pltBrowserService.filterByProjectId(request);
-//        return ResponseEntity.ok().build();
-//    }
-//
-//    @PostMapping("columns/filter/reset")
-//    public ResponseEntity<?> resetColumnFilterCriteria(@RequestBody ResetColumnFilterCriteriaRequest request) {
-//        this.pltBrowserService.resetColumnFilterCriteria(request);
-//        return ResponseEntity.ok().build();
-//    }
-//
-//    @PostMapping("columns/orderandvisibility")
-//    public ResponseEntity<?> updateColumnOrderAndVisibility(@RequestBody UpdateColumnOrderAndVisibilityRequest request) {
-//        this.pltBrowserService.updateColumnOrderAndVisibility(request);
-//        return ResponseEntity.ok().build();
-//    }
-//
-//    @PostMapping("assign-user-tag")
-//    public Boolean assignUpdateUserTag(@RequestBody AssignTagToPltsRequest request) {
-//        return tagService.assignTagToPlts(request);
-//    }
-//
-//    /*@PostMapping("delete")
-//    public Boolean deletePLT(@RequestBody PLTHeaderDeleteRequest request) {
-//        return pltBrowserService.deletePLTheader(request);
-//    }
-//
-//    @PostMapping("restore")
-//    public Boolean deletePLT(@RequestBody List<Long> pltHeaderIds) {
-//        return pltBrowserService.restorePLTHeader(pltHeaderIds);
-//    }*/
+    @Autowired
+    PltBrowserService pltBrowserService;
+
+    @Autowired
+    TagService tagService;
+
+    @GetMapping
+    public PLTManagerViewResponse getPLTHeaderView(PLTManagerViewRequest request) { return pltBrowserService.getPLTHeaderView(request); }
+
+    @GetMapping("/grouped")
+    public List<GroupedPLTs> getGroupedPLT(PLTManagerViewRequest request) { return pltBrowserService.getPLTManagerGroupedPLTs(request); }
+
+    @GetMapping("ids")
+    public ResponseEntity<?> getIDs(PLTManagerIDsRequest request) { return ResponseEntity.ok(pltBrowserService.getIDs(request));}
+
+    @GetMapping("columns")
+    public ResponseEntity<?> getColumns() { return ResponseEntity.ok(pltBrowserService.getColumns());}
+
+    @PostMapping("columns/width")
+    public ResponseEntity<?> updateColumnWidth(@RequestBody UpdateColumnWidthRequest request) {
+        this.pltBrowserService.updateColumnWidth(request);
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("columns/sort")
+    public ResponseEntity<?> updateColumnSort(@RequestBody UpdateColumnSortRequest request) {
+        this.pltBrowserService.updateColumnSort(request);
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("columns/sort/reset")
+    public ResponseEntity<?> resetColumnSort(@RequestBody ResetColumnSortRequest request) {
+        this.pltBrowserService.resetColumnSort(request);
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("columns/filter")
+    public ResponseEntity<?> updateColumnFilterCriteria(@RequestBody UpdateColumnFilterCriteriaRequest request) {
+        this.pltBrowserService.updateColumnFilterCriteria(request);
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("columns/filter/project")
+    public ResponseEntity<?> filterByProjectId(@RequestBody UpdateColumnFilterCriteriaRequest request) {
+        this.pltBrowserService.filterByProjectId(request);
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("columns/filter/reset")
+    public ResponseEntity<?> resetColumnFilterCriteria(@RequestBody ResetColumnFilterCriteriaRequest request) {
+        this.pltBrowserService.resetColumnFilterCriteria(request);
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("columns/orderandvisibility")
+    public ResponseEntity<?> updateColumnOrderAndVisibility(@RequestBody UpdateColumnOrderAndVisibilityRequest request) {
+        this.pltBrowserService.updateColumnOrderAndVisibility(request);
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("assign-user-tag")
+    public Boolean assignUpdateUserTag(@RequestBody AssignTagToPltsRequest request) {
+        return tagService.assignTagToPlts(request);
+    }
+
+    /*@PostMapping("delete")
+    public Boolean deletePLT(@RequestBody PLTHeaderDeleteRequest request) {
+        return pltBrowserService.deletePLTheader(request);
+    }
+
+    @PostMapping("restore")
+    public Boolean deletePLT(@RequestBody List<Long> pltHeaderIds) {
+        return pltBrowserService.restorePLTHeader(pltHeaderIds);
+    }*/
 
 }

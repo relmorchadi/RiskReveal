@@ -54,7 +54,8 @@ export class PltBrowserComponent extends BaseContainer implements OnInit, OnDest
     defaultColDef: any,
     autoGroupColumnDef: any,
     getChildCount: Function,
-    frameworkComponents: any
+    frameworkComponents: any,
+    rowSelection: 'multiple' | 'single'
   };
 
   rightMenuInputs: rightMenuStore.Input;
@@ -99,16 +100,20 @@ export class PltBrowserComponent extends BaseContainer implements OnInit, OnDest
       defaultColDef: {
         flex: 1,
         minWidth: 160,
+        maxWidth: 300,
         resizable: true,
         sortable: true,
         columnGroupShow: 'open',
         enableRowGroup: true,
         floatingFilter: true,
-        filter: 'agTextColumnFilter',
+        filter: 'agTextColumnFilter'
       },
+
       autoGroupColumnDef: {
         headerName: 'Group',
+        field: 'pltId',
         cellRenderer: 'agGroupCellRenderer',
+        cellRendererParams: { checkbox: true }
       },
       columnDefs: [{field:"pltId", cellStyle: { textAlign: 'center' }, filter: "agNumberColumnFilter"},{field:"pltName"},{field:"pltType"},{field:"pltStatus", filter: "agSetColumnFilter", filterParams: { values: [ "Valid", 'In progress','Locked', 'Fail', 'Pending', 'Requires Regeneration' ] }, cellRenderer: 'statusCellRenderer'},{field:"groupedPlt",floatingFilterComponent: 'customBooleanFloatingFilter', filter: 'customBooleanFilter', cellRenderer: 'booleanCellRenderer'},{field:"grain"},{field:"arcPublication",floatingFilterComponent: 'customBooleanFloatingFilter', filter: 'customBooleanFilter', cellRenderer: 'booleanCellRenderer'},{field:"perilGroupCode"},{field:"regionPerilCode"},{field:"regionPerilDesc"},{field:"minimumGrainRPCode"},{field:"minimumGrainRPDescription"},{field:"financialPerspective"},{field:"targetRAPCode"},{field:"targetRAPDesc"},{field:"rootRegionPeril"},{field:"vendorSystem"},{field:"modellingDataSource"},{field:"analysisId", cellStyle: { textAlign: 'center' }},{field:"analysisName"},{field:"defaultOccurenceBasis"},{field:"occurenceBasis"},{field:"baseAdjustment",floatingFilterComponent: 'customBooleanFloatingFilter', filter: 'customBooleanFilter', cellRenderer: 'booleanCellRenderer'},{field:"defaultAdjustment",floatingFilterComponent: 'customBooleanFloatingFilter', filter: 'customBooleanFilter', cellRenderer: 'booleanCellRenderer'},{field:"clientAdjustment",floatingFilterComponent: 'customBooleanFloatingFilter', filter: 'customBooleanFilter', cellRenderer: 'booleanCellRenderer'},{field:"projectId", cellStyle: { textAlign: 'center' }},{field:"projectName"},{field:"workspaceContextCode"},{field:"client"},{field:"uwYear"},{field:"clonedPlt",floatingFilterComponent: 'customBooleanFloatingFilter', filter: 'customBooleanFilter', cellRenderer: 'booleanCellRenderer'},{field:"clonedSourcePlt"},{field:"clonedSourceProject"},{field:"clonedSourceWorkspace"},{field:"pltCcy"},{field:"aal", filter: 'agNumberColumnFilter', cellRenderer: 'numberCellRenderer'},{field:"cov", filter: 'agNumberColumnFilter', cellRenderer: 'numberCellRenderer'},{field:"stdDev", filter: 'agNumberColumnFilter', cellRenderer: 'numberCellRenderer'},{field:"oep10", filter: 'agNumberColumnFilter', cellRenderer: 'numberCellRenderer'},{field:"oep50", filter: 'agNumberColumnFilter', cellRenderer: 'numberCellRenderer'},{field:"oep100", filter: 'agNumberColumnFilter', cellRenderer: 'numberCellRenderer'},{field:"oep250", filter: 'agNumberColumnFilter', cellRenderer: 'numberCellRenderer'},{field:"oep500", filter: 'agNumberColumnFilter', cellRenderer: 'numberCellRenderer'},{field:"oep1000", filter: 'agNumberColumnFilter', cellRenderer: 'numberCellRenderer'},{field:"aep10", filter: 'agNumberColumnFilter', cellRenderer: 'numberCellRenderer'},{field:"aep50", filter: 'agNumberColumnFilter', cellRenderer: 'numberCellRenderer'},{field:"aep100", filter: 'agNumberColumnFilter', cellRenderer: 'numberCellRenderer'},{field:"aep250", filter: 'agNumberColumnFilter', cellRenderer: 'numberCellRenderer'},{field:"aep500", filter: 'agNumberColumnFilter', cellRenderer: 'numberCellRenderer'},{field:"aep1000", filter: 'agNumberColumnFilter', cellRenderer: 'numberCellRenderer'},{field:"createdDate", filter: 'agDateColumnFilter', cellRenderer: 'dateCellRenderer'},{field:"importedBy"},{field:"publishedBy"},{field:"archived"},{field:"archivedDate", filter: 'agDateColumnFilter', cellRenderer: 'dateCellRenderer'},{field:"deletedBy"},{field:"deletedDue"},{field:"deletedOn"},{field:"xactPublicationDate", filter: 'agDateColumnFilter', cellRenderer: 'dateCellRenderer'},{field:"xactPublication",floatingFilterComponent: 'customBooleanFloatingFilter', filter: 'customBooleanFilter', cellRenderer: 'booleanCellRenderer'},{field:"xactPriced",floatingFilterComponent: 'customBooleanFloatingFilter', filter: 'customBooleanFilter', cellRenderer: 'booleanCellRenderer'}],
       rowData: null,
@@ -120,7 +125,8 @@ export class PltBrowserComponent extends BaseContainer implements OnInit, OnDest
         booleanCellRenderer: BooleanCellRenderer,
         numberCellRenderer: NumberCellRenderer,
         dateCellRenderer: DateCellRenderer
-      }
+      },
+      rowSelection: "multiple"
     };
     this.lastSelectedId = null;
     this.drawerIndex = 0;
