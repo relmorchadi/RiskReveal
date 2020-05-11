@@ -241,7 +241,7 @@ public class BatchExecution {
         String contractId = myWorkspace.getContractId();
         String clientName = myWorkspace.getClientName();
         String clientId = myWorkspace.getClientId();
-        String workspaceName = contractSearchResult != null ? contractSearchResult.getWorkspaceName() : "";
+        String workspaceName = myWorkspace.getWorkspaceName();
         String carId = projectConfigurationForeWriter != null ? projectConfigurationForeWriter.getCaRequestId() : "carId";
         String reinsuranceType = myWorkspace.getWorkspaceMarketChannel().equals("TTY") ? "T" : myWorkspace.getWorkspaceMarketChannel().equals("FAC") ? "F" : "";
         String lob = myWorkspace.getLob();
