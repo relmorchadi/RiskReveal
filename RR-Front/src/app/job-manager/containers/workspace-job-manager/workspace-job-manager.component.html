@@ -1,290 +1,222 @@
-<!--<div class="app-wrapper">-->
-  <!--<div nz-row class="row top-separator">-->
-    <!--<div nz-col nzSpan=24>-->
-      <!--<span>-->
-        <!--JOB MANAGER ENVIRONMENT &nbsp; <i class="icon-close_24px" (click)="navigateBack()"></i>-->
-      <!--</span>-->
-    <!--</div>-->
-  <!--</div>-->
-  <!--<div class="app-header">-->
-    <!--<p-contextMenu #cm [model]="changeContext()"></p-contextMenu>-->
-    <!--<div class="app-title-manager">-->
-      <!--<span style="flex: 1">JOB Manager 1-50 of 348 results</span>-->
-<!--&lt;!&ndash;      <label class="label-wrapper">User :</label>&ndash;&gt;-->
-      <!--<nz-select (ngModelChange)="filterByUser($event)" class="jobs-for a-dropdown-label" style="width: 140px;" nzShowSearch [(ngModel)]="Users">-->
-        <!--<nz-option nzLabel="All Users" nzValue="all"></nz-option>-->
-        <!--<nz-option nzLabel="Amina Cheref" nzValue="Amina Cheref"></nz-option>-->
-        <!--<nz-option nzLabel="Rim Benabbes" nzValue="Rim Benabbes"></nz-option>-->
-      <!--</nz-select>-->
-<!--&lt;!&ndash;      <button class="mx-4 pine-btn  d-flex justify-content-center align-items-center"-->
-              <!--nz-button nzType="primary" nzSize="default" nzShape="circle">-->
-        <!--<i style="color: #9592E6;" nz-icon theme="outline">-->
-          <!--<i class="icon-map-pin-alt"></i>-->
-        <!--</i>-->
-      <!--</button>&ndash;&gt;-->
-    <!--</div>-->
-    <!--<p-table [value]="savedTask" #dt-->
-             <!--[columns]="tableColumn" [resizableColumns]="true"-->
-             <!--[scrollable]="true" [scrollHeight]="'500'" [rows]="50"-->
-             <!--[(contextMenuSelection)]="contextSelectedItem"-->
-             <!--[contextMenu]="cm" class="table-ngPrime"-->
-             <!--[loading]="loading" dataKey="id"-->
-    <!--&gt;-->
-      <!--<ng-template pTemplate="colgroup" let-columns>-->
-        <!--<colgroup>-->
-          <!--<col *ngFor="let col of columns; let i=index" [ngStyle]="{'width': col?.width}">-->
-        <!--</colgroup>-->
-      <!--</ng-template>-->
-      <!--<ng-template pTemplate="header" let-columns>-->
-        <!--<tr *ngIf="!sortable">-->
-          <!--<th *ngFor="let col of columns" pResizableColumn>-->
-        <!--<span [ngStyle]="{'visibility': col?.display ? 'unset' : 'hidden'}" [ngClass]="{'status-border': col.header === 'State'}" style="display:flex">-->
-          <!--{{col?.header}}-->
-        <!--</span>-->
-            <!--<div class="search-bar-table" *ngIf="col?.filtered">-->
-              <!--<i class="fa fa-search" style="margin: 6px 4px 4px 6px"></i>-->
-              <!--<input pInputText type="text" (input)="dt.filterGlobal($event.target.value, 'contains')">-->
-            <!--</div>-->
-          <!--</th>-->
-        <!--</tr>-->
-      <!--</ng-template>-->
-      <!--<ng-template pTemplate="body" let-i="rowIndex" let-expanded="expanded" let-rowData let-columns="columns">-->
-        <!--<tr [pContextMenuRow]="rowData"-->
-            <!--[ngClass]="{'active_contract_item': rowData?.selected, 'selected_contract_item': rowData === currentSelectedItem}">-->
-          <!--<ng-container *ngFor="let col of columns">-->
-            <!--<td *ngIf="col?.type === 'checkbox'">-->
-              <!--<div style="display:flex">-->
-                <!--<label nz-checkbox [ngModel]="rowData.selected" (ngModelChange)="uncheckRow(rowData)"></label>-->
-              <!--</div>-->
-            <!--</td>-->
-            <!--<td *ngIf="col?.type === 'text'" (click)="multiSelectRow(rowData, i)">-->
-              <!--<div class="td-wrapper" style="display:flex">-->
-                <!--<i *ngIf="col?.type === 'date'" class="icon-calendar-alt"></i>-->
-                <!--<span [title]="rowData[col?.field]" class="text-wrapper">{{rowData[col?.field]}}</span>-->
-              <!--</div>-->
-            <!--</td>-->
-            <!--<td *ngIf="col?.type === 'progress'" (click)="multiSelectRow(rowData, i)">-->
-              <!--<div class="td-wrapper status-border" style="display:flex; align-items: center">-->
-                <!--<ng-container *ngIf="rowData.pending">-->
-                  <!--<i class="icon-clock pause-icon-status"></i>-->
-                  <!--<span style="padding-left: 5px">Pending 4/12</span>-->
-                <!--</ng-container>-->
-                <!--<ng-container *ngIf="!rowData.pending">-->
-                  <!--<ng-container *ngIf="!rowData.isPaused">-->
-                    <!--<nz-progress [nzWidth]="35" [nzPercent]="rowData[col?.field]" nzType="circle"></nz-progress>-->
-                    <!--<span style="padding-left: 5px">In Progress</span>-->
-                  <!--</ng-container>-->
-                  <!--<ng-container *ngIf="rowData.isPaused">-->
-                    <!--<i class="icon-pause_circle_outline_24px pause-icon-status"></i>-->
-                    <!--<span style="padding-left: 5px">Paused</span>-->
-                  <!--</ng-container>-->
-                <!--</ng-container>-->
-              <!--</div>-->
-            <!--</td>-->
-            <!--<td *ngIf="col?.type === 'object'" (click)="multiSelectRow(rowData, i)">-->
-              <!--<div class="td-wrapper context-wrapper">-->
-                <!--<span class="context-title">{{rowData.context.data}}</span>-->
-                <!--<span class="context-subtitle">{{rowData.context.year}} - {{rowData.context.program}}</span>-->
-              <!--</div>-->
-            <!--</td>-->
-            <!--<td *ngIf="col?.type === 'status'" (click)="multiSelectRow(rowData, i)">-->
-              <!--<div class="td-wrapper" style="display: flex" *ngIf="rowData[col?.field] === 'high'">-->
-                <!--<span class="status-high"></span>-->
-                <!--<span>High</span>-->
-              <!--</div>-->
-              <!--<div class="td-wrapper" style="display: flex" *ngIf="rowData[col?.field] === 'medium'">-->
-                <!--<span class="status-medium"></span>-->
-                <!--<span>Medium</span>-->
-              <!--</div>-->
-              <!--<div class="td-wrapper" style="display: flex" *ngIf="rowData[col?.field] === 'low'">-->
-                <!--<span class="status-low"></span>-->
-                <!--<span>Low</span>-->
-              <!--</div>-->
-            <!--</td>-->
-            <!--<td *ngIf="col?.type === 'icon'">-->
-              <!--<div class="td-wrapper" style="display: flex; font-size: 15px;">-->
-                <!--<nz-dropdown [nzPlacement]="'bottomRight'" [nzTrigger]="'click'">-->
-                  <!--<i nz-dropdown style="margin-top: 7px" class="icon-menu_24px"></i>-->
-                  <!--<ul nz-menu class="dropdown-menu-selector">-->
-                    <!--&lt;!&ndash;<li style="display:flex" nz-menu-item><i class="icon-close_24px dropdown-icons"></i><span-->
-                      <!--class="dropdown-title">Cancel</span></li>&ndash;&gt;-->
-                    <!--<li style="display:flex; align-items: center;" nz-menu-item-->
-                        <!--*ngIf="!rowData.isPaused"-->
-                        <!--nz-popconfirm-->
-                        <!--nzTitle="Are you sure you want to pause this Job?"-->
-                        <!--nzOkText="PAUSE"-->
-                        <!--nzCancelText="CANCEL"-->
-                        <!--(nzOnConfirm)="pauseJob(rowData.id)"-->
-                        <!--(nzOnCancel)="cancel()"-->
-                        <!--nzPlacement="bottom"><i-->
-                      <!--class="pi pi-times"></i><span-->
-                      <!--class="dropdown-title">Pause</span></li>-->
+<div class="app-wrapper">
+  <div nz-row class="row top-separator">
+    <div nz-col nzSpan=24>
+      <span>
+        JOB MANAGER ENVIRONMENT &nbsp; <i class="icon-close_24px" (click)="navigateBack()"></i>
+      </span>
+    </div>
+  </div>
+  <div class="app-header">
+    <p-contextMenu #cm [model]="changeContext()"></p-contextMenu>
+    <div class="app-title-manager">
+      <span style="flex: 1">JOB Manager - {{savedTask.length}} results</span>
+      <label class="label-wrapper">User :</label>
+      <nz-select [nzDisabled]="true" (ngModelChange)="filterByUser($event)" class="jobs-for a-dropdown-label" style="width: 140px;" nzShowSearch [(ngModel)]="Users">
+        <nz-option [nzLabel]="Users" [nzValue]="Users"></nz-option>
+      </nz-select>
+        <button class="mx-4 pine-btn  d-flex justify-content-center align-items-center"
+              nz-button nzType="primary" nzSize="default" nzShape="circle">
+        <i style="color: #9592E6;" nz-icon theme="outline">
+          <i class="icon-map-pin-alt"></i>
+        </i>
+      </button>
+    </div>
+    <p-table [value]="savedTask" #dt
+             [columns]="tableColumn" [resizableColumns]="true"
+             [scrollable]="true" [scrollHeight]="'500'" [rows]="50"
+             [(contextMenuSelection)]="contextSelectedItem"
+             [contextMenu]="cm" class="table-ngPrime"
+             [loading]="loading" dataKey="id"
+    >
+      <ng-template pTemplate="colgroup" let-columns>
+        <colgroup>
+          <col *ngFor="let col of columns; let i=index" [ngStyle]="{'width': col?.width}">
+        </colgroup>
+      </ng-template>
+      <ng-template pTemplate="header" let-columns>
+        <tr *ngIf="!sortable">
+          <th *ngFor="let col of columns" pResizableColumn>
+        <span [ngStyle]="{'visibility': col?.display ? 'unset' : 'hidden'}" [ngClass]="{'status-border': col.header === 'State'}" style="display:flex">
+          {{col?.header}}
+        </span>
+            <div class="search-bar-table" *ngIf="col?.filtered">
+              <i class="fa fa-search" style="margin: 6px 4px 4px 6px"></i>
+              <input pInputText type="text" (input)="dt.filterGlobal($event.target.value, 'contains')">
+            </div>
+          </th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-i="rowIndex" let-expanded="expanded" let-rowData let-columns="columns">
+        <tr [pContextMenuRow]="rowData"
+            [ngClass]="{'active_contract_item': rowData?.selected, 'selected_contract_item': rowData === currentSelectedItem}">
+          <ng-container *ngFor="let col of columns">
+            <td *ngIf="col?.type === 'checkbox'">
+              <div style="display:flex">
+                <label nz-checkbox [ngModel]="rowData.selected" (ngModelChange)="uncheckRow(rowData)"></label>
+              </div>
+            </td>
+            <td *ngIf="col?.type === 'text'" (click)="multiSelectRow(rowData, i)">
+              <div class="td-wrapper" style="display:flex">
+                <i *ngIf="col?.type === 'date'" class="icon-calendar-alt"></i>
+                <span [title]="rowData[col?.field]" class="text-wrapper">{{rowData[col?.field]}}</span>
+              </div>
+            </td>
+            <td *ngIf="col?.type === 'date'" (click)="multiSelectRow(rowData, i)">
+              <div class="td-wrapper" style="display:flex">
+<!--                <i *ngIf="col?.type === 'date'" class="icon-calendar-alt"></i>-->
+                <span [title]="rowData[col?.field]" class="text-wrapper">
+                    {{rowData[col?.field] | rRDate: 'longFormat' : 'date' : dateConfig}}
+                    {{rowData[col?.field] | rRDate: 'longFormat' : 'time' : dateConfig}}
+                </span>
+              </div>
+            </td>
 
-                    <!--<li style="display:flex; align-items: center;" nz-menu-item-->
-                        <!--*ngIf="rowData.isPaused"-->
-                        <!--nz-popconfirm-->
-                        <!--nzTitle="Are you sure you want to resume this Job?"-->
-                        <!--nzOkText="RESUME"-->
-                        <!--nzCancelText="CANCEL"-->
-                        <!--(nzOnConfirm)="resumeJob(rowData.id)"-->
-                        <!--(nzOnCancel)="cancel()"-->
-                        <!--nzPlacement="bottom"><i-->
-                      <!--class="pi pi-check"></i><span-->
-                      <!--class="dropdown-title">Resume</span></li>-->
+            <td *ngIf="col?.type === 'progress'" (click)="multiSelectRow(rowData, i)">
+              <div class="td-wrapper status-border" style="display:flex; align-items: center">
+                  <ng-container *ngIf="rowData.status == 'PENDING'">
+                      <i class="icon-clock pause-icon-status"></i>
+                      <span style="padding-left: 5px">Pending</span>
+                  </ng-container>
+                  <ng-container *ngIf="rowData.status == 'RUNNING'">
+                      <nz-progress [nzWidth]="35" [nzPercent]="rowData.percent" nzType="circle"></nz-progress>
+                      <span style="padding-left: 5px">In Progress</span>
+                  </ng-container>
+                  <ng-container *ngIf="rowData.status == 'PAUSED'">
+                      <i class="icon-pause_circle_outline_24px pause-icon-status"></i>
+                      <span style="padding-left: 5px">Paused</span>
+                  </ng-container>
+                  <ng-container *ngIf="rowData.status == 'FAILED'">
+                      <i style="color: red" class="icon-close_24px pause-icon-status"></i>
+                      <span style="padding-left: 5px">Failed</span>
+                  </ng-container>
+                  <ng-container *ngIf="rowData.status == 'SUCCEEDED'">
+                      <i style="color: #1ad21f" class="icon-check_circle_outline_24px pause-icon-status"></i>
+                      <span style="padding-left: 5px">Succeeded</span>
+                  </ng-container>
+              </div>
+            </td>
+            <td *ngIf="col?.type === 'object'" (click)="multiSelectRow(rowData, i)">
+              <div class="td-wrapper context-wrapper">
+                <span class="context-title">{{rowData.workspaceName}} - {{rowData.uwYear}}</span>
+              </div>
+            </td>
+            <td *ngIf="col?.type === 'status'" (click)="multiSelectRow(rowData, i)">
+              <div class="td-wrapper" style="display: flex" *ngIf="rowData[col?.field] === 'HIGH'">
+                <span class="status-high"></span>
+                <span>High</span>
+              </div>
+              <div class="td-wrapper" style="display: flex" *ngIf="rowData[col?.field] === 'MEDIUM'">
+                <span class="status-medium"></span>
+                <span>Medium</span>
+              </div>
+              <div class="td-wrapper" style="display: flex" *ngIf="rowData[col?.field] === 'LOW'">
+                <span class="status-low"></span>
+                <span>Low</span>
+              </div>
+            </td>
+            <td *ngIf="col?.type === 'icon'">
+              <div class="td-wrapper" style="display: flex; font-size: 15px;">
+                <nz-dropdown [nzPlacement]="'bottomRight'" [nzTrigger]="'click'">
+                  <i nz-dropdown style="margin-top: 7px" class="icon-menu_24px"></i>
+                  <ul nz-menu class="dropdown-menu-selector">
+                    <li style="display:flex; align-items: center;" nz-menu-item
+                        *ngIf="rowData.status !== 'PAUSED'"
+                        nz-popconfirm
+                        nzTitle="Are you sure you want to pause this Job?"
+                        nzOkText="PAUSE"
+                        nzCancelText="CANCEL"
+                        (nzOnConfirm)="pauseJob(rowData.jobId)"
+                        (nzOnCancel)="cancel()"
+                        nzPlacement="bottom"><i
+                      class="pi pi-times"></i><span
+                      class="dropdown-title">Pause</span></li>
 
-                    <!--<li style="display:flex; align-items: center;" nz-menu-item-->
-                        <!--nz-popconfirm-->
-                        <!--nzOkText="ABORT"-->
-                        <!--nzCancelText="CANCEL"-->
-                        <!--nzTitle="Are you sure you want to Abort this Job?"-->
-                        <!--(nzOnConfirm)="deleteJob(rowData.id)"-->
-                        <!--(nzOnCancel)="cancel()"-->
-                        <!--nzPlacement="bottom"><i-->
-                      <!--class="pi pi-trash"></i><span-->
-                      <!--class="dropdown-title">Delete</span></li>-->
+                    <li style="display:flex; align-items: center;" nz-menu-item
+                        *ngIf="rowData.status == 'PAUSED'"
+                        nz-popconfirm
+                        nzTitle="Are you sure you want to resume this Job?"
+                        nzOkText="RESUME"
+                        nzCancelText="CANCEL"
+                        (nzOnConfirm)="resumeJob(rowData.jobId)"
+                        (nzOnCancel)="cancel()"
+                        nzPlacement="bottom"><i
+                      class="pi pi-check"></i><span
+                      class="dropdown-title">Resume</span></li>
 
-                    <!--<li style="display:flex; align-items: center;" nz-menu-item (click)="rowData.append = true">-->
-                      <!--<i class="pi pi-eye"></i><span class="dropdown-title">View Detail</span>-->
-                    <!--</li>-->
+                    <li style="display:flex; align-items: center;" nz-menu-item
+                        nz-popconfirm
+                        nzOkText="ABORT"
+                        nzCancelText="CANCEL"
+                        nzTitle="Are you sure you want to Abort this Job?"
+                        (nzOnConfirm)="deleteJob(rowData.jobId)"
+                        (nzOnCancel)="cancel()"
+                        nzPlacement="bottom"><i
+                      class="pi pi-trash"></i><span
+                      class="dropdown-title">Delete</span></li>
 
-                    <!--<li style="display:flex; align-items: center;" nz-menu-item (click)="rowData.selected = true">-->
-                      <!--<i class="pi pi-check"></i><span class="dropdown-title">Select Item</span>-->
-                    <!--</li>-->
+                    <li style="display:flex; align-items: center;" nz-menu-item (click)="rowData.append = true">
+                      <i class="pi pi-eye"></i><span class="dropdown-title">View Detail</span>
+                    </li>
 
-                    <!--<li style="display:flex; align-items: center;" nz-menu-item (click)="openWorkspace(rowData.workSpaceId, rowData.uwYear, rowData.linkTo)">-->
-                      <!--<i class="pi pi-eject"></i><span class="dropdown-title">Pop In</span>-->
-                    <!--</li>-->
+                    <li style="display:flex; align-items: center;" nz-menu-item (click)="rowData.selected = true">
+                      <i class="pi pi-check"></i><span class="dropdown-title">Select Item</span>
+                    </li>
 
-                    <!--<li style="display:flex; align-items: center;" nz-menu-item>-->
-                      <!--<i class="pi pi-eject"></i><span class="dropdown-title">pop Out</span>-->
-                    <!--</li>-->
+                    <li style="display:flex; align-items: center;" nz-menu-item (click)="openWorkspace(rowData.workSpaceId, rowData.uwYear, rowData.linkTo)">
+                      <i class="pi pi-eject"></i><span class="dropdown-title">Pop In</span>
+                    </li>
 
-                  <!--</ul>-->
-                <!--</nz-dropdown>-->
-                <!--<div (click)="expanded = expandRow(rowData, expanded)" [pRowToggler]="rowData">-->
-                  <!--<i [ngClass]="rowData.append ? 'pi pi-chevron-up' : 'pi pi-chevron-down'"></i>-->
-                <!--</div>-->
-              <!--</div>-->
-            <!--</td>-->
-          <!--</ng-container>-->
-        <!--</tr>-->
-      <!--</ng-template>-->
-      <!--<ng-template pTemplate="rowexpansion" let-rowData let-columns="columns">-->
-        <!--<tr *ngIf="rowData.append">-->
-          <!--<td [attr.colspan]="columns.length">-->
-            <!--<div class="td-wrapper td-wrapper-append" style="">-->
-              <!--<ul class="data-append-list">-->
-                <!--<li class="data-append-item" *ngFor="let item of rowData.content">-->
-                  <!--<div class="list-item-left">-->
-                    <!--<nz-progress style="display: flex; align-items: center; margin-right: 5px;"-->
-                                 <!--class="circular-progress-bar"-->
-                                 <!--[nzPercent]="item.progress"-->
-                                 <!--[nzFormat]="formatter"-->
-                                 <!--[nzStrokeWidth]="8"-->
-                                 <!--nzType="circle" [nzWidth]="15">-->
-                    <!--</nz-progress>-->
-                    <!--<div class="list-item-title-wrapper">-->
-                      <!--<span class="item-list-title">{{item.contentId}}</span>-->
-                      <!--<span class="item-list-subtitle">{{item.projectId}} | {{item.createdBy}}</span>-->
-                    <!--</div>-->
-                  <!--</div>-->
-                  <!--<div class="list-item-info">-->
-                    <!--<span class="task-duration">{{item.duration}}</span>-->
-                    <!--<i *ngIf="item.progress === 100" class="icon-file-check-alt"></i>-->
-                    <!--<i *ngIf="item.progress < 100" nz-icon [nzType]="'loading'"></i>-->
-                  <!--</div>-->
-                <!--</li>-->
-              <!--</ul>-->
-            <!--</div>-->
-          <!--</td>-->
-        <!--</tr>-->
-      <!--</ng-template>-->
-      <!--<ng-template pTemplate="loadingbody" let-columns="columns">-->
-        <!--<tr style="height:34px">-->
-          <!--<td [ngStyle]="{'width': col?.width}" *ngFor="let col of columns">-->
-            <!--<div class="loading-text"></div>-->
-          <!--</td>-->
-        <!--</tr>-->
-      <!--</ng-template>-->
-    <!--</p-table>-->
-<!--&lt;!&ndash;    <div class="detail-Job-wrapper">-->
-      <!--<div class="detail-Job">-->
-        <!--<span class="detail-Job-title">Import - ALABAMA INS.UA - 2019</span>-->
-        <!--<p-table [value]="detailData"-->
-                 <!--[columns]="tableColumnDetail" [resizableColumns]="true"-->
-                 <!--[scrollable]="true" [scrollHeight]="'100'" [rows]="20"-->
-                 <!--class="table-ngPrime"-->
-                 <!--[loading]="loading">-->
-          <!--<ng-template pTemplate="colgroup" let-columns>-->
-            <!--<colgroup>-->
-              <!--<col *ngFor="let col of columns" [ngStyle]="{'width': col?.width}">-->
-            <!--</colgroup>-->
-          <!--</ng-template>-->
-          <!--<ng-template pTemplate="header" let-columns>-->
-            <!--<tr *ngIf="!sortable">-->
-              <!--<th *ngFor="let col of columns" pResizableColumn>-->
-                <!--<span [ngStyle]="{'visibility': col?.display ? 'unset' : 'hidden'}" style="display:flex">-->
-                  <!--{{col?.header}}-->
-<!--&lt;!&ndash;                  <ng-container *ngIf="col.type === 'checkbox'">-->
-                    <!--<label style="margin-top:20px" nz-checkbox [(ngModel)]="allChecked" (ngModelChange)="updateAllChecked()"-->
-                           <!--[nzIndeterminate]="indeterminate"></label>-->
-                    <!--<i (click)="sort()" style="cursor: pointer;" nz-icon nzType="down" nzTheme="outline"></i>-->
-                  <!--</ng-container>&ndash;&gt;-->
-                <!--</span>-->
-                <!--<div class="search-bar-table" *ngIf="col?.filtered">-->
-                  <!--<i class="fa fa-search" style="margin: 6px 4px 4px 6px"></i>-->
-                  <!--<input pInputText type="text" (input)="filterCol($event.target.value, col?.filterParam)">-->
-                <!--</div>-->
-              <!--</th>-->
-            <!--</tr>-->
-          <!--</ng-template>-->
-          <!--<ng-template pTemplate="body" let-i="rowIndex" let-rowData let-columns="columns">-->
-            <!--<tr [pContextMenuRow]="rowData"-->
-                <!--[ngClass]="{'active_contract_item': rowData?.selected, 'selected_contract_item': rowData === currentSelectedItem}">-->
-              <!--<ng-container *ngFor="let col of columns">-->
-                <!--<td *ngIf="col?.type === 'checkbox'">-->
-                  <!--<div style="display:flex">-->
-                    <!--<label nz-checkbox [(ngModel)]="rowData.selected" ></label>-->
-                  <!--</div>-->
-                <!--</td>-->
-                <!--<td *ngIf="col?.type === 'text'">-->
-                  <!--<div style="display:flex">-->
-                    <!--<i *ngIf="col?.type === 'date'" class="icon-calendar-alt"></i>-->
-                    <!--<span [title]="rowData[col?.field]" class="text-wrapper">{{rowData[col?.field]}}</span>-->
-                  <!--</div>-->
-                <!--</td>-->
-                <!--<td *ngIf="col?.type === 'progress'">-->
-                  <!--<div style="display:flex; align-items: center">-->
-                    <!--<nz-progress [nzWidth]="35" [nzPercent]="rowData[col?.field]" nzType="circle"></nz-progress>-->
-                    <!--<span style="padding-left: 5px">In Progress</span>-->
-                  <!--</div>-->
-                <!--</td>-->
-                <!--<td *ngIf="col?.type === 'status'">-->
-                  <!--<div style="display: flex" *ngIf="rowData[col?.field] === 'high'">-->
-                    <!--<span class="status-high"></span>-->
-                    <!--<span>High</span>-->
-                  <!--</div>-->
-                  <!--<div style="display: flex" *ngIf="rowData[col?.field] === 'medium'">-->
-                    <!--<span class="status-medium"></span>-->
-                    <!--<span>Medium</span>-->
-                  <!--</div>-->
-                  <!--<div style="display: flex" *ngIf="rowData[col?.field] === 'low'">-->
-                    <!--<span class="status-low"></span>-->
-                    <!--<span>Low</span>-->
-                  <!--</div>-->
-                <!--</td>-->
-              <!--</ng-container>-->
-            <!--</tr>-->
-          <!--</ng-template>-->
-          <!--<ng-template pTemplate="loadingbody" let-columns="columns">-->
-            <!--<tr style="height:34px">-->
-              <!--<td [ngStyle]="{'width': col?.width}" *ngFor="let col of columns">-->
-                <!--<div class="loading-text"></div>-->
-              <!--</td>-->
-            <!--</tr>-->
-          <!--</ng-template>-->
-        <!--</p-table>-->
-      <!--</div>-->
-    <!--</div>&ndash;&gt;-->
-  <!--</div>-->
-<!--</div>-->
+                    <li style="display:flex; align-items: center;" nz-menu-item>
+                      <i class="pi pi-eject"></i><span class="dropdown-title">pop Out</span>
+                    </li>
+
+                  </ul>
+                </nz-dropdown>
+                <div (click)="expanded = expandRow(rowData, expanded)" [pRowToggler]="rowData">
+                  <i [ngClass]="rowData.append ? 'pi pi-chevron-up' : 'pi pi-chevron-down'"></i>
+                </div>
+              </div>
+            </td>
+          </ng-container>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="rowexpansion" let-rowData let-columns="columns">
+        <tr *ngIf="rowData.append">
+          <td [attr.colspan]="columns.length">
+            <div class="td-wrapper td-wrapper-append" style="">
+              <ul class="data-append-list">
+                <li class="data-append-item" *ngFor="let item of rowData.tasks">
+                  <div class="list-item-left">
+                    <nz-progress style="display: flex; align-items: center; margin-right: 5px;"
+                                 class="circular-progress-bar"
+                                 [nzPercent]="item.percent"
+                                 [nzFormat]="formatter"
+                                 [nzStrokeWidth]="8"
+                                 nzType="circle" [nzWidth]="15">
+                    </nz-progress>
+                    <div class="list-item-title-wrapper">
+<!--                      <span class="item-list-title">{{item.contentId}}</span>-->
+                      <span class="item-list-subtitle">{{item.taskId}} | {{item.taskType}} |  {{item.name}}</span>
+                    </div>
+                  </div>
+                  <div class="list-item-info">
+                    <span class="task-duration">1 min remaining</span>
+                    <i *ngIf="item.percent === 100" class="icon-file-check-alt"></i>
+                    <i *ngIf="item.percent < 100" nz-icon [nzType]="'loading'"></i>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="loadingbody" let-columns="columns">
+        <tr style="height:34px">
+          <td [ngStyle]="{'width': col?.width}" *ngFor="let col of columns">
+            <div class="loading-text"></div>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+</div>

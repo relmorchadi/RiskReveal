@@ -228,7 +228,7 @@ public class JobManagerImpl extends JobManagerAbstraction {
                 TaskDto taskdto = new TaskDto();
 
                 taskdto.setTaskId(((BigInteger) task.get("TaskId")).longValue());
-                taskdto.setJobExecutionId(((BigInteger) task.get("JobExecutionId")).longValue());
+                taskdto.setJobExecutionId(task.get("JobExecutionId") != null ? ((BigInteger) task.get("JobExecutionId")).longValue() : null);
                 taskdto.setPercent((Integer) task.get("Percentage"));
                 taskdto.setTaskType((String) task.get("TaskType"));
                 taskdto.setStatus((String) task.get("Status"));
@@ -240,7 +240,7 @@ public class JobManagerImpl extends JobManagerAbstraction {
                     if (task.get("AnalysisDivision") != null)
                         taskdto.setDivision((Integer) task.get("AnalysisDivision"));
                     if (task.get("AnalysisProject") != null)
-                        taskdto.setProjectId(((BigInteger) task.get("AnalysisProject")).longValue());
+                        taskdto.setProjectId(task.get("AnalysisProject") != null ? ((BigInteger) task.get("AnalysisProject")).longValue() : null);
                     taskdto.setName((String) task.get("AnalysisName"));
                     taskdto.setFinancialPerspective((String) task.get("AnalysisFinancialPerspective"));
                     taskdto.setTargetRapCode((String) task.get("TargetRapCode"));
@@ -250,7 +250,8 @@ public class JobManagerImpl extends JobManagerAbstraction {
                     if (task.get("PortfolioDivision") != null)
                         taskdto.setDivision((Integer) task.get("PortfolioDivision"));
                     if (task.get("PortfolioProject") != null)
-                        taskdto.setProjectId(((BigInteger) task.get("PortfolioProject")).longValue());
+                        taskdto.setProjectId(task.get("PortfolioProject") != null ?
+                                ((BigInteger) task.get("PortfolioProject")).longValue() : null);
                     taskdto.setName((String) task.get("PortfolioNumber"));
                 }
 
