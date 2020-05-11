@@ -65,6 +65,7 @@ export class WorkspaceExposuresComponent extends BaseContainer implements OnInit
     }
 
     ngOnInit() {
+        super.ngOnInit();
         this.selectedProject$.pipe(this.unsubscribeOnDestroy).subscribe(project => {
             if (project != undefined) {
                 this.projectId = project.projectId;
@@ -82,11 +83,14 @@ export class WorkspaceExposuresComponent extends BaseContainer implements OnInit
                 })
             }
         });
+
         /*this.tableConfig$.pipe(first()).subscribe(tableConfig => {
             _.forEach([...tableConfig.frozenColumns, ...tableConfig.columns], column => {
                 this.sortConfig[column.field] = 0;
             })
         })*/
+
+
     }
 
     patchState({wsIdentifier, data}: any): void {
@@ -241,7 +245,22 @@ export class WorkspaceExposuresComponent extends BaseContainer implements OnInit
                 this.exposuresTableService.exportTable({
                     ...this.selectedHeaderConfig,
                     projectId: this.projectId
-                })
+                }).subscribe(
+                    (response: any) => {
+                        let contentType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+                        let blob = new Blob([response.body], {type: contentType});
+                        let fileName = response.headers.get('Content-Disposition')
+                            .split(';')[1].trim().split('=')[1];
+                        let url = window.URL.createObjectURL(blob);
+                        let anchor = document.createElement("a");
+                        anchor.download = fileName;
+                        anchor.href = url;
+                        anchor.click();
+                    },
+                    (err) => {
+
+                    }
+                );
                 break;
             }
         }

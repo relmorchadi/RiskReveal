@@ -100,7 +100,7 @@ body .ui-radiobutton .ui-radiobutton-box {
     opacity: 1;
     color: #d9d9d9;
     left: 0;
-    top: 0;
+    top: 1px;
     transform: none;
     font-family: 'scor_fonticon' !important;
     content: "\e9b4" !important;
@@ -108,8 +108,8 @@ body .ui-radiobutton .ui-radiobutton-box {
 
   span.ant-checkbox.ant-checkbox-checked {
     .ant-checkbox-inner::after {
-      top: -2px;
-      left: -2px;
+      top: 0px;
+      left: -1px;
       border-right: 0;
       border-bottom: 0;
       display: table;

@@ -10,6 +10,7 @@ import com.scor.rr.domain.model.RRJob;
 import com.scor.rr.repository.JobEntityRepository;
 import com.scor.rr.repository.JobExecutionRepository;
 import com.scor.rr.repository.TaskRepository;
+import com.scor.rr.repository.UserRrRepository;
 import com.scor.rr.service.batch.abstraction.JobManagerAbstraction;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.Job;
@@ -23,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -51,6 +53,8 @@ public class JobManagerImpl extends JobManagerAbstraction {
     @Autowired
     private JobEntityRepository jobRepository;
 
+    @Autowired
+    private UserRrRepository userRrRepository;
 
     @Override
     public void submitJob(Long jobId) {
@@ -127,8 +131,8 @@ public class JobManagerImpl extends JobManagerAbstraction {
             // If the task was already running
 //            if (task != null && task.getJobExecutionId() != null && jobOperator.getRunningExecutions("importLossData").contains(task.getJobExecutionId())) {
 //                jobOperator.stop(task.getJobExecutionId());
-//                cancelTaskSteps(task);
-//                // If the task is still in queue
+////                cancelTaskSteps(task);
+////                // If the task is still in queue
 //            } else
             if (task != null && task.getJobExecutionId() == null) {
                 RRJob runnable = (RRJob) executor.getQueue().stream().filter(e -> ((RRJob) e).getTask().getTaskId().equals(task.getTaskId())).findFirst().orElse(null);
@@ -205,6 +209,8 @@ public class JobManagerImpl extends JobManagerAbstraction {
 
             jobDto.setJobId(((BigInteger) job.get("JobId")).longValue());
             jobDto.setJobTypeCode("IMPORT");
+            userRrRepository.findById(((BigInteger) job.get("UserId")).longValue())
+                    .ifPresent(user -> jobDto.setSubmittedByUser(user.getFirstName() + " " + user.getLastName()));
             jobDto.setPriority(JobPriority.getStringValue((Integer) job.get("Priority")));
             jobDto.setStatus((String) job.get("Status"));
             jobDto.setClientName((String) job.get("clientName"));
@@ -212,6 +218,9 @@ public class JobManagerImpl extends JobManagerAbstraction {
             jobDto.setWorkspaceName((String) job.get("workspaceName"));
             jobDto.setContractCode((String) job.get("contractCode"));
             jobDto.setProjectId(Long.valueOf((String) job.get("projectId")));
+            jobDto.setSubmittedDate((Date) job.get("submittedDate"));
+            jobDto.setStartedDate((Date) job.get("startedDate"));
+            jobDto.setFinishedDate((Date) job.get("finishedDate"));
 
             List<Map<String, Object>> tasks = taskRepository.getTasksByJobId(jobDto.getJobId());
 
@@ -223,12 +232,15 @@ public class JobManagerImpl extends JobManagerAbstraction {
                 taskdto.setPercent((Integer) task.get("Percentage"));
                 taskdto.setTaskType((String) task.get("TaskType"));
                 taskdto.setStatus((String) task.get("Status"));
+                taskdto.setSubmittedDate((Date) task.get("submittedDate"));
+                taskdto.setStartedDate((Date) task.get("startedDate"));
+                taskdto.setFinishedDate((Date) task.get("finishedDate"));
 
                 if (taskdto.getTaskType().equalsIgnoreCase(TaskType.IMPORT_ANALYSIS.getCode())) {
                     if (task.get("AnalysisDivision") != null)
-                        taskdto.setDivision(Integer.valueOf((String) task.get("AnalysisDivision")));
+                        taskdto.setDivision((Integer) task.get("AnalysisDivision"));
                     if (task.get("AnalysisProject") != null)
-                        taskdto.setProjectId(Long.valueOf((String) task.get("AnalysisProject")));
+                        taskdto.setProjectId(((BigInteger) task.get("AnalysisProject")).longValue());
                     taskdto.setName((String) task.get("AnalysisName"));
                     taskdto.setFinancialPerspective((String) task.get("AnalysisFinancialPerspective"));
                     taskdto.setTargetRapCode((String) task.get("TargetRapCode"));
@@ -236,9 +248,9 @@ public class JobManagerImpl extends JobManagerAbstraction {
 
                 if (taskdto.getTaskType().equalsIgnoreCase(TaskType.IMPORT_PORTFOLIO.getCode())) {
                     if (task.get("PortfolioDivision") != null)
-                        taskdto.setDivision(Integer.valueOf((String) task.get("PortfolioDivision")));
+                        taskdto.setDivision((Integer) task.get("PortfolioDivision"));
                     if (task.get("PortfolioProject") != null)
-                        taskdto.setProjectId(Long.valueOf((String) task.get("PortfolioProject")));
+                        taskdto.setProjectId(((BigInteger) task.get("PortfolioProject")).longValue());
                     taskdto.setName((String) task.get("PortfolioNumber"));
                 }
 
