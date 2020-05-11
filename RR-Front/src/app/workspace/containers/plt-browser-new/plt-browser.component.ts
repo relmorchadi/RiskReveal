@@ -99,7 +99,7 @@ export class PltBrowserComponent extends BaseContainer implements OnInit, OnDest
       rowModelType: "serverSide",
       defaultColDef: {
         flex: 1,
-        minWidth: 160,
+        minWidth: 120,
         maxWidth: 300,
         resizable: true,
         sortable: true,
