@@ -61,14 +61,23 @@
                 <span [title]="rowData[col?.field]" class="text-wrapper">{{rowData[col?.field]}}</span>
               </div>
             </td>
+            <td *ngIf="col?.type === 'date'" (click)="multiSelectRow(rowData, i)">
+              <div class="td-wrapper" style="display:flex">
+<!--                <i *ngIf="col?.type === 'date'" class="icon-calendar-alt"></i>-->
+                <span [title]="rowData[col?.field]" class="text-wrapper">
+                    {{rowData[col?.field] | rRDate: 'longFormat' : 'date' : dateConfig}}
+                    {{rowData[col?.field] | rRDate: 'longFormat' : 'time' : dateConfig}}
+                </span>
+              </div>
+            </td>
 
             <td *ngIf="col?.type === 'progress'" (click)="multiSelectRow(rowData, i)">
               <div class="td-wrapper status-border" style="display:flex; align-items: center">
                   <ng-container *ngIf="rowData.status == 'PENDING'">
                       <i class="icon-clock pause-icon-status"></i>
-                      <span style="padding-left: 5px">Pending 4/12</span>
+                      <span style="padding-left: 5px">Pending</span>
                   </ng-container>
-                  <ng-container *ngIf="rowData.status == 'INPROGRESS'">
+                  <ng-container *ngIf="rowData.status == 'RUNNING'">
                       <nz-progress [nzWidth]="35" [nzPercent]="rowData.percent" nzType="circle"></nz-progress>
                       <span style="padding-left: 5px">In Progress</span>
                   </ng-container>
@@ -187,7 +196,7 @@
                     </nz-progress>
                     <div class="list-item-title-wrapper">
 <!--                      <span class="item-list-title">{{item.contentId}}</span>-->
-                      <span class="item-list-subtitle">{{item.jobExecutionId}} | {{item.taskType}}</span>
+                      <span class="item-list-subtitle">{{item.taskId}} | {{item.taskType}} |  {{item.name}}</span>
                     </div>
                   </div>
                   <div class="list-item-info">

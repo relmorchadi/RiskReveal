@@ -14,6 +14,7 @@ import {WorkspaceState} from "../../../workspace/store/states";
 import {JobManagerService} from "../../../core/service/jobManager.service";
 import {first, map} from "rxjs/operators";
 import {AuthModel} from "../../../core/model/auth.model";
+import {BaseContainer} from "../../../shared/base";
 
 @Component({
   selector: 'app-workspace-job-manager',
@@ -21,7 +22,8 @@ import {AuthModel} from "../../../core/model/auth.model";
   styleUrls: ['./workspace-job-manager.component.scss'],
   providers:[JobManagerService]
 })
-export class WorkspaceJobManagerComponent implements OnInit {
+export class WorkspaceJobManagerComponent extends BaseContainer
+    implements OnInit {
   loading = false;
   contextSelectedItem = null;
   lastSelectedIndex = null;
@@ -151,7 +153,7 @@ export class WorkspaceJobManagerComponent implements OnInit {
       display: true,
       sorted: false,
       filtered: true,
-      type: 'text',
+      type: 'date',
       filterParam: 'submittedTime'
     },
     {
@@ -161,7 +163,7 @@ export class WorkspaceJobManagerComponent implements OnInit {
       display: true,
       sorted: false,
       filtered: true,
-      type: 'text',
+      type: 'date',
       filterParam: 'innerYear'
     },
     {
@@ -171,7 +173,7 @@ export class WorkspaceJobManagerComponent implements OnInit {
       display: true,
       sorted: false,
       filtered: true,
-      type: 'text',
+      type: 'date',
       filterParam: 'elapsedTime'
     },
     {
@@ -181,7 +183,7 @@ export class WorkspaceJobManagerComponent implements OnInit {
       display: true,
       sorted: false,
       filtered: true,
-      type: 'text',
+      type: 'date',
       filterParam: 'completionTime'
     },
     {
@@ -203,20 +205,29 @@ export class WorkspaceJobManagerComponent implements OnInit {
 
   constructor(private cdref : ChangeDetectorRef,public location: Location, private _searchService: SearchService, private store: Store,private jobManagerService:JobManagerService,
               private helperService: HelperService, private route: ActivatedRoute, private router: Router) {
+    super(router,cdref,store)
   }
 
   ngOnInit() {
-
+    super.ngOnInit();
     this.jobManagerService.getAllJobs().subscribe((jobs:any) => {
       console.log(jobs);
       this.savedTask = jobs.map(row => ({
         ...row,
-        append:false
+        append:false,
+        selected:false,
       }));
-      this.cdref.detectChanges();
+      this.savedTask = [
+          ...this.savedTask.filter(row => row.status =='RUNNING'),
+        ...this.savedTask.filter(row => row.status == 'PAUSED'),
+        ...this.savedTask.filter(row => row.status == 'PENDING'),
+        ...this.savedTask.filter(row => row.status == 'SUCCEEDED'),
+        ...this.savedTask.filter(row => row.status == 'FAILED')
+      ]
+      this.detectChanges();
     });
 
-    this.user$.pipe(first()).subscribe( value => {
+    this.user$.subscribe( value => {
       this.Users = value;
     })
     // this.jobs$.subscribe(value => {
@@ -227,20 +238,21 @@ export class WorkspaceJobManagerComponent implements OnInit {
   }
 
   expandRow(row, expand) {
+    console.log(expand);
     row.append = !row.append;
-    return true;
+    return row.append;
   }
 
   resumeJob(id) {
-    this.store.dispatch(new ResumeTask({id: id}));
+    this.jobManagerService.resumeJob(id);
   }
 
   deleteJob(id) {
-    this.store.dispatch(new DeleteTask({id: id}));
+    this.jobManagerService.deleteJob(id);
   }
 
   pauseJob(id): void {
-    this.store.dispatch(new PauseTask({id: id}));
+    this.jobManagerService.pauseJob(id);
   }
 
   filterByUser(event) {
@@ -250,7 +262,7 @@ export class WorkspaceJobManagerComponent implements OnInit {
 
   uncheckRow(row) {
     row.selected = !row.selected;
-    this.selectedRows = this.jobs.filter(ws => ws.selected === true);
+    this.selectedRows = this.savedTask.filter(ws => ws.selected === true);
   }
 
   openWorkspace(wsId, year, routerLink) {
@@ -271,11 +283,11 @@ export class WorkspaceJobManagerComponent implements OnInit {
         row.selected = true;
       }
     } else {
-      this.jobs.forEach(res => res.selected = false);
+      this.savedTask.forEach(res => res.selected = false);
       this.lastSelectedIndex = index;
       row.selected = true;
     }
-    this.selectedRows = this.jobs.filter(ws => ws.selected === true);
+    this.selectedRows = this.savedTask.filter(ws => ws.selected === true);
   }
 
   private selectSection(from, to) {
