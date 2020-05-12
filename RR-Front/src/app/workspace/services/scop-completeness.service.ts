@@ -411,7 +411,7 @@ export class ScopeCompletenessService {
             } else {
               targetRaps = _.merge(targetRaps, {[id]: {regionPerils: _.merge(targetRaps[id].regionPerils, {[regionId]: {
                       scopeContext: [...targetRaps[id].regionPerils[regionId].scopeContext, item.id],
-                      expected:  _.merge(targetRaps[id].regionPerils[regionId].expected,  {[item.id]: tr.expected})
+                      expected:  _.merge(targetRaps[id].regionPerils[regionId].expected,  {[item.id]: rp.expected})
                     }})}});
               _.forEach(rp.pltsAttached, plt => {
                 const pltID = _.findIndex(targetRaps[id].regionPerils[regionId].pltsAttached, (plts: any) => plts.pltHeaderId === plt.pltHeaderId);

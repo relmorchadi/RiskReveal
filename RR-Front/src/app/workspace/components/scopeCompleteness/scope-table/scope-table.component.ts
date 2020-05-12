@@ -803,74 +803,52 @@ export class ScopeTableComponent extends BaseContainer implements OnInit {
     if (this.filterBy === 'All') {
       return draftData;
     } else if (this.filterBy === 'Incomplete Only') {
-      if (this.sortBy === 'Minimum Grain / RAP') {
-        return _.compact(_.map(draftData, item => {
-          let filteredData = [];
+      return _.compact(_.map(draftData, item => {
+        let filteredData = [];
+        if (this.sortBy === 'Minimum Grain / RAP') {
           _.forEach(item.targetRaps, tr => {
             if (!this.checkRowAttached(item, tr)) {
               filteredData = [...filteredData, tr];
             }
           });
-          if (filteredData.length === 0) {
-            return null;
-          } else {
-            return {...item, targetRaps: filteredData};
-          }
-        }));
-      } else {
-        return _.map(draftData, item => {
-          let filteredData = [];
+        } else {
           _.forEach(item.regionPerils, rp => {
             if (!this.checkRowAttached(item, rp)) {
               filteredData = [...filteredData, rp];
             }
           });
-          if (filteredData.length === 0) {
-            return null;
-          } else {
-            return {...item, regionPerils: filteredData};
-          }
-        });
-      }
+        }
+        if (filteredData.length === 0) {
+          return null;
+        } else {
+          return this.sortBy === 'Minimum Grain / RAP' ? {...item, targetRaps: filteredData} : {...item, regionPerils: filteredData};
+        }
+      }));
     } else if (this.filterBy === 'Overridden Only') {
-      return _.filter(draftData, item => {
-        let filtered = false;
+      return _.compact(_.map(draftData, item => {
+        let filteredData = [];
         if (this.sortBy === 'Minimum Grain / RAP') {
           _.forEach(item.targetRaps, tr => {
-            if (_.includes( _.map(_.values(tr.override), itemOver => itemOver.overridden), false)) {
-              filtered = true;
+            if (_.toArray(tr.override).length > 0) {
+              filteredData = [...filteredData, {...tr, pltsAttached: []}];
             }
           });
         } else {
           _.forEach(item.regionPerils, tr => {
-            if (_.includes( _.map(_.values(tr.override), itemOver => itemOver.overridden), false)) {
-              filtered = true;
+            if (_.toArray(tr.override).length > 0) {
+              filteredData = [...filteredData, {...tr, pltsAttached: []}];
             }
           });
         }
-        return filtered;
-      })
+        if (filteredData.length === 0) {
+          return null;
+        } else {
+          return this.sortBy === 'Minimum Grain / RAP' ? {...item, targetRaps: filteredData} : {...item, regionPerils: filteredData}
+        }
+      }));
     } else if (this.filterBy === 'Synthetic PLTs Only') {
       return draftData;
     } else if (this.filterBy === 'Expected Only') {
-      return _.filter(draftData, item => {
-        let filtered = false;
-        if (this.sortBy === 'Minimum Grain / RAP') {
-          _.forEach(item.targetRaps, tr => {
-            if (_.includes(_.values(tr.expected), false)) {
-              filtered = true;
-            }
-          });
-        } else {
-          _.forEach(item.regionPerils, tr => {
-            if (_.includes(_.values(tr.expected), false)) {
-              filtered = true;
-            }
-          });
-        }
-        return filtered;
-      })
-    } else if (this.filterBy === 'Unexpected Only') {
       return _.filter(draftData, item => {
         let filtered = true;
         if (this.sortBy === 'Minimum Grain / RAP') {
@@ -887,7 +865,25 @@ export class ScopeTableComponent extends BaseContainer implements OnInit {
           });
         }
         return filtered;
-      })
+      });
+    } else if (this.filterBy === 'Unexpected Only') {
+      return _.filter(draftData, item => {
+        let filtered = false;
+        if (this.sortBy === 'Minimum Grain / RAP') {
+          _.forEach(item.targetRaps, tr => {
+            if (_.includes(_.values(tr.expected), false)) {
+              filtered = true;
+            }
+          });
+        } else {
+          _.forEach(item.regionPerils, tr => {
+            if (_.includes(_.values(tr.expected), false)) {
+              filtered = true;
+            }
+          });
+        }
+        return filtered;
+      });
     }
   }
 
@@ -895,8 +891,26 @@ export class ScopeTableComponent extends BaseContainer implements OnInit {
     if (column.type === 'contractCol') {
       if (this.filterBy === 'Incomplete Only') {
         return !this.checkColumnAttached(column, index);
-      } else if(this.filterBy === '') {
-
+      } else if(this.filterBy === 'Overridden Only') {
+        let removeCol = false;
+        if (this.sortBy === 'Minimum Grain / RAP') {
+          _.forEach(this.pendingData.regionPerils, rp => {
+            _.forEach(rp.targetRaps, tr => {
+              if (_.get(tr, `override.${index}.overridden`, false)) {
+                removeCol = true;
+              }
+            });
+          })
+        } else {
+          _.forEach(this.pendingData.targetRaps, tr => {
+            _.forEach(tr.regionPerils, rp => {
+              if (_.get(rp, `override.${index}.overridden`, false)) {
+                removeCol = true;
+              }
+            });
+          })
+        }
+        return removeCol;
       } else {
         return true;
       }
@@ -909,14 +923,18 @@ export class ScopeTableComponent extends BaseContainer implements OnInit {
     let unexpected = false;
     if (this.sortBy === 'Minimum Grain / RAP') {
       _.forEach(rowData.targetRaps, item => {
-        if (!item.expected[col.columnContext]) {
-          unexpected = true;
+        if (_.includes(item.scopeContext, col.columnContext)) {
+          if (!item.expected[col.columnContext]) {
+            unexpected = true;
+          }
         }
       })
     } else {
       _.forEach(rowData.regionPerils, item => {
-        if (!item.expected[col.columnContext]) {
-          unexpected = true;
+        if (_.includes(item.scopeContext, col.columnContext)) {
+          if (!item.expected[col.columnContext]) {
+            unexpected = true;
+          }
         }
       })
     }
