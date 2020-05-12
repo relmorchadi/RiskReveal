@@ -165,7 +165,7 @@ export class SearchMainComponent extends BaseContainer implements OnInit, OnDest
   }
 
   openWorkspace(wsId, year) {
-    console.log(wsId, year);
+    console.log(wsId, year, this.searchMode);
     if (this.searchMode === 'Treaty') {
       this.dispatch(new workspaceActions.OpenWS({wsId, uwYear: year, route: 'projects', type: 'TTY'}));
     } else {

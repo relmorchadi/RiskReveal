@@ -112,24 +112,6 @@
                    [activateContextMenu]="true"
                    [loading]="loading">
         </app-table>
-
-        <app-table [tableColumn]="columnsFac" [sortable]="false"
-                   [rows]="100" [virtualRowHeight]="35.56"
-                   [totalRecords]="paginationOption?.total"
-                   #dtFac *ngIf="searchMode === 'Fac'"
-                   [listOfData]="contracts"
-                   [virtualScroll]="true"
-                   (selectOne)="openWorkspaceInSlider($event)"
-                   [tableWidth]="'1000px'" [secondaryLoader]="secondaryLoading"
-                   [tableHeight]="'calc(100vh - 212px)'"
-                   (loadMore)="loadMore($event)"
-                   (filterData)="filterData($event.searchValue, $event.searchAddress, $event)"
-                   (sortDataChange)="sortChange($event)"
-                   [sortData]="sortData"
-                   (dbClickItem)="openWorkspace($event?.workspaceContextCode, $event?.uwYear)"
-                   [activateContextMenu]="true"
-                   [loading]="loading">
-        </app-table>
       </div>
     </div>
     <app-search-main-detail-component [expandWorkspaceDetails]="expandWorkspaceDetails"
