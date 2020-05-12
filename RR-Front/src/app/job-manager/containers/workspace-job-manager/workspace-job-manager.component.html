@@ -65,7 +65,7 @@
               <div class="td-wrapper" style="display:flex">
 <!--                <i *ngIf="col?.type === 'date'" class="icon-calendar-alt"></i>-->
                 <span [title]="rowData[col?.field]" class="text-wrapper">
-                    {{rowData[col?.field] | rRDate: 'longFormat' : 'date' : dateConfig}}
+                    {{rowData[col?.field] | rRDate: 'shortFormat' : 'date' : dateConfig}}
                     {{rowData[col?.field] | rRDate: 'longFormat' : 'time' : dateConfig}}
                 </span>
               </div>
