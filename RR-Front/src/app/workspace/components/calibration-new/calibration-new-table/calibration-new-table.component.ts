@@ -81,9 +81,6 @@ export class CalibrationNewTableComponent implements OnInit, AfterViewInit, Afte
   contextMenuItem : any[];
 
   constructor(private _baseStore: Store) {
-    setInterval(() => {
-      console.log("Table width: "+ this.tableWidth)
-    }, 1000)
   }
 
   ngOnInit() {
