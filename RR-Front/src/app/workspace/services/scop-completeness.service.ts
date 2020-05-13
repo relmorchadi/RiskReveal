@@ -190,7 +190,8 @@ export class ScopeCompletenessService {
             ctx.patchState(produce(ctx.getState(), draft => {
               draft.content[wsIdentifier].scopeOfCompleteness.plts = _.map(data, item => ({...item, selected: false}));
             }))
-          })
+          }),
+          catchError(err => {console.log(err); return of()})
       )
     }
   }

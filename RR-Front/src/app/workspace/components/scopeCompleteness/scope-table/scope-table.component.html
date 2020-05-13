@@ -1,6 +1,6 @@
-<div>
-  <p-table [columns]="columns" [value]="filterData()" scrollHeight="440px"
-           dataKey="id" [expandedRowKeys]="sortBy == 'RAP / Minimum Grain' ? targetCodes : regionCodes" scrollable="true">
+<p-table [columns]="columns" [value]="filterData()" [scrollHeight]="'calc(100% - 30px)'"
+         [loading]="loading" dataKey="id"
+         [expandedRowKeys]="sortBy == 'RAP / Minimum Grain' ? targetCodes : regionCodes" scrollable="true">
     <ng-template pTemplate="colgroup" let-columns>
       <colgroup>
         <ng-container  *ngFor="let col of columns; let i = index">
@@ -543,7 +543,6 @@
       </ng-container>
     </ng-template>
   </p-table>
-</div>
 
 <app-attach-plts-pop-up [isVisible]="isAttachVisible" (closePopUp)="closePopUp()">
 
