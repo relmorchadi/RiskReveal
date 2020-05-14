@@ -32,6 +32,7 @@
       <div class="tabset-right" [ngStyle]="{ 'width': leftIsHidden ? 'calc(100vw - ' + leftMenu.clientWidth +'px - 80px - 174px + 130px)' : 'calc(100vw - ' + leftMenu.clientWidth + 'px - 80px - 177px)'}">
         <d-table
                 [params]="params"
+                [workspaceType]="workspaceType"
                 [selectedProject]="selectedProject"
                 (actionDispatcher)="handleTableActions($event)"
         ></d-table>
