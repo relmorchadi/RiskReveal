@@ -462,7 +462,7 @@ export class PltBrowserComponent extends BaseContainer implements OnInit, OnDest
             //this.gridApi.purgeServerSideCache();
             params.successCallback(response.rows, response.lastRow);
             this.gridColumnApi.autoSizeColumns(_.map(this.gridColumnApi.getAllColumns(), col => col.colId), false);
-            this.gridApi.forEachNode((node, i) => console.log("[Node]", node))
+            //this.gridApi.forEachNode((node, i) => console.log("[Node]", node))
           } else {
             params.failCallback();
           }
