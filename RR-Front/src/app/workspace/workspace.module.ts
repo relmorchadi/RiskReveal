@@ -24,7 +24,6 @@ import {AddRemovePopUpComponent} from './components/calibration/add-remove-pop-u
 import {PopUpPltTableComponent} from './components/calibration/add-remove-pop-up/pop-up-plt-table/pop-up-plt-table.component';
 import {CalibrationMainTableComponent} from './components/calibration/calibration-main-table/calibration-main-table.component';
 import {InuringCanvasTabComponent} from './components/inuring/inuring-canvas-tab/inuring-canvas-tab.component';
-import {AttachPltPopUpComponent} from './components/scopeCompleteness/attachPlt-pop-up/attach-plt-pop-up/attach-plt-pop-up.component';
 import {jsPlumbToolkitModule} from 'jsplumbtoolkit-angular';
 import {jsPlumbToolkitDragDropModule} from 'jsplumbtoolkit-angular-drop';
 import {Dialogs} from 'jsplumbtoolkit';
@@ -60,7 +59,7 @@ import {NumberCellRenderer} from "../shared/components/grid/number-cell-renderer
   declarations: [
     ...COMPONENTS, ...CONTAINERS,
     FrozenColumnsFilterPipe,
-    ...PIPES, ...DIRECTIVES, TagsComponent, LastAdjustmentMatrixComponent, AdjustmentPopUpComponent, AddRemovePopUpComponent, PopUpPltTableComponent, CalibrationMainTableComponent, InuringCanvasTabComponent, AttachPltPopUpComponent, EditContractPopUpComponent, EditEdgePopUpComponent, ParseIdPipe, ReturnPeriodPopUpComponent, AddRemovePopUpNewComponent, PopUpPltTableNewComponent, CalibrationSortAndFilterPipe, AttachPltsPopUpComponent
+    ...PIPES, ...DIRECTIVES, TagsComponent, LastAdjustmentMatrixComponent, AdjustmentPopUpComponent, AddRemovePopUpComponent, PopUpPltTableComponent, CalibrationMainTableComponent, InuringCanvasTabComponent, EditContractPopUpComponent, EditEdgePopUpComponent, ParseIdPipe, ReturnPeriodPopUpComponent, AddRemovePopUpNewComponent, PopUpPltTableNewComponent, CalibrationSortAndFilterPipe, AttachPltsPopUpComponent
 
   ],
   imports: [
