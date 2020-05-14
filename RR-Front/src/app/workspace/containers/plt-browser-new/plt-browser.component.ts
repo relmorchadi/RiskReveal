@@ -98,9 +98,6 @@ export class PltBrowserComponent extends BaseContainer implements OnInit, OnDest
     this.gridParams = {
       rowModelType: "serverSide",
       defaultColDef: {
-        flex: 1,
-        minWidth: 120,
-        maxWidth: 300,
         resizable: true,
         sortable: true,
         columnGroupShow: 'open',
@@ -465,6 +462,7 @@ export class PltBrowserComponent extends BaseContainer implements OnInit, OnDest
           if (response.success) {
             //this.gridApi.purgeServerSideCache();
             params.successCallback(response.rows, response.lastRow);
+            this.gridColumnApi.autoSizeColumns(_.map(this.gridColumnApi.getAllColumns(), col => col.colId), false);
           } else {
             params.failCallback();
           }
