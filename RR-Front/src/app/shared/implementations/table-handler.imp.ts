@@ -199,7 +199,7 @@ export class TableHandlerImp implements TableHandlerInterface, OnDestroy {
   private resolveColumns = (columns) => {
     this.updateColumns(columns);
     this.updateTotalColumnWidth(columns);
-    this.updateLoading(false);
+    //this.updateLoading(false);
     //save to store
     this.saveColumns(this.params, columns);
 
@@ -272,7 +272,7 @@ export class TableHandlerImp implements TableHandlerInterface, OnDestroy {
         );
 
 
-    //this.updateLoading(true);
+    this.updateLoading(true);
 
     initialized$
         .pipe(
