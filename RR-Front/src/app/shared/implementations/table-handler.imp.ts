@@ -258,9 +258,9 @@ export class TableHandlerImp implements TableHandlerInterface, OnDestroy {
   initTable(params, selectedProject) {
     this.params = params;
 
-    const init$ = this._api.filterByProject({
+    const init$ = (selectedProject ? this._api.filterByProject({
       projectId: selectedProject.projectId
-    }).pipe(
+    }) : of([])).pipe(
         take(1),
         share()
     );
