@@ -9,8 +9,8 @@
     <div class="right-menu-header">
         <div class="right-menu-title">
             <hr>
-            <div class="title">
-                 {{rightMenuConfig.type}} Details
+            <div *ngIf="rightMenuConfig.type" class="title">
+                 {{toUpperCase(rightMenuConfig.type)}} Details
             </div>
         </div>
         <div class="right-menu-close">
