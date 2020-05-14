@@ -293,7 +293,7 @@ export class ScopeCompletenessService {
     const state = ctx.getState();
     const {wsIdentifier} = state.currentTab;
     ctx.patchState(produce(ctx.getState(), draft => {
-      draft.content[wsIdentifier].scopeOfCompleteness.projects = _.map(state.content[wsIdentifier].scopeOfCompleteness.projects, item => ({...item, selected: item.projectId === payload.projectId}))
+      draft.content[wsIdentifier].scopeOfCompleteness.projects = _.map(state.content[wsIdentifier].projects, item => ({...item, selected: item.projectId === payload.projectId}))
     }));
     ctx.dispatch(new LoadScopePLTsData());
   }
