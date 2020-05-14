@@ -305,7 +305,7 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
       workspaceUwYear: uwYear
     };
     this.workspaceType = marketChannel;
-    if(marketChannel == 'FAC') this.selectedProject = _.find(projects, project => project.selected);
+    this.selectedProject = _.find(projects, project => project.selected);
   }
 
   protected detectChanges() {

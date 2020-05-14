@@ -85,8 +85,8 @@ export class BaseTable extends BaseContainer implements TableInterface , OnInit,
       selectedProject,
       workspaceType
     } = changes;
-    this.initTable(params, selectedProject, workspaceType && workspaceType.currentValue);
-    if(workspaceType && workspaceType.currentValue == 'FAC') this.selectedProjectFilter(selectedProject);
+    this.initTable(params, selectedProject, workspaceType);
+    this.selectedProjectFilter(selectedProject);
   }
 
   ngAfterViewInit(): void {
@@ -107,10 +107,11 @@ export class BaseTable extends BaseContainer implements TableInterface , OnInit,
     this._handler.initApi(`${backendUrl()}plt/`);
   }
 
-  initTable(params, selectedProject, workspaceType) {
-    if(this.params && !this.tableInitialized) {
+  initTable(params, selectedProject, wsType) {
+    if(this.params && !this.tableInitialized && wsType && selectedProject && selectedProject.previousValue != selectedProject.currentValue) {
       this.tableInitialized = true;
-      this._handler.initTable(this.params, workspaceType == 'FAC' && selectedProject && selectedProject.previousValue != selectedProject.currentValue ? selectedProject.currentValue: null);
+      console.log(params, selectedProject, wsType);
+      this._handler.initTable(this.params, wsType.currentValue == 'FAC' ? selectedProject.currentValue : null);
     }
   }
 
