@@ -102,14 +102,14 @@ public class BatchConfiguration {
     public TaskExecutor threadPoolTaskExecutor() {
 
         SimpleAsyncTaskExecutor executor = new SimpleAsyncTaskExecutor();
-        executor.setConcurrencyLimit(5);
+        executor.setConcurrencyLimit(1);
         executor.setThreadNamePrefix("jm_thread");
         return executor;
     }
 
     @Bean(name = "RRThreadPoolWithQueue")
     public ThreadPoolExecutor RRThreadPoolWithQueue() {
-        return new ThreadPoolExecutor(5, 5, 1, TimeUnit.SECONDS, new PriorityBlockingQueue<Runnable>(500, new Comparator<Runnable>() {
+        return new ThreadPoolExecutor(1, 1, 1, TimeUnit.SECONDS, new PriorityBlockingQueue<Runnable>(500, new Comparator<Runnable>() {
             @Override
             public int compare(Runnable o1, Runnable o2) {
                 return ((RRJob) o1).compareTo((RRJob) o2);
