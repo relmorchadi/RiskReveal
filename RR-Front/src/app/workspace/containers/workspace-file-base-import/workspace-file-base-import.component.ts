@@ -474,11 +474,12 @@ export class WorkspaceFileBaseImportComponent extends BaseContainer implements O
       object.forEach(o => {
         if(o.hasOwnProperty('label')) {
           o.children = o.label.children;
-          console.log('SPLIT', o.label.data.file.split('\\')[o.label.data.file.split('\\').length-1]);
-          o.label = o.label.data.file.split('\\')[o.label.data.file.split('\\').length-1];
-          //o.label = o.label.data.customName;
+          //console.log('SPLIT', o.label.data.file.split('\\')[o.label.data.file.split('\\').length-1]);
+          //o.label = o.label.data.file.split('\\')[o.label.data.file.split('\\').length-1];
+          o.label = o.label.data.customName;
         } else {
-            o.label = o.data.customName;
+            //o.label = o.label.data.file.split('\\')[o.label.data.file.split('\\').length-1];
+            o.label = o.label.data.customName;
         }
         this.changeData(o.children)
       });
