@@ -115,6 +115,7 @@ export class WorkspaceExposuresComponent extends BaseContainer implements OnInit
     }
 
     initSelectedHeaderConfig(headerConfig) {
+        if (headerConfig.divisions[0])
         this.selectedHeaderConfig = {
             division: headerConfig.divisions[0],
             portfolio: headerConfig.portfolios[0],
@@ -223,7 +224,7 @@ export class WorkspaceExposuresComponent extends BaseContainer implements OnInit
                 break;
             }
             case 'changeView' : {
-                this.selectedHeaderConfig.exposureView = $event.payload.value;
+                this.selectedHeaderConfig.exposureView = $event.payload.header;
                 this.tableConfig$ = this.exposuresTableService.loadTableConfig(
                     {
                         ...this.selectedHeaderConfig,

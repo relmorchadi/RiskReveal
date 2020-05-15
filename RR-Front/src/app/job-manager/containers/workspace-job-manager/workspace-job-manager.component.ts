@@ -227,9 +227,9 @@ export class WorkspaceJobManagerComponent extends BaseContainer
       this.detectChanges();
     });
 
-    this.user$.subscribe( value => {
-      this.Users = value;
-    })
+    // this.user$.subscribe( value => {
+    //   this.Users = value;
+    // })
     // this.jobs$.subscribe(value => {
     //   this.jobs = _.toArray(_.merge({}, value));
     //   this.savedTask = [..._.sortBy(_.filter(this.jobs, (dt) => !dt.pending), (dt) => dt.isPaused),
