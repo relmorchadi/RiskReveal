@@ -2,7 +2,7 @@ import {CUSTOM_ELEMENTS_SCHEMA, NgModule} from '@angular/core';
 import {COMPONENTS} from './components';
 import {CONTAINERS} from './containers';
 import {DIRECTIVES} from './directives';
-import {PIPES} from './pipes';
+import {FilterByPathPipe, PIPES} from './pipes';
 import {RouterModule} from '@angular/router';
 import {SharedModule} from '../shared/shared.module';
 import {NgMasonryGridModule} from 'ng-masonry-grid';
@@ -79,7 +79,8 @@ import { AttachPltsPopUpComponent } from './components/scopeCompleteness/attach-
     ContextMenuModule
   ],
   exports: [
-    RouterModule
+    RouterModule,
+    FilterByPathPipe
   ],
   providers: [
     ...SERVICE,...PIPES,

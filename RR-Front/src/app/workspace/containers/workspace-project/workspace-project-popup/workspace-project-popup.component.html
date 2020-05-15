@@ -1,9 +1,10 @@
 <calib-col-manager
         *ngIf="isManageColumnsVisible"
+        [fixedVisibleColumns]="false"
         [visibleList]="((browesing && selectionStep == 'plt') ? Inputs.pltColumns.visible :
-        ( marketChannel == 'FAC' ? columnsFac.visible : columnsTreaty.visible)) | cloneDataColumnManageFilter"
+        ( marketChannel == 'FAC' ? columnsFac : columnsTreaty ) | getVisibleColumns : true  ) | cloneDataColumnManageFilter"
         [availableList]="((browesing && selectionStep == 'plt') ? Inputs.pltColumns.available :
-        ( marketChannel == 'FAC' ? columnsFac.available : columnsTreaty.available)) "
+        ( marketChannel == 'FAC' ? columnsFac : columnsTreaty) | getVisibleColumns : false ) "
         (actionDispatcher)="handleManageColumnsActions($event)">
 </calib-col-manager>
 <p-dialog [(visible)]="isVisible"
@@ -66,7 +67,7 @@
       <div style="width: 100%; text-align: right">
         <i (click)="openColumnManager()" style="cursor: pointer;" class="icon-settings_24px" nz-tooltip="Manage Columns"></i>
         </div>
-      <app-table [tableColumn]="marketChannel == 'FAC' ? columnsFac.visible : columnsTreaty.visible"
+      <app-table [tableColumn]="marketChannel == 'FAC' ? columnsFac : columnsTreaty"
                  [sortable]="false" [totalRecords]="paginationOption?.total" #dt
                  [listOfData]="contracts" [virtualScroll]="false" (selectOne)="openWorkspaceInSlider($event)"
                  [tableWidth]="'1000px'" (loadMore)="loadMore($event)"
@@ -112,6 +113,7 @@
         <div class="PLTs-content">
           <app-plt-main-table
             [tableInputs]="Inputs | pickKeys : tableInputs"
+            [selectedProject]="Inputs.selectedProject"
             (actionDispatcher)="tableActionDispatcher($event)"
           ></app-plt-main-table>
         </div>

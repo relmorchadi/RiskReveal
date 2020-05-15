@@ -36,6 +36,7 @@ export class PltMainTableComponent implements OnInit {
 
   @Input() tableInputs: tableStore.Input;
   @Input() containerPlts: any;
+  @Input() selectedProject: number;
 
   selectedDropDown: any;
   selectedDropDownTs: any;

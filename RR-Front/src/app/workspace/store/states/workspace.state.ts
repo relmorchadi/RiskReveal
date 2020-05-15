@@ -13,6 +13,7 @@ import {FileBasedService} from '../../services/file-based.service';
 import {ScopeCompletenessService} from '../../services/scop-completeness.service';
 import {ContractService} from "../../services/contract.service";
 import {CalibrationNewService} from "../../services/calibration-new.service";
+import {CloningStatus} from "../../model/CloningStatus";
 
 
 const initialState: WorkspaceModel = {
@@ -32,6 +33,7 @@ const initialState: WorkspaceModel = {
       edmrdmSelection: {}
     }
   },
+  cloningStatus: CloningStatus.noClone,
   routing: '',
   loading: false
 };
@@ -187,6 +189,11 @@ export class WorkspaceState {
   @Selector()
   static getCloneConfig(state: WorkspaceModel) {
     return state.content[state.currentTab.wsIdentifier].pltManager['cloneConfig'];
+  }
+
+  @Selector()
+  static getCloningStatus(state: WorkspaceModel) {
+    return state.cloningStatus;
   }
 
   @Selector()
@@ -656,17 +663,16 @@ export class WorkspaceState {
     this.pltStateService.saveGlobalTableSelection(ctx, payload);
   }
 
-  @Action(fromPlt.commitClone)
-  commitClone(ctx: StateContext<WorkspaceModel>, {payload}: fromPlt.commitClone) {
+  @Action(fromPlt.CommitClone)
+  commitClone(ctx: StateContext<WorkspaceModel>, {payload}: fromPlt.CommitClone) {
     return this.pltStateService.commitClone(ctx, payload);
   }
 
-  @Action(fromPlt.commitCloneSuccess)
-  commitCloneSuccess(ctx: StateContext<WorkspaceModel>, {payload}: fromPlt.commitCloneSuccess) {
+  @Action(fromPlt.CommitCloneSuccess)
+  commitCloneSuccess(ctx: StateContext<WorkspaceModel>, {payload}: fromPlt.CommitCloneSuccess) {
     return this.pltStateService.commitCloneSuccess(ctx, payload);
   }
 
-  @Action(fromPlt.setCloneConfig)
   setCloneConfig(ctx: StateContext<WorkspaceModel>, {payload}: fromPlt.setCloneConfig) {
     return this.pltStateService.setCloneConfig(ctx, payload);
   }

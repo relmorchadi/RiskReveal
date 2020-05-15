@@ -23,6 +23,7 @@ import {RrNumberPipe} from "./rr-number.pipe";
 import {HasStatusPipe} from "./has-status.pipe";
 import {TableFilterPipe} from "./table-filter.pipe";
 import {GetIdentifiersPipe} from "./get-identifiers.pipe";
+import {FilterByPathPipe} from "./filter-by-path.pipe";
 
 export const PIPES = [
     RRDatePipe,
@@ -33,6 +34,7 @@ export const PIPES = [
     TableSortAndFilterPipe,
     TextLengthPipe,
     TrimFormatPipe,
+    FilterByPathPipe,
     TrimSecondaryFormatPipe,
     KeysPipe,
     ShowLastPipe,

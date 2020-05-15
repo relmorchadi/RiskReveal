@@ -76,6 +76,7 @@ export class BaseTable extends BaseContainer implements TableInterface , OnInit,
 
   ngOnInit() {
     super.ngOnInit();
+    console.log(this.params);
   }
 
   ngOnChanges(changes: SimpleChanges): void {

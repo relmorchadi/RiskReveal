@@ -21,30 +21,31 @@ import { TrimSecondaryFormatPipe } from './pipes/trim-secondary-format.pipe';
 import {NgxEchartsModule} from 'ngx-echarts';
 import { AngularResizeElementModule } from 'angular-resize-element';
 import {SERVICES} from "./services";
+import {WorkspaceModule} from "../workspace/workspace.module";
 
 
 @NgModule({
   declarations: [...COMPONENTS, ...PIPES, ...DIRECTIVES, TrimFormatPipe, TrimSecondaryFormatPipe],
-  imports: [
-    CommonModule,
-    NgZorroAntdModule,
-    ReactiveFormsModule,
-    ContextMenuModule,
-    DialogModule,
-    TableModule,
-    FormsModule,
-    ColorChromeModule,
-    ColorSketchModule,
-    MultiSelectModule,
-    SidebarModule,
-    ProgressSpinnerModule,
-    DragDropModuleAngular,
-    AngularDraggableModule,
-    ColorGithubModule,
-    AngularResizedEventModule,
-    NgxEchartsModule,
-    AngularResizeElementModule
-  ],
+    imports: [
+        CommonModule,
+        NgZorroAntdModule,
+        ReactiveFormsModule,
+        ContextMenuModule,
+        DialogModule,
+        TableModule,
+        FormsModule,
+        ColorChromeModule,
+        ColorSketchModule,
+        MultiSelectModule,
+        SidebarModule,
+        ProgressSpinnerModule,
+        DragDropModuleAngular,
+        AngularDraggableModule,
+        ColorGithubModule,
+        AngularResizedEventModule,
+        NgxEchartsModule,
+        AngularResizeElementModule,
+    ],
   providers: [TableSortAndFilterPipe, SystemTagFilterPipe, DecimalPipe, ...SERVICES, ...PIPES],
   exports: [
     CommonModule,

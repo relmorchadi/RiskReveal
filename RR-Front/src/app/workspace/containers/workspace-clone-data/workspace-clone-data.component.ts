@@ -2,7 +2,7 @@ import {ChangeDetectionStrategy, ChangeDetectorRef, Component, ComponentFactoryR
 import {ActivatedRoute, Router} from '@angular/router';
 import {Actions, ofActionDispatched, Select, Store} from '@ngxs/store';
 import {MessageService} from 'primeng/api';
-import {combineLatest, forkJoin} from 'rxjs';
+import {combineLatest, forkJoin, Observable} from 'rxjs';
 import * as _ from 'lodash'
 import {WorkspaceState} from '../../store/states';
 import * as fromWS from '../../store'
@@ -15,6 +15,8 @@ import {WsApi} from "../../services/api/workspace.api";
 import {$e} from "codelyzer/angular/styles/chars";
 import {CloneDataApi} from "../../services/api/cloneData.api";
 import {LoadProjectByWorkspace} from "../../store";
+import {GeneralConfigState} from "../../../core/store/states";
+import {GetTablePreference} from "../../../core/store/actions";
 
 interface SourceData {
   plts: any[];
@@ -33,6 +35,9 @@ interface SourceData {
 export class WorkspaceCloneDataComponent extends BaseContainer implements OnInit, StateSubscriber {
 
   @Select(WorkspaceState.getCurrentTab) currentTab$;
+  @Select(WorkspaceState.getCloningStatus) cloningStatus$;
+
+  cloningStatus = '';
 
   constructor(
     private route$: ActivatedRoute,
@@ -198,8 +203,16 @@ export class WorkspaceCloneDataComponent extends BaseContainer implements OnInit
   };
   projectsForm: FormGroup;
   listOfProjects: any[];
+  data$: Observable<any>;
 
   ngOnInit() {
+
+    this.cloningStatus$.subscribe(status => this.cloningStatus = status);
+
+ //   this.data$ = this.store.select(GeneralConfigState.getTablePreference('pageTst', 'tabblename'));
+   //   this.data$.subscribe(t => console.log(t));
+    //this.dispatch(new GetTablePreference({uIPage: 'pageTst', tableName: 'tabblename'}));
+
     this.currentTab$.subscribe(c => {
 
       this.store.dispatch(new LoadProjectByWorkspace({wsId: c.wsIdentifier.split('-')[0], uwYear: c.wsIdentifier.split('-')[1]}));
@@ -623,7 +636,7 @@ export class WorkspaceCloneDataComponent extends BaseContainer implements OnInit
     }
 
 
-    this.dispatch(new fromWS.commitClone(body));
+    this.dispatch(new fromWS.CommitClone(body));
 
     if (this._projectStep.value === 0) {
       this._projectName.markAsDirty();
@@ -632,6 +645,7 @@ export class WorkspaceCloneDataComponent extends BaseContainer implements OnInit
     if (this._projectStep.value === 1) {
       this._selectedProjectId.markAsDirty();
     }
+    this.detectChanges();
   }
 
   cloneAndOpen() {

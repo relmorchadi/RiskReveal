@@ -353,6 +353,7 @@ export class TableComponent implements OnInit {
   }
 
   resize(event) {
+    console.log('resize', event);
     this.resizeTable.emit(event);
   }
 

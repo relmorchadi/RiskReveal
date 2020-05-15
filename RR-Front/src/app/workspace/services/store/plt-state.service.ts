@@ -13,6 +13,7 @@ import {ADJUSTMENT_TYPE, ADJUSTMENTS_ARRAY} from "../../containers/workspace-cal
 import {TagsApi} from "../api/tags.api";
 import {loadAllPlts, LoadProjectByWorkspace, LoadWS} from "../../store/actions";
 import {CloneDataApi} from "../api/cloneData.api";
+import {CloningStatus} from "../../model/CloningStatus";
 
 @Injectable({
   providedIn: 'root'
@@ -649,11 +650,14 @@ export class PltStateService {
   }
 
   commitClone(ctx: StateContext<WorkspaceModel>, payload: any) {
+    ctx.patchState(produce(ctx.getState(), draft => {
+      draft.cloningStatus = CloningStatus.onClone;
+    }));
 
     return this.cloneDataApi.cloneData(payload).pipe(
         mergeMap((r => {
 
-      return ctx.dispatch(new fromPlt.commitCloneSuccess(payload));
+      return ctx.dispatch(new fromPlt.CommitCloneSuccess(payload));
     })));
 
   }
@@ -664,6 +668,11 @@ export class PltStateService {
       targetWorkspaceContextCode,
       targetWorkspaceUwYear
     } = payload;
+
+    ctx.patchState(produce(ctx.getState(), draft => {
+      draft.cloningStatus = CloningStatus.cloneSucceed;
+    }));
+
     const state = ctx.getState();
     if (state.content[targetWorkspaceContextCode + '-' + targetWorkspaceUwYear]) {
 
@@ -671,4 +680,5 @@ export class PltStateService {
 
     }
   }
+
 }

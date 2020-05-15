@@ -4,7 +4,10 @@
 <p-table
   [columns]="tableInputs.pltColumns.visible"
   [value]="(tableInputs.showDeleted ? tableInputs.listOfDeletedPltsData : tableInputs.listOfPltsData)
-  | tableSortAndFilter : [tableInputs.sortData, tableInputs.filterData] | systemTagFilter: [tableInputs.filters.systemTag] | falselyFilter: tableInputs.status"
+  | tableSortAndFilter : [tableInputs.sortData, tableInputs.filterData]
+  | systemTagFilter: [tableInputs.filters.systemTag]
+  | falselyFilter: tableInputs.status
+  |  filterByPath : selectedProject"
   [contextMenu]="cm"
   [scrollable]="true"
   [resizableColumns]="true"

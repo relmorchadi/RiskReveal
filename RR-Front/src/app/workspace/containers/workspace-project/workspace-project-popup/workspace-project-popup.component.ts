@@ -61,8 +61,7 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
   globalSearchItem = '';
   private _filter = {};
   keywordFormGroup: FormGroup;
-  columnsTreaty = {
-   visible : [
+  columnsTreaty = [
      {field: 'checkbox', header: '', width: '20px', visible: true, display: true, sorted: true, filtered: false, type: 'checkbox', class: 'icon-check_24px',},
      {field: 'countryName', header: 'Country', width: '90px', type: 'text', visible: true, display: true, sorted: true, filtered: true, queryParam: ''},
      {field: 'cedantName', header: 'Cedent Name', width: '90px', type: 'text', visible: true, display: true, sorted: true, filtered: true, queryParam: 'CLIENT_NAME'},
@@ -72,11 +71,8 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
      {field: 'workSpaceId', header: 'Workspace Context', width: '90px', type: 'text', visible: true, display: true, sorted: true, filtered: true, queryParam: 'CONTRACT_CODE'},
      /*    {field: 'openInHere', header: '', width: '20px', type: 'icon', class: 'icon-fullscreen_24px', visible: true/*, handler: (option) => option.forEach(dt => this.openWorkspace(dt.workSpaceId, dt.uwYear)), display: false, sorted: false, filtered: false},
          {field: 'openInPopup', header: '', width: '20px', type: 'icon', class: 'icon-open_in_new_24px', visible: true/*, handler: (option) => option.forEach(dt => this.popUpWorkspace(dt.workSpaceId, dt.uwYear)), display: false, sorted: false, filtered: false}
-       */],
-    available: []
-  };
-   columnsFac = {
-     visible :        [
+     */];
+   columnsFac =   [
        {field: 'checkbox', header: '', width: '20px', visible: true, display: true, sorted: true, filtered: false, type: 'checkbox', class: 'icon-check_24px',},
        {field: 'client', header: 'Client', width: '90px', type: 'text', visible: true, display: true, sorted: true, filtered: true, queryParam: 'ClientCode'},
        {field: 'uwYear', header: 'Uw Year', width: '90px', type: 'text', visible: true, display: true, sorted: true, filtered: true, queryParam: 'UWYear'},
@@ -88,9 +84,7 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
        {field: 'assignedTo', header: 'Assigned User', width: '90px', type: 'text', visible: true, display: true, sorted: true, filtered: true, queryParam: 'AssignedTo'},
        /*  {field: 'openInHere', header: '', width: '20px', type: 'icon', class: 'icon-fullscreen_24px', visible: true, /*handler: (option) => option.forEach(dt => this.openWorkspace(dt.workspaceName, dt.uwYear)), display: false, sorted: false, filtered: false},
            {field: 'openInPopup', header: '', width: '20px', type: 'icon', class: 'icon-open_in_new_24px', visible: true, /*handler: (option) => option.forEach(dt => this.popUpWorkspace(dt.workspaceName, dt.uwYear)), display: false, sorted: false, filtered: false}
-          */  ],
-  available: []
-   };
+    */  ];
   paginationOption = {currentPage: 0, page: 0, size: 40, total: '-'};
   contracts = [];
   loading;
@@ -131,6 +125,7 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
     addTagModalIndex: number;
     fromPlts: boolean;
     deletedPltsLength: number;
+    selectedProject: number;
     userTags: any[];
     systemTagsCount: any;
     wsHeaderSelected: boolean;
@@ -168,6 +163,7 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
           }
         },
       ],
+      selectedProject: 0,
       filterInput: '',
       pltColumns: {
         visible: [
@@ -340,7 +336,6 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
 
     this.getPlts().subscribe((data) => {
 
-
       this.updateLeftMenuInputs('systemTagsCount', this.systemTagService.countSystemTags(data));
 
       this.setInputs('listOfPltsCache', _.map(data, (v, k) => ({...v, pltId: k})));
@@ -471,9 +466,9 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
 
   mapColToQuery(col) {
     if (this.marketChannel === 'Treaty') {
-      return _.find(this.columnsTreaty.visible, column => column.field == col).queryParam;
+      return _.find(this.columnsTreaty, column => column.field == col).queryParam;
     } else {
-      return _.find(this.columnsFac.visible, column => column.field == col).queryParam;
+      return _.find(this.columnsFac, column => column.field == col).queryParam;
     }
   }
 
@@ -504,6 +499,7 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
         },
       ],
       filterInput: '',
+      selectedProject: 0,
       pltColumns: {
         visible: [
           {
@@ -654,11 +650,14 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
         }));
 
         this.getPlts().subscribe((data) => {
+          console.log(data);
 
           let ar = data;
           if(ar)
-          if(ar.plts)
-          ar.plts.forEach(d => d.visible = true);
+          if(ar.plts) {
+            ar.plts.forEach(d => d.visible = true);
+            ar.plts.filter(p => p.pltType == "THREAD");
+          }
           this.updateLeftMenuInputs('systemTagsCount', this.systemTagService.countSystemTags(data? data.tag: null));
           this.setInputs('selectedListOfPlts', []);
           this.setInputs('listOfPltsData', ar? ar.plts : []);
@@ -873,9 +872,11 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
   }
 
   setSelectedProjects($event) {
-    this.updateLeftMenuInputs('projects', $event);
 
-    this.setInputs('projects', $event);
+    console.log('selectedProject', $event);
+    this.setInputs('selectedProject', $event);
+    this.updateLeftMenuInputs('projects', _.map(this.leftMenuInputs.projects, p => ({...p, selected: +p.projectId == +$event})));
+    console.log(this.leftMenuInputs.projects);
   }
 
   clear() {
@@ -1055,6 +1056,8 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
   }
 
   resetPath() {
+    console.log('reset');
+    this.setInputs('selectedProject', 0);
     this.updateTableAndTagsInputs('filterData', _.omit(this.getTableInputKey('filterData'), 'project'));
     this.updateLeftMenuInputs('projects', _.map(this.leftMenuInputs.projects, p => ({...p, selected: false})));
     this.updateTableAndTagsInputs('showDeleted', false);
@@ -1117,7 +1120,7 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
         this.isManageColumnsVisible = false;
         action.payload.visible = [
           {
-            sortDir: 1, fields: '', header: '', sorted: false, filtred: false, resizable: false, width: '40', icon: null, type: 'checkbox', active: true
+            field: 'checkbox', header: '', width: '20px', visible: true, display: true, sorted: true, filtered: false, type: 'checkbox', class: 'icon-check_24px'
           },
           ...action.payload.visible,
         ];
@@ -1127,10 +1130,19 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
 
         }
         else {
+          console.log(action.payload);
+
+          action.payload.visible.forEach(avCol => {
+            avCol.visible = true;
+          });
+          action.payload.available.forEach(avCol => {
+            avCol.visible = false;
+          });
           if(this.marketChannel === 'FAC') {
-            this.columnsFac = action.payload;
+            this.columnsFac = [...action.payload.visible, ...action.payload.available]
+            console.log(this.columnsFac)
           } else {
-            this.columnsTreaty = action.payload;
+            this.columnsTreaty = [...action.payload.visible, ...action.payload.available]
           }
         }
         this.isVisible = true;

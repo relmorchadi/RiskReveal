@@ -1,4 +1,4 @@
-<div class="a-app-wrapper">
+c<div class="a-app-wrapper">
   <div class="a-app-header">
 
     <h4>Clone Workspace assets</h4>
@@ -152,7 +152,12 @@ f            <button (click)="openSearchPopUp('to')" class="a-buttons-contained 
       <div class="box-item" style="width: 780px;">
       <div style="margin-top: 20px; display: flex;justify-content: flex-end;">
       <button (click)="reset()" [ngClass]="{'a-button-text': activeSubTitle === 0, 'a-buttons-outlined': activeSubTitle != 0}">{{ activeSubTitle === 0 ? 'reset' : 'submit'}}</button>
-      <button (click)="clone()" class="a-buttons-contained" style="margin-left: 10px;">clone</button>
+      <button (click)="clone()"
+              [ngClass]="{'a-buttons-contained' : cloningStatus != 'ON_CLONE',
+                          'a-button-text':  cloningStatus == 'ON_CLONE'}"
+              style="margin-left: 10px;">
+          {{cloningStatus == 'ON_CLONE' ? 'Cloning...' : 'clone'}}
+      </button>
       <button (click)="cloneAndOpen()" class="a-buttons-contained" style="margin-left: 10px;">clone AND open</button>
       </div>
       </div>

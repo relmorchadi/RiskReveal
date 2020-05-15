@@ -145,24 +145,17 @@ export class setCloneConfig {
   }
 }
 
-export class commitClone {
+export class CommitClone {
   static readonly type = '[PLT Main] Commit clone';
 
   constructor(public payload: any) {
   }
 }
 
-export class commitCloneSuccess {
+export class CommitCloneSuccess {
   static readonly type = '[PLT Main] Commit clone success';
 
   constructor(public payload: any) {
-  }
-}
-
-export class commitCloneFail {
-  static readonly type = '[PLT Main] Commit clone fail';
-
-  constructor() {
   }
 }
 

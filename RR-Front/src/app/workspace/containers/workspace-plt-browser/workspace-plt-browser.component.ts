@@ -106,7 +106,7 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
 
   observeRouteParams() {
     return this.route$.params.pipe(
-        tap(({wsId, year}) => {
+        tap(({wsId, year}) =>  {
           this.workspaceId = wsId;
           this.uwy = year;
           this.updateLeftMenuInputs('wsId', this.workspaceId);
@@ -301,6 +301,8 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
   patchState({data: {leftNavbarCollapsed, wsId, uwYear, projects}}): void {
     this.leftIsHidden = leftNavbarCollapsed;
     this.params = {
+      wsId,
+      uwYear,
       workspaceContextCode: wsId,
       workspaceUwYear: uwYear
     };

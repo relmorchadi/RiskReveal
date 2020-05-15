@@ -93,13 +93,25 @@ public class CloningScorPltHeaderService {
     public ProjectEntity getCloningIntoProject(String cloningType, Integer workspaceUwYear, String workspaceContextCode,
                                                String projectName, String projectDescription, Long existingProjectId)
     throws com.scor.rr.exceptions.RRException{
-        System.out.println("[clone data]: creating target project; cloning type : " + cloningType);
-        System.out.println(projectDescription + " " + projectName);
+        //System.out.println("[clone data]: creating target project; cloning type : " + cloningType);
+        //System.out.println(projectDescription + " " + projectName);
         if (this.workspaceRepository.findByWorkspaceContextCodeAndWorkspaceUwYear(workspaceContextCode, workspaceUwYear).isPresent()) {
             WorkspaceEntity workspaceTarget = this.workspaceRepository.findByWorkspaceContextCodeAndWorkspaceUwYear
                     (workspaceContextCode, workspaceUwYear).get();
+            Optional<ProjectEntity> projs = this.projectRepository.findByProjectNameAndWorkspaceId(projectName, workspaceTarget.getWorkspaceId());
+            if (projs.isPresent()) {
+                return projs.get();
+            } else {
+                /**
+                 *  CREATE PROJECT
+                 */
+                return this.createNewProject(workspaceUwYear,
+                        workspaceContextCode,
+                        projectName,
+                        projectDescription);
+            }
 
-            switch(cloningType) {
+/*            switch(cloningType) {
                 case "KEEP_PROJECT_NAME":
                     Optional<ProjectEntity> projs = this.projectRepository.findByProjectNameAndWorkspaceId(projectName, workspaceTarget.getWorkspaceId());
                     if (projs.isPresent()) {
@@ -107,7 +119,6 @@ public class CloningScorPltHeaderService {
                     } else {
                         /**
                          *  CREATE PROJECT
-                         */
                         return this.createNewProject(workspaceUwYear,
                                 workspaceContextCode,
                                 projectName,
@@ -128,7 +139,7 @@ public class CloningScorPltHeaderService {
                 default:
                     return null;
             }
-        } else {
+  */      } else {
             throw new com.scor.rr.exceptions.RRException(ExceptionCodename.WORKSPACE_NOT_FOUND, 1);
         }
     }
@@ -137,6 +148,10 @@ public class CloningScorPltHeaderService {
             throws com.scor.rr.exceptions.RRException{
 
         List<PltHeaderEntity> pltsResults = new ArrayList<PltHeaderEntity>();
+
+        System.out.println("************************** request ");
+        System.out.println(request);
+
 
         for(Long pltId : request.getPltIds()) {
             // create new plt header entity
@@ -191,7 +206,7 @@ public class CloningScorPltHeaderService {
             }
             // @TODO: FIX THIS !!!!!!!!!!!!
             // copy plt files
-            try {
+          /*  try {
                 File dstFile = this.copyPltFile(sourcePlt, newPLT ,
                         "/scor/data/ihub/v4/Facultative/Contracts/" + request.getTargetWorkspaceContextCode()
                                 + "/" + request.getTargetWorkspaceUwYear() + "/" +
@@ -202,7 +217,7 @@ public class CloningScorPltHeaderService {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-
+*/
             newPLT.setCloningSourceId(sourcePlt.getPltHeaderId());
             pltsResults.add(this.pltHeaderRepository.save(newPLT));
         }
@@ -226,8 +241,8 @@ public class CloningScorPltHeaderService {
 
     private File copyPltFile(PltHeaderEntity plt, PltHeaderEntity newPLT, String targetPath) throws Exception {
 
-        System.out.println(">>>>>>>>>>>>>> source: " + plt.getLossDataFilePath());
-        System.out.println(">>>>>>>>>>>>>> new: " + newPLT.getLossDataFilePath());
+        //System.out.println(">>>>>>>>>>>>>> source: " + plt.getLossDataFilePath());
+        //System.out.println(">>>>>>>>>>>>>> new: " + newPLT.getLossDataFilePath());
         String dstFilePath = "/scor/data/ihub/v4/Facultative/Contracts/" + targetPath ;
         File sourceFile = new File(plt.getLossDataFilePath(), plt.getLossDataFileName());
         File dstFile = new File(dstFilePath, "PLT_" + newPLT.getPltHeaderId() + "_" + newPLT.getPltType() + "_" + sdf.format(new Date()) + ".bin");

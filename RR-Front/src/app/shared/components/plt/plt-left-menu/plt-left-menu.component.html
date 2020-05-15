@@ -4,7 +4,7 @@
       <span style="width: 90px; padding: 0px 12px 0px 12px; font-size: 15px; font-weight: bold;">Path</span>
     </ng-template>
     <div class="upPartLeftMenu">
-        <span class="wsHeader" [ngStyle]="{'background-color': leftMenuInputs.wsHeaderSelected && !leftMenuInputs.showDeleted ?  '#FDFBDF' : 'white'}"
+        <span class="clickable-item wsHeader" [ngStyle]="{'background-color': leftMenuInputs.wsHeaderSelected && !leftMenuInputs.showDeleted ?  '#FDFBDF' : 'white'}"
               (click)="resetPath()">
           <i class="icon-window-section"></i>
           <span class="body-info">{{leftMenuInputs?.wsId}} - {{leftMenuInputs?.uwYear}}</span>
@@ -26,7 +26,7 @@
             [ngClass]="{'active-path': project.selected}">
           <i [ngClass]="{ 'icon-assignment_24px': !project.carRequestId  , 'icon-copy': project.carRequestId }" ></i>
           <span class="body-list" [nz-tooltip]="project.carRequestId ? project.carRequestId + ' ' + project.carRequestStatus : (project.projectName + ' ' + (project.projectId | reFormatPID) + ' ' + (toDate(project.creationDate) | date: 'y'))">
-            {{project.selected + ' ' + ( project.carRequestId ? project.carRequestId + ' ' + project.carRequestStatus :
+            {{( project.carRequestId ? project.carRequestId + ' ' + project.carRequestStatus :
                   (project.projectName + ' ' + project.projectId | reFormatPID) + ' ' + (toDate(project.creationDate) | date: 'y'))}}
           </span>
         </li>
