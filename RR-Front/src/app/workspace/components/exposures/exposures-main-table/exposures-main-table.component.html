@@ -11,7 +11,7 @@
         <ng-template pTemplate="colgroup" let-columns>
             <colgroup>
                 <col *ngFor="let col of columns"
-                     [ngStyle]="{'width':col.field == 'country'?'120px':'100px'}">
+                     [ngStyle]="{'width':col.field == 'country'?'150px':'100px'}">
             </colgroup>
         </ng-template>
         <ng-template pTemplate="frozenheader" let-columns>
@@ -41,7 +41,10 @@
                 (mouseleave)="hoveredRow = null">
                 <ng-container *ngFor="let col of columns">
                     <td [colSpan]="col.field == 'country' ? 2 : 1">
-                        <b>{{rowData[col.field]}}</b>
+                        <b *ngIf="rowData[col.field] == 'TOTAL'">{{rowData[col.field]}}</b>
+                        <div   *ngIf="rowData[col.field] != 'TOTAL'"
+                               appRrNumber [number]="rowData[col.field]" [config]="numberConfig"class="total-row">
+                        </div>
                     </td>
                 </ng-container>
             </tr>
@@ -76,7 +79,10 @@
                     </ng-container>
                     <ng-container *ngIf="col.field != 'country'">
                         <td class="ui-resizable-column">
-                            {{rowData[col.field]}}
+                            <div    appRrNumber [number]="rowData[col.field]" [config]="numberConfig"
+                                    class="text-ellipsis"
+                                    style="font-size: 12px;font-weight: 400;text-align: right">
+                            </div>
                         </td>
                     </ng-container>
                 </ng-container>
@@ -89,7 +95,8 @@
                 <ng-container *ngFor="let col of columns">
                     <ng-container>
                         <td class="ui-resizable-column" style="text-align: start; !important;">
-                            {{rowData[col.field]}}
+                            <div    appRrNumber [number]="rowData[col.field]" [config]="numberConfig">
+                            </div>
                         </td>
                     </ng-container>
                 </ng-container>

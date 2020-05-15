@@ -1,9 +1,6 @@
 package com.scor.rr.service;
 
-import com.scor.rr.domain.JobEntity;
-import com.scor.rr.domain.JobExecutionEntity;
-import com.scor.rr.domain.StepEntity;
-import com.scor.rr.domain.TaskEntity;
+import com.scor.rr.domain.*;
 import com.scor.rr.domain.dto.JobDto;
 import com.scor.rr.domain.dto.TaskDto;
 import com.scor.rr.domain.enums.JobPriority;
@@ -13,9 +10,9 @@ import com.scor.rr.domain.model.RRJob;
 import com.scor.rr.repository.JobEntityRepository;
 import com.scor.rr.repository.JobExecutionRepository;
 import com.scor.rr.repository.TaskRepository;
-import com.scor.rr.service.abstraction.JobManagerAbstraction;
+import com.scor.rr.repository.UserRrRepository;
+import com.scor.rr.service.batch.abstraction.JobManagerAbstraction;
 import lombok.extern.slf4j.Slf4j;
-import org.modelmapper.ModelMapper;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.launch.JobLauncher;
@@ -23,12 +20,13 @@ import org.springframework.batch.core.launch.JobOperator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.stream.Collectors;
 
@@ -56,12 +54,13 @@ public class JobManagerImpl extends JobManagerAbstraction {
     private JobEntityRepository jobRepository;
 
     @Autowired
-    private ModelMapper modelMapper;
+    private UserRrRepository userRrRepository;
 
     @Override
     public void submitJob(Long jobId) {
     }
 
+    @Override
     public void submitJob(Job importLossData, JobPriority priority, JobParameters params) {
         executor.execute(new RRJob(importLossData, priority, params, jobLauncher));
     }
@@ -83,10 +82,44 @@ public class JobManagerImpl extends JobManagerAbstraction {
     }
 
     @Override
+    public void pauseJob(Long jobId) {
+        try {
+            JobEntity job = jobRepository.findById(jobId).orElse(null);
+            if (job != null) {
+                for (TaskEntity task : job.getTasks()) {
+                    this.pauseTask(task.getTaskId());
+                }
+                job.setStatus(JobStatus.PAUSED.getCode());
+                jobRepository.saveAndFlush(job);
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    @Override
+    public void resumeJob(Long jobId) {
+        try {
+            JobEntity job = jobRepository.findById(jobId).orElse(null);
+            if (job != null) {
+                for (TaskEntity task : job.getTasks().stream().filter(t -> t.getStatus().equalsIgnoreCase(JobStatus.PAUSED.getCode())).collect(Collectors.toList())) {
+                    task.setStatus(JobStatus.PENDING.getCode());
+                    taskRepository.saveAndFlush(task);
+                }
+                job.setStatus(JobStatus.PENDING.getCode());
+                jobRepository.saveAndFlush(job);
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    @Override
     public void submitTask(Long taskId) {
 
     }
 
+    @Override
     public void submitTask(Job importLossData, JobPriority priority, JobParameters params, TaskEntity taskEntity) {
         executor.execute(new RRJob(importLossData, priority, params, jobLauncher, taskEntity, taskRepository, jobRepository));
     }
@@ -97,10 +130,11 @@ public class JobManagerImpl extends JobManagerAbstraction {
             TaskEntity task = taskRepository.findById(taskId).orElse(null);
             // If the task was already running
             if (task != null && task.getJobExecutionId() != null && jobOperator.getRunningExecutions("importLossData").contains(task.getJobExecutionId())) {
-//                jobOperator.stop(task.getJobExecutionId());
-//                cancelTaskSteps(task);
-//                // If the task is still in queue
-            } else if (task != null && task.getJobExecutionId() == null) {
+                jobOperator.stop(task.getJobExecutionId());
+                cancelTaskSteps(task);
+                // If the task is still in queue
+            } else
+            if (task != null && task.getJobExecutionId() == null) {
                 RRJob runnable = (RRJob) executor.getQueue().stream().filter(e -> ((RRJob) e).getTask().getTaskId().equals(task.getTaskId())).findFirst().orElse(null);
                 if (runnable != null)
                     executor.getQueue().remove(runnable);
@@ -111,10 +145,33 @@ public class JobManagerImpl extends JobManagerAbstraction {
         }
     }
 
+    @Override
+    public void pauseTask(Long taskId) {
+        try {
+            TaskEntity task = taskRepository.findById(taskId).orElse(null);
+            if (task != null && task.getJobExecutionId() == null) {
+                RRJob runnable = (RRJob) executor.getQueue().stream().filter(e -> ((RRJob) e).getTask().getTaskId().equals(task.getTaskId())).findFirst().orElse(null);
+                if (runnable != null)
+                    executor.getQueue().remove(runnable);
+                pauseTaskSteps(task);
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
     private void cancelTaskSteps(TaskEntity task) {
         task.setStatus(JobStatus.CANCELLED.getCode());
         for (StepEntity step : task.getSteps().stream().filter(s -> s.getStatus().equalsIgnoreCase(StepStatus.RUNNING.getCode())).collect(Collectors.toList())) {
             this.logStep(step.getStepId(), StepStatus.CANCELLED);
+        }
+        taskRepository.saveAndFlush(task);
+    }
+
+    private void pauseTaskSteps(TaskEntity task) {
+        task.setStatus(JobStatus.PAUSED.getCode());
+        for (StepEntity step : task.getSteps().stream().filter(s -> s.getStatus().equalsIgnoreCase(StepStatus.RUNNING.getCode())).collect(Collectors.toList())) {
+            this.logStep(step.getStepId(), StepStatus.PAUSED);
         }
         taskRepository.saveAndFlush(task);
     }
@@ -136,6 +193,7 @@ public class JobManagerImpl extends JobManagerAbstraction {
 
     // Find Jobs from spring batch default schema
     @Override
+    @Transactional(transactionManager = "theTransactionManager")
     public List<JobExecutionEntity> findRunningJobsForUser(String userId) {
         return jobExecutionRepository.findRunningJobsForUser(userId);
     }
@@ -143,25 +201,73 @@ public class JobManagerImpl extends JobManagerAbstraction {
     // Find Jobs from RR custom schema
     @Override
     public List<JobDto> findRunningJobsForUserRR(Long userId) {
-        List<JobEntity> myJobs = jobRepository.findAllByUserIdAndSubmittedDate(userId);
-        List<JobDto> jobs = new ArrayList<>();
-//        List<JobDto> jobs = myJobs.stream().map(j -> modelMapper.map(j, JobDto.class)).collect(Collectors.toList());
-        for (JobEntity j : myJobs) {
-            List<TaskDto> tasks = new ArrayList<>();
-            for (TaskEntity t : j.getTasks()) {
-                TaskDto task = new TaskDto(t.getTaskId(), t.getJobExecutionId(), t.getStatus(), t.getPriority(),
-                        t.getSubmittedDate(), t.getStartedDate(), t.getFinishedDate(), 0);
-                tasks.add(task);
+
+        List<JobDto> jobDtoList = new ArrayList<>();
+        List<Map<String, Object>> jobs = jobRepository.getJobRunningOrPendingForUser(userId);
+
+        for (Map<String, Object> job : jobs) {
+            JobDto jobDto = new JobDto();
+
+            jobDto.setJobId(((BigInteger) job.get("JobId")).longValue());
+            jobDto.setJobTypeCode("IMPORT");
+            userRrRepository.findById(((BigInteger) job.get("UserId")).longValue())
+                    .ifPresent(user -> jobDto.setSubmittedByUser(user.getFirstName() + " " + user.getLastName()));
+            jobDto.setPriority(JobPriority.getStringValue((Integer) job.get("Priority")));
+            jobDto.setStatus((String) job.get("Status"));
+            jobDto.setClientName((String) job.get("clientName"));
+            jobDto.setUwYear(Integer.valueOf((String) job.get("uwYear")));
+            jobDto.setWorkspaceName((String) job.get("workspaceName"));
+            jobDto.setContractCode((String) job.get("contractCode"));
+            jobDto.setProjectId(Long.valueOf((String) job.get("projectId")));
+            jobDto.setSubmittedDate((Date) job.get("submittedDate"));
+            jobDto.setStartedDate((Date) job.get("startedDate"));
+            jobDto.setFinishedDate((Date) job.get("finishedDate"));
+
+            List<Map<String, Object>> tasks = taskRepository.getTasksByJobId(jobDto.getJobId());
+
+            for (Map<String, Object> task : tasks) {
+                TaskDto taskdto = new TaskDto();
+
+                taskdto.setTaskId(((BigInteger) task.get("TaskId")).longValue());
+                taskdto.setJobExecutionId(task.get("JobExecutionId") != null ? ((BigInteger) task.get("JobExecutionId")).longValue() : null);
+                taskdto.setPercent((Integer) task.get("Percentage"));
+                taskdto.setTaskType((String) task.get("TaskType"));
+                taskdto.setStatus((String) task.get("Status"));
+                taskdto.setSubmittedDate((Date) task.get("submittedDate"));
+                taskdto.setStartedDate((Date) task.get("startedDate"));
+                taskdto.setFinishedDate((Date) task.get("finishedDate"));
+
+                if (taskdto.getTaskType().equalsIgnoreCase(TaskType.IMPORT_ANALYSIS.getCode())) {
+                    if (task.get("AnalysisDivision") != null)
+                        taskdto.setDivision((Integer) task.get("AnalysisDivision"));
+                    if (task.get("AnalysisProject") != null)
+                        taskdto.setProjectId(task.get("AnalysisProject") != null ? ((BigInteger) task.get("AnalysisProject")).longValue() : null);
+                    taskdto.setName((String) task.get("AnalysisName"));
+                    taskdto.setFinancialPerspective((String) task.get("AnalysisFinancialPerspective"));
+                    taskdto.setTargetRapCode((String) task.get("TargetRapCode"));
+                }
+
+                if (taskdto.getTaskType().equalsIgnoreCase(TaskType.IMPORT_PORTFOLIO.getCode())) {
+                    if (task.get("PortfolioDivision") != null)
+                        taskdto.setDivision((Integer) task.get("PortfolioDivision"));
+                    if (task.get("PortfolioProject") != null)
+                        taskdto.setProjectId(task.get("PortfolioProject") != null ?
+                                ((BigInteger) task.get("PortfolioProject")).longValue() : null);
+                    taskdto.setName((String) task.get("PortfolioNumber"));
+                }
+
+                jobDto.addTask(taskdto);
             }
-            JobDto jobDto = new JobDto(j.getJobId(), j.getSubmittedByUser(), j.getSubmittedDate(),
-                    j.getPriority(), j.getStatus(), j.getStartedDate(), j.getFinishedDate(), j.getJobTypeCode(), tasks);
-            jobs.add(jobDto);
+
+            jobDto.calculatePercentage();
+            jobDtoList.add(jobDto);
         }
-        return jobs;
+
+        return jobDtoList;
     }
 
     @Override
-    @Transactional(transactionManager = "theTransactionManager")
+    //@Transactional(transactionManager = "theTransactionManager")
     public void onTaskError(Long taskId) {
         TaskEntity task = taskRepository.findById(taskId).orElse(null);
 

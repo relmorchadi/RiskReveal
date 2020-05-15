@@ -33,7 +33,7 @@ public class AccumulationPackageOverrideSectionService {
 
     public AccumulationPackageResponse overrideChosenSections(OverrideSectionRequest request) throws RRException {
         AccumulationPackageResponse response = new AccumulationPackageResponse();
-        WorkspaceEntity ws = workspaceEntityRepository.findByWorkspaceNameAndWorkspaceUwYear(request.getWorkspaceName(),request.getUwYear());
+        WorkspaceEntity ws = workspaceEntityRepository.findByWorkspaceContextCodeAndWorkspaceUwYear(request.getWorkspaceName(),request.getUwYear());
 
         if(ws == null ) throw new WorkspaceNotFoundException(request.getWorkspaceName(),request.getUwYear());
 
@@ -49,11 +49,12 @@ public class AccumulationPackageOverrideSectionService {
                 overrideSection.setAccumulationRAPCode(row.getAccumulationRAPCode());
                 overrideSection.setOverrideBasisCode(request.getOverrideBasisCode());
                 overrideSection.setOverrideBasisNarrative(request.getOverrideBasisNarrative());
+                overrideSection.setEntity(1);
                 listToSave.add(overrideSection);
             }
             accumulationPackageOverrideSectionRepository.saveAll(listToSave);
 
-            response.setScopeObject(accumulationPackageService.getScopeOnly(request.getWorkspaceName(),request.getUwYear()));
+            response.setScopeObject(accumulationPackageService.getScopeOnly(request.getWorkspaceName(),request.getUwYear(),request.getProjectId(),accumulationPackage.getAccumulationPackageId()));
             response.setAttachedPLTs(accumulationPackageAttachedPLTService.getAttachedPLTs(accumulationPackage.getAccumulationPackageId()));
             response.setOverriddenSections(getOverriddenSections(accumulationPackage.getAccumulationPackageId()));
         }

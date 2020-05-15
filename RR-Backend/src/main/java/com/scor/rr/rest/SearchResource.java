@@ -73,30 +73,30 @@ public class SearchResource {
     }
 
     @GetMapping("saved-search")
-    ResponseEntity<?> getSavedSearch(@RequestParam SearchType searchType, @RequestParam Integer userId) {
+    ResponseEntity<?> getSavedSearch(@RequestParam SearchType searchType) {
         return ResponseEntity.ok(
-                searchService.getSavedSearches(searchType, userId)
+                searchService.getSavedSearches(searchType)
         );
     }
 
     @GetMapping("recent")
-    ResponseEntity<?> getRecentSearch(@RequestParam Integer userId) {
+    ResponseEntity<?> getRecentSearch(@RequestParam SearchType searchType) {
         return ResponseEntity.ok(
-                searchService.getRecentSearch(userId)
+                searchService.getRecentSearch(searchType)
         );
     }
 
     @GetMapping("saved-search/most")
-    ResponseEntity<?> getMostUsedSavedSearch(@RequestParam SearchType searchType, @RequestParam Integer userId) {
+    ResponseEntity<?> getMostUsedSavedSearch(@RequestParam SearchType searchType) {
         return ResponseEntity.ok(
-                searchService.getMostUsedSavedSearch(searchType, userId)
+                searchService.getMostUsedSavedSearch(searchType)
         );
     }
 
     @DeleteMapping("saved-search")
     ResponseEntity<?> deleteSavedSearch(@RequestParam SearchType searchType, @RequestParam Long id) {
         try {
-            searchService.deleteSavedSearch(searchType, id);
+            searchService.deleteSavedSearch(id);
             return ResponseEntity.ok().build();
         } catch (Exception ex) {
             return ResponseEntity.ok(ex.getMessage());

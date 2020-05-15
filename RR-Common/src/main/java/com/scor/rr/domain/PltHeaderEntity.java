@@ -129,6 +129,9 @@ public class PltHeaderEntity {
     @Column(name = "CreatedBy")
     private Long createdBy;
 
+    @Column(name = "SummaryStatisticHeaderId")
+    private Long summaryStatisticHeaderId;
+
     public PltHeaderEntity(Long pltHeaderId, String deletedBy) {
         this.pltHeaderId = pltHeaderId;
         this.deletedBy = deletedBy;

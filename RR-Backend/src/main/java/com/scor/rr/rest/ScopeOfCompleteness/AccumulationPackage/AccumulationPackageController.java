@@ -27,15 +27,16 @@ public class AccumulationPackageController {
 
 
     @GetMapping("getScopeOnly")
-    public List<ScopeAndCompletenessResponse> getScopeOnlyData(@RequestParam("workspaceId") String workspaceId,@RequestParam("uwyear") int uwyear){
-        return accumulationPackageService.getScopeOnly(workspaceId,uwyear);
+    public List<ScopeAndCompletenessResponse> getScopeOnlyData(@RequestParam("workspaceId") String workspaceId,@RequestParam("uwyear") int uwyear,@RequestParam("projectId") long projectId){
+        return accumulationPackageService.getScopeOnly(workspaceId,uwyear,projectId,-1);
     }
 
     @GetMapping("getAccumulationPackage")
     public AccumulationPackageResponse getAccumulationPackage(@RequestParam("workspaceId") String workspaceId,
                                                               @RequestParam("uwyear") int uwyear,
-                                                              @RequestParam("AccumulationPackageId") long accumulationPackageId) throws RRException{
-        return accumulationPackageService.getAccumulationPackageDetails(workspaceId,uwyear,accumulationPackageId);
+                                                              @RequestParam("AccumulationPackageId") long accumulationPackageId,
+                                                              @RequestParam("ProjectId") long projectId) throws RRException{
+        return accumulationPackageService.getAccumulationPackageDetails(workspaceId,uwyear,accumulationPackageId,projectId);
     }
 
     @GetMapping("getDropDownInformation")

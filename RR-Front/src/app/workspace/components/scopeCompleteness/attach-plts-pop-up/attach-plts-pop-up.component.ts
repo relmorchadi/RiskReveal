@@ -23,12 +23,15 @@ export class AttachPltsPopUpComponent extends BaseContainer implements OnInit {
 
   selectedForAttachment: any = {};
   showApplicablePlts = false;
+  selectedProject: any;
   workspaceType: any;
   selectedPLTs: any = [];
   scopeContext;
   wsIdentifier;
+  filteredData = {};
   projectType: any;
   workspace;
+  sortData = {};
   columns = [];
 
   @Select(WorkspaceState.getScopeProjects) projects$;
@@ -52,8 +55,9 @@ export class AttachPltsPopUpComponent extends BaseContainer implements OnInit {
 
   ngOnInit() {
     this.projects$.pipe().subscribe(data => {
-      this.projects = data;
-      this.dispatch(new LoadScopePLTsData());
+      if(this.projects !== data) {
+        this.projects = data;
+      }
       this.detectChanges();
     });
 
@@ -69,12 +73,13 @@ export class AttachPltsPopUpComponent extends BaseContainer implements OnInit {
 
     this.pendingData$.pipe().subscribe(value => {
       this.pendingData =  value;
-      this.initAttachedPLTs();
       this.detectChanges();
     });
 
-    this.currentWs$.pipe().subscribe(value => {
+    this.currentWs$.pipe().subscribe((value: any) => {
       this.currentWs =  value;
+      this.wsIdentifier = value.wsId + '-' + value.uwYear;
+      this.selectedProject = _.find(value.projects, item => item.selected);
       this.workspaceType = _.get(value, 'workspaceType', 'fac');
       this.detectChanges();
     });
@@ -90,17 +95,23 @@ export class AttachPltsPopUpComponent extends BaseContainer implements OnInit {
   }
 
   initAttachedPLTs() {
+    if (this.selectedProject !== undefined) {
+      this.dispatch(new SelectScopeProject({projectId: this.selectedProject.projectId}));
+    }
     this.selectedPLTs = [];
     this.selectedForAttachment = {};
     _.forEach(this.pendingData.regionPerils, item => {
       _.forEach(item.targetRaps, itemTR => {
         _.forEach(_.toArray(itemTR.pltsAttached), plt => {
-          this.selectedForAttachment[plt.pltHeaderId + plt.scope] = true;
-          this.selectedPLTs = [...this.selectedPLTs, plt];
+          _.forEach(plt.scope, pltScope => {
+            const pltScopeIndex = _.findIndex(this.scopeContext, (scope: any) => scope.id === pltScope) + 1;
+            this.selectedForAttachment[plt.pltHeaderId + pltScope] = true;
+            this.selectedPLTs = [...this.selectedPLTs, {...plt, scopeIndex: pltScopeIndex, scope: pltScope}];
+            console.log(this.selectedPLTs);
+          });
         })
       })
-    })
-    console.log(this.selectedPLTs, this.selectedForAttachment)
+    });
   }
 
   initColumns() {
@@ -194,6 +205,17 @@ export class AttachPltsPopUpComponent extends BaseContainer implements OnInit {
     });
   }
 
+  selectPLTByRowNC(rowData, event) {
+    _.forEach(this.scopeContext, (scope, index) => {
+      this.selectedForAttachment[rowData.pltHeaderId + scope.id] = event;
+      if (event) {
+        this.selectedPLTs = [...this.selectedPLTs, {...rowData, scope: scope.id, scopeIndex: index + 1}];
+      } else {
+        this.selectedPLTs = _.filter(this.selectedPLTs, item => item.pltHeaderId !== rowData.pltHeaderId || item.scope !== scope.id);
+      }
+    });
+  }
+
   checkedRow(rowData) {
     let checked = true;
     _.forEach(this.scopeContext, (scope, index) => {
@@ -208,8 +230,38 @@ export class AttachPltsPopUpComponent extends BaseContainer implements OnInit {
     return checked;
   }
 
+  checkedRowNC(rowData) {
+    let checked = true;
+    _.forEach(this.scopeContext, (scope, index) => {
+      const attachable = _.get(this.selectedForAttachment, `${rowData.pltHeaderId}${scope.id}`, false);
+      if (!attachable) {
+        checked = false;
+      }
+    });
+    return checked;
+  }
+
   unableAttachment() {
     return _.includes(_.values(this.selectedForAttachment), true);
+  }
+
+  sortChange(field: any, sortCol: any) {
+    if (!sortCol) {
+      this.sortData = _.merge({}, this.sortData, {[field]: 'asc'});
+    } else if (sortCol === 'asc') {
+      this.sortData =_.merge({}, this.sortData, {[field]: 'desc'});
+    } else if (sortCol === 'desc') {
+      this.sortData = _.omit(this.sortData, `${field}`);
+    }
+  }
+
+  filterChange(field: any, filterValue: any) {
+    if (_.isEmpty(_.trim(filterValue))) {
+      this.filteredData =_.omit( this.filteredData, `${field}`);
+    } else {
+      this.filteredData = _.merge({}, this.filteredData, {[field]: filterValue});
+      console.log(this.filteredData);
+    }
   }
 
   toDate(date) {

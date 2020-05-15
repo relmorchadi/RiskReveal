@@ -2,10 +2,9 @@ package com.scor.rr.service.batch.reader;
 
 import com.scor.rr.configuration.RmsInstanceCache;
 import com.scor.rr.domain.StepEntity;
-import com.scor.rr.domain.TaskEntity;
 import com.scor.rr.domain.enums.StepStatus;
 import com.scor.rr.mapper.RLAccItemRowMapper;
-import com.scor.rr.repository.TaskRepository;
+import com.scor.rr.repository.StepRepository;
 import com.scor.rr.service.abstraction.JobManager;
 import com.scor.rr.service.batch.processor.rows.RLAccRow;
 import com.scor.rr.service.state.TransformationPackage;
@@ -45,7 +44,7 @@ public class RLAccCursorItemReader extends JdbcCursorItemReader<RLAccRow> {
     private JobManager jobManager;
 
     @Autowired
-    private TaskRepository taskRepository;
+    private StepRepository stepRepository;
 
     @Value("#{jobParameters['taskId']}")
     private String taskId;
@@ -66,6 +65,8 @@ public class RLAccCursorItemReader extends JdbcCursorItemReader<RLAccRow> {
 
     private StepEntity step;
 
+    private boolean isOpen = false;
+
     public RLAccCursorItemReader() {
         super();
         setName(ClassUtils.getShortName(JdbcCursorItemReader.class));
@@ -73,11 +74,7 @@ public class RLAccCursorItemReader extends JdbcCursorItemReader<RLAccRow> {
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        log.info("nothing to see...");
-        TaskEntity task = taskRepository.findById(Long.valueOf(taskId)).orElse(null);
-        if (task != null && task.getSteps().stream().noneMatch(s -> s.getStepName().equalsIgnoreCase("ExtractACC"))) {
-            step = jobManager.createStep(Long.valueOf(taskId), "ExtractACC", 15);
-        }
+
     }
 
     @PostConstruct
@@ -90,12 +87,16 @@ public class RLAccCursorItemReader extends JdbcCursorItemReader<RLAccRow> {
             parameters.add("PORTFOLIO");
         } catch (Exception e) {
             log.error("init error", e);
+            super.close();
             throw new RuntimeException(e);
         }
     }
 
     @Override
     protected void openCursor(Connection con) {
+
+        if (step == null)
+            step = jobManager.createStep(Long.valueOf(taskId), "ExtractACC", 15);
 
         if (!transformationPackage.getModelPortfolios().isEmpty()) {
 
@@ -112,10 +113,14 @@ public class RLAccCursorItemReader extends JdbcCursorItemReader<RLAccRow> {
                 setPreparedStatementSetter(pss);
 
                 super.openCursor(con);
+                isOpen = true;
             } catch (Exception ex) {
                 jobManager.onTaskError(Long.valueOf(taskId));
-                jobManager.logStep(step.getStepId(), StepStatus.FAILED);
-                super.close();
+//                jobManager.logStep(step.getStepId(), StepStatus.FAILED);
+                step.setStatus(StepStatus.FAILED.getCode());
+                stepRepository.save(step);
+                if (isOpen)
+                    super.close();
                 ex.printStackTrace();
             }
 

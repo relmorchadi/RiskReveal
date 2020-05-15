@@ -9,15 +9,18 @@ import javax.persistence.Entity;
 import java.util.List;
 
 @Entity
+@Table(name = "GlobalExposureViewSummary")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class GlobalViewSummary {
+public class GlobalExposureViewSummary {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "GlobalViewSummaryId")
+    @Column(name = "GlobalExposureViewSummaryId")
     private Long globalViewSummaryId;
+    @Column(name="Entity")
+    private Integer entity = 1;
     @Column(name = "SummaryTitle")
     private String summaryTitle;
     @Column(name = "SummaryOrder")

@@ -19,7 +19,7 @@ public class PricedScopeAndCompletenessViewService {
     public PricedScopeAndCompletenessResponse getListOfImportedPLTs(long projectId, String WorkspaceName, int UWYear) {
 
         PricedScopeAndCompletenessResponse response = new PricedScopeAndCompletenessResponse();
-        response.setScopeObject(accumulationPackageService.getScopeOnly(WorkspaceName, UWYear));
+        response.setScopeObject(accumulationPackageService.getScopeOnly(WorkspaceName, UWYear,projectId,0));
         response.setListOfImportedPLTs(pricedScopeAndCompletenessViewRepository.findByProjectId(projectId));
 
         return response;

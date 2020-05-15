@@ -1,5 +1,6 @@
 package com.scor.rr.rest;
 
+import com.scor.rr.configuration.security.UserPrincipal;
 import com.scor.rr.domain.dto.ImportLossDataParams;
 import com.scor.rr.domain.dto.ImportParamsAndConfig;
 import com.scor.rr.domain.dto.ImportReferenceData;
@@ -11,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -71,10 +73,35 @@ public class ImportResource {
         }
     }
 
-    @GetMapping("/running-jobs")
-    public ResponseEntity<?> getRunningJobs(@RequestParam Long userId) {
+    @GetMapping("/resume-job")
+    public ResponseEntity<?> resume(@RequestParam Long jobId) {
         try {
-            return new ResponseEntity<>(jobManager.findRunningJobsForUserRR(userId), HttpStatus.OK);
+            batchExecution.resumeJobAfterPausing(jobId);
+            return new ResponseEntity<>("Operation done", HttpStatus.OK);
+        } catch (Exception ex) {
+            return new ResponseEntity<>("Operation Failed", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping("/user-jobs")
+    public ResponseEntity<?> getRunningJobs() {
+        try {
+            if (SecurityContextHolder.getContext() != null && SecurityContextHolder.getContext().getAuthentication() != null)
+                return new ResponseEntity<>(jobManager.findRunningJobsForUserRR(
+                        ((UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser().getUserId()), HttpStatus.OK);
+            else
+                return new ResponseEntity<>("Unidentified user", HttpStatus.UNAUTHORIZED);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return new ResponseEntity<>("Operation failed", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping("/pause-job")
+    public ResponseEntity<?> pauseJob(@RequestParam Long jobId) {
+        try {
+            jobManager.pauseJob(jobId);
+            return new ResponseEntity<>("Operation done", HttpStatus.OK);
         } catch (Exception ex) {
             ex.printStackTrace();
             return new ResponseEntity<>("Operation failed", HttpStatus.INTERNAL_SERVER_ERROR);

@@ -8,15 +8,16 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "ZZ_RecentSearchItem")
+@Table(name = "RecentSearchItem")
 @NoArgsConstructor
 @Data
 @EqualsAndHashCode(callSuper = false)
 public class RecentSearchItem extends SearchItem {
+
     private Long recentSearchId;
 
     public RecentSearchItem(SearchItem searchItem, Long recentSearchId){
         super(searchItem);
-        this.recentSearchId= recentSearchId;
+        this.recentSearchId = recentSearchId;
     }
 }

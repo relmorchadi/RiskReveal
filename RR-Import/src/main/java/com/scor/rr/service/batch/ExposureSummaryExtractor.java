@@ -1,5 +1,7 @@
 package com.scor.rr.service.batch;
 
+import com.google.common.collect.Lists;
+import com.google.common.math.IntMath;
 import com.scor.rr.domain.*;
 import com.scor.rr.domain.enums.StepStatus;
 import com.scor.rr.domain.riskLink.RLExposureSummaryItem;
@@ -25,6 +27,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
+import java.math.RoundingMode;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -86,6 +89,9 @@ public class ExposureSummaryExtractor {
     @Value("#{jobParameters['taskId']}")
     private String taskId;
 
+    @Value("${spring.jpa.properties.hibernate.jdbc.batch_size}")
+    private int batchSize;
+
     private MultiKey createEdmKey(String instance, Long edmId, String edmName) {
         return new MultiKey(instance, edmId, edmName);
     }
@@ -95,8 +101,8 @@ public class ExposureSummaryExtractor {
         StepEntity step = jobManager.createStep(Long.valueOf(taskId), "ExtractExposureSummaries", 14);
         try {
             //NOTE: I think you could find ProjectImportRun by projectId and importSequence (in jobParameters) ?
-            List<ProjectImportRunEntity> projectImportRunList = projectImportRunRepository.findByProjectId(Long.valueOf(projectId));
-            ProjectImportRunEntity projectImportRun = projectImportRunRepository.findByProjectIdAndRunId(Long.valueOf(projectId), projectImportRunList.size());
+//            List<ProjectImportRunEntity> projectImportRunList = projectImportRunRepository.findByProjectId(Long.valueOf(projectId));
+//            ProjectImportRunEntity projectImportRun = projectImportRunRepository.findByProjectIdAndRunId(Long.valueOf(projectId), projectImportRunList.size());
 
             List<ModelPortfolioEntity> modelPortfolios = transformationPackage.getModelPortfolios();
 
@@ -121,8 +127,6 @@ public class ExposureSummaryExtractor {
                     globalExposureView.setProjectId(Long.valueOf(projectId));
                     globalExposureView.setName(defaultExposureView.getName());
 
-                    if (division != null)
-                        globalExposureView.setDivisionNumber(Integer.valueOf(division));
                     //TODO : FIX ME LATER
                     globalExposureView.setPeriodBasisId(null);
                     if (importSequence != null)
@@ -171,7 +175,7 @@ public class ExposureSummaryExtractor {
                                         if (exposureViewVersion != null) {
                                             ExposureViewQuery exposureViewQuery = exposureViewQueryRepository.findByExposureViewVersion(exposureViewVersion);
 
-                                            GlobalViewSummary globalViewSummary = new GlobalViewSummary();
+                                            GlobalExposureViewSummary globalViewSummary = new GlobalExposureViewSummary();
                                             globalViewSummary.setInstanceId(instance);
                                             globalViewSummary.setEdmId(edmId);
                                             globalViewSummary.setEdmName(edmName);
@@ -191,17 +195,49 @@ public class ExposureSummaryExtractor {
                                                     query,
                                                     new RLExposureSummaryItemRowMapper(globalViewSummary));
 
+                                            List<ExposureSummaryData> records = this.transformSummary(exposureViewDefinition, rlExposureSummaryItems, entry.getValue());
+                                            List<List<ExposureSummaryData>> partitions = new ArrayList<>();
+                                            if (records.size() > batchSize) {
+                                                int partitionSize = IntMath.divide(records.size(), (records.size() / batchSize) + 1, RoundingMode.UP);
+                                                partitions = Lists.partition(records, partitionSize);
+                                            } else
+                                                partitions.add(records);
+
+
                                             log.info("Info: Start saving risk reveal exposure summaries");
-                                            exposureSummaryDataRepository.saveAll(this.transformSummary(exposureViewDefinition, rlExposureSummaryItems, entry.getValue()));
+                                            partitions.forEach(list -> exposureSummaryDataRepository.saveAll(list));
                                             log.info("Info: Saving risk reveal exposure summaries has ended");
 
-                                            log.info("Info: Start saving risk link exposure summaries");
-                                            exposureSummaryItemRepository.saveAll(rlExposureSummaryItems);
-                                            log.info("Info: Saving risk link exposure summaries has ended");
+//                                            log.info("Info: Start saving risk link exposure summaries");
+//                                            exposureSummaryItemRepository.saveAll(rlExposureSummaryItems);
+//                                            log.info("Info: Saving risk link exposure summaries has ended");
 
                                             exposureViewDefinitions.stream()
                                                     .filter(derivedDefinition -> derivedDefinition.getBasedOnSummaryAlias().equalsIgnoreCase(exposureViewDefinition.getExposureSummaryAlias()))
-                                                    .forEach(derivedDefinition -> exposureSummaryDataRepository.saveAll(this.transformSummary(derivedDefinition, rlExposureSummaryItems, entry.getValue())));
+                                                    .forEach(derivedDefinition -> {
+                                                        GlobalExposureViewSummary derivedGlobalViewSummary = new GlobalExposureViewSummary();
+                                                        derivedGlobalViewSummary.setInstanceId(instance);
+                                                        derivedGlobalViewSummary.setEdmId(edmId);
+                                                        derivedGlobalViewSummary.setEdmName(edmName);
+                                                        derivedGlobalViewSummary.setSummaryTitle(derivedDefinition.getName());
+                                                        derivedGlobalViewSummary.setSummaryOrder(derivedDefinition.getOrder());
+                                                        derivedGlobalViewSummary.setGlobalExposureView(globalExposureView);
+
+                                                        globalViewSummaryRepository.save(derivedGlobalViewSummary);
+
+                                                        List<ExposureSummaryData> derivedRecords = this.transformSummary(derivedDefinition, rlExposureSummaryItems, entry.getValue());
+                                                        List<List<ExposureSummaryData>> derivedPartitions = new ArrayList<>();
+
+                                                        if (records.size() > batchSize) {
+                                                            int derivedPartitionSize = IntMath.divide(derivedRecords.size(), (derivedRecords.size() / 30) + 1, RoundingMode.UP);
+                                                            derivedPartitions = Lists.partition(derivedRecords, derivedPartitionSize);
+                                                        } else
+                                                            derivedPartitions.add(derivedRecords);
+
+                                                        log.info("Info: Start saving risk reveal exposure summaries derived from " + derivedDefinition.getName());
+                                                        derivedPartitions.forEach(list -> exposureSummaryDataRepository.saveAll(list));
+                                                        log.info("Info: Saving risk reveal derived (" + derivedDefinition.getName() + ") exposure summaries has ended");
+                                                    });
                                         }
                                     });
 
@@ -384,7 +420,7 @@ public class ExposureSummaryExtractor {
 
             if (itemAgg != null) {
                 itemAgg.setLocationCount(itemAgg.getLocationCount() + exposureSummaryData.getLocationCount());
-                itemAgg.setTiv(itemAgg.getTiv() + exposureSummaryData.getTiv());
+                itemAgg.setTiv(itemAgg.getTiv().add(exposureSummaryData.getTiv()));
             } else {
                 tempAggregate.put(itemKey, exposureSummaryData);
             }

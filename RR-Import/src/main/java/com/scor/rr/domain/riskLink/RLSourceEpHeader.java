@@ -21,6 +21,8 @@ public class RLSourceEpHeader {
     private Integer entity;
     @Column(name = "FinancialPerspective")
     private String financialPerspective;
+    @Column(name = "OccurrenceBasis")
+    private String occurrenceBasis;
     @Column(name = "OEP10")
     private Double oEP10;
     @Column(name = "OEP50")

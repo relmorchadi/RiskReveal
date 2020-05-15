@@ -32,7 +32,7 @@ export class ExposuresRightMenuComponent implements OnInit, OnDestroy {
     ngOnDestroy(): void {
 
     }
-    
+
 
     closeRightMenu() {
         if (this.first) {
@@ -42,5 +42,9 @@ export class ExposuresRightMenuComponent implements OnInit, OnDestroy {
             this.first = true;
         }
 
+    }
+
+    toUpperCase(type: any) {
+        return type.charAt(0).toUpperCase() + type.slice(1);
     }
 }

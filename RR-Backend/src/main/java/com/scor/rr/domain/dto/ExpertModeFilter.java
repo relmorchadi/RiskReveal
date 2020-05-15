@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ExpertModeFilter {
     String field;
+    String key;
     String value;
     Operator operator;
     Long searchId;

@@ -46,8 +46,6 @@ public class RmsService {
     @Autowired
     private RLModelDataSourceRepository rlModelDataSourcesRepository;
 
-    @Autowired
-    private RLAnalysisScanStatusRepository rlAnalysisScanStatusRepository;
 
     @Autowired
     private RLAnalysisRepository rlAnalysisRepository;
@@ -58,8 +56,6 @@ public class RmsService {
     @Autowired
     private RLImportSelectionRepository rlImportSelectionRepository;
 
-    @Autowired
-    private RLPortfolioScanStatusRepository rlPortfolioScanStatusRepository;
 
     @Autowired
     private RLPortfolioSelectionRepository rlPortfolioSelectionRepository;
@@ -115,28 +111,33 @@ public class RmsService {
     @Autowired
     private PortfolioDetailedScanRunnableTask portfolioDetailedScanRunnableTask;
 
-    /********** Scan Basic / Detailed **********/
+    private String instanceId;
 
+    private RLModelDataSource edm;
+
+    /********** Scan Basic / Detailed **********/
 
     public List<RLModelDataSource> basicScan(List<DataSource> dataSources, Long projectId) {
         return dataSources.stream().map(dataSource -> {
+            Integer count = null;
 
             RLModelDataSource rlModelDataSource =
                     rlModelDataSourcesRepository.findByProjectIdAndTypeAndInstanceIdAndRlId(projectId, dataSource.getType(), dataSource.getInstanceId(), dataSource.getRmsId());
-
             if (rlModelDataSource != null) {
-                rlAnalysisRepository.deleteByRlModelDataSourceId(rlModelDataSource.getRlModelDataSourceId());
-                rlPortfolioRepository.deleteByRlModelDataSourceRlModelDataSourceId(rlModelDataSource.getRlModelDataSourceId());
+                if (rlModelDataSource.getType().equalsIgnoreCase("RDM")) {
+                    count = scanAnalysisBasicForRdm(dataSource.getInstanceId(), rlModelDataSource, projectId);
+                } else {
+                    count = scanPortfolioBasicForEdm(dataSource.getInstanceId(), rlModelDataSource, projectId);
+                }
             } else {
                 rlModelDataSource = new RLModelDataSource(dataSource, projectId, dataSource.getInstanceId(), dataSource.getInstanceName());
                 rlModelDataSourcesRepository.save(rlModelDataSource);
-            }
+                if (rlModelDataSource.getType().equalsIgnoreCase("RDM")) {
+                    count = scanAnalysisBasicForRdm(dataSource.getInstanceId(), rlModelDataSource);
+                } else if (rlModelDataSource.getType().equalsIgnoreCase("EDM")) {
+                    count = scanPortfolioBasicForEdm(dataSource.getInstanceId(), rlModelDataSource);
+                }
 
-            Integer count = null;
-            if (rlModelDataSource.getType().equalsIgnoreCase("RDM")) {
-                count = scanAnalysisBasicForRdm(dataSource.getInstanceId(), rlModelDataSource);
-            } else if (rlModelDataSource.getType().equalsIgnoreCase("EDM")) {
-                count = scanPortfolioBasicForEdm(dataSource.getInstanceId(), rlModelDataSource);
             }
             rlModelDataSourcesRepository.updateCount(rlModelDataSource.getRlModelDataSourceId(), count);
             rlModelDataSource.setCount(count);
@@ -150,15 +151,15 @@ public class RmsService {
                 projectId
         ).get(0);
     }
-
+/**
     public DetailedScanResult detailedScan(DetailedScanDto detailedScanDto) {
         return new DetailedScanResult(
-                scanAnalysisDetail(detailedScanDto.getInstanceId(), detailedScanDto.getRlAnalysisList(), detailedScanDto.getProjectId()).stream()
+                scanAnalysisDetail(detailedScanDto.getRlAnalysisList(), detailedScanDto.getProjectId()).stream()
                         .map(analysis -> modelMapper.map(analysis, RLAnalysisDetailedDto.class))
                         .collect(Collectors.toList()),
                 scanPortfolioDetail(detailedScanDto.getInstanceId(), detailedScanDto.getRlPortfolioList(), detailedScanDto.getProjectId()));
     }
-
+*/
     public DetailedScanResult paralleledDetailedScan(DetailedScanDto detailedScanDto) {
 
         List<Future<List<RLAnalysis>>> analysisFutures = new ArrayList<>();
@@ -175,6 +176,7 @@ public class RmsService {
             analysisDetailedScanRunnableTask.setCountDownLatch(countDownLatch);
             analysisDetailedScanRunnableTask.setInstanceId(detailedScanDto.getInstanceId());
             analysisDetailedScanRunnableTask.setProjectId(detailedScanDto.getProjectId());
+            analysisDetailedScanRunnableTask.setSelectedFp(detailedScanDto.getSelectedFP());
             analysisDetailedScanRunnableTask.setHeaders(Collections.singletonList(analysisHeader));
             analysisFutures.add(executorService.submit(analysisDetailedScanRunnableTask));
         });
@@ -293,23 +295,100 @@ public class RmsService {
 
     private int scanAnalysisBasicForRdm(String instanceId, RLModelDataSource rdm) {
         List<RdmAnalysisBasic> rdmAnalysisBasics = listRdmAnalysisBasic(instanceId, rdm.getRlId(), rdm.getName());
-        for (RdmAnalysisBasic rdmAnalysisBasic : rdmAnalysisBasics) {
+        this.rlAnalysisRepository.saveAll(
+                rdmAnalysisBasics.stream().map(an -> new RLAnalysis(an, rdm, ScanLevelEnum.Basic.getCode())).collect(toList())
+        );
+        /*for (RdmAnalysisBasic rdmAnalysisBasic : rdmAnalysisBasics) {
             RLAnalysis rlAnalysis = this.rlAnalysisRepository.save(
-                    new RLAnalysis(rdmAnalysisBasic, rdm)
-            );
-            RLAnalysisScanStatus rlAnalysisScanStatus = new RLAnalysisScanStatus(rlAnalysis, 0);
-            rlAnalysisScanStatusRepository.save(rlAnalysisScanStatus);
-        }
+                    new RLAnalysis(rdmAnalysisBasic, rdm, ScanLevelEnum.Basic.getCode()));}
+         */
         return rdmAnalysisBasics.size();
     }
 
-    public List<RLAnalysis> scanAnalysisDetail(String instanceId, List<AnalysisHeader> rlAnalysisList, Long projectId) {
+    public int scanAnalysisBasicForRdm(String InstanceId, RLModelDataSource rlModelDataSource, Long projectId) {
+        List<RdmAnalysisBasic> rdmAnalysisBasicList = listRdmAnalysisBasic(InstanceId, rlModelDataSource.getRlId(), rlModelDataSource.getName());
+        Map<Long, RdmAnalysisBasic> rdmAnalysisBasicMap = rdmAnalysisBasicList.stream()
+                .collect(Collectors.toMap(rdmAnalysisBasic -> rdmAnalysisBasic.getAnalysisId(), rdmAnalysisBasic -> rdmAnalysisBasic));
+        /*for testing the case when the data coming from the rms differs from that of the RR
+        Map<Long,RdmAnalysisBasic> rdmAnalysisBasicMap=new HashMap<Long,RdmAnalysisBasic>();
+        rdmAnalysisBasicMap.put((long) 11,rdmAnalysisBasicList.get(1));
+       */
+        List<RLAnalysis> rlAnalysisList = rlAnalysisRepository.findByRdmIdAndProjectId(rlModelDataSource.getRlId(), projectId);
+        Map<Long, RLAnalysis> rlAnalysisMap = rlAnalysisList.stream().collect(Collectors.toMap(rlAnalysis -> rlAnalysis.getRlId(), rlAnalysis -> rlAnalysis));
+
+        rlAnalysisMap.forEach((rlId, rlAnalysis) -> {
+            if (rdmAnalysisBasicMap.containsKey(rlId)) {
+                updateRLAnalysis(rlAnalysis, rdmAnalysisBasicMap.get(rlId));
+                rdmAnalysisBasicMap.remove(rlId);
+            } else {
+                rlAnalysisRepository.deleteByRLAnalysisId(rlId, projectId);
+            }
+        });
+        rdmAnalysisBasicMap.forEach((analysisId, rdmAnalysisBasic) -> {
+            RLAnalysis rlAnalysis = new RLAnalysis(rdmAnalysisBasic, rlModelDataSource, ScanLevelEnum.Basic.getCode());
+            rlAnalysisRepository.save(rlAnalysis);
+        });
+        return rdmAnalysisBasicList.size();
+    }
+
+    private void updateRLAnalysis(RLAnalysis rlAnalysis, RdmAnalysisBasic rdmAnalysisBasic) {
+        if (rlAnalysis.compare(rdmAnalysisBasic)) {
+            rlAnalysis.updateBasic(rdmAnalysisBasic);
+            rlAnalysisRepository.save(rlAnalysis);
+        }
+    }
+
+    private int scanPortfolioBasicForEdm(String instanceId, RLModelDataSource edm) {
+        this.instanceId = instanceId;
+        this.edm = edm;
+        List<EdmPortfolioBasic> edmPortfolioBasics = listEdmPortfolioBasic(instanceId, edm.getRlId(), edm.getName());
+        for (EdmPortfolioBasic edmPortfolioBasic : edmPortfolioBasics) {
+            RLPortfolio rlPortfolio = rlPortfolioRepository.save(
+                    new RLPortfolio(edmPortfolioBasic, edm, ScanLevelEnum.Basic.getCode()));
+        }
+        return edmPortfolioBasics.size();
+    }
+
+    public int scanPortfolioBasicForEdm(String InstanceId, RLModelDataSource rlModelDataSource, Long projectId) {
+        List<EdmPortfolioBasic> edmPortfolioBasicList = listEdmPortfolioBasic(InstanceId, rlModelDataSource.getRlId(), rlModelDataSource.getName());
+        Map<Long, EdmPortfolioBasic> edmPortfolioBasicMap = edmPortfolioBasicList.stream()
+                .collect(Collectors.toMap(edmPortfolioBasic -> edmPortfolioBasic.getPortfolioId(), edmPortfolioBasic -> edmPortfolioBasic));
+
+        List<RLPortfolio> rlPortfolioList = this.rlPortfolioRepository.findByEdmIdAndProjectId(rlModelDataSource.getRlId(), projectId);
+        Map<Long, RLPortfolio> rlPortfolioMap = rlPortfolioList.stream().collect(Collectors.toMap(rLPortfolio -> rLPortfolio.getRlId(), rLPortfolio -> rLPortfolio));
+
+        rlPortfolioMap.forEach((rlId, rLPortfolio) -> {
+            if (edmPortfolioBasicMap.containsKey(rlId)) {
+                updateRLPortfolio(rLPortfolio, edmPortfolioBasicMap.get(rlId));
+                edmPortfolioBasicMap.remove(rlId);
+            } else {
+                rlPortfolioRepository.deleteByRLPortfolioId(rlId, projectId);
+            }
+        });
+
+        edmPortfolioBasicMap.forEach((portfolioId, edmPortfolioBasic) -> {
+            RLPortfolio rlPortfolio = new RLPortfolio(edmPortfolioBasic, rlModelDataSource, ScanLevelEnum.Basic.getCode());
+            rlPortfolioRepository.save(rlPortfolio);
+        });
+        return edmPortfolioBasicList.size();
+    }
+
+    public void updateRLPortfolio(RLPortfolio rlPortfolio, EdmPortfolioBasic edmPortfolioBasic) {
+        if (rlPortfolio.compare(edmPortfolioBasic)) {
+            rlPortfolio.updateBasic(edmPortfolioBasic);
+            rlPortfolioRepository.save(rlPortfolio);
+        }
+    }
+
+    public List<RLAnalysis> scanAnalysisDetail(List<AnalysisHeader> rlAnalysisList, Long projectId, String fp) {
 
         Map<MultiKey, List<Long>> analysisByRdms = new HashMap<>();
         Map<Long, RLAnalysis> cache = new HashMap<>();
 
 
         List<RLAnalysis> allScannedAnalysis = new ArrayList<>();
+
+        List<String> fpCodes = financialPerspectiveRepository.findSelectableCodes();
 
 
         if (rlAnalysisList != null && !rlAnalysisList.isEmpty()) {
@@ -344,13 +423,26 @@ public class RmsService {
                             this.updateRLAnalysis(rlAnalysis, rdmAnalysis);
                             String systemRegionPeril = this.resolveSystemRegionPeril(rlAnalysis);
                             rlAnalysis.setSystemRegionPeril(systemRegionPeril != null ? systemRegionPeril : rlAnalysis.getRpCode());
+                            rlAnalysis.setScanLevel(ScanLevelEnum.Detailed);
+                            List<ExpectedFinancialPerspective> expectedFinancialPerspectives= this.getExpectedFinancialPersp(
+                                    dataSource.getInstanceId(),
+                                    rdmId,
+                                    rdmName,
+                                    Collections.singletonList(rlAnalysis.getRlId()),
+                                    fpCodes
+                            );
+                            expectedFinancialPerspectives.stream().filter(item -> item.getFpCode().equals(fp))
+                                    .findFirst()
+                                    .ifPresent(expectedFinancialPerspective -> {
+                                        rlAnalysis.setDefaultOccurrenceBasis(expectedFinancialPerspective.getOccurrenceBasis());
+                                    });
                             rlAnalysisRepository.save(rlAnalysis);
                             rlAnalysis.setReferenceTargetRaps(configurationService.getTargetRapByAnalysisId(rlAnalysis.getRlAnalysisId()));
+                            rlAnalysis.setExpectedFinancialPerspectives(expectedFinancialPerspectives);
                             allScannedAnalysis.add(rlAnalysis);
                         });
             }
         }
-
         return allScannedAnalysis;
     }
 
@@ -387,19 +479,6 @@ public class RmsService {
         rlPortfolio.setAgSource(edmPortfolio.getAgSource());
     }
 
-    private int scanPortfolioBasicForEdm(String instanceId, RLModelDataSource edm) {
-        List<EdmPortfolioBasic> edmPortfolioBasics = listEdmPortfolioBasic(instanceId, edm.getRlId(), edm.getName());
-        for (EdmPortfolioBasic edmPortfolioBasic : edmPortfolioBasics) {
-            RLPortfolio rlPortfolio = rlPortfolioRepository.save(
-                    new RLPortfolio(edmPortfolioBasic, edm)
-            );
-            RLPortfolioScanStatus rlPortfolioScanStatus = new RLPortfolioScanStatus(rlPortfolio, 0);
-            rlPortfolioScanStatusRepository.save(rlPortfolioScanStatus);
-            rlPortfolio.setRlPortfolioScanStatus(rlPortfolioScanStatus);
-            rlPortfolioRepository.save(rlPortfolio);
-        }
-        return edmPortfolioBasics.size();
-    }
 
     public List<RLPortfolio> scanPortfolioDetail(String instanceId, List<PortfolioHeader> rlPortfolioList, Long projectId) {
 
@@ -435,7 +514,7 @@ public class RmsService {
                         .stream()
                         .map(portfolioAnalysisRegions -> {
                             RLPortfolio rlPortfolio = rlPortfolioRepository.findByEdmIdAndEdmNameAndRlIdAndProjectId(edmId, edmName, portfolioAnalysisRegions.getPortfolioId(), projectId);
-                            rlPortfolio.getRlPortfolioScanStatus().setScanLevel(ScanLevelEnum.Detailed);
+                            rlPortfolio.setScanLevel(ScanLevelEnum.Detailed);
                             rlPortfolio = rlPortfolioRepository.save(rlPortfolio);
                             rlPortfolioAnalysisRegionRepository.deleteByRlPortfolioRlPortfolioId(rlPortfolio.getRlPortfolioId());
                             return new RLPortfolioAnalysisRegion(portfolioAnalysisRegions, rlPortfolio);
@@ -480,7 +559,7 @@ public class RmsService {
     /****** Risk Link Interface ******/
 
     public Page<DataSource> listAvailableDataSources(String instanceId, String keyword, int offset, int size) {
-        String sql = "execute " + DATABASE + ".dbo.RR_RL_ListAvailableDataSources @page_num=" + (offset/size) + ", @page_size=" + size;
+        String sql = "execute " + DATABASE + ".dbo.RR_RL_ListAvailableDataSources @page_num=" + (offset / size) + ", @page_size=" + size;
         String countSql = "execute " + DATABASE + ".dbo.RR_RL_ListAvailableDataSources @count_only=1";
         this.logger.debug("Service starts executing the query ...");
         if (!StringUtils.isEmpty(keyword)) {
@@ -499,10 +578,10 @@ public class RmsService {
     }
 
     public Page<DataSource> listAvailableDataSources(String instanceId, String keyword, int offset, int size, DataSourceType type) {
-        if(type == null)
+        if (type == null)
             throw new RuntimeException("No data source type specified for data sources extraction !");
-        String sql = "execute " + DATABASE + ".dbo.RR_RL_ListAvailableDataSources @db_type=" + type.getValue() + ", @page_num=" + (offset/size) + ", @page_size=" + size;
-        String countSql = "execute " + DATABASE + ".dbo.RR_RL_ListAvailableDataSources @db_type="+ type.getValue() +" , @count_only=1";
+        String sql = "execute " + DATABASE + ".dbo.RR_RL_ListAvailableDataSources @db_type=" + type.getValue() + ", @page_num=" + (offset / size) + ", @page_size=" + size;
+        String countSql = "execute " + DATABASE + ".dbo.RR_RL_ListAvailableDataSources @db_type=" + type.getValue() + " , @count_only=1";
         this.logger.debug("Service starts executing the query ...");
         if (!StringUtils.isEmpty(keyword)) {
             sql += ", @filter='" + keyword + "'";
@@ -548,7 +627,7 @@ public class RmsService {
     }
 
     public List<EdmPortfolioBasic> listEdmPortfolioBasic(String instanceId, Long id, String name) {
-        String sql = "execute " + DATABASE + ".dbo.RR_RL_ListEdmPortfolioBasic @edm_id=" + id + ",@edm_name='" + name +"'";
+        String sql = "execute " + DATABASE + ".dbo.RR_RL_ListEdmPortfolioBasic @edm_id=" + id + ",@edm_name='" + name + "'";
         this.logger.debug("Service starts executing the query ...");
         List<EdmPortfolioBasic> edmPortfolioBasic = getJdbcTemplate(instanceId).query(
                 sql, new EdmPortfolioBasicRowMapper()
@@ -558,7 +637,7 @@ public class RmsService {
     }
 
     public List<EdmPortfolio> listEdmPortfolio(String instanceId, Long id, String name, List<String> portfolioList) {
-        String query = "execute " + DATABASE + ".dbo.RR_RL_ListEdmPortfolio @edm_id=" + id + ",@edm_name='" + name +"'";
+        String query = "execute " + DATABASE + ".dbo.RR_RL_ListEdmPortfolio @edm_id=" + id + ",@edm_name='" + name + "'";
         List<EdmPortfolio> edmPortfolios = new ArrayList<>();
         this.logger.debug("Service starts executing the query ...");
 
@@ -949,6 +1028,13 @@ public class RmsService {
                 });
     }
 
+    public List<ExpectedFinancialPerspective> getExpectedFinancialPersp(String instanceId, Long rdmId, String rdmName, List<Long> analysisIds, List<String> fpCodes) {
+        return this.getRdmAllAnalysisSummaryStats(instanceId, rdmId, rdmName, fpCodes, analysisIds)
+                .stream()
+                .map(ExpectedFinancialPerspective::new)
+                .collect(toList());
+    }
+
     private String generateEpCurveFieldName(Long returnPeriod, int statisticMetric) throws Exception {
         StatisticMetric statMetric = StatisticMetric.getFrom(statisticMetric);
         String fieldName = null;
@@ -1057,7 +1143,7 @@ public class RmsService {
                     String rootRegionPerilCode = rlAnalysis.getRpCode();
                     //TODO: need to define a new ref table
                     PEQTRegionPerilMapping peqtRegionPerilMapping = peqtRegionPerilMappingRepository.findByPeqtRegionPerilCode(rlAnalysis.getRpCode());
-                    if (peqtRegionPerilMapping != null && ! StringUtils.isEmpty(peqtRegionPerilMapping.getRrRegionPerilCode())) {
+                    if (peqtRegionPerilMapping != null && !StringUtils.isEmpty(peqtRegionPerilMapping.getRrRegionPerilCode())) {
                         rootRegionPerilCode = peqtRegionPerilMapping.getRrRegionPerilCode();
                     }
                     if (isSameRegionPerilHierarchy(rootRegionPerilCode, rp)) {

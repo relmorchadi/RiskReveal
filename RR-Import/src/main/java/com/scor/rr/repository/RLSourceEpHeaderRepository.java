@@ -12,18 +12,8 @@ import java.util.List;
 
 public interface RLSourceEpHeaderRepository extends JpaRepository<RLSourceEpHeader, Long> {
 
-    @Transactional(transactionManager = "rrTransactionManager")
-    void deleteByRlAnalysisRlAnalysisIdAndFinancialPerspective(Long rlAnalysisId, String financialPerspective);
-
-    List<RLSourceEpHeader> findByRlAnalysisRlAnalysisId(Long rlAnalysisId);
-
-    @Transactional(transactionManager = "rrTransactionManager")
+    @Transactional(transactionManager = "theTransactionManager")
     @Modifying
-    @Query(value = "DELETE FROM RLSourceEpHeader WHERE RLModelAnalysisId IN (:analysisIds)")
-    void deleteByRLAnalysisIdList(@Param("analysisIds") List<Long> analysisIds);
-
-    @Transactional(transactionManager = "rrTransactionManager")
-    @Modifying
-    @Query(value = "DELETE FROM RLSourceEpHeader WHERE RLModelAnalysisId = :analysisId")
+    @Query(value = "DELETE FROM RLSourceEpHeader WHERE RLModelAnalysisId =:analysisId")
     void deleteByRLAnalysisId(@Param("analysisId") Long analysisId);
 }

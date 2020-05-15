@@ -91,8 +91,11 @@ export class WorkspaceRouterComponent implements OnInit, OnChanges {
   /**
    * @desc Handle left menu Toggle
    */
-  handleLeftMenuToggle() {
-    this.store.dispatch(new ToggleWsLeftMenu(this.state.wsIdentifier));
+  handleLeftMenuToggle(isCollapsed) {
+    this.store.dispatch(new ToggleWsLeftMenu({
+      wsId: this.state.wsIdentifier,
+      isCollapsed
+    }));
   }
 
   /**

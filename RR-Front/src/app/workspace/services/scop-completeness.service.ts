@@ -28,7 +28,7 @@ export class ScopeCompletenessService {
       if (scope === 'scopeContext') {
         draft.content[wsIdentifier].scopeOfCompleteness.scopeContext = _.merge(draft.content[wsIdentifier].scopeOfCompleteness.scopeContext, payload.mergedData)
       } else {
-        draft.content[wsIdentifier].scopeOfCompleteness = _.merge(draft.content[wsIdentifier].scopeOfCompleteness, payload);
+        draft.content[wsIdentifier].scopeOfCompleteness.override = _.merge(draft.content[wsIdentifier].scopeOfCompleteness.override, payload);
       }
     }))
   }
@@ -53,20 +53,24 @@ export class ScopeCompletenessService {
     const state = ctx.getState();
     const {wsIdentifier} = state.currentTab;
     const {uwYear, wsId} = state.content[wsIdentifier];
-    return this.scopeApi.getData(uwYear, wsId)
+    const {projectId} =  _.find(state.content[wsIdentifier].projects, prj => prj.selected);
+    return this.scopeApi.getData(uwYear, wsId, projectId)
       .pipe(
           tap((data: any[]) => {
+            console.log(data);
             ctx.patchState(produce(ctx.getState(), draft => {
               const {regionPerils, targetRaps, scopeContext} = this._formatData(data);
               draft.content[wsIdentifier].scopeOfCompleteness.data = {
-                regionPerils: regionPerils,
-                targetRaps: targetRaps,
+                regionPerils: _.orderBy(regionPerils, ['id']),
+                targetRaps: _.orderBy(targetRaps, ['id']),
                 scopeContext: scopeContext
               };
+
               if(draft.content[wsIdentifier].scopeOfCompleteness.pendingData.regionPerils.length === 0) {
                 draft.content[wsIdentifier].scopeOfCompleteness.pendingData = {
+                  ...draft.content[wsIdentifier].scopeOfCompleteness.pendingData,
                   regionPerils: regionPerils,
-                  targetRaps: targetRaps
+                  targetRaps: targetRaps,
                 };
               }
 
@@ -91,11 +95,11 @@ export class ScopeCompletenessService {
             tap((data: any) => {
               ctx.patchState(produce(ctx.getState(), draft => {
                 const {regionPerils, targetRaps, scopeContext} = this._formatData(data.scopeObject);
-                const listOfPLTs = _.map(data.listOfImportedPLTs, item => ({...item, pltHeaderId: item.pltheaderId}));
+                const listOfPLTs = _.map(data.listOfImportedPLTs, item => ({...item, pltHeaderId: item.pltheaderId, scopeIndex: [item.division]}));
                 let {newRegionPerils, newTargetRaps} = this._attachPLT(listOfPLTs, regionPerils, targetRaps);
                 draft.content[wsIdentifier].scopeOfCompleteness.data = {
-                  regionPerils: newRegionPerils,
-                  targetRaps: newTargetRaps,
+                  regionPerils: _.orderBy(newRegionPerils, ['id']),
+                  targetRaps: _.orderBy(newTargetRaps, ['id']),
                   scopeContext: scopeContext
                 };
               }));
@@ -112,24 +116,37 @@ export class ScopeCompletenessService {
     const {wsIdentifier} = state.currentTab;
     const {uwYear, wsId} = state.content[wsIdentifier];
     const {accumulationPackageId} = state.content[wsIdentifier].scopeOfCompleteness.pendingData;
-    const {scopeContext} = state.content[wsIdentifier].scopeOfCompleteness.data
-    return this.scopeApi.getDataPending(accumulationPackageId, uwYear, wsId).pipe(
+    const {scopeContext} = state.content[wsIdentifier].scopeOfCompleteness.data;
+    const {projectId} =  _.find(state.content[wsIdentifier].projects, prj => prj.selected);
+    return this.scopeApi.getDataPending(accumulationPackageId, uwYear, wsId, projectId).pipe(
         tap((data: any) => {
           const overriddenData = data.overriddenSections;
           const {regionPerils, targetRaps} = this._formatData(data.scopeObject);
           const {scopeDataRP, scopeDataTR} = this._overrideData(overriddenData, regionPerils, targetRaps);
+          let mergedPltList = [];
 
           const attachedPLTs = _.map(data.attachedPLTs, item => {
             const scopeIndex =  _.toNumber(item.contractSectionId);
             return {...item.attachedPLT, scopeIndex: scopeIndex, scope: scopeContext[scopeIndex - 1].id, pltHeaderId: item.attachedPLT.pltheaderId}
           });
 
-          const {newRegionPerils, newTargetRaps} = this._attachPLT(attachedPLTs, scopeDataRP, scopeDataTR);
+          _.forEach(attachedPLTs, plt => {
+            if (_.includes(_.map(mergedPltList, item => item.pltHeaderId), plt.pltHeaderId)) {
+              const pltIndex = _.findIndex(mergedPltList, item => item.pltHeaderId === plt.pltHeaderId);
+              _.merge(mergedPltList, {[pltIndex]: {...mergedPltList[pltIndex], scope: [...mergedPltList[pltIndex].scope, plt.scope],
+                  scopeIndex: [...mergedPltList[pltIndex].scopeIndex, plt.scopeIndex]
+                }});
+            } else {
+              mergedPltList = [...mergedPltList, {...plt, scope: [plt.scope], scopeIndex: [plt.scopeIndex]}];
+            }
+          });
+
+          const {newRegionPerils, newTargetRaps} = this._attachPLT(mergedPltList, scopeDataRP, scopeDataTR);
           ctx.patchState(produce(ctx.getState(), draft => {
             draft.content[wsIdentifier].scopeOfCompleteness.pendingData = {
               ...draft.content[wsIdentifier].scopeOfCompleteness.pendingData,
-              targetRaps: newTargetRaps,
-              regionPerils: newRegionPerils,
+              targetRaps: _.orderBy(newTargetRaps, ['id']),
+              regionPerils: _.orderBy(newRegionPerils, ['id']),
               overriddenSections: data.overriddenSections
             }
           }))
@@ -190,7 +207,7 @@ export class ScopeCompletenessService {
       uwYear: ws.uwYear,
       workspaceId: ws.wsId,
       projectId: _.find(ws.projects, item => item.selected).projectId,
-      workspaceName: ws.workspaceName
+      workspaceName: ws.wsId
     };
     return this.scopeApi.overrideDone(target).pipe(
         tap((data: any) => {
@@ -202,9 +219,12 @@ export class ScopeCompletenessService {
 
           ctx.patchState(produce(ctx.getState(), draft => {
             draft.content[wsIdentifier].scopeOfCompleteness.pendingData = {
+              ...draft.content[wsIdentifier].scopeOfCompleteness.pendingData,
+              accumulationPackageId: _.get(data, 'overriddenSections.0.accumulationPackageId', 0),
               regionPerils: scopeDataRP,
               targetRaps: scopeDataTR,
-              overriddenSections: data.overriddenSections
+              overriddenSections: [..._.get(draft.content[wsIdentifier].scopeOfCompleteness.pendingData, 'overriddenSections',[]),
+                ...data.overriddenSections]
             }
           }))
 
@@ -219,7 +239,6 @@ export class ScopeCompletenessService {
   removeOverrideSelection(ctx: StateContext<WorkspaceModel>, payload) {
     const state = ctx.getState();
     const {wsIdentifier} = state.currentTab;
-    const ws = state.content[wsIdentifier];
     const scopeDataRP = _.cloneDeep(state.content[wsIdentifier].scopeOfCompleteness.pendingData.regionPerils);
     const scopeDataTR = _.cloneDeep(state.content[wsIdentifier].scopeOfCompleteness.pendingData.targetRaps);
     const {overriddenSections} = state.content[wsIdentifier].scopeOfCompleteness.pendingData;
@@ -261,20 +280,19 @@ export class ScopeCompletenessService {
 
       ctx.patchState(produce(ctx.getState(), draft => {
         draft.content[wsIdentifier].scopeOfCompleteness.pendingData = {
+          ...draft.content[wsIdentifier].scopeOfCompleteness.pendingData,
           regionPerils: scopeDataRP,
           targetRaps: scopeDataTR
         }
       }))
     }));
-
-
   }
 
   selectProject(ctx: StateContext<WorkspaceModel>, payload) {
     const state = ctx.getState();
     const {wsIdentifier} = state.currentTab;
     ctx.patchState(produce(ctx.getState(), draft => {
-      draft.content[wsIdentifier].scopeOfCompleteness.projects = _.map(draft.content[wsIdentifier].scopeOfCompleteness.projects, item => ({...item, selected: item.projectId === payload.projectId}))
+      draft.content[wsIdentifier].scopeOfCompleteness.projects = _.map(state.content[wsIdentifier].scopeOfCompleteness.projects, item => ({...item, selected: item.projectId === payload.projectId}))
     }));
     ctx.dispatch(new LoadScopePLTsData());
   }
@@ -282,56 +300,20 @@ export class ScopeCompletenessService {
   attachPLT(ctx: StateContext<WorkspaceModel>, payload) {
     const state = ctx.getState();
     const {wsIdentifier} = state.currentTab;
-    const {plts} = payload;
+    const plts = _.uniqWith(payload.plts, _.isEqual);
     const ws = state.content[wsIdentifier];
 
     const sendData = {
       accumulationPackageId: ws.scopeOfCompleteness.pendingData.accumulationPackageId,
       pltList: _.map(plts, item => ({contractSectionId: item.scopeIndex, pltHeaderId: item.pltHeaderId})),
       projectId: _.find(ws.projects, item => item.selected).projectId,
-      workspaceName: ws.workspaceName,
+      workspaceName: ws.wsId,
       uwYear: ws.uwYear,
     };
 
     return this.scopeApi.attachePLTCreate(sendData).pipe(
         tap(data => {
-          ctx.patchState(produce(ctx.getState(), draft => {
-            let regionPeril = [...state.content[wsIdentifier].scopeOfCompleteness.pendingData.regionPerils];
-            let targetRaps = [...state.content[wsIdentifier].scopeOfCompleteness.pendingData.targetRaps];
-            regionPeril = _.map(regionPeril, item => ({
-              ...item, targetRaps: _.map(item.targetRaps, itemPR => ({...itemPR, pltsAttached: []}))
-            }));
-
-            targetRaps = _.map(targetRaps, item => ({
-              ...item, regionPerils: _.map(item.regionPerils, itemPR => ({...itemPR, pltsAttached: []}))
-            }));
-
-            _.forEach(plts, plt => {
-              _.forEach(regionPeril, item => {
-                if (item.id === plt.regionPerilCode) {
-                  const regionIndex = _.findIndex(regionPeril, rp => rp.id === item.id);
-                  _.forEach(item.targetRaps, itemTR => {
-
-                    if(itemTR.id === plt.accumulationRapCode) {
-                      const regionTargetIndex = _.findIndex(item.targetRaps, (tr: any) => tr.id === itemTR.id);
-                      const targetIndex = _.findIndex(targetRaps, tr => tr.id === itemTR.id);
-                      const targetRegionIndex = _.findIndex(targetRaps[targetIndex].regionPerils, (rp: any) => rp.id === item.id);
-
-                      regionPeril[regionIndex].targetRaps[regionTargetIndex].pltsAttached = [...regionPeril[regionIndex].targetRaps[regionTargetIndex].pltsAttached, plt];
-                      targetRaps[targetIndex].regionPerils[targetRegionIndex].pltsAttached = [...targetRaps[targetIndex].regionPerils[targetRegionIndex].pltsAttached, plt];
-
-                    }
-                  })
-                }
-              })
-            });
-
-            draft.content[wsIdentifier].scopeOfCompleteness.pendingData = {
-              regionPerils: regionPeril,
-              targetRaps: targetRaps
-            }
-
-          }));
+          ctx.dispatch(new LoadScopeCompletenessPendingData());
         })
     )
   }
@@ -389,20 +371,21 @@ export class ScopeCompletenessService {
       _.forEach(item.regionPerils, rp => {
         const id = _.findIndex(regionPerils, dt => dt.id === rp.id);
         if (id === -1) {
-          const newTr = _.map(rp.targetRaps, trRp => ({...trRp, scopeContext: [item.id]}));
+          const newTr = _.map(_.uniqWith(rp.targetRaps, _.isEqual), trRp => ({...trRp, scopeContext: [item.id], expected: {[item.id]: trRp.expected}}));
           regionPerils = [...regionPerils, {...rp, scopeContext: [item.id], targetRaps: newTr}];
         } else {
           regionPerils = _.merge(regionPerils, {[id]: {scopeContext: [...regionPerils[id].scopeContext, item.id]}});
           _.forEach(rp.targetRaps, tr => {
             const targetId = _.findIndex(regionPerils[id].targetRaps, (dt: any) => dt.id === tr.id);
             if (targetId === -1) {
-              regionPerils = _.merge(regionPerils, {[id]: {targetRaps: [...regionPerils[id].targetRaps, {...tr, scopeContext: [item.id]}]}})
+              regionPerils = _.merge(regionPerils, {[id]: {targetRaps: [...regionPerils[id].targetRaps, {...tr, scopeContext: [item.id], expected: {[item.id]: tr.expected}}]}})
             } else {
               regionPerils = _.merge(regionPerils, {[id]: {targetRaps: _.merge(regionPerils[id].targetRaps, {[targetId]: {
-                      scopeContext: [...regionPerils[id].targetRaps[targetId].scopeContext, item.id]
+                      scopeContext: [...regionPerils[id].targetRaps[targetId].scopeContext, item.id],
+                      expected: _.merge(regionPerils[id].targetRaps[targetId].expected, {[item.id]: tr.expected})
                     }})}});
-              _.forEach(rp.targetRaps[targetId].pltsAttached, plt => {
-                const pltID = _.findIndex(regionPerils[id].targetRaps[targetId].pltsAttached, (plts: any) => plts.id === plt.id);
+              _.forEach(tr.pltsAttached, plt => {
+                const pltID = _.findIndex(regionPerils[id].targetRaps[targetId].pltsAttached, (plts: any) => plts.pltHeaderId === plt.pltHeaderId);
                 if (pltID === -1) {
                   regionPerils = _.merge(regionPerils, {[id]: {targetRaps: _.merge(regionPerils[id].targetRaps, {[targetId]: {
                           pltsAttached: [...regionPerils[id].targetRaps[targetId].pltsAttached, plt]
@@ -417,20 +400,21 @@ export class ScopeCompletenessService {
       _.forEach(item.targetRaps, tr => {
         const id = _.findIndex(targetRaps, dt => dt.id === tr.id);
         if (id === -1) {
-          const newRp = _.map(tr.regionPerils, trRp => ({...trRp, scopeContext: [item.id]}));
+          const newRp = _.map(_.uniqWith(tr.regionPerils, _.isEqual), trRp => ({...trRp, scopeContext: [item.id], expected: {[item.id]: trRp.expected}}));
           targetRaps = [...targetRaps, {...tr, scopeContext: [item.id], regionPerils: newRp}];
         } else {
           targetRaps = _.merge(targetRaps, {[id]: {scopeContext: [...targetRaps[id].scopeContext, item.id]}});
           _.forEach(tr.regionPerils, rp => {
             const regionId = _.findIndex(targetRaps[id].regionPerils, (dt: any) => dt.id === rp.id);
             if (regionId === -1) {
-              targetRaps = _.merge(targetRaps, {[id]: {regionPerils: [...targetRaps[id].regionPerils, {...rp, scopeContext: [item.id]}]}})
+              targetRaps = _.merge(targetRaps, {[id]: {regionPerils: [...targetRaps[id].regionPerils, {...rp, scopeContext: [item.id], expected: {[item.id]: rp.expected}}]}})
             } else {
               targetRaps = _.merge(targetRaps, {[id]: {regionPerils: _.merge(targetRaps[id].regionPerils, {[regionId]: {
-                      scopeContext: [...targetRaps[id].regionPerils[regionId].scopeContext, item.id]
+                      scopeContext: [...targetRaps[id].regionPerils[regionId].scopeContext, item.id],
+                      expected:  _.merge(targetRaps[id].regionPerils[regionId].expected,  {[item.id]: tr.expected})
                     }})}});
-              _.forEach(tr.regionPerils[regionId].pltsAttached, plt => {
-                const pltID = _.findIndex(targetRaps[id].regionPerils[regionId].pltsAttached, (plts: any) => plts.id === plt.id);
+              _.forEach(rp.pltsAttached, plt => {
+                const pltID = _.findIndex(targetRaps[id].regionPerils[regionId].pltsAttached, (plts: any) => plts.pltHeaderId === plt.pltHeaderId);
                 if (pltID === -1) {
                   targetRaps = _.merge(targetRaps, {[id]: {regionPerils: _.merge(targetRaps[id].regionPerils, {[regionId]: {
                           pltsAttached: [...targetRaps[id].regionPerils[regionId].pltsAttached, plt]

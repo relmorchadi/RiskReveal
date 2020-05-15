@@ -45,7 +45,11 @@ public class WebSecurityConfigDev extends WebSecurityConfigurerAdapter {
             @Override
             protected void doFilterInternal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, FilterChain filterChain) throws ServletException, IOException {
                 WebSecurityConfigDev.this.logger.info("invoke filter auth");
+<<<<<<< HEAD
                 UsernamePasswordAuthenticationToken userPassToken = new UsernamePasswordAuthenticationToken("U011191", null, Collections.emptyList());
+=======
+                UsernamePasswordAuthenticationToken userPassToken = new UsernamePasswordAuthenticationToken("u011170", null, Collections.emptyList());
+>>>>>>> 1649cfe7f1fbc262b52965161c5e04de6d198e45
                 userRepository.findByUserCode(userPassToken.getName()).ifPresent((e) -> {
                     getContext().setAuthentication(userPassToken);
                     WebSecurityConfigDev.this.logger.info("set username password on the SpringSecurityContext");
