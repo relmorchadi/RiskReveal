@@ -35,19 +35,9 @@ public class BatchConfiguration {
 
 
     @Autowired
-    @Qualifier(value = "dbRms")
-    private DataSource dataSource;
-
-    @Autowired
     @Qualifier(value = "dataSource")
     private DataSource rrDataSource;
 
-    @Bean(name = "rrTransactionManager")
-    public DataSourceTransactionManager getDataSourceTransactionManager() {
-        DataSourceTransactionManager dataSourceTransactionManager = new DataSourceTransactionManager();
-        dataSourceTransactionManager.setDataSource(dataSource);
-        return dataSourceTransactionManager;
-    }
 
     @Bean(name = "theTransactionManager")
     public DataSourceTransactionManager getTransactionManager() {
@@ -112,14 +102,14 @@ public class BatchConfiguration {
     public TaskExecutor threadPoolTaskExecutor() {
 
         SimpleAsyncTaskExecutor executor = new SimpleAsyncTaskExecutor();
-        executor.setConcurrencyLimit(1);
+        executor.setConcurrencyLimit(5);
         executor.setThreadNamePrefix("jm_thread");
         return executor;
     }
 
     @Bean(name = "RRThreadPoolWithQueue")
     public ThreadPoolExecutor RRThreadPoolWithQueue() {
-        return new ThreadPoolExecutor(1, 1, 1, TimeUnit.SECONDS, new PriorityBlockingQueue<Runnable>(500, new Comparator<Runnable>() {
+        return new ThreadPoolExecutor(5, 5, 1, TimeUnit.SECONDS, new PriorityBlockingQueue<Runnable>(500, new Comparator<Runnable>() {
             @Override
             public int compare(Runnable o1, Runnable o2) {
                 return ((RRJob) o1).compareTo((RRJob) o2);

@@ -19,7 +19,7 @@ import java.util.concurrent.CountDownLatch;
 @Scope("prototype")
 @Data
 @Slf4j
-@Transactional(transactionManager = "rrTransactionManager")
+@Transactional(transactionManager = "rmsTransactionManager")
 public class AnalysisDetailedScanRunnableTask implements Callable<List<RLAnalysis>> {
 
     @Autowired
@@ -36,7 +36,7 @@ public class AnalysisDetailedScanRunnableTask implements Callable<List<RLAnalysi
     private List<AnalysisHeader> headers;
 
     @Override
-    @Transactional(transactionManager = "rrTransactionManager", propagation = Propagation.REQUIRES_NEW)
+    @Transactional(transactionManager = "rmsTransactionManager", propagation = Propagation.REQUIRES_NEW)
     public List<RLAnalysis> call() throws Exception {
         try {
             return rmsService.scanAnalysisDetail(headers, projectId, selectedFp);

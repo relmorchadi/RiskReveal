@@ -15,6 +15,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 
+import java.util.List;
+
 @StepScope
 public class LocItemProcessor implements ItemProcessor<RLLocRow, RLLocRow> {
 
@@ -42,6 +44,10 @@ public class LocItemProcessor implements ItemProcessor<RLLocRow, RLLocRow> {
     @Value("#{jobParameters['carId']}")
     private String carId;
 
+    private List<CARDivisionDto> divisions;
+
+    private boolean isDone = false;
+
     @Override
     public RLLocRow process(RLLocRow item) throws Exception {
         try {
@@ -53,17 +59,21 @@ public class LocItemProcessor implements ItemProcessor<RLLocRow, RLLocRow> {
                 item.setDivision(String.valueOf(division));
             // TODO : review later & currency
 //        item.setAccuracyLevel(mappingHandler.getGeoResForCode(Integer.toString(item.getGeoResultionCode())));
+            divisions = configurationService.getDivisions(carId);
             item.setCurrencyCode(
-                    configurationService.getDivisions(carId).stream().filter(div -> div.getDivisionNumber().equals(division))
+                    divisions.stream().filter(div -> div.getDivisionNumber().equals(division))
                             .map(CARDivisionDto::getCurrency)
                             .findFirst().orElse("USD")
             );
 
-            TaskEntity task = taskRepository.findById(Long.valueOf(taskId)).orElse(null);
-            if (task != null) {
-                StepEntity step = task.getSteps().stream().filter(s -> s.getStepName().equalsIgnoreCase("ExtractLOC")).findFirst().orElse(null);
-                if (step != null)
-                    jobManager.logStep(step.getStepId(), StepStatus.SUCCEEDED);
+            if (!isDone) {
+                TaskEntity task = taskRepository.findById(Long.valueOf(taskId)).orElse(null);
+                if (task != null) {
+                    StepEntity step = task.getSteps().stream().filter(s -> s.getStepName().equalsIgnoreCase("ExtractLOC")).findFirst().orElse(null);
+                    if (step != null)
+                        jobManager.logStep(step.getStepId(), StepStatus.SUCCEEDED);
+                }
+                isDone = true;
             }
             return item;
         } catch (Exception ex) {
