@@ -16,12 +16,13 @@ export class FileBaseApi {
     return this.http.get(`${this.URL}retrieveTextFiles`, {params: {path: paths}});
   }
 
-    searchFoldersList(paths = '/') {
+    searchFoldersList(paths) {
         return this.http.get(`${this.URL}directoryListing`, {params: {path: paths}});
     }
 
     searchReadFiles(nameFiles): Observable<any> {
-     return this.http.get(`${this.URL}read-metadata`, {params: {nameFile: nameFiles}, responseType: 'text'});
+     return this.http.get(`${this.URL}read-PLTdata`, {params: {nameFile: nameFiles}});
+        //return this.http.get(`${this.URL}read-PLTdata`, {params: {nameFile: nameFiles}, responseType: 'text'});
    }
 
 }

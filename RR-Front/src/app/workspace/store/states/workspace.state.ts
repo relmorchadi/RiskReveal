@@ -1354,8 +1354,8 @@ export class WorkspaceState {
    ***********************************/
 
   @Action(fromWS.LoadFileBasedFoldersAction)
-  loadFileBasedFolders(ctx: StateContext<WorkspaceModel>) {
-    return this.fileBasedFacade.loadFolderList(ctx);
+  loadFileBasedFolders(ctx: StateContext<WorkspaceModel>, payload: string) {
+    return this.fileBasedFacade.loadFolderList(ctx, payload);
   }
 
   @Action(fromWS.LoadFileBasedFilesAction)

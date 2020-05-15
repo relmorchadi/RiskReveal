@@ -21,7 +21,7 @@
           Find Directory
         </span>
           <div class="tree-menu-wrapper" *ngIf="!collapseSearchFiles">
-            <p-tree [value]="directoryTree?.data" selectionMode="single" [(selection)]="selectedFile"
+            <p-tree [value]="directoryTree.data" selectionMode="single" [(selection)]="selectedFile"
                     (onNodeSelect)="nodeSelect($event)" (onNodeUnselect)="nodeUnselect($event)"></p-tree>
           </div>
         </div>
@@ -42,7 +42,7 @@
                   <li nz-menu-divider></li>
                   <li nz-menu-item (click)="toggleColumnsManager('pltImported')">Manage Columns</li>
                   <li nz-menu-divider></li>
-                  <li nz-menu-item>Unselect All</li>
+                  <li nz-menu-item (click)="unselectAll()">Unselect All</li>
                 </ul>
               </nz-dropdown>
             </div>

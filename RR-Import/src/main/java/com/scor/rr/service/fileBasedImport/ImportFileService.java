@@ -61,6 +61,7 @@ public class ImportFileService {
 
     @Value("${nonrms.plt.root.path}")
     private String rootFilePath;
+    //private String rootFilePath="C:\\ManualBasedImportFile";
 
     @Value("${nonrms.peqt.path}")
     private String peqtFilePath;

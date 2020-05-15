@@ -158,8 +158,8 @@ const PltDataTables = [
 ];
 
 const importedFiles = [
-  {field: 'selected', header: '', width: '25px', type: 'select', sorted: false, filtered: false, highlight: false, visible: true},
-  {field: 'name', header: 'File Name', width: '265px', type: 'text', sorted: false, filtered: true, highlight: false, visible: true},
+  {field: 'selected', header: ' ', width: '25px', type: 'select', sorted: false, filtered: false, highlight: false, visible: true},
+  {field: 'label', header: 'File Name', width: '265px', type: 'text', sorted: false, filtered: true, highlight: false, visible: true},
   {field: 'createdAt', header: 'Created At', width: '50px', type: 'text', sorted: false, filtered: true, highlight: false, visible: true},
   {field: 'updatedAt', header: 'Updated At', width: '50px', type: 'text', sorted: false, filtered: true, highlight: false, visible: true},
 ];
