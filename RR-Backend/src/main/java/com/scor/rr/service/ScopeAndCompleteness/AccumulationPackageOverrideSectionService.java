@@ -49,11 +49,12 @@ public class AccumulationPackageOverrideSectionService {
                 overrideSection.setAccumulationRAPCode(row.getAccumulationRAPCode());
                 overrideSection.setOverrideBasisCode(request.getOverrideBasisCode());
                 overrideSection.setOverrideBasisNarrative(request.getOverrideBasisNarrative());
+                overrideSection.setEntity(1);
                 listToSave.add(overrideSection);
             }
             accumulationPackageOverrideSectionRepository.saveAll(listToSave);
 
-            response.setScopeObject(accumulationPackageService.getScopeOnly(request.getWorkspaceName(),request.getUwYear(),request.getProjectId()));
+            response.setScopeObject(accumulationPackageService.getScopeOnly(request.getWorkspaceName(),request.getUwYear(),request.getProjectId(),accumulationPackage.getAccumulationPackageId()));
             response.setAttachedPLTs(accumulationPackageAttachedPLTService.getAttachedPLTs(accumulationPackage.getAccumulationPackageId()));
             response.setOverriddenSections(getOverriddenSections(accumulationPackage.getAccumulationPackageId()));
         }

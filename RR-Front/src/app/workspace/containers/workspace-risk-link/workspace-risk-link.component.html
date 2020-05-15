@@ -510,8 +510,9 @@
             -->
             </div>
 
-            <div class="body-wrap-footer-right">
-              <button *ngIf="summarySelectionSize$ | async" style="padding: 6px 20px 7px" (click)="triggerImport()" class="a-buttons-contained-mini">IMPORT</button>
+            <div class="body-wrap-footer-right" *ngIf="summarySelectionSize$ | async">
+              <button  style="padding: 6px 20px 7px; margin: 10px" (click)="saveConfiguration()" class="a-buttons-outlined-mini">Save Configuration</button>
+              <button style="padding: 6px 20px 7px; margin: 10px" (click)="triggerImport()" class="a-buttons-contained-mini">IMPORT</button>
             </div>
           </div>
         </div>
