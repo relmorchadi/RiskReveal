@@ -3,22 +3,21 @@
     <div class="a-app-header">
       <h4>Calibration</h4>
     </div>
-    <div class="my-tabs">
-      <div class="tab-set-right table-design" [ngClass]="{'table-design-sp': tableConfig.isExpanded}">
-        <app-calibration-new-table
-          [wsIdentifier]="wsIdentifier"
-          [data]="data"
-          [epMetrics]="epMetrics"
-          [adjustments]="adjustments"
-          [tableConfig]="tableConfig"
-          [columnsConfig]="columnsConfig"
-          [constants]="constants"
-          [status]="status"
-          [selectedStatusFilter]="selectedStatusFilter"
-          [exchangeRates]="exchangeRates"
-          (actionDispatcher)="handleTableActions($event)"
-        ></app-calibration-new-table>
-      </div>
+    <div class="my-tabs tab-set-right table-design table-design-sp" (resized)="detectChanges()" #dtContainer>
+      <app-calibration-new-table
+              [wsIdentifier]="wsIdentifier"
+              [data]="data"
+              [epMetrics]="epMetrics"
+              [adjustments]="adjustments"
+              [tableConfig]="tableConfig"
+              [columnsConfig]="columnsConfig"
+              [constants]="constants"
+              [status]="status"
+              [selectedStatusFilter]="selectedStatusFilter"
+              [exchangeRates]="exchangeRates"
+              [tableWidth]="dtContainer.offsetWidth + 'px'"
+              (actionDispatcher)="handleTableActions($event)"
+      ></app-calibration-new-table>
     </div>
   </div>
 </div>

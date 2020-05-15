@@ -13,7 +13,7 @@ import {ExposuresHeaderConfig} from "../../../model/exposures-header-config.mode
 })
 export class ExposuresHeaderComponent implements OnInit, OnDestroy {
 
-    @Input("headerConfig") headerConfig: ExposuresHeaderConfig;
+    @Input("headerConfig") headerConfig: any;
     @Output("actionDispatcher") actionDispatcher: EventEmitter<any> = new EventEmitter<any>();
     @Input("selectedHeaderConfig") selectedHeaderConfig: any;
 
@@ -35,6 +35,9 @@ export class ExposuresHeaderComponent implements OnInit, OnDestroy {
 
     changeFinancialUnit(financialUnit: any) {
         this.actionDispatcher.emit({type: 'changeFinancialUnit', payload: financialUnit});
+    }
+    changeFinancialPerspecctive(financialPerspective: any) {
+        this.actionDispatcher.emit({type: 'changeFinancialPerspecctive', payload: financialPerspective});
     }
 
     changeDivision(division: any) {
@@ -59,5 +62,13 @@ export class ExposuresHeaderComponent implements OnInit, OnDestroy {
 
     exportExposuresTable() {
         this.actionDispatcher.emit({type: 'exportExposuresTable', payload: null})
+    }
+
+    downloadIhubFiles() {
+        this.actionDispatcher.emit({type: 'downloadIhubFiles', payload: null})
+    }
+
+    downloadYoyReport() {
+        this.actionDispatcher.emit({type: 'downloadYoyReport', payload: null})
     }
 }

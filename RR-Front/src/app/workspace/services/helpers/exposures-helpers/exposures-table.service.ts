@@ -31,8 +31,8 @@ export class ExposuresTableService {
     }
 
 
-    exportTable() {
-        this._api.exportTable()
+    exportTable(headerConfig) {
+        return this._api.exportTable(this.constructHeaderConfig(headerConfig));
     }
 
     filterRowRegionPeril(tableConfig,rowData: any) {
@@ -60,7 +60,14 @@ export class ExposuresTableService {
     }
 
     constructHeaderConfig(headerConfig) {
-
+        let view:any;
+        if (headerConfig.exposureView == '#Risk') {
+            view = 'locationCount'
+        }else if (headerConfig.exposureView == 'Avg TIV') {
+            view = 'avgTIV'
+        }else {
+            view = 'TIV'
+        }
         return {
             currency:headerConfig.currency,
             division:headerConfig.division.divisionNumber,
@@ -71,7 +78,8 @@ export class ExposuresTableService {
             projectId:headerConfig.projectId,
             requestTotalRow:true,
             summaryType:'Summary By Country',
-            regionPerilFilter: headerConfig.regionPerilFilter ? headerConfig.regionPerilFilter : null
+            regionPerilFilter: headerConfig.regionPerilFilter ? headerConfig.regionPerilFilter : null,
+            type:view
         }
     }
 }

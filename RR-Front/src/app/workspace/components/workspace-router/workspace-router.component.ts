@@ -1,8 +1,8 @@
 import {Component, ComponentFactoryResolver, Input, OnChanges, OnInit, SimpleChanges, ViewChild} from '@angular/core';
 import {
-  WorkspaceCalibrationComponent,
-  WorkspaceContractComponent, WorkspaceExposuresComponent, WorkspaceFileBaseImportComponent,
-  WorkspacePltBrowserComponent,
+  WorkspaceCalibrationComponent, WorkspaceCloneDataComponent,
+  WorkspaceContractComponent, WorkspaceExposuresComponent,
+  WorkspacePltBrowserComponent,WorkspaceFileBaseImportComponent,
   WorkspaceProjectComponent,
   WorkspaceRiskLinkComponent, WorkspaceScopeCompletenceComponent,
 } from "../../containers";
@@ -13,6 +13,7 @@ import {Navigate} from "@ngxs/router-plugin";
 import {Store} from "@ngxs/store";
 import * as _ from 'lodash';
 import {WorkspaceCalibrationNewComponent} from "../../containers/workspace-calibration-new/workspace-calibration-new.component";
+import {PltBrowserComponent} from "../../containers/plt-browser-new/plt-browser.component";
 
 /**
  * @Component Workspace Router
@@ -44,6 +45,9 @@ export class WorkspaceRouterComponent implements OnInit, OnChanges {
     //Activity: {component: WorkspaceActivityComponent, selector: (state) => state},
     PltBrowser: {component: WorkspacePltBrowserComponent, selector: (state) => state.pltManager},
     RiskLink: {component: WorkspaceRiskLinkComponent, selector: (state) => state},
+    PltManager: {component: PltBrowserComponent, selector: (state) => state},
+    //FileBasedImport: {component: WorkspaceFileBaseImportComponent, selector: (state) => state},
+    CloneData: {component: WorkspaceCloneDataComponent, selector: (state) => state},
     FileBasedImport: {component: WorkspaceFileBaseImportComponent, selector: (state) => state},
     //CloneData: {component: WorkspaceCloneDataComponent, selector: (state) => state},
     Exposures: {component: WorkspaceExposuresComponent, selector: (state) => state},
@@ -82,6 +86,8 @@ export class WorkspaceRouterComponent implements OnInit, OnChanges {
    * @param route
    */
   handleLeftMenuNavigation({route}) {
+    console.log('is route , ?');
+    console.log(route);
     const {wsId, uwYear} = this.state.data;
     this.store.dispatch(
       [new UpdateWsRouting(this.state.wsIdentifier, route), new Navigate(route ? [`workspace/${wsId}/${uwYear}/${route}`] : [`workspace/${wsId}/${uwYear}/projects`])]
@@ -91,8 +97,11 @@ export class WorkspaceRouterComponent implements OnInit, OnChanges {
   /**
    * @desc Handle left menu Toggle
    */
-  handleLeftMenuToggle() {
-    this.store.dispatch(new ToggleWsLeftMenu(this.state.wsIdentifier));
+  handleLeftMenuToggle(isCollapsed) {
+    this.store.dispatch(new ToggleWsLeftMenu({
+      wsId: this.state.wsIdentifier,
+      isCollapsed
+    }));
   }
 
   /**

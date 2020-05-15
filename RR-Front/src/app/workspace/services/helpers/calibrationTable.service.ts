@@ -97,7 +97,6 @@ export class CalibrationTableService {
         tail = this.columnsConfigCache.frozenColumns[this.columnsConfigCache.frozenColumns.length - 1];
       }
 
-
       const columns = ( isExpanded ? [..._.uniqBy([...head, ...CalibrationTableService.frozenCols, tail], 'field'), ...this.epMetrics] : this.epMetrics );
       const columnsLength = columns ? columns.length : null;
 
@@ -109,7 +108,22 @@ export class CalibrationTableService {
       })
     },
     "fac-adjustments": (isExpanded) => {
-      const c = {header: 'Default',field: 'Default', width: "40", unit: 'px', icon:'', filter: false, sort: false}
+      const c = {header: 'Default',field: 'Default', width: "100", unit: '%', icon:'', filter: false, sort: false}
+      const frozenColumns = ( isExpanded ? null : this.columnsConfigCache.frozenColumns);
+      const frozenWidth = ( isExpanded ? '0px' : this.columnsConfigCache.frozenWidth);
+
+      const columns = ( isExpanded ?
+          [...this.columnsConfigCache.frozenColumns, c] :
+          [c] );
+      const columnsLength = columns ? columns.length : null;
+      return ({
+        frozenWidth,
+        frozenColumns,
+        columns,
+        columnsLength
+      })
+    },
+    "treaty-epMetrics": (isExpanded) => {
       const frozenColumns = ( isExpanded ? null : this.columnsConfigCache.frozenColumns);
       const frozenWidth = ( isExpanded ? '0px' : this.columnsConfigCache.frozenWidth);
       let head, tail;
@@ -117,9 +131,26 @@ export class CalibrationTableService {
         head = _.slice(this.columnsConfigCache.frozenColumns, 0, this.columnsConfigCache.frozenColumns.length - 1);
         tail = this.columnsConfigCache.frozenColumns[this.columnsConfigCache.frozenColumns.length - 1];
       }
-      const columns = ( isExpanded ? [..._.uniqBy([...head, ...CalibrationTableService.frozenColsExpanded, tail], 'field'), c] : [c] );
+
+      const columns = ( isExpanded ? [..._.uniqBy([...head, ...CalibrationTableService.frozenCols, tail], 'field'), ...this.epMetrics] : this.epMetrics );
       const columnsLength = columns ? columns.length : null;
 
+      return ({
+        frozenWidth,
+        frozenColumns,
+        columns,
+        columnsLength
+      })
+    },
+    "treaty-adjustments": (isExpanded) => {
+      const c = {header: 'Default',field: 'Default', width: "100", unit: '%', icon:'', filter: false, sort: false}
+      const frozenColumns = ( isExpanded ? null : this.columnsConfigCache.frozenColumns);
+      const frozenWidth = ( isExpanded ? '0px' : this.columnsConfigCache.frozenWidth);
+
+      const columns = ( isExpanded ?
+          [...this.columnsConfigCache.frozenColumns, c] :
+          [c] );
+      const columnsLength = columns ? columns.length : null;
       return ({
         frozenWidth,
         frozenColumns,
@@ -147,7 +178,7 @@ export class CalibrationTableService {
       this.updateColumnsConfig(tmp);
     } catch(e) {
       this.updateColumnsConfig({
-        frozenWidth: _.reduce(CalibrationTableService.frozenCols, (acc, curr) => acc + _.toNumber(curr), 0) + 'px',
+        frozenWidth: _.reduce(CalibrationTableService.frozenCols, (acc, curr) => acc + _.toNumber(curr.width), 0) + 'px',
         frozenColumns: CalibrationTableService.frozenCols,
         columns: this.analysis,
         columnsLength: CalibrationTableService.frozenCols.length
@@ -155,7 +186,7 @@ export class CalibrationTableService {
     }
   }
 
-  generateColumns = (arr) => _.map(arr, el => ({header: el,field: el, type: 'number', width: "100", icon:'', filter: false, sort: false, align: 'right', resizable:true}));
+  generateColumns = (arr) => _.map(arr, el => ({header: el,field: el, type: 'number', width: "100", unit: 'px', icon:'', filter: false, sort: false, align: 'right', resizable:true}));
 
   setCols = (cols, view) => {
     this[view] = this.generateColumns(cols);

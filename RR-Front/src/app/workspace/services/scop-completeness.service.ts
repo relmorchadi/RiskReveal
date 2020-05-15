@@ -8,6 +8,7 @@ import {ActivatedRoute} from '@angular/router';
 import {WorkspaceModel} from '../model';
 import {of} from 'rxjs';
 import {ScopeOfCompletenessApi} from "./api/scopeOfCompleteness.api";
+import {LoadScopeCompletenessPendingData, LoadScopePLTsData} from "../store/actions";
 
 @Injectable({
   providedIn: 'root'
@@ -17,6 +18,19 @@ export class ScopeCompletenessService {
   constructor(private store$: Store, private pltApi: PltApi,
               private route$: ActivatedRoute,
               private scopeApi: ScopeOfCompletenessApi) {
+  }
+
+  patchScopeState(ctx: StateContext<WorkspaceModel>, payload) {
+    const state = ctx.getState();
+    const {wsIdentifier} = state.currentTab;
+    const scope = _.get(payload, 'scope', null);
+    ctx.patchState(produce(ctx.getState(), draft => {
+      if (scope === 'scopeContext') {
+        draft.content[wsIdentifier].scopeOfCompleteness.scopeContext = _.merge(draft.content[wsIdentifier].scopeOfCompleteness.scopeContext, payload.mergedData)
+      } else {
+        draft.content[wsIdentifier].scopeOfCompleteness.override = _.merge(draft.content[wsIdentifier].scopeOfCompleteness.override, payload);
+      }
+    }))
   }
 
   publishToPricing(ctx: StateContext<WorkspaceModel>, paylaod) {
@@ -39,21 +53,29 @@ export class ScopeCompletenessService {
     const state = ctx.getState();
     const {wsIdentifier} = state.currentTab;
     const {uwYear, wsId} = state.content[wsIdentifier];
-    return this.scopeApi.getData(uwYear, wsId)
+    const {projectId} =  _.find(state.content[wsIdentifier].projects, prj => prj.selected);
+    return this.scopeApi.getData(uwYear, wsId, projectId)
       .pipe(
           tap((data: any[]) => {
             console.log(data);
             ctx.patchState(produce(ctx.getState(), draft => {
-              let regionPerils = [];
-              let targetRaps = [];
-              _.forEach(data, item => {
-                regionPerils = [...regionPerils, ...item.regionPerils];
-                targetRaps = [...targetRaps, ...item.targetRaps]
-              });
+              const {regionPerils, targetRaps, scopeContext} = this._formatData(data);
               draft.content[wsIdentifier].scopeOfCompleteness.data = {
-                regionPerils: regionPerils,
-                targetRaps: targetRaps
+                regionPerils: _.orderBy(regionPerils, ['id']),
+                targetRaps: _.orderBy(targetRaps, ['id']),
+                scopeContext: scopeContext
               };
+
+              if(draft.content[wsIdentifier].scopeOfCompleteness.pendingData.regionPerils.length === 0) {
+                draft.content[wsIdentifier].scopeOfCompleteness.pendingData = {
+                  ...draft.content[wsIdentifier].scopeOfCompleteness.pendingData,
+                  regionPerils: regionPerils,
+                  targetRaps: targetRaps,
+                };
+              }
+
+              draft.content[wsIdentifier].scopeOfCompleteness.projects = _.map(
+                  draft.content[wsIdentifier].projects, (item, key: any) => ({...item, selected: key === 0}));
             }));
         }),
         catchError(err => {
@@ -63,4 +85,394 @@ export class ScopeCompletenessService {
       );
   }
 
+  loadScopeCompletenessDataPricing(ctx: StateContext<WorkspaceModel>, payload) {
+    const state = ctx.getState();
+    const {wsIdentifier} = state.currentTab;
+    const {uwYear, wsId} = state.content[wsIdentifier];
+    const selectedPrj = _.find(state.content[wsIdentifier].projects, item => item.selected);
+    return this.scopeApi.getDataPricing(uwYear, wsId, selectedPrj.projectId)
+        .pipe(
+            tap((data: any) => {
+              ctx.patchState(produce(ctx.getState(), draft => {
+                const {regionPerils, targetRaps, scopeContext} = this._formatData(data.scopeObject);
+                const listOfPLTs = _.map(data.listOfImportedPLTs, item => ({...item, pltHeaderId: item.pltheaderId, scopeIndex: [item.division]}));
+                let {newRegionPerils, newTargetRaps} = this._attachPLT(listOfPLTs, regionPerils, targetRaps);
+                draft.content[wsIdentifier].scopeOfCompleteness.data = {
+                  regionPerils: _.orderBy(newRegionPerils, ['id']),
+                  targetRaps: _.orderBy(newTargetRaps, ['id']),
+                  scopeContext: scopeContext
+                };
+              }));
+            }),
+            catchError(err => {
+              console.log(err);
+              return of();
+            })
+        );
+  }
+
+  loadScopeCompletenessDataPending(ctx: StateContext<WorkspaceModel>, payload) {
+    const state = ctx.getState();
+    const {wsIdentifier} = state.currentTab;
+    const {uwYear, wsId} = state.content[wsIdentifier];
+    const {accumulationPackageId} = state.content[wsIdentifier].scopeOfCompleteness.pendingData;
+    const {scopeContext} = state.content[wsIdentifier].scopeOfCompleteness.data;
+    const {projectId} =  _.find(state.content[wsIdentifier].projects, prj => prj.selected);
+    return this.scopeApi.getDataPending(accumulationPackageId, uwYear, wsId, projectId).pipe(
+        tap((data: any) => {
+          const overriddenData = data.overriddenSections;
+          const {regionPerils, targetRaps} = this._formatData(data.scopeObject);
+          const {scopeDataRP, scopeDataTR} = this._overrideData(overriddenData, regionPerils, targetRaps);
+          let mergedPltList = [];
+
+          const attachedPLTs = _.map(data.attachedPLTs, item => {
+            const scopeIndex =  _.toNumber(item.contractSectionId);
+            return {...item.attachedPLT, scopeIndex: scopeIndex, scope: scopeContext[scopeIndex - 1].id, pltHeaderId: item.attachedPLT.pltheaderId}
+          });
+
+          _.forEach(attachedPLTs, plt => {
+            if (_.includes(_.map(mergedPltList, item => item.pltHeaderId), plt.pltHeaderId)) {
+              const pltIndex = _.findIndex(mergedPltList, item => item.pltHeaderId === plt.pltHeaderId);
+              _.merge(mergedPltList, {[pltIndex]: {...mergedPltList[pltIndex], scope: [...mergedPltList[pltIndex].scope, plt.scope],
+                  scopeIndex: [...mergedPltList[pltIndex].scopeIndex, plt.scopeIndex]
+                }});
+            } else {
+              mergedPltList = [...mergedPltList, {...plt, scope: [plt.scope], scopeIndex: [plt.scopeIndex]}];
+            }
+          });
+
+          const {newRegionPerils, newTargetRaps} = this._attachPLT(mergedPltList, scopeDataRP, scopeDataTR);
+          ctx.patchState(produce(ctx.getState(), draft => {
+            draft.content[wsIdentifier].scopeOfCompleteness.pendingData = {
+              ...draft.content[wsIdentifier].scopeOfCompleteness.pendingData,
+              targetRaps: _.orderBy(newTargetRaps, ['id']),
+              regionPerils: _.orderBy(newRegionPerils, ['id']),
+              overriddenSections: data.overriddenSections
+            }
+          }))
+        })
+    )
+  }
+
+  loadAccumulationPackageInfo(ctx: StateContext<WorkspaceModel>, payload) {
+    const state = ctx.getState();
+    const {wsIdentifier} = state.currentTab;
+    const selectedProject = _.find(state.content[wsIdentifier].projects, item => item.selected);
+    return this.scopeApi.getDataAccumulation(selectedProject.projectId).pipe(
+        tap((data: any)  => {
+          const packageData = data.length === 0 ? {accumulationPackageId: 0,
+            accumulationPackageStatus: "string"} : data[0];
+          ctx.patchState(produce(ctx.getState(), draft => {
+            draft.content[wsIdentifier].scopeOfCompleteness.pendingData = {
+              ...draft.content[wsIdentifier].scopeOfCompleteness.pendingData,
+              ...packageData,
+              packages: data,
+            }
+          }));
+          ctx.dispatch(new LoadScopeCompletenessPendingData());
+        }),
+        catchError(err => {
+          return of();
+        })
+    );
+
+
+  }
+
+  listOfPLTsToAttach(ctx: StateContext<WorkspaceModel>, payload) {
+    const state = ctx.getState();
+    const {wsIdentifier} = state.currentTab;
+    const projects = state.content[wsIdentifier].scopeOfCompleteness.projects;
+    if (projects.length > 0) {
+      const selectedProject = _.find(state.content[wsIdentifier].scopeOfCompleteness.projects, item => item.selected);
+      return  this.scopeApi.getListOfPLTs(0, selectedProject.projectId).pipe(
+          tap(data => {
+            ctx.patchState(produce(ctx.getState(), draft => {
+              draft.content[wsIdentifier].scopeOfCompleteness.plts = _.map(data, item => ({...item, selected: false}));
+            }))
+          }),
+          catchError(err => {console.log(err); return of()})
+      )
+    }
+  }
+
+  overrideSelection(ctx: StateContext<WorkspaceModel>, payload) {
+    const state = ctx.getState();
+    const {wsIdentifier} = state.currentTab;
+    const ws = state.content[wsIdentifier];
+    let target = {
+      accumulationPackageId: ws.scopeOfCompleteness.pendingData.accumulationPackageId,
+      listOfOverrides: payload.listOfOverrides,
+      overrideBasisCode: payload.overrideBasisCode,
+      overrideBasisNarrative: payload.overrideBasisNarrative,
+      uwYear: ws.uwYear,
+      workspaceId: ws.wsId,
+      projectId: _.find(ws.projects, item => item.selected).projectId,
+      workspaceName: ws.wsId
+    };
+    return this.scopeApi.overrideDone(target).pipe(
+        tap((data: any) => {
+          const overriddenData = data.overriddenSections;
+          const regionPeril = _.cloneDeep(state.content[wsIdentifier].scopeOfCompleteness.pendingData.regionPerils);
+          const targetRap = _.cloneDeep(state.content[wsIdentifier].scopeOfCompleteness.pendingData.targetRaps);
+
+          const {scopeDataRP, scopeDataTR} = this._overrideData(overriddenData, regionPeril, targetRap);
+
+          ctx.patchState(produce(ctx.getState(), draft => {
+            draft.content[wsIdentifier].scopeOfCompleteness.pendingData = {
+              ...draft.content[wsIdentifier].scopeOfCompleteness.pendingData,
+              accumulationPackageId: _.get(data, 'overriddenSections.0.accumulationPackageId', 0),
+              regionPerils: scopeDataRP,
+              targetRaps: scopeDataTR,
+              overriddenSections: [..._.get(draft.content[wsIdentifier].scopeOfCompleteness.pendingData, 'overriddenSections',[]),
+                ...data.overriddenSections]
+            }
+          }))
+
+        }),
+        catchError(err => {
+          console.log(err);
+          return of();
+        })
+    )
+  }
+
+  removeOverrideSelection(ctx: StateContext<WorkspaceModel>, payload) {
+    const state = ctx.getState();
+    const {wsIdentifier} = state.currentTab;
+    const scopeDataRP = _.cloneDeep(state.content[wsIdentifier].scopeOfCompleteness.pendingData.regionPerils);
+    const scopeDataTR = _.cloneDeep(state.content[wsIdentifier].scopeOfCompleteness.pendingData.targetRaps);
+    const {overriddenSections} = state.content[wsIdentifier].scopeOfCompleteness.pendingData;
+
+    let removedOverride = [];
+
+    _.forEach(payload.listOfRemovedItems, item => {
+      removedOverride = [...removedOverride, _.find(overriddenSections, overriddenItem => overriddenItem.minimumGrainRegionPerilCode === item.minimumGrainRegionPerilCode &&
+      overriddenItem.accumulationRAPCode === item.accumulationRAPCode && overriddenItem.contractSectionId == item.contractSectionId)];
+    });
+
+    return this.scopeApi.overrideDelete(removedOverride).pipe(tap(data => {
+      _.forEach(payload.listOfRemovedItems, overriddenItem => {
+        _.forEach(scopeDataRP, item => {
+          if (item.id === overriddenItem.minimumGrainRegionPerilCode) {
+            const overriddenRpIndex = _.findIndex(scopeDataRP, (Otr: any) => Otr.id === item.id);
+            _.forEach(item.targetRaps, tr => {
+              if (tr.id === overriddenItem.accumulationRAPCode) {
+                const overriddenRpTrIndex = _.findIndex(item.targetRaps, (Otr: any) => Otr.id === tr.id);
+                const overriddenTrIndex = _.findIndex(scopeDataTR, (Otr: any) => Otr.id === tr.id);
+                const overriddenTrRpIndex = _.findIndex(scopeDataTR[overriddenTrIndex].regionPerils,
+                    (Otr: any) => Otr.id === item.id);
+                console.log(_.omit(scopeDataRP[overriddenRpIndex].targetRaps[overriddenRpTrIndex].override, `${overriddenItem.contractSectionId}`));
+                scopeDataRP[overriddenRpIndex].targetRaps[overriddenRpTrIndex] = {
+                  ...scopeDataRP[overriddenRpIndex].targetRaps[overriddenRpTrIndex],
+                  override: _.omit(scopeDataRP[overriddenRpIndex].targetRaps[overriddenRpTrIndex].override, `${overriddenItem.contractSectionId}`)
+                };
+
+                scopeDataTR[overriddenTrIndex].regionPerils[overriddenTrRpIndex] = {
+                  ...scopeDataTR[overriddenTrIndex].regionPerils[overriddenTrRpIndex],
+                  override: _.omit(scopeDataTR[overriddenTrIndex].regionPerils[overriddenTrRpIndex], `${overriddenItem.contractSectionId}`)
+                }
+
+              }
+            })
+          }
+        });
+      });
+
+      ctx.patchState(produce(ctx.getState(), draft => {
+        draft.content[wsIdentifier].scopeOfCompleteness.pendingData = {
+          ...draft.content[wsIdentifier].scopeOfCompleteness.pendingData,
+          regionPerils: scopeDataRP,
+          targetRaps: scopeDataTR
+        }
+      }))
+    }));
+  }
+
+  selectProject(ctx: StateContext<WorkspaceModel>, payload) {
+    const state = ctx.getState();
+    const {wsIdentifier} = state.currentTab;
+    ctx.patchState(produce(ctx.getState(), draft => {
+      draft.content[wsIdentifier].scopeOfCompleteness.projects = _.map(state.content[wsIdentifier].projects, item => ({...item, selected: item.projectId === payload.projectId}))
+    }));
+    ctx.dispatch(new LoadScopePLTsData());
+  }
+
+  attachPLT(ctx: StateContext<WorkspaceModel>, payload) {
+    const state = ctx.getState();
+    const {wsIdentifier} = state.currentTab;
+    const plts = _.uniqWith(payload.plts, _.isEqual);
+    const ws = state.content[wsIdentifier];
+
+    const sendData = {
+      accumulationPackageId: ws.scopeOfCompleteness.pendingData.accumulationPackageId,
+      pltList: _.map(plts, item => ({contractSectionId: item.scopeIndex, pltHeaderId: item.pltHeaderId})),
+      projectId: _.find(ws.projects, item => item.selected).projectId,
+      workspaceName: ws.wsId,
+      uwYear: ws.uwYear,
+    };
+
+    return this.scopeApi.attachePLTCreate(sendData).pipe(
+        tap(data => {
+          ctx.dispatch(new LoadScopeCompletenessPendingData());
+        })
+    )
+  }
+
+  deleteOverride(ctx: StateContext<WorkspaceModel>, payload) {
+    const state = ctx.getState();
+    const {wsIdentifier} = state.currentTab;
+    const ws = state.content[wsIdentifier];
+    let target = {
+      listOfOverrides: payload.listOfOverrides,
+      overrideBasisCode: payload.overrideBasisCode,
+      overrideBasisNarrative: payload.overrideBasisNarrative,
+      uwYear: ws.uwYear,
+      workspaceId: ws.wsId,
+      workspaceName: ws.workspaceName
+    };
+    return this.scopeApi.overrideDelete(target).pipe(
+        tap(data => {})
+    )
+  }
+
+  private _attachPLT(plts, regionPerils, targetRaps) {
+    const newRegionPerils = [...regionPerils];
+    const newTargetRaps = [...targetRaps];
+    _.forEach(newRegionPerils, item => {
+      _.forEach(plts, plt => {
+        if(_.includes(item.id, plt.regionPerilCode)) {
+          const regionIndex = _.findIndex(newRegionPerils, (rp: any) => rp.id === item.id);
+          _.forEach(item.targetRaps, child => {
+            if(_.isEqual(child.id, plt.accumulationRapCode)) {
+              const targetIndex = _.findIndex(item.targetRaps, (tr: any) => tr.id === child.id);
+              const targetConIndex = _.findIndex(newTargetRaps, (rp: any) => rp.id === child.id);
+              const regionConIndex = _.findIndex(newTargetRaps[targetConIndex].regionPerils,
+                  (rp: any) => rp.id === item.id);
+
+              newRegionPerils[regionIndex].targetRaps[targetIndex].pltsAttached =
+                  [..._.toArray(newRegionPerils[regionIndex].targetRaps[targetIndex].pltsAttached), plt];
+              newTargetRaps[targetConIndex].regionPerils[regionConIndex].pltsAttached =
+                  [..._.toArray(newTargetRaps[targetConIndex].regionPerils[regionConIndex].pltsAttached), plt];
+            }
+          })
+        }
+      })
+    });
+
+    return {newRegionPerils , newTargetRaps}
+  }
+
+  private _formatData(data) {
+    let regionPerils = [];
+    let targetRaps = [];
+    let scopeContext = [];
+    _.forEach(data, item => {
+      scopeContext = [...scopeContext, _.omit(item, ['regionPerils', 'targetRaps'])];
+      _.forEach(item.regionPerils, rp => {
+        const id = _.findIndex(regionPerils, dt => dt.id === rp.id);
+        if (id === -1) {
+          const newTr = _.map(_.uniqWith(rp.targetRaps, _.isEqual), trRp => ({...trRp, scopeContext: [item.id], expected: {[item.id]: trRp.expected}}));
+          regionPerils = [...regionPerils, {...rp, scopeContext: [item.id], targetRaps: newTr}];
+        } else {
+          regionPerils = _.merge(regionPerils, {[id]: {scopeContext: [...regionPerils[id].scopeContext, item.id]}});
+          _.forEach(rp.targetRaps, tr => {
+            const targetId = _.findIndex(regionPerils[id].targetRaps, (dt: any) => dt.id === tr.id);
+            if (targetId === -1) {
+              regionPerils = _.merge(regionPerils, {[id]: {targetRaps: [...regionPerils[id].targetRaps, {...tr, scopeContext: [item.id], expected: {[item.id]: tr.expected}}]}})
+            } else {
+              regionPerils = _.merge(regionPerils, {[id]: {targetRaps: _.merge(regionPerils[id].targetRaps, {[targetId]: {
+                      scopeContext: [...regionPerils[id].targetRaps[targetId].scopeContext, item.id],
+                      expected: _.merge(regionPerils[id].targetRaps[targetId].expected, {[item.id]: tr.expected})
+                    }})}});
+              _.forEach(tr.pltsAttached, plt => {
+                const pltID = _.findIndex(regionPerils[id].targetRaps[targetId].pltsAttached, (plts: any) => plts.pltHeaderId === plt.pltHeaderId);
+                if (pltID === -1) {
+                  regionPerils = _.merge(regionPerils, {[id]: {targetRaps: _.merge(regionPerils[id].targetRaps, {[targetId]: {
+                          pltsAttached: [...regionPerils[id].targetRaps[targetId].pltsAttached, plt]
+                        }})}})
+                }
+              })
+            }
+          });
+        }
+      });
+
+      _.forEach(item.targetRaps, tr => {
+        const id = _.findIndex(targetRaps, dt => dt.id === tr.id);
+        if (id === -1) {
+          const newRp = _.map(_.uniqWith(tr.regionPerils, _.isEqual), trRp => ({...trRp, scopeContext: [item.id], expected: {[item.id]: trRp.expected}}));
+          targetRaps = [...targetRaps, {...tr, scopeContext: [item.id], regionPerils: newRp}];
+        } else {
+          targetRaps = _.merge(targetRaps, {[id]: {scopeContext: [...targetRaps[id].scopeContext, item.id]}});
+          _.forEach(tr.regionPerils, rp => {
+            const regionId = _.findIndex(targetRaps[id].regionPerils, (dt: any) => dt.id === rp.id);
+            if (regionId === -1) {
+              targetRaps = _.merge(targetRaps, {[id]: {regionPerils: [...targetRaps[id].regionPerils, {...rp, scopeContext: [item.id], expected: {[item.id]: rp.expected}}]}})
+            } else {
+              targetRaps = _.merge(targetRaps, {[id]: {regionPerils: _.merge(targetRaps[id].regionPerils, {[regionId]: {
+                      scopeContext: [...targetRaps[id].regionPerils[regionId].scopeContext, item.id],
+                      expected:  _.merge(targetRaps[id].regionPerils[regionId].expected,  {[item.id]: rp.expected})
+                    }})}});
+              _.forEach(rp.pltsAttached, plt => {
+                const pltID = _.findIndex(targetRaps[id].regionPerils[regionId].pltsAttached, (plts: any) => plts.pltHeaderId === plt.pltHeaderId);
+                if (pltID === -1) {
+                  targetRaps = _.merge(targetRaps, {[id]: {regionPerils: _.merge(targetRaps[id].regionPerils, {[regionId]: {
+                          pltsAttached: [...targetRaps[id].regionPerils[regionId].pltsAttached, plt]
+                        }})}})
+                }
+              })
+            }
+          });
+        }
+      });
+    });
+    return {regionPerils, targetRaps, scopeContext}
+  }
+
+  private _overrideData(overriddenData,  regionPeril, targetRap) {
+    const scopeDataRP = [...regionPeril];
+    const scopeDataTR = [...targetRap];
+
+    _.forEach(overriddenData, overriddenItem => {
+      _.forEach(scopeDataRP, item => {
+        if (item.id === overriddenItem.minimumGrainRegionPerilCode) {
+          const overriddenRpIndex = _.findIndex(scopeDataRP, (Otr: any) => Otr.id === item.id);
+          _.forEach(item.targetRaps, tr => {
+            if (tr.id === overriddenItem.accumulationRAPCode) {
+              const overriddenRpTrIndex = _.findIndex(item.targetRaps, (Otr: any) => Otr.id === tr.id);
+              const overriddenTrIndex = _.findIndex(scopeDataTR, (Otr: any) => Otr.id === tr.id);
+              const overriddenTrRpIndex = _.findIndex(scopeDataTR[overriddenTrIndex].regionPerils,
+                  (Otr: any) => Otr.id === item.id);
+
+              scopeDataRP[overriddenRpIndex].targetRaps[overriddenRpTrIndex] = {
+                ...scopeDataRP[overriddenRpIndex].targetRaps[overriddenRpTrIndex],
+                override: {
+                  ..._.get(scopeDataRP[overriddenRpIndex].targetRaps[overriddenRpTrIndex], 'override', {}),
+                  [overriddenItem.contractSectionId]: {
+                    overridden: true,
+                    reason: overriddenItem.overrideBasisCode,
+                    reasonNarrative: overriddenItem.overrideBasisNarrative
+                  }},
+              };
+
+              scopeDataTR[overriddenTrIndex].regionPerils[overriddenTrRpIndex] = {
+                ...scopeDataTR[overriddenTrIndex].regionPerils[overriddenTrRpIndex],
+                override: {
+                  ..._.get(scopeDataTR[overriddenTrIndex].regionPerils[overriddenTrRpIndex], 'override', {}),
+                  [overriddenItem.contractSectionId]: {
+                    overridden: true,
+                    reason: overriddenItem.overrideBasisCode,
+                    reasonNarrative: overriddenItem.overrideBasisNarrative
+                  }},
+              }
+
+            }
+          })
+        }
+      });
+    });
+
+    return {scopeDataRP, scopeDataTR};
+  }
 }

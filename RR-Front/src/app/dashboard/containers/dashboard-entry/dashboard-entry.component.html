@@ -104,7 +104,7 @@
                       (onCancel)="closePopUp()"></app-manage-columns>
   <div class="PLT-slider closed-slider">
     <div *ngIf="!rightSliderCollapsed" class="collapsed-setting-icon">
-      <i class="clickable-item icon-settings_24px" style="font-size: 24px" nz-tooltip="Dashboard Preference"
+      <i class="clickable-item icon-settings_24px" style="font-size: 24px" nz-tooltip="Dashboard Preferences"
          (click)="openRightSlider()"></i>
     </div>
   </div>
@@ -147,7 +147,7 @@
         </nz-select>
         <div class="edit-dashboard-section">
           <input style="width: 80%" class="hover-input"
-                 (change)="changeDashboardName($event.target.value)" [ngModel]="selectedDashboard?.name">
+                 (ngModelChange)="changeDashboardName($event)" [ngModel]="selectedDashboard?.name">
           <i nz-popconfirm nzPlacement="top" [nzTitle]="deleted" *ngIf="dashboards?.length > 1"
              (nzOnConfirm)="deleteDashboard()" style="cursor: pointer" class="icon-trash-alt delete-icon"
             nzOkText="DELETE" nzCancelText="CANCEL" [nzOkType]="'danger'" (nzVisibleChange)="visibilityCheck($event)"

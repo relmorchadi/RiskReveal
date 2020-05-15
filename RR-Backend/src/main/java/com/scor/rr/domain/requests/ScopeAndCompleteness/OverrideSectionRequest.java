@@ -7,9 +7,9 @@ import java.util.List;
 @Data
 public class OverrideSectionRequest {
 
+    private long projectId;
     private String WorkspaceName;
     private int uwYear;
-    private long workspaceId;
     private long accumulationPackageId;
     private String OverrideBasisCode;
     private String OverrideBasisNarrative;

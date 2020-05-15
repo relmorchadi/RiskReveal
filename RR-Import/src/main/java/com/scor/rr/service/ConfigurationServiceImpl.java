@@ -141,7 +141,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
             if (rlModelDataSourceOp.isPresent()) {
                 rlSourceEpHeaderRepository.deleteByRLAnalysisId(rlAnalysisId);
                 rmsService.extractSourceEpHeaders(rlModelDataSourceOp.get().getInstanceId(), rlModelDataSourceOp.get().getRlId(),
-                        rlModelDataSourceOp.get().getRlDataSourceName(), rlAnalysisOptional.get().getProjectId(), epPoints, analysis, fpCodes);
+                        rlModelDataSourceOp.get().getName(), rlAnalysisOptional.get().getProjectId(), epPoints, analysis, fpCodes);
                 return rlSourceEPHeaderViewRepository.findByRLAnalysisId(rlAnalysisId);
             } else
                 return new ArrayList<>();
@@ -237,6 +237,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
     public List<RLImportSelectionDtoWithAnalysisInfo> getRLModelAnalysisConfigs(Long projectId) {
         List<RLImportSelection> data = rlImportSelectionRepository.findByProjectId(projectId);
         List<RLImportSelectionDtoWithAnalysisInfo> importedAnalysis = new ArrayList<>();
+        List<String> fpCodes = financialPerspectiveRepository.findSelectableCodes();
 
         if (data != null && !data.isEmpty()) {
             data.forEach(element -> {
@@ -264,6 +265,21 @@ public class ConfigurationServiceImpl implements ConfigurationService {
                 }
 
                 rlImportSelection.setReferenceTargetRaps(this.getTargetRapByAnalysisId(element.getRlAnalysis().getRlAnalysisId()));
+                Optional<RLModelDataSource> dsOpt= rlModelDataSourceRepository.findById(element.getRlAnalysis().getRlModelDataSourceId());
+
+                if(dsOpt.isPresent()){
+                    RLModelDataSource ds= dsOpt.get();
+                    rlImportSelection.setExpectedFinancialPerspectives(
+                            rmsService.getExpectedFinancialPersp(
+                                    ds.getInstanceId(),
+                                    element.getRlAnalysis().getRdmId(),
+                                    element.getRlAnalysis().getRdmName(),
+                                    Collections.singletonList(element.getRlAnalysis().getRlId()),
+                                    fpCodes
+                            )
+                    );
+                }
+
             });
         }
         return importedAnalysis;
@@ -341,9 +357,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 
     @Override
     public void deleteRlDataSource(Long rlDataSourceId) {
-        Integer status = rlModelDataSourceRepository.deleteRLModelDataSourceById(rlDataSourceId);
-        if (status == -1)
-            throw new RuntimeException("Failed delete for RL DataSource with ID : " + rlDataSourceId);
+        rlModelDataSourceRepository.deleteRLModelDataSourceById(rlDataSourceId);
     }
 
     private List<RLAnalysisDto> findAnalysis(Long rdmId, String keyword) {
@@ -369,22 +383,16 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 
     @Override
     public void clearProjectAndLoadDefaultDataSources(Long projectId) {
-        rlModelDataSourceRepository.findByProjectId(projectId)
-                .stream()
-                .forEach(ds -> {
-                    rlModelDataSourceRepository.deleteRLModelDataSourceById(ds.getRlModelDataSourceId());
-                });
+        rlModelDataSourceRepository.deleteRLModelDataSourceByProjectId(projectId);
     }
 
     @Override
-    public void deleteAnalysisSummary(List<Long> rlAnalysisId, Long projectId) {
-        rlAnalysisId.stream()
-                .forEach(id -> rlImportSelectionRepository.deleteByRlAnalysisIdAndProjectId(id, projectId));
+    public void deleteAnalysisSummary(List<Long> rlAnalysisIds) {
+        rlImportSelectionRepository.deleteByRlAnalysisIdIn(rlAnalysisIds);
     }
 
     @Override
-    public void deletePortfolioSummary(List<Long> rlPortfolioId, Long projectId) {
-        rlPortfolioId.stream()
-                .forEach(id -> rlPortfolioSelectionRepository.deleteByPortfolioIdAndProjectId(id,projectId));
+    public void deletePortfolioSummary(List<Long> rlPortfolioIds) {
+        rlPortfolioSelectionRepository.deleteByPortfolioIdIn(rlPortfolioIds);
     }
 }

@@ -24,6 +24,9 @@ import { forkJoin, of, Subscription} from "rxjs";
 import {WorkspaceState} from "../../../../workspace/store";
 import EChartOption = echarts.EChartOption;
 import {ExchangeRatePipe} from "../../../pipes/exchange-rate.pipe";
+import {FormatNumbersService} from "../../../services/format-numbers.service";
+import {RrNumberPipe} from "../../../pipes/rr-number.pipe";
+import {GeneralConfigState} from "../../../../core/store/states";
 
 @Component({
   selector: 'app-plt-right-menu',
@@ -105,7 +108,8 @@ export class PltRightMenuComponent extends BaseContainer implements OnInit, OnDe
       _baseStore: Store, _baseRouter: Router, _baseCdr: ChangeDetectorRef,
       private calibrationAPI: CalibrationAPI,
       private pltAPI: PltApi,
-      private exChangeRatePipe: ExchangeRatePipe
+      private exChangeRatePipe: ExchangeRatePipe,
+      private numberPipe: RrNumberPipe
   ) {
     super(_baseRouter, _baseCdr, _baseStore);
     this.selectedPLT= {};
@@ -307,24 +311,33 @@ export class PltRightMenuComponent extends BaseContainer implements OnInit, OnDe
         bottom: '0px',
         data:[{name: 'OEP',icon: 'circle'}, {name: 'AEP',icon: 'circle'}, {name: 'AEP-TVAR',icon: 'circle'}, {name: 'OEP-TVAR',icon: 'circle'}]
       },
-      grid: {
-        left: '15%',
-        right: '1%'
-      },
+      grid: {width: '100%', height: '50%' },
       xAxis: {
         type: 'category',
         boundaryGap: false,
+        axisLabel: {
+          show: false,
+          formatter: (value, index) => 'eee'
+        },
         data: []
       },
       yAxis: {
         type: 'value',
-        splitNumber: 5
+        splitNumber: 5,
+        axisLabel: {
+          formatter: (value, index) => this.format(value, index)
+        }
       },
       series: []
     };
 
     this.updateOption= this.chartOption;
   }
+
+  format = (value, index) => {
+    console.log(this.numberConfig);
+    return this.numberPipe.transform(value, this.numberConfig);
+  };
 
   ngOnInit() {
     this.exchangeRates= {};
@@ -339,6 +352,55 @@ export class PltRightMenuComponent extends BaseContainer implements OnInit, OnDe
           this.detectChanges();
         }
     )
+
+    this.select(GeneralConfigState.getNumberFormatConfig)
+        .pipe(this.unsubscribeOnDestroy).subscribe(({ numberOfDecimals, decimalSeparator, decimalThousandSeparator, negativeFormat }) => {
+      this.format = (value, index) => {
+        return this.numberPipe.transform(value, { numberOfDecimals, decimalSeparator, decimalThousandSeparator, negativeFormat });
+      };
+
+      this.chartOption = {
+        tooltip: {
+          trigger: 'axis',
+          formatter: params => {
+            let axisValue = 0;
+            let str = _.join(_.map(params, (param: any) => {
+              axisValue = param.axisValue;
+              return param.seriesName + ': ' + this.format(param.value, null);
+            }), '<br>')
+
+            return axisValue + '<br>' + str;
+          }
+        },
+        legend: {
+          orient: 'horizontal',
+          bottom: '0px',
+          data:[{name: 'OEP',icon: 'circle'}, {name: 'AEP',icon: 'circle'}, {name: 'AEP-TVAR',icon: 'circle'}, {name: 'OEP-TVAR',icon: 'circle'}]
+        },
+        grid: {
+          left: '15%',
+          right: '1%'
+        },
+        xAxis: {
+          type: 'category',
+          boundaryGap: false,
+          axisLabel: {
+            show: false,
+            formatter: (value, index) => 'eee'
+          },
+          data: [],
+        },
+        yAxis: {
+          type: 'value',
+          splitNumber: 5,
+          axisLabel: {
+            formatter: (value, index) => this.format(value, index)
+          }
+        },
+        series: []
+      };
+      this.detectChanges();
+    })
   }
 
   ngOnDestroy() {
@@ -370,11 +432,11 @@ export class PltRightMenuComponent extends BaseContainer implements OnInit, OnDe
             takeWhile(v => !_.isNil(v)),
             take(2),
             this.unsubscribeOnDestroy
-        ).subscribe( selectedProject => {
-      this.workspaceCurrency = selectedProject ? selectedProject.currency : null;
+        ).subscribe( currency => {
+      this.workspaceCurrency = currency
       this.summaryEpMetricsConfig = {
         ...this.summaryEpMetricsConfig,
-        selectedCurrency: selectedProject ? selectedProject.currency : null
+        selectedCurrency: currency
       };
       this.detectChanges();
     });
@@ -399,10 +461,12 @@ export class PltRightMenuComponent extends BaseContainer implements OnInit, OnDe
     this.loadTab(index);
   }
 
-  closeDrawer() {
-    this.actionDispatcher.emit({
-      type: this.inputs['visible'] ? rightMenuStore.closeDrawer : rightMenuStore.openDrawer
-    })
+  closeDrawer(outside) {
+    if(outside || this.inputs.visible) {
+      this.actionDispatcher.emit({
+        type: rightMenuStore.closeDrawer
+      })
+    }
   }
 
   popupActionHandler(action: Message) {
@@ -555,13 +619,23 @@ export class PltRightMenuComponent extends BaseContainer implements OnInit, OnDe
   loadEpChartxAxis(pltId) {
     this.updateOption = _.assign({}, this.updateOption, {
       xAxis: {
+        type: 'category',
+        boundaryGap: false,
+        axisLabel: {
+          formatter: (value, index) => this.format(value, null)
+        },
         data: this.rps[pltId]
-      }
+      },
     });
     this.chartOption = _.assign({}, this.chartOption, {
       xAxis: {
+        type: 'category',
+        boundaryGap: false,
+        axisLabel: {
+          formatter: (value, index) => this.format(value, null)
+        },
         data: this.rps[pltId]
-      }
+      },
     });
   }
 
@@ -574,7 +648,8 @@ export class PltRightMenuComponent extends BaseContainer implements OnInit, OnDe
               this.unsubscribeOnDestroy
           )
           .subscribe(losses => {
-            this.epMetricsLosses[pltHeaderId]= _.get(losses, '0');
+            console.log(losses);
+            this.epMetricsLosses[pltHeaderId]= losses;
             this.detectChanges();
           })
 

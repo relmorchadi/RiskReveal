@@ -38,10 +38,10 @@ public class ProjectConfigurationForeWriterFiles {
     @Column(name = "LocFileId")
     private Integer locFileId;
 
-    @Column(name = "vIsFileName")
+    @Column(name = "vlsFileName")
     private String vIsFileName;
 
-    @Column(name = "vIsFileId")
+    @Column(name = "vlsFileId")
     private Integer vIsFileId;
 
 }

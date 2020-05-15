@@ -12,8 +12,24 @@ export class ScopeOfCompletenessApi {
     constructor(private  http: HttpClient) {
     }
 
-    getData(uwyear, workspaceId) {
-        return this.http.get(`${this.api}AccumulationPackage/getScopeOnly`, { params: {uwyear, workspaceId}});
+    getData(uwyear, workspaceId, projectId) {
+        return this.http.get(`${this.api}AccumulationPackage/getScopeOnly`, { params: {uwyear, workspaceId, projectId}});
+    }
+
+    getDataPending(AccumulationPackageId, uwyear, workspaceId, ProjectId) {
+        return this.http.get(`${this.api}AccumulationPackage/getAccumulationPackage`, { params: {AccumulationPackageId, uwyear, workspaceId, ProjectId}});
+    }
+
+    getDataPricing(UWYear, WorkspaceName, projectId) {
+        return this.http.get(`${this.api}PricedScopeAndCompleteness/getPricedScope`, { params: {UWYear, WorkspaceName, projectId}});
+    }
+
+    getDataAccumulation(ProjectID) {
+        return this.http.get(`${this.api}AccumulationPackage/getDropDownInformation`, { params: {ProjectID}});
+    }
+
+    getListOfPLTs(accumulationPackageId, projectId) {
+        return this.http.get(`${this.api}AttachPLT/getPLTsForPopUp`, { params: {accumulationPackageId, projectId}});
     }
 
     attachePLTCreate(data) {
@@ -29,10 +45,10 @@ export class ScopeOfCompletenessApi {
     }
 
     overrideDone(data) {
-        return this.http.post(`${this.api}OverrideSection/override`, data, {responseType: 'text' as 'json'})
+        return this.http.post(`${this.api}OverrideSection/override`, data)
     }
 
     overrideDelete(overriddenSections) {
-        return this.http.delete(`${this.api}OverrideSection/override`, {params: {overriddenSections}, responseType: 'text' as 'json'})
+        return this.http.post(`${this.api}OverrideSection/deleteOverride`,  overriddenSections, {responseType: 'text' as 'json'});
     }
 }

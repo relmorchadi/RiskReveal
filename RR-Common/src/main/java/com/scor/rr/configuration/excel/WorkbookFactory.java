@@ -34,7 +34,6 @@ public class WorkbookFactory {
 
     public static Workbook constructWorkbook(final String extension, InputStream stream) {
         Function<InputStream, Workbook> Func = ofNullable(workBooks.get(extension)).orElseThrow(RuntimeException::new);
-        Workbook workbook = Func.apply(stream);
-        return workbook;
+        return Func.apply(stream);
     }
 }

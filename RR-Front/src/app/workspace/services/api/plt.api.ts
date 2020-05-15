@@ -2,6 +2,7 @@ import {Injectable} from '@angular/core';
 import {Observable} from 'rxjs';
 import {HttpClient} from '@angular/common/http';
 import {backendUrl} from "../../../shared/api";
+import {GridRequest} from "../../../shared/types/grid-request.type";
 
 @Injectable({
   providedIn: 'root'
@@ -9,6 +10,8 @@ import {backendUrl} from "../../../shared/api";
 export class PltApi {
 
   protected URL = `${backendUrl()}plt`;
+
+  protected URLn = `${backendUrl()}plt-manager`;
 
   constructor(private http: HttpClient) {
   }
@@ -27,6 +30,10 @@ export class PltApi {
 
   public getSummary(payload): Observable<any> {
     return this.http.get(`${this.URL}/detail/summary/?pltHeaderId=${payload}`);
+  }
+
+  public getGroupedPLTs(payload: GridRequest<any>) {
+    return this.http.post(`${this.URLn}/grouped`, payload)
   }
 
 }

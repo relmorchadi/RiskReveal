@@ -42,12 +42,24 @@ public class WorkspaceEntity implements Serializable {
     @Column(name = "ClientName")
     private String clientName;
 
-    public WorkspaceEntity(String workspaceContextCode, Integer workspaceUwYear,String workspaceMarketChannel, String workspaceName, String clientName) {
+    @Column(name = "ClientId")
+    private String clientId;
+
+    @Column(name = "ContractId")
+    private String contractId;
+
+    @Column(name = "LineOfBusiness")
+    private String lob;
+
+    public WorkspaceEntity(String workspaceContextCode, Integer workspaceUwYear,String workspaceMarketChannel, String workspaceName, String clientName, String clientId, String lob, String contractId) {
         this.workspaceContextCode = workspaceContextCode;
         this.entity = 1;
         this.workspaceUwYear = workspaceUwYear;
         this.workspaceMarketChannel= workspaceMarketChannel;
         this.workspaceName = workspaceName;
         this.clientName = clientName;
+        this.clientId = clientId;
+        this.lob = lob;
+        this.contractId = contractId;
     }
 }

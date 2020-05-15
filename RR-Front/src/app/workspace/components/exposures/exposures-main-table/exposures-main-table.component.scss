@@ -69,7 +69,7 @@
         cursor: pointer;
         color: rgb(0, 0, 0);
         font-size: 12px;
-        height: 27px;
+        height: 40px;
         text-align: end;
         letter-spacing: 0.08px;
         border: none !important;
@@ -104,9 +104,11 @@
   .grouped-metric-next {
     border-bottom: none !important;
     font-size: 0px !important;
+
   }
   .grouped-metric-first {
     border-bottom: none !important;
+
   }
   .grouped-metric-last {
     font-size: 0px !important;
@@ -130,5 +132,15 @@
   }
   .filtered-column {
     border: 1px solid #52b8e4 !important;
+  }
+}
+::ng-deep .ui-table-unfrozen-view {
+  td, th {
+    text-align: start !important;
+  }
+}
+::ng-deep .total-row{
+  span {
+    font-weight: bold !important;
   }
 }

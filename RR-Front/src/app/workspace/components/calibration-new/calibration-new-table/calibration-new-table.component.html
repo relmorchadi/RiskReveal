@@ -1,4 +1,4 @@
-<div style="width: 100%" #dtContainer >
+
    <p-table
           [dataKey]="'pltId'"
           [value]="data | filterGroupedPlts : tableConfig.filterData | sortGroupedPlts : tableConfig.sortData"
@@ -9,12 +9,13 @@
           [frozenWidth]="columnsConfig?.frozenWidth"
           [resizableColumns]="true"
           [scrollable]="true"
-          [scrollHeight]="'calc( 100vh - 466px )'"
+          [scrollHeight]="'calc( 100vh - 480px )'"
           [columnResizeMode]="'expand'"
           (onColResize)="onColumnResize($event)"
           syncScroll
           [class]="'calibration-table'"
           [classIdentifier]="'calibration-table'"
+          [expandCount]="tableConfig.expandCount"
           #dt
   >
 
@@ -22,7 +23,7 @@
     -->
     <ng-template pTemplate="colgroup" let-columns>
       <colgroup>
-        <col *ngFor="let col of columns" [style.width]="col.width + 'px' ">
+        <col *ngFor="let col of columns" [style.width]="col.width + col.unit ">
       </colgroup>
     </ng-template>
 
@@ -30,18 +31,18 @@
     -->
     <ng-template pTemplate="frozencolgroup" let-columns *ngIf="!tableConfig.isExpanded">
       <colgroup >
-        <col *ngFor="let col of columns" [style.width]="col.width + 'px' ">
+        <col *ngFor="let col of columns" [style.width]="col.width + col.unit ">
       </colgroup>
     </ng-template>
 
     <!-- Frozen columns ( "side" is to tell wish header to call) -->
     <ng-template pTemplate="frozenheader" let-columns *ngIf="!tableConfig.isExpanded">
-      <ng-container [ngTemplateOutlet]="unexpandedHeader" [ngTemplateOutletContext]="{$implicit: columns, side: leftHeader}"></ng-container>
+      <ng-container [ngTemplateOutlet]="unexpandedHeader" [ngTemplateOutletContext]="{$implicit: columns, side: 'left'}"></ng-container>
     </ng-template>
 
     <!-- others columns -->
     <ng-template pTemplate="header" let-columns>
-      <ng-container *ngIf="!tableConfig.isExpanded" [ngTemplateOutlet]="unexpandedHeader" [ngTemplateOutletContext]="{$implicit: columns, side: rightHeader}"></ng-container>
+      <ng-container *ngIf="!tableConfig.isExpanded" [ngTemplateOutlet]="unexpandedHeader" [ngTemplateOutletContext]="{$implicit: columns, side: 'right', cnt: dtContainer}"></ng-container>
       <ng-container *ngIf="tableConfig.isExpanded" [ngTemplateOutlet]="expandedHeader" [ngTemplateOutletContext]="{$implicit: columns}"></ng-container>
     </ng-template>
 
@@ -65,30 +66,30 @@
     </ng-template>
 
 
+
     <!--
     Header Template
     -->
-    <ng-template #unexpandedHeader let-columns let-side="side">
+    <ng-template #unexpandedHeader let-columns let-side="side" let-container="cnt">
 
-      <ng-container *ngIf="side == leftHeader">
+      <ng-container *ngIf="side == 'left'">
         <tr >
           <th   class="header-cnt" [attr.colspan]="(columnsConfig?.frozenColumns | frozenColumnsFilter).length" [style.height]="'120px'">
             <ng-container [ngTemplateOutlet]="leftHeader"></ng-container>
           </th>
 
-          <th   class="header-cnt" style="position:fixed; z-index: 999;" [attr.colspan]="columnsConfig?.columns.length" [style.height]="'120px'"
-                [ngStyle]="{ width: 'calc( ' + dtContainer.offsetWidth + 'px - ' + columnsConfig.frozenWidth + ' )'}">
-            <ng-container [ngTemplateOutlet]="rightHeader" ></ng-container>
+          <th   class="header-cnt"
+                [style.height]="'120px'"
+                [ngStyle]="{ position: 'fixed', zIndex: 999, width: 'calc('+ tableWidth + ' - ' + columnsConfig?.frozenWidth +')'}">
+            <ng-container [ngTemplateOutlet]="rightHeader" [ngTemplateOutletContext]="{$implicit: false}"></ng-container>
           </th>
         </tr>
       </ng-container>
 
-      <ng-container *ngIf="side == rightHeader">
+      <ng-container *ngIf="side == 'right'">
         <tr>
-          <th  class="header-cnt" [attr.colspan]="columns.length" *ngIf="columns">
-
-          </th>
-          <th class="header-cnt" *ngIf="!(columns | frozenColsLength)" [attr.colspan]="columns.length" [ngStyle]="{ height: '120px', background: 'transparent'}" ></th>
+          <th  class="header-cnt" *ngIf="columns"></th>
+          <th class="header-cnt" *ngIf="!(columns | frozenColsLength)" [ngStyle]="{ height: '120px', background: 'transparent'}" ></th>
         </tr>
       </ng-container>
       <ng-container [ngTemplateOutlet]="headerFields" [ngTemplateOutletContext]="{ $implicit: columns }"></ng-container>
@@ -101,7 +102,7 @@
           <ng-container [ngTemplateOutlet]="leftHeader"></ng-container>
         </th>
 
-        <th   class="header-cnt" [attr.colspan]="columns.length - (columns | frozenColsLength)" [style.height]="'120px'">
+        <th  class="header-cnt" [attr.colspan]="columns.length - (columns | frozenColsLength)" [style.height]="'120px'">
           <ng-container [ngTemplateOutlet]="rightHeader" ></ng-container>
         </th>
       </tr>
@@ -111,7 +112,7 @@
     <!-- Header fields - column name and filter inputs (row 2 & 3)  -->
     <ng-template #headerFields let-columns>
       <tr>
-        <ng-container *ngFor="let col of columns;let i= index;" [ngTemplateOutlet]="resizableTemplate" [ngTemplateOutletContext]="{$implicit: col?.resizable, col: col, width: col?.width, index: i}"></ng-container>
+        <ng-container *ngFor="let col of columns;let i= index;" [ngTemplateOutlet]="resizableTemplate" [ngTemplateOutletContext]="{$implicit: col?.resizable, col: col, width: col.width + col.unit, index: i}"></ng-container>
       </tr>
       <tr >
         <th *ngFor="let col of columns">
@@ -127,7 +128,7 @@
                  let-columns="columns">
       <tr>
         <td *ngFor="let col of columns; let i =index; let last=last"
-            [ngStyle]="{'width': col?.width + 'px', 'text-align-last': col.align}"
+            [ngStyle]="{'text-align-last': col.align }"
             style="background-color: #ecf1f7 !important; padding-right: 9px">
 
           <ng-container *ngIf="col?.type == 'arrow'">
@@ -183,7 +184,7 @@
         thread.pltId, rowIndex, index, 'checkbox')">
 
         <td *ngFor="let col of columns; let i=index; let last=last"
-            [ngStyle]="{'width': col?.width + 'px','text-align-last': col?.align}"
+            [ngStyle]="{'text-align-last': col?.align}"
             style="padding-right: 9px">
           <ng-container *ngIf="col?.type == 'arrow'" >
             <label nz-checkbox [(ngModel)]="thread.selected"
@@ -241,8 +242,7 @@
           [ngClass]="{'active_plt_item': thread.selected}"
           (click)="handlepltClick($event,rowData.pltId, thread.pltId, rowIndex, index, 'checkbox')">
 
-        <td *ngFor="let col of columns; let i=index; let last=last"
-            [ngStyle]="{'width': col?.width + 'px', 'text-align-last': col.align}" style="padding-right: 9px">
+        <td *ngFor="let col of columns; let i=index; let last=last" [ngStyle]="{'text-align-last': col.align}" style="padding-right: 9px">
 
           <ng-container *ngIf="col?.type == 'arrow'">
             <!--<div class="ui-g-12"><p-checkbox name="group1" value="New York" label="New York" inputId="ny"></p-checkbox></div>-->
@@ -269,11 +269,11 @@
             </ng-container>
 
           </ng-container>
+
         </td>
+
       </tr>
     </ng-template>
-
-
     <!--Frozen Template-->
     <!--Helpers-->
     <!--TEMPLATES-->
@@ -321,7 +321,7 @@
 
     <!--Resizable Header-->
     <ng-template #resizableTemplate let-isResizable let-col="col" let-width="width" let-index="index" let-isLastColumn="isLastColumn">
-      <th [attr.aria-colindex]="index" [attr.aria-details]="col?.isFrozen" [attr.id]="col?.field" [style.width]="width + 'px'" [ngStyle]="{'text-align-last': col.align}" style="padding-right: 9px" pResizableColumn [pResizableColumnDisabled]="!isResizable">
+      <th [attr.aria-colindex]="index" [attr.aria-details]="col?.isFrozen" [attr.id]="col?.field" [ngStyle]="{'text-align-last': col.align}" style="padding-right: 9px" pResizableColumn [pResizableColumnDisabled]="!isResizable">
 
         <ng-container *ngIf="col?.type == 'status'">
           <ng-container [ngTemplateOutlet]="statusIcons"></ng-container>
@@ -343,6 +343,7 @@
             </ng-container>
           </div>
         </ng-container>
+
       </th>
     </ng-template>
 
@@ -381,11 +382,13 @@
       </div>
     </ng-template>
 
-    <ng-template #rightHeader >
+    <ng-template #rightHeader let-expanded>
 
 
-      <div class="table-header-right-container" >
-        <div class="table-header-right"   style="background-color: #fff">
+      <div class="table-header-right-container"
+           [style.width]="700"
+      >
+        <div class="table-header-right"  style="background-color: #fff">
           <div *ngIf="tableConfig?.view == 'epMetrics'"
                class="title-as-tab" style="height: 58px">
           <span class="title" style="margin-right: 16px">
@@ -520,7 +523,6 @@
     </ng-template>
 
   </p-table>
-</div>
 
 <p-contextMenu #contmenu [model]="contextMenuItem" appendTo="body"></p-contextMenu>
 

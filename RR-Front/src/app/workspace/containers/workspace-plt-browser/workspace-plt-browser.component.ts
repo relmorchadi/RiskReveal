@@ -45,6 +45,7 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
   searchAddress: string;
   workspaceId: string;
   uwy: number;
+  workspaceType: string;
   params: any;
   lastSelectedId;
   managePopUp: boolean;
@@ -263,8 +264,7 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
   rightMenuActionDispatcher(action: Message) {
     switch (action.type) {
       case rightMenuStore.closeDrawer:
-        this.updateMenuKey('visible', false);
-        this.updateMenuKey('pltHeaderId', null);
+        this.closeDrawer(false);
         break;
 
       case rightMenuStore.setSelectedTabByIndex:
@@ -274,6 +274,11 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
       default:
         console.log('default right menu action');
     }
+  }
+
+  closeDrawer(outside){
+    this.updateMenuKey('visible', false);
+    this.updateMenuKey('pltHeaderId', null);
   }
 
   setRightMenuSelectedTab(tab) {
@@ -293,12 +298,13 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
     this.destroy();
   }
 
-  patchState({data: {leftNavbarCollapsed, wsId, uwYear, projects}}): void {
+  patchState({data: {leftNavbarCollapsed, wsId, uwYear, projects, marketChannel}}): void {
     this.leftIsHidden = leftNavbarCollapsed;
     this.params = {
       workspaceContextCode: wsId,
       workspaceUwYear: uwYear
     };
+    this.workspaceType = marketChannel;
     this.selectedProject = _.find(projects, project => project.selected);
   }
 

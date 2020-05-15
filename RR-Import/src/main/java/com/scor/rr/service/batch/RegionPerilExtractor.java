@@ -87,6 +87,9 @@ public class RegionPerilExtractor implements RegionPerilExtractorInterface {
     private JobEntityRepository jobRepository;
 
     @Autowired
+    private ExchangerateRepository exchangerateRepository;
+
+    @Autowired
     @Qualifier("jobManagerImpl")
     private JobManager jobManager;
 
@@ -150,7 +153,7 @@ public class RegionPerilExtractor implements RegionPerilExtractorInterface {
             projectImportRunEntity.setRunId(projectImportRunEntityList == null ? 1 : projectImportRunEntityList.size() + 1);
             projectImportRunEntity.setStatus(TrackingStatus.INPROGRESS.toString());
             projectImportRunEntity.setStartDate(new Date());
-            projectImportRunEntity.setImportedBy(projectEntity.getAssignedTo());
+            //projectImportRunEntity.setImportedBy(projectEntity.getAssignedTo());
 
             projectImportRunEntity.setSourceConfigVendor("RL");
             projectImportRunEntity = projectImportRunRepository.save(projectImportRunEntity);
@@ -206,6 +209,7 @@ public class RegionPerilExtractor implements RegionPerilExtractorInterface {
                     modelAnalysisEntity.setCreationDate(new Date());
                     modelAnalysisEntity.setRunDate(sourceResult.getRlAnalysis().getRunDate());
                     modelAnalysisEntity.setImportStatus(TrackingStatus.INPROGRESS.toString());
+                    modelAnalysisEntity.setImportedDate(new Date());
                     modelAnalysisEntity.setProjectImportRunId(projectImportRunEntity.getProjectImportRunId());
 
                     TransformationBundle bundle = new TransformationBundle();
@@ -366,12 +370,12 @@ public class RegionPerilExtractor implements RegionPerilExtractorInterface {
                             "ALL",
                             rlPortfolioSelection.getTargetCurrency() != null ? rlPortfolioSelection.getTargetCurrency() :
                                     rlPortfolioSelection.getRlPortfolio().getAgCurrency() != null ? rlPortfolioSelection.getRlPortfolio().getAgCurrency() : "USD",
-                            1,
+                            rlPortfolioSelection.getDivision() != null ? rlPortfolioSelection.getDivision() : 1,
                             1.0d,
                             rlPortfolioSelection.getProportion() != null ? rlPortfolioSelection.getProportion() : 1.0d,
                             rlPortfolioSelection.getUnitMultiplier() != null ? rlPortfolioSelection.getUnitMultiplier() : 1.0d,
                             rlPortfolioSelection.getRlPortfolio().getDescription(),
-                            rlPortfolioSelection.getRlPortfolio().getType(),
+                            true,
                             rlPortfolioSelection.isImportLocationLevel()
                     );
 

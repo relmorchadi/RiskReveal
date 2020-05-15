@@ -4,19 +4,21 @@
              [frozenValue]="tableConfig.frozenRow" [value]="tableConfig.data"
              [scrollable]="true"
              syncScroll
+             [resizableColumns]="true"
              [customSort]="true"
              (sortFunction)="onSort($event)"
              scrollHeight="calc( 100vh - 435px )" frozenWidth="520px">
         <ng-template pTemplate="colgroup" let-columns>
             <colgroup>
                 <col *ngFor="let col of columns"
-                     [ngStyle]="{'width':col.field == 'country'?'120px':'100px'}">
+                     [ngStyle]="{'width':col.field == 'country'?'150px':'100px'}">
             </colgroup>
         </ng-template>
         <ng-template pTemplate="frozenheader" let-columns>
             <tr>
                 <ng-container *ngFor="let col of columns">
                     <th [colSpan]="col.field == 'country' ? 2 : 1"
+                        pResizableColumn
                         [pSortableColumn]="col.field">
                         <span>{{col.header}}</span>
                     </th>
@@ -27,6 +29,7 @@
             <tr>
                 <ng-container *ngFor="let col of columns">
                     <th [pSortableColumn]="col.field"
+                        pResizableColumn
                         [ngClass]="{'filtered-column':filteredColumn == col.field}">
                         <span>{{col.header}}</span>
                     </th>
@@ -38,7 +41,10 @@
                 (mouseleave)="hoveredRow = null">
                 <ng-container *ngFor="let col of columns">
                     <td [colSpan]="col.field == 'country' ? 2 : 1">
-                        <b>{{rowData[col.field]}}</b>
+                        <b *ngIf="rowData[col.field] == 'TOTAL'">{{rowData[col.field]}}</b>
+                        <div   *ngIf="rowData[col.field] != 'TOTAL'"
+                               appRrNumber [number]="rowData[col.field]" [config]="numberConfig"class="total-row">
+                        </div>
                     </td>
                 </ng-container>
             </tr>
@@ -49,7 +55,8 @@
                 [ngClass]="{'row-hover':hoveredRow == rowIndex}">
                 <ng-container *ngFor="let col of columns">
                     <ng-container *ngIf="col.field == 'country'">
-                        <td [ngClass]="{'grouped-metric-first' : rowIndex < tableConfig.data.length - 1 &&
+                        <td class="ui-resizable-column"
+                            [ngClass]="{'grouped-metric-first' : rowIndex < tableConfig.data.length - 1 &&
                                          rowData['country'] == tableConfig.data[rowIndex + 1]['country'],
                                         'grouped-metric-next':rowIndex > 0 && rowIndex < tableConfig.data.length - 1 &&
                                          rowData['country'] == tableConfig.data[rowIndex - 1]['country'] &&
@@ -71,8 +78,11 @@
                         </td>
                     </ng-container>
                     <ng-container *ngIf="col.field != 'country'">
-                        <td>
-                            {{rowData[col.field]}}
+                        <td class="ui-resizable-column">
+                            <div    appRrNumber [number]="rowData[col.field]" [config]="numberConfig"
+                                    class="text-ellipsis"
+                                    style="font-size: 12px;font-weight: 400;text-align: right">
+                            </div>
                         </td>
                     </ng-container>
                 </ng-container>
@@ -84,8 +94,9 @@
                 [ngClass]="{'row-hover':hoveredRow == rowIndex}">
                 <ng-container *ngFor="let col of columns">
                     <ng-container>
-                        <td>
-                            {{rowData[col.field]}}
+                        <td class="ui-resizable-column" style="text-align: start; !important;">
+                            <div    appRrNumber [number]="rowData[col.field]" [config]="numberConfig">
+                            </div>
                         </td>
                     </ng-container>
                 </ng-container>

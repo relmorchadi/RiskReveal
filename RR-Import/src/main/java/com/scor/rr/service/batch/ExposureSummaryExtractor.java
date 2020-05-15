@@ -92,7 +92,7 @@ public class ExposureSummaryExtractor {
 
     public RepeatStatus extract() {
 
-        StepEntity step = jobManager.createStep(Long.valueOf(taskId), "ExtractExposureSummaries", 13);
+        StepEntity step = jobManager.createStep(Long.valueOf(taskId), "ExtractExposureSummaries", 14);
         try {
             //NOTE: I think you could find ProjectImportRun by projectId and importSequence (in jobParameters) ?
             List<ProjectImportRunEntity> projectImportRunList = projectImportRunRepository.findByProjectId(Long.valueOf(projectId));
@@ -121,8 +121,8 @@ public class ExposureSummaryExtractor {
                     globalExposureView.setProjectId(Long.valueOf(projectId));
                     globalExposureView.setName(defaultExposureView.getName());
 
-                    if (division != null)
-                        globalExposureView.setDivisionNumber(Integer.valueOf(division));
+//                    if (division != null)
+//                        globalExposureView.setDivisionNumber(Integer.valueOf(division));
                     //TODO : FIX ME LATER
                     globalExposureView.setPeriodBasisId(null);
                     if (importSequence != null)
@@ -171,7 +171,7 @@ public class ExposureSummaryExtractor {
                                         if (exposureViewVersion != null) {
                                             ExposureViewQuery exposureViewQuery = exposureViewQueryRepository.findByExposureViewVersion(exposureViewVersion);
 
-                                            GlobalViewSummary globalViewSummary = new GlobalViewSummary();
+                                            GlobalExposureViewSummary globalViewSummary = new GlobalExposureViewSummary();
                                             globalViewSummary.setInstanceId(instance);
                                             globalViewSummary.setEdmId(edmId);
                                             globalViewSummary.setEdmName(edmName);
@@ -384,7 +384,7 @@ public class ExposureSummaryExtractor {
 
             if (itemAgg != null) {
                 itemAgg.setLocationCount(itemAgg.getLocationCount() + exposureSummaryData.getLocationCount());
-                itemAgg.setTiv(itemAgg.getTiv() + exposureSummaryData.getTiv());
+                itemAgg.setTiv(itemAgg.getTiv().add(exposureSummaryData.getTiv()));
             } else {
                 tempAggregate.put(itemKey, exposureSummaryData);
             }

@@ -1,3 +1,8 @@
+:host {
+  display: block;
+  height: 100%;
+}
+
 .divided-col {
   border-left: 8px solid #F4F6FC !important;
 }
@@ -21,10 +26,41 @@
 }
 
 .row-hover:hover {
-  background-color: #cee5ef !important;
+  background-color: #F7F8FD !important;
 
   .burger-menu {
     display: block;
   }
 }
 
+.center-header {
+  text-align: center;
+}
+
+.arrow-key-design {
+  color: #007AD9;
+  font-size: 28px;
+  margin-top: 4px;
+}
+
+.checkbox-override-wrap {
+  text-align: center;
+
+  .unCheckedBoxTab {
+    border: 1px solid;
+    font-size: 20px !important;
+    color: darkgray;
+  }
+
+  .checkedBoxTab {
+    background-color: #0700CF;
+    color: #FFFFFF;
+  }
+}
+
+.header-override {
+  display: inline-flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}

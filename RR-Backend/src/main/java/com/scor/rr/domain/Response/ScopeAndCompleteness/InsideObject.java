@@ -14,5 +14,6 @@ public class InsideObject {
     private String reason;
     private String reasonDescribed;
     private boolean attached;
+    private boolean isExpected;
     private List<AttachedPLT> pltsAttached;
 }

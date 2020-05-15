@@ -24,15 +24,21 @@ export class WorkspaceService {
   }
 
   initWs(ctx: StateContext<WorkspaceModel>, payload) {
-    const {wsId, uwYear, route, type} = payload;
+    const {wsId, uwYear, route, type, carSelected} = payload;
     const content = ctx.getState().content;
-    return this.wsApi.getOpenedTabs({workspaceContextCode: wsId, workspaceUwYear: uwYear, screen: route}).pipe(
-        switchMap((tabs: any[]) =>  forkJoin(
-            ..._.map(_.filter(tabs, t => !(content[t.workspaceContextCode + '-' + t.workspaceUwYear])), tab => this.wsApi.searchWorkspace(tab.workspaceContextCode, tab.workspaceUwYear, type ? type : ''))
-        ).pipe(
-            mergeMap(data => of(ctx.dispatch(new fromWS.OpenMultiWS({workspaces: data, tabs }))))
+    return this.wsApi.getOpenedTabs({workspaceContextCode: wsId, workspaceUwYear: uwYear, screen: route, type: type || ''}).pipe(
+        switchMap((tabs: any[]) =>  {
+          const lookupWorkspaces = _.filter(tabs, t => !(content[t.workspaceContextCode + '-' + t.workspaceUwYear]));
+          if(lookupWorkspaces.length) {
+            return forkJoin(
+                ..._.map(lookupWorkspaces, tab => this.wsApi.searchWorkspace(tab.workspaceContextCode, tab.workspaceUwYear, type ? type : ''))
+            ).pipe(
+                mergeMap(data => of(ctx.dispatch(new fromWS.OpenMultiWS({workspaces: data, tabs, carSelected }))))
             )
-        )
+          } else {
+            return of(ctx.dispatch(new fromWS.OpenMultiWS({workspaces: [], tabs, carSelected })))
+          }
+        })
     );
   }
 
@@ -126,8 +132,34 @@ export class WorkspaceService {
           },
           riskLink: new RiskLink(),
           scopeOfCompletence: {
-            data: {},
-            wsType: null
+            data: {
+              targetRaps: [],
+              regionPerils: [],
+              scopeContext: null
+            },
+            pendingData: {
+              accumulationPackageId: 0,
+              accumulationPackageStatus: "",
+              targetRaps: [],
+              regionPerils: [],
+            },
+            override: {
+              overrideAll: false,
+              overrideRow: false,
+              overrideInit: false,
+              overrideCancelAll: false,
+              overrideCancelRow: false,
+              overrideCancelStart: false,
+              removeOverrideUnable: false
+            },
+            overriddenRows: [],
+            projects: [],
+            plts: [],
+            scopeContext: {
+              accumulationStatus: 'Scope Only',
+              filterBy: 'All',
+              sortBy: 'Minimum Grain / RAP',
+            }
           },
           fileBaseImport: {
             folders: null,
@@ -153,33 +185,13 @@ export class WorkspaceService {
   openWorkspace(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.OpenWS) {
     const {wsId, uwYear, route, type} = payload;
     const carSelected = _.get(payload, 'carSelected', null);
-    const state = ctx.getState();
-    const wsIdentifier = wsId + '-' + uwYear;
 
-    if (state.content[wsIdentifier]) {
-      this.updateWsRouting(ctx, {wsId: wsIdentifier, route});
-      if (carSelected !== null) {
-        ctx.patchState(produce(ctx.getState(), draft =>  {
-          draft.content[wsIdentifier].projects = _.map(draft.content[wsIdentifier].projects, (prj, index: any) => {
-            prj.selected = prj.projectId === carSelected;
-            return prj;
-          });
-        }));
-      }
-      return ctx.dispatch(new fromWS.SetCurrentTab({
-        index: _.findIndex(_.toArray(state.content), ws => ws.wsId == wsId && ws.uwYear == uwYear),
-        wsIdentifier
-      }));
-    } else {
-      return ctx.dispatch(new fromWS.InitWorkspace({wsId, uwYear, route, type, carSelected}));
-    }
+    return ctx.dispatch(new fromWS.InitWorkspace({wsId, uwYear, route, type, carSelected}));
   }
 
-  openMultipleWorkspaces(ctx: StateContext<WorkspaceModel>, {payload: {workspaces, tabs }}: fromWS.OpenMultiWS) {
+  openMultipleWorkspaces(ctx: StateContext<WorkspaceModel>, {payload: {workspaces, tabs , carSelected}}: fromWS.OpenMultiWS) {
     let screenByTab = {};
     let selectedTab: any = null;
-
-    console.log('multi:', workspaces, tabs);
 
     ctx.patchState(produce(ctx.getState(), draft => {
       draft.loading = true;
@@ -199,7 +211,6 @@ export class WorkspaceService {
 
       if(!ctx.getState().content[wsIdentifier]) {
        const ws = _.find(workspaces, e => e.id == tab.workspaceContextCode && e.uwYear == tab.workspaceUwYear);
-       const carSelected = null;
        const {projects} = ws;
 
        ctx.patchState(produce(ctx.getState(), draft => {
@@ -265,9 +276,35 @@ export class WorkspaceService {
               allAdjsArray: _.assign({}, ADJUSTMENTS_ARRAY),
             },
             riskLink: new RiskLink(),
-            scopeOfCompletence: {
-              data: {},
-              wsType: null
+            scopeOfCompleteness: {
+              data: {
+                targetRaps: [],
+                regionPerils: [],
+                scopeContext: null
+              },
+              pendingData: {
+                accumulationPackageId: 0,
+                accumulationPackageStatus: "",
+                targetRaps: [],
+                regionPerils: [],
+              },
+              override: {
+                overrideAll: false,
+                overrideRow: false,
+                overrideInit: false,
+                overrideCancelAll: false,
+                overrideCancelRow: false,
+                overrideCancelStart: false,
+                removeOverrideUnable: false
+              },
+              overriddenRows: [],
+              projects: [],
+              plts: [],
+              scopeContext: {
+                accumulationStatus: 'Scope Only',
+                filterBy: 'All',
+                sortBy: 'Minimum Grain / RAP',
+              }
             },
             fileBaseImport: {
               folders: null,
@@ -278,11 +315,22 @@ export class WorkspaceService {
             inuring: defaultInuringState
           }
         }));
-
-       if(selectedTab && (selectedTab.wsIdentifier == tab.workspaceContextCode + '-' + tab.workspaceUwYear)) ctx.dispatch(new Navigate([`workspace/${_.replace(selectedTab.wsIdentifier, '-', '/')}${screenByTab[selectedTab.wsIdentifier] ? '/' + screenByTab[selectedTab.wsIdentifier] : '/projects'}`]));
       }
 
     });
+
+    if(carSelected && selectedTab && selectedTab.wsIdentifier && ctx.getState().content[selectedTab.wsIdentifier].projects) {
+      ctx.patchState(produce(ctx.getState(), draft => {
+        draft.content[selectedTab.wsIdentifier].projects = _.map(draft.content[selectedTab.wsIdentifier].projects, (prj, index: any) => {
+          prj.selected = carSelected !== null ? prj.projectId === carSelected : index === 0;
+          prj.projectType = prj.carRequestId === null ? 'TREATY' : 'FAC';
+          return prj;
+        })
+      }))
+    }
+
+    ctx.dispatch(new Navigate([`workspace/${_.replace(selectedTab.wsIdentifier, '-', '/')}${screenByTab[selectedTab.wsIdentifier] ? '/' + screenByTab[selectedTab.wsIdentifier] : '/projects'}`]));
+
     ctx.patchState(produce(ctx.getState(), draft => {
       draft.currentTab = { ...selectedTab, openedTabs: tabs };
       draft.loading = false;
@@ -365,9 +413,13 @@ export class WorkspaceService {
     }));
   }
 
-  toggleWsLeftMenu(ctx: StateContext<WorkspaceModel>, {wsId}: fromWS.ToggleWsLeftMenu) {
+  toggleWsLeftMenu(ctx: StateContext<WorkspaceModel>, { payload }: fromWS.ToggleWsLeftMenu) {
+    const {
+      wsId,
+      isCollapsed
+    } = payload;
     return ctx.patchState(produce(ctx.getState(), draft => {
-      draft.content[wsId].leftNavbarCollapsed = !draft.content[wsId].leftNavbarCollapsed;
+      draft.content[wsId].leftNavbarCollapsed = isCollapsed;
     }));
   }
 

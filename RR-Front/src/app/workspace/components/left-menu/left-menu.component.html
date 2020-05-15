@@ -1,5 +1,5 @@
 <ul [nzInlineCollapsed]="isCollapsed" [nzMode]="'inline'" nz-menu>
-  <li (click)="collapse($event)" nz-menu-item nz-tooltip nzPlacement="right" style="text-align: right">
+  <li (click)="collapse(false)" nz-menu-item nz-tooltip nzPlacement="right" style="text-align: right">
     <span title>
       <i nz-icon>
         <i *ngIf="!isCollapsed" class="icon-chevron_left_24px"></i>
@@ -32,6 +32,20 @@
     <span title>
       <i nz-icon><i class="icon-file-search-alt"></i></i>
       <span class="test-list">PLT Manager</span>
+    </span>
+  </li>
+  <li (click)="routerNavigate('PltManager')" [nzTitle]="isCollapsed ? 'PLT Manager-NEW' : ''" nz-menu-item nz-tooltip
+      nzPlacement="right">
+    <span title>
+      <i nz-icon><i class="icon-file-search-alt"></i></i>
+      <span class="test-list">PLT Manager-NEW</span>
+    </span>
+  </li>
+  <li (click)="routerNavigate('CloneData')" [nzTitle]="isCollapsed ? 'Clone data' : ''" nz-menu-item nz-tooltip
+      nzPlacement="right">
+    <span title>
+      <i nz-icon><i class="icon-database"></i></i>
+      <span class="test-list">Clone Data</span>
     </span>
   </li>
   <li (click)="routerNavigate('Exposures')" [nzTitle]="isCollapsed ? 'Exposure Manager' : ''" nz-menu-item nz-tooltip

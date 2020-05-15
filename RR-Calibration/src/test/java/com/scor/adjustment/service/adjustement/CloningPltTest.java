@@ -1,6 +1,6 @@
 package com.scor.adjustment.service.adjustement;
 
-import com.scor.rr.RiskRevealApplication;
+import com.scor.rr.CalibrationApplication;
 import com.scor.rr.exceptions.RRException;
 import com.scor.rr.service.adjustement.*;
 import com.scor.rr.service.cloning.CloningScorPltHeaderService;
@@ -16,7 +16,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
 @RunWith(SpringRunner.class)
-@ContextConfiguration(classes = {RiskRevealApplication.class})
+@ContextConfiguration(classes = {CalibrationApplication.class})
 @SpringBootTest
 @Transactional
 @PropertySource({"classpath:application.properties"})

@@ -1,5 +1,6 @@
 package com.scor.rr.service.batch;
 
+import com.scor.rr.configuration.security.UserPrincipal;
 import com.scor.rr.domain.*;
 import com.scor.rr.domain.enums.CARStatus;
 import com.scor.rr.domain.enums.JobStatus;
@@ -16,7 +17,11 @@ import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.*;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.Date;
 
@@ -38,6 +43,8 @@ public class ProjectImportRunAndCARStatus {
     @Autowired
     private JobEntityRepository jobEntityRepository;
 
+    RestTemplate restTemplate=new RestTemplate();
+
     @Autowired
     @Qualifier("jobManagerImpl")
     private JobManager jobManager;
@@ -54,9 +61,12 @@ public class ProjectImportRunAndCARStatus {
     @Value("#{stepExecution.jobExecution.jobId}")
     private Long jobId;
 
+    @Value("${endpoint.scope.completness.generation}")
+    private String generateScopeAndCompletenessURL;
+
     public RepeatStatus changeProjectImportRunStatus() {
 
-        StepEntity step = jobManager.createStep(Long.valueOf(taskId), "ExtractLOC", 18);
+        StepEntity step = jobManager.createStep(Long.valueOf(taskId), "ChangeProjectImportRunStatus", 18);
         try {
             log.info("Changing CAR and Project import run status");
             if (projectId != null) {
@@ -83,18 +93,22 @@ public class ProjectImportRunAndCARStatus {
                     } else {
                         log.info("No car configuration was found");
                     }
+
+                    this.generateScopeAndCompletenessData(projectConfigurationForeWriter.getCaRequestId());
+
                 }
             }
 
             TaskEntity task = taskEntityRepository.findById(Long.valueOf(taskId)).orElse(null);
             if (task != null) {
-                task.setStatus(JobStatus.SUCCEEDED.getCode());
+                if (!task.getStatus().equalsIgnoreCase(JobStatus.FAILED.getCode()))
+                    task.setStatus(JobStatus.SUCCEEDED.getCode());
                 task.setFinishedDate(new Date());
                 taskEntityRepository.saveAndFlush(task);
                 JobEntity job = jobEntityRepository.findById(task.getJob().getJobId()).orElse(null);
                 if (job != null && job.getTasks().indexOf(task) == job.getTasks().size() - 1) {
                     if (job.getTasks().stream()
-                            .noneMatch(t -> t.getStatus().equalsIgnoreCase(JobStatus.FAILED.getCode())))
+                            .anyMatch(t -> t.getStatus().equalsIgnoreCase(JobStatus.FAILED.getCode())))
                         job.setStatus(JobStatus.FAILED.getCode());
                     else
                         job.setStatus(JobStatus.SUCCEEDED.getCode());
@@ -109,6 +123,29 @@ public class ProjectImportRunAndCARStatus {
             jobManager.logStep(step.getStepId(), StepStatus.FAILED);
             ex.printStackTrace();
             return RepeatStatus.FINISHED;
+        }
+    }
+
+    private void generateScopeAndCompletenessData(String carId){
+        HttpHeaders requestHeaders = new HttpHeaders();
+        requestHeaders.add("Accept", MediaType.APPLICATION_JSON_VALUE);
+        requestHeaders.add("Authorization", "Bearer ".concat(((UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser().getJwtToken()));
+
+        HttpEntity<String> request = new HttpEntity<>(requestHeaders);
+
+        UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl(generateScopeAndCompletenessURL)
+                .queryParam("fileName", carId);
+
+        try {
+            ResponseEntity<?> response = restTemplate
+                    .exchange(uriBuilder.toUriString(), HttpMethod.POST, request, String.class);
+
+            if (response.getStatusCode().equals(HttpStatus.OK))
+                log.info("Scope and Completeness data generation has ended successfully for the CAR with Id {}", carId);
+            else
+                log.info("Scope and Completeness data generation has failed for the CAR with Id {} for reason : {}", carId, response.toString());
+        }catch (Exception exp){
+            exp.printStackTrace();
         }
     }
 }

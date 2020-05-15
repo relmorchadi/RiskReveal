@@ -31,13 +31,15 @@ public class AnalysisDetailedScanRunnableTask implements Callable<List<RLAnalysi
 
     private Long projectId;
 
+    private String selectedFp;
+
     private List<AnalysisHeader> headers;
 
     @Override
     @Transactional(transactionManager = "rrTransactionManager", propagation = Propagation.REQUIRES_NEW)
     public List<RLAnalysis> call() throws Exception {
         try {
-            return rmsService.scanAnalysisDetail(instanceId, headers, projectId);
+            return rmsService.scanAnalysisDetail(headers, projectId, selectedFp);
         } finally {
             countDownLatch.countDown();
         }

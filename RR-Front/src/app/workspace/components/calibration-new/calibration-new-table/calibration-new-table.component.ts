@@ -6,7 +6,7 @@ import {
   EventEmitter,
   Input, OnChanges,
   OnInit,
-  Output, SimpleChanges
+  Output, SimpleChanges, ViewChild
 } from '@angular/core';
 import {Message} from "../../../../shared/message";
 import * as fromWorkspaceStore from "../../../store";
@@ -30,6 +30,8 @@ export class CalibrationNewTableComponent implements OnInit, AfterViewInit, Afte
   @Input() epMetrics: any;
   @Input() adjustments: any;
 
+  @Input() tableWidth: any;
+
   @Input() tableConfig: {
     view: 'adjustments' | 'analysis' | 'epMetrics',
     selectedCurveType: string,
@@ -41,7 +43,8 @@ export class CalibrationNewTableComponent implements OnInit, AfterViewInit, Afte
     filterData: any,
     sortData: any,
     isDeltaByAmount: boolean,
-    isExpandAll: boolean
+    isExpandAll: boolean,
+    expandCount: number
   };
 
   @Input() exchangeRates: any;
@@ -77,7 +80,8 @@ export class CalibrationNewTableComponent implements OnInit, AfterViewInit, Afte
 
   contextMenuItem : any[];
 
-  constructor(private _baseStore: Store) { }
+  constructor(private _baseStore: Store) {
+  }
 
   ngOnInit() {
     this.contextMenuItem = [
@@ -90,10 +94,6 @@ export class CalibrationNewTableComponent implements OnInit, AfterViewInit, Afte
 
   ngAfterViewChecked(): void {
 
-  }
-
-  statusFlilerCheckbox(event: any, type: string) {
-    this.selectedStatusFilter = {...this.selectedStatusFilter, [type]: event};
   }
 
   unexpandColumns() {
@@ -301,6 +301,7 @@ export class CalibrationNewTableComponent implements OnInit, AfterViewInit, Afte
   }
 
   onColumnResize(event) {
+    console.log(event);
     const {delta, element} = event;
     const isFrozen = element.attributes['aria-details'].value;
     const index = element.attributes['aria-colindex'].value;
@@ -350,6 +351,7 @@ export class CalibrationNewTableComponent implements OnInit, AfterViewInit, Afte
   }
 
   onTableSeparatorResize(event) {
+    console.log('oe');
     const {currentWidthValue, originalWidthValue} = event;
     const delta = currentWidthValue - originalWidthValue;
 

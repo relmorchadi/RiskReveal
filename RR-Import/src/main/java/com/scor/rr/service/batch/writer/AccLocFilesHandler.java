@@ -94,7 +94,8 @@ public class AccLocFilesHandler extends AbstractWriter {
                 try {
                     accLocFile.setAccFileName(targetPath + "/" + this.doCopy(sourceAccFileName, targetAccFileName, "", ".acc", sourcePath, targetPath) + ".txt");
                     accLocFile.setLocFileName(targetPath + "/" + this.doCopy(sourceLocFileName, targetLocFileName, "", ".loc", sourcePath, targetPath) + ".txt");
-                    projectConfigurationForeWriterFilesRepository.save(accLocFile);
+                    projectConfigurationForeWriterFilesRepository.saveAndFlush(accLocFile);
+                    jobManager.logStep(step.getStepId(), StepStatus.SUCCEEDED);
                 } catch (IOException ex) {
                     log.error("reading/writing error has occurred while copying forewriter files to the iHub");
                     jobManager.onTaskError(Long.valueOf(taskId));

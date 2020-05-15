@@ -1,7 +1,6 @@
 <!--normal table-->
 <p-contextMenu *ngIf="!virtualScroll && activateContextMenu" #cmL [model]="getItems()"></p-contextMenu>
 <p-contextMenu *ngIf="virtualScroll && activateContextMenu" appendTo="body" #cm [model]="getItems()"></p-contextMenu>
-
 <p-table *ngIf="!virtualScroll" [loading]="loading"
          [columns]="tableColumn"
          [value]="listOfData | tableSortAndFilter : [sortedData, FilterData]"
@@ -65,7 +64,7 @@
         <ng-container *ngIf="col.visible">
           <td *ngIf="col?.type ==='checkbox'" class="ui-resizable-column">
             <div style="display:flex">
-              <label nz-checkbox [(ngModel)]="rowData.selected" (ngModelChange)="uncheckRow()"></label>
+              <label nz-checkbox [(ngModel)]="rowData.selected" (ngModelChange)="selectRow(rowData, i)"></label>
             </div>
           </td>
           <td *ngIf="col?.type !=='checkbox' && col?.type !== 'icon'" class="ui-resizable-column"
@@ -129,6 +128,7 @@
          [lazy]="true" [showLoader]="false" [lazyLoadOnInit]="fromSearch"
          [(contextMenuSelection)]="contextSelectedItem"
          [contextMenu]="getContextMenu()" class="table-ngPrime"
+         (onColResize)="resize($event)"
          [selectionMode]="selectionMode"
          (onRowSelect)="rowSelect($event)"
          (onRowUnselect)="rowUnselect($event)"

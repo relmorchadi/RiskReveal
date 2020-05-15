@@ -47,16 +47,16 @@ export class SearchService {
     return this._http.get(`${this.api}workspace`, {params: _.pickBy({...filter, offset, size}, _.identity())});
   }
 
-  expertModeSearch(filter) {
-    return this._http.post(`${this.api}workspace/expert-mode`, filter);
+  expertModeSearch(params) {
+    return this._http.post(`${this.api}workspace/expert-mode`, params);
   }
 
   loadShort(): Observable<any> {
     return this._http.get(`${this.api}shortcuts`);
   }
 
-  getMostRecentSearch() {
-    return this._http.get(`${this.api}recent?userId=1`);
+  getMostRecentSearch(payload) {
+    return this._http.get(`${this.api}recent`, { params: payload });
   }
 
   getSavedSearch(payload) : Observable<any> {

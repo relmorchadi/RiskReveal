@@ -6,47 +6,48 @@ import {ExposuresMainTableConfig} from "../../model/exposures-main-table-config.
 import {ExposuresHeaderConfig} from "../../model/exposures-header-config.model";
 import {FAKEDATA, HEADERCONFIG} from "../../containers/workspace-exposures/fakeExposuresData";
 import {map} from "rxjs/operators";
+import {importUrl} from "../../../shared/api";
 
 @Injectable({
     providedIn: 'root'
 })
 export class ExposuresApi {
 
-    private readonly URL = environment.IMPORT_URI + 'exposure-manager/';
+    private readonly URL = `${importUrl()}exposure-manager/`;
 
-    private readonly fakeTableConfig :ExposuresMainTableConfig;
-    private readonly portfolioDetails:any;
-    private readonly divisionDetails:any;
+    private readonly fakeTableConfig: ExposuresMainTableConfig;
+    private readonly portfolioDetails: any;
+    private readonly divisionDetails: any;
 
     constructor(private _http: HttpClient) {
-       /* this.fakeTableConfig = FAKEDATA;*/
+        /* this.fakeTableConfig = FAKEDATA;*/
         this.portfolioDetails = 'Portfolio Details';
         this.divisionDetails = 'Division Details';
     }
 
-    loadTableConfig(headerConfig){
-        return this._http.post(this.URL+'exposure-manager-data',headerConfig)
+    loadTableConfig(headerConfig) {
+        return this._http.post(this.URL + 'exposure-manager-data', headerConfig)
     }
 
-    loadTableColumnsConfig(){
+    loadTableColumnsConfig() {
         return of<any>(this.fakeTableConfig.columns);
     }
 
     loadRightMenuContent(type: any) {
-        console.log('reached API ==> ',type);
+        console.log('reached API ==> ', type);
         switch (type) {
             case 'portfolio': {
                 return this.portfolioDetails;
             }
-            case 'division':{
+            case 'division': {
                 return this.divisionDetails;
             }
         }
     }
 
     loadHeaderConfig(projectId) {
-        console.log('reached API ==> ',projectId);
-        return this._http.get(this.URL+'references?projectId=' + projectId)
+        console.log('reached API ==> ', projectId);
+        return this._http.get(this.URL + 'references?projectId=' + projectId)
 
     }
 
@@ -55,31 +56,32 @@ export class ExposuresApi {
     }
 
     changeCurrency(currency: any) {
-        console.log('reached API ==> ',currency);
+        console.log('reached API ==> ', currency);
         return of<ExposuresMainTableConfig>(this.fakeTableConfig);
     }
 
     changeFinancialUnit(financialUnit: any) {
-        console.log('reached API ==> ',financialUnit);
+        console.log('reached API ==> ', financialUnit);
         return of<ExposuresMainTableConfig>(this.fakeTableConfig);
     }
 
     changeDivision(division: any) {
-        console.log('reached API ==> ',division);
+        console.log('reached API ==> ', division);
         return of<ExposuresMainTableConfig>(this.fakeTableConfig);
     }
 
     changePortfolio(portfolio: any) {
-        console.log('reached API ==> ',portfolio);
+        console.log('reached API ==> ', portfolio);
         return of<ExposuresMainTableConfig>(this.fakeTableConfig);
     }
 
     changeView(view: any) {
-        console.log('reached API ==> ',view);
+        console.log('reached API ==> ', view);
         return of<ExposuresMainTableConfig>(this.fakeTableConfig);
     }
 
-    exportTable() {
-        console.log('reached API ==> Export Table');
+    exportTable(headerConfig) {
+        console.log(headerConfig);
+        return this._http.post(this.URL + 'exposure-manager-export-data',headerConfig, { observe: 'response',responseType: 'blob' });
     }
 }

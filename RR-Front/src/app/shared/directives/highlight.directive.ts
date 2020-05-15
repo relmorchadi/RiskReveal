@@ -10,10 +10,10 @@ export class HighlightDirective {
   constructor(private _elementRef: ElementRef) {
   }
 
-  @HostListener('document:click', ['$event.target']) onMouseEnter(targetElement) {
-    const clickedInside = this._elementRef.nativeElement.contains(targetElement);
+  @HostListener('document:click', ['$event']) onMouseEnter(event) {
+    const clickedInside = this._elementRef.nativeElement.contains(event.target);
     if (!clickedInside) {
-      this.clickOutside.emit(null);
+      this.clickOutside.emit(true);
     }
   }
 

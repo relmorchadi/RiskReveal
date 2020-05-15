@@ -9,6 +9,7 @@
 .a-app-wrapper {
   .a-app-body {
     background-color: #FFFFFF;
+    height: calc(100vh - 160px);
 
     .header-divider {
       display: flex;
@@ -34,6 +35,7 @@
     .table-wrap {
       padding: 20px 0;
       margin: auto;
+      height: calc(100% - 65px);
       width: 97%;
       overflow: hidden;
       display: block;
@@ -197,10 +199,6 @@
             font-weight: 500;
           }
 
-          .plt-info {
-            margin: 15px;
-          }
-
           .text-ellipsis {
             width: 100%;
             text-overflow: ellipsis;
@@ -240,7 +238,7 @@
           }
 
           .expanded-row {
-            background-color: #E5E9FA;
+            background-color: rgb(236, 241, 247);
           }
 
           .expanded-inner-row {

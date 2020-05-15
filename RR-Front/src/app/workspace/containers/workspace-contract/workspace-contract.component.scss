@@ -242,6 +242,8 @@
               white-space: nowrap;
               overflow: hidden;
               padding-top: 4px;
+              display: flex;
+              align-items: center;
             }
 
             .icon-block_24px {
@@ -262,7 +264,6 @@
 
           .icon-check_24px {
             display: flex;
-            align-items: center;
             justify-content: center;
             border: 1px solid #00C4AA;
             background-color: #FFFFFF;
@@ -270,9 +271,7 @@
             height: 17px;
             width: 17px;
             font-size: 14px;
-            padding: 2px 1px 1px;
             border-radius: 18px;
-            margin-top: 4px;
           }
         }
       }

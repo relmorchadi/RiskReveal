@@ -17,6 +17,7 @@ export class ExposuresRightMenuComponent implements OnInit, OnDestroy {
 
     @Input('rightMenuConfig') rightMenuConfig: ExposuresRightMenuConfig;
     @Output('actionDispatcher') actionDispatcher: EventEmitter<any> = new EventEmitter<any>();
+    private first = true;
 
 
     constructor() {
@@ -32,7 +33,18 @@ export class ExposuresRightMenuComponent implements OnInit, OnDestroy {
 
     }
 
+
     closeRightMenu() {
-        this.actionDispatcher.emit({type:'closeRightMenu'});
+        if (this.first) {
+            this.first = false;
+        }else {
+            this.actionDispatcher.emit({type:'closeRightMenu'});
+            this.first = true;
+        }
+
+    }
+
+    toUpperCase(type: any) {
+        return type.charAt(0).toUpperCase() + type.slice(1);
     }
 }

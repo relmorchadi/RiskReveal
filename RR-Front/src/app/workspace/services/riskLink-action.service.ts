@@ -986,18 +986,25 @@ export class RiskLinkStateService {
     }
 
     runDetailedScan(ctx: StateContext<WorkspaceModel>, payload) {
-        const {projectId, analysis, portfolios, instanceId} = payload;
-        return this.riskApi.runDetailedScan(instanceId, projectId, analysis, portfolios)
+        const {projectId, analysis, portfolios, instanceId, fp} = payload;
+        return this.riskApi.runDetailedScan(instanceId, projectId, analysis, portfolios, fp)
             .pipe(
-                mergeMap((res: any) => {
+                mergeMap(({analysis, portfolios}: any) => {
                     ctx.patchState(produce(ctx.getState(), draft => {
                         const wsIdentifier = draft.currentTab.wsIdentifier;
-                        const {analysis, portfolios} = res;
                         _.forEach(analysis, a => {
                             draft.content[wsIdentifier].riskLink.summary.analysis[a.rlAnalysisId].rpCode = a.systemRegionPeril;
                             draft.content[wsIdentifier].riskLink.summary.analysis[a.rlAnalysisId].isScanning = false;
                             draft.content[wsIdentifier].riskLink.summary.analysis[a.rlAnalysisId].referenceTargetRaps = a.referenceTargetRaps;
-                            draft.content[wsIdentifier].riskLink.summary.analysis[a.rlAnalysisId].targetRaps = _.filter(a.referenceTargetRaps || [], item => item.default)
+                            draft.content[wsIdentifier].riskLink.summary.analysis[a.rlAnalysisId].targetRaps = _.filter(a.referenceTargetRaps || [], item => item.default);
+                            draft.content[wsIdentifier].riskLink.summary.analysis[a.rlAnalysisId].expectedFinancialPerspectives = a.expectedFinancialPerspectives;
+                            const {financialPerspectives} = draft.content[wsIdentifier].riskLink.summary.analysis[a.rlAnalysisId];
+                            draft.content[wsIdentifier].riskLink.summary.analysis[a.rlAnalysisId].occurrenceBasis = _.get(
+                                _.find(a.expectedFinancialPerspectives, ({fpCode}) => _.first(financialPerspectives) == fpCode),
+                                'occurrenceBasis',
+                                null
+                            );
+                            draft.content[wsIdentifier].riskLink.summary.analysis[a.rlAnalysisId].isExpectedFp= _.find(a.expectedFinancialPerspectives, ({fpCode}) => _.first(financialPerspectives) == fpCode) != null;
                         });
                         _.forEach(portfolios, p => {
                             draft.content[wsIdentifier].riskLink.summary.portfolios[p.rlPortfolioId].isScanning = false;
@@ -1010,7 +1017,7 @@ export class RiskLinkStateService {
                             ctx.dispatch(new fromWs.LoadRegionPerilForAnalysis({rlAnalysisIds}));
                         }
                     }));
-                    return of(res);
+                    return of({analysis, portfolios});
                 })
                 , catchError(err => {
                     console.error('Error while doing the detailed scan', err);
@@ -1065,12 +1072,12 @@ export class RiskLinkStateService {
             switch (action) {
                 case 'selectChunk':
                     _.forEach(draft.content[wsIdentifier].riskLink.summary.analysis, (analysis, index) => {
-                        draft.content[wsIdentifier].riskLink.summary.analysis[index].selected= _.includes(ids,Number(index));
+                        draft.content[wsIdentifier].riskLink.summary.analysis[index].selected = _.includes(ids, Number(index));
                     });
                     break;
                 case 'selectOne':
-                    const [id]= ids;
-                    draft.content[wsIdentifier].riskLink.summary.analysis[id].selected= !draft.content[wsIdentifier].riskLink.summary.analysis[id].selected;
+                    const [id] = ids;
+                    draft.content[wsIdentifier].riskLink.summary.analysis[id].selected = !draft.content[wsIdentifier].riskLink.summary.analysis[id].selected;
                     break;
             }
         }))
@@ -1091,12 +1098,12 @@ export class RiskLinkStateService {
             switch (action) {
                 case 'selectChunk':
                     _.forEach(draft.content[wsIdentifier].riskLink.summary.portfolios, (portfolio, index) => {
-                        draft.content[wsIdentifier].riskLink.summary.portfolios[index].selected= _.includes(ids,Number(index));
+                        draft.content[wsIdentifier].riskLink.summary.portfolios[index].selected = _.includes(ids, Number(index));
                     });
                     break;
                 case 'selectOne':
-                    const [id]= ids;
-                    draft.content[wsIdentifier].riskLink.summary.portfolios[id].selected= !draft.content[wsIdentifier].riskLink.summary.portfolios[id].selected;
+                    const [id] = ids;
+                    draft.content[wsIdentifier].riskLink.summary.portfolios[id].selected = !draft.content[wsIdentifier].riskLink.summary.portfolios[id].selected;
                     break;
             }
         }))
@@ -1316,6 +1323,8 @@ export class RiskLinkStateService {
             const wsIdentifier = draft.currentTab.wsIdentifier;
             _.forEach(payload, (item, key) => {
                 draft.content[wsIdentifier].riskLink.summary.analysis[key].financialPerspectives = item.financialPerspectives;
+                const {expectedFinancialPerspectives}=draft.content[wsIdentifier].riskLink.summary.analysis[key];
+                draft.content[wsIdentifier].riskLink.summary.analysis[key].isExpectedFp= _.find(expectedFinancialPerspectives, ({fpCode}) => _.first(item.financialPerspectives) == fpCode) != null;
             });
         }))
     }
@@ -1474,12 +1483,17 @@ export class RiskLinkStateService {
                                     peqt: item.targetRAPCodes,
                                     targetRaps: _.map(item.targetRAPCodes, val => ({targetRapCode: val})),
                                     selected: false,
-                                    occurrenceBasis: null,
+                                    occurrenceBasis: _.get(
+                                        _.find(item.expectedFinancialPerspectives, ({fpCode}) => _.first(item.financialPerspectives) == fpCode),
+                                        'occurrenceBasis',
+                                        null
+                                    ),
                                     overrideReason: null,
                                     rpOccurrenceBasis: null,
                                     isScanning: false,
                                     rpCode: item.targetRegionPeril,
-                                    analysisCurrency: item.sourceCurrency
+                                    analysisCurrency: item.sourceCurrency,
+                                    isExpectedFp: _.find(item.expectedFinancialPerspectives, ({fpCode}) => _.first(item.financialPerspectives) == fpCode) != null
                                 }
                             }))
                         );
