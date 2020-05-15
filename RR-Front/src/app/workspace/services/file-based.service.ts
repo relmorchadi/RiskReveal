@@ -17,19 +17,20 @@ export class FileBasedService {
   constructor(private fileBaseApi: FileBaseApi) {
   }
 
-  loadFolderList(ctx: StateContext<WorkspaceModel>) {
+  loadFolderList(ctx: StateContext<WorkspaceModel>, payload) {
     const state = ctx.getState();
     const wsIdentifier = _.get(state, 'currentTab.wsIdentifier');
     const data = {data: []};
-    return this.fileBaseApi.searchFoldersList().pipe(
+    return this.fileBaseApi.searchFoldersList(payload).pipe(
       mergeMap(
         (ds: any) => {
-          _.forEach(ds, item => data.data = [...data.data,
+          _.forEach(ds.children, item => data.data = [...data.data,
             {
               label: item, data: 'folder',
               expandedIcon: 'fa fa-folder-open',
               collapsedIcon: 'fa fa-folder'
             }]);
+          console.log(data);
           return of(ctx.patchState(
             produce(
               ctx.getState(), draft => {

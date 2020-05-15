@@ -5,7 +5,7 @@ export class LoadFileBasedFilesAction {
 
 export class LoadFileBasedFoldersAction {
   static readonly type = '[File Based] File Based Import Folders Search';
-  constructor() {}
+  constructor(public payload: string) {}
 }
 
 export class LoadFileContentAction {

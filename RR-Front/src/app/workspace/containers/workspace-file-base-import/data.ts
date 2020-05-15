@@ -47,7 +47,7 @@ const directoryTree = {
           {
             label: 'SampleElements',
             data: 'Home Folder',
-            expandedIcon: 'fa fa-folder-open',
+            expandedIcon: 'fa fa-folder',
             collapsedIcon: 'fa fa-folder',
             children: [{label: 'Amended Files', icon: 'fa fa-folder', data: 'Invoices for this month'}]
           }
@@ -117,19 +117,20 @@ const directoryTree = {
 };
 
 const textFilesData = [
-  {id: 0, name: '27_201804_PPS - 201804_PPS_ZAEQ_EventSetId_1190_100', selected: false},
-  {id: 1, name: '27_201804_PPS - 201804_PPS_ZAEQ_EventSetId_1190_100', selected: false},
-  {id: 2, name: '27_201804_PPS - 201804_PPS_ZAEQ_EventSetId_1190_100', selected: false},
-  {id: 3, name: '31_2A_ALGERIA_Fire_SP - Analysis_2A_IF_Fire_SP_EventSetId_1190_100', selected: false},
-  {id: 4, name: '351_2018 APAC TWN SOUTHCHINA ENG OS_Shinkong EventSetId_1190_100', selected: false},
-  {id: 5, name: '360_SGDOOD YONGSHI TRAINING_Nationwide - TAIWAN EventSetId_1190_100', selected: false},
-  {id: 6, name: '360_SGDOOD YONGSHI TRAINING_Nationwide - TAIWAN EventSetId_1190_100', selected: false},
-  {id: 7, name: '27_201804_PPS - 201804_PPS_ZAEQ_EventSetId_1190_100', selected: false},
-  {id: 8, name: '27_201804_PPS - 201804_PPS_ZAEQ_EventSetId_1190_100', selected: false}
-];
+  {id: 0, name: '27_201804_PPS - 201804_PPS_ZAEQ_EventSetId_1190_100', selected: false, createdAt: '17/04/2000', updatedAt: '17/04/2010'},
+  {id: 1, name: '27_201804_PPS - 201804_PPS_ZAEQ_EventSetId_1190_100', selected: false, createdAt: '17/04/2001', updatedAt: '17/04/2011'},
+  {id: 2, name: '27_201804_PPS - 201804_PPS_ZAEQ_EventSetId_1190_100', selected: false, createdAt: '17/04/2002', updatedAt: '17/04/2012'},
+  {id: 3, name: '31_2A_ALGERIA_Fire_SP - Analysis_2A_IF_Fire_SP_EventSetId_1190_100', selected: false, createdAt: '17/04/2003', updatedAt: '17/04/2013'},
+  {id: 4, name: '351_2018 APAC TWN SOUTHCHINA ENG OS_Shinkong EventSetId_1190_100', selected: false, createdAt: '17/04/2004', updatedAt: '17/04/2014'},
+  {id: 5, name: '360_SGDOOD YONGSHI TRAINING_Nationwide - TAIWAN EventSetId_1190_100', selected: false, createdAt: '17/04/2005', updatedAt: '17/04/2015'},
+  {id: 6, name: '360_SGDOOD YONGSHI TRAINING_Nationwide - TAIWAN EventSetId_1190_100', selected: false, createdAt: '17/04/2006', updatedAt: '17/04/2016'},
+  {id: 7, name: '27_201804_PPS - 201804_PPS_ZAEQ_EventSetId_1190_100', selected: false, createdAt: '17/04/2007', updatedAt: '17/04/2017'},
+  {id: 8, name: '27_201804_PPS - 201804_PPS_ZAEQ_EventSetId_1190_100', selected: false, createdAt: '17/04/2008', updatedAt: '17/04/2018'}
+    ]
+;
 
 const PltDataTables = [
-  // {field: 'selected', header: '', width: '25px', type: 'select', sorted: false, filtered: false, highlight: false, visible: true, edit: false},
+  {field: 'selected', header: '', width: '25px', type: 'select', sorted: false, filtered: false, highlight: false, visible: true, edit: false},
   {field: 'scanned', header: '', width: '25px', type: 'scan', sorted: false, filtered: false, highlight: false, visible: true, edit: false},
   {field: 'delete', header: '', width: '25px', type: 'action', sorted: false, filtered: false, highlight: false, visible: true, edit: false},
   {field: 'FileName', header: 'File Name', width: '130px', type: 'text', sorted: false, filtered: true, highlight: false, visible: true, edit: false},
@@ -157,7 +158,7 @@ const PltDataTables = [
 ];
 
 const importedFiles = [
-  {field: 'selected', header: '', width: '25px', type: 'select', sorted: false, filtered: false, highlight: false, visible: true},
+  {field: 'selected', header: ' ', width: '25px', type: 'select', sorted: false, filtered: false, highlight: false, visible: true},
   {field: 'label', header: 'File Name', width: '265px', type: 'text', sorted: false, filtered: true, highlight: false, visible: true},
   {field: 'createdAt', header: 'Created At', width: '50px', type: 'text', sorted: false, filtered: true, highlight: false, visible: true},
   {field: 'updatedAt', header: 'Updated At', width: '50px', type: 'text', sorted: false, filtered: true, highlight: false, visible: true},

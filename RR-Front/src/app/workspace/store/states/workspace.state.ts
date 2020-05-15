@@ -1347,14 +1347,19 @@ export class WorkspaceState {
    ***********************************/
 
   @Action(fromWS.LoadFileBasedFoldersAction)
-  loadFileBasedFolders(ctx: StateContext<WorkspaceModel>) {
-    return this.fileBasedFacade.loadFolderList(ctx);
+  loadFileBasedFolders(ctx: StateContext<WorkspaceModel>, payload: string) {
+    return this.fileBasedFacade.loadFolderList(ctx, payload);
   }
 
   @Action(fromWS.LoadFileBasedFilesAction)
   loadFileBasedFiles(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.LoadFileBasedFilesAction) {
     return this.fileBasedFacade.loadFilesList(ctx, payload);
   }
+
+    @Action(fromWS.LoadFileContentAction)
+    LoadFileContent(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.LoadFileBasedFilesAction) {
+        return this.fileBasedFacade.readFileContent(ctx, payload);
+    }
 
   @Action(fromWS.RemoveFileFromImportAction)
   removeFileFromImport(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.RemoveFileFromImportAction) {
