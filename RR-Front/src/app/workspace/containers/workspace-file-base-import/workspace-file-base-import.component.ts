@@ -366,6 +366,10 @@ export class WorkspaceFileBaseImportComponent extends BaseContainer implements O
         this.dispatch(new fromWs.LoadFileBasedFilesAction(this.nodePath));
         this.selectedData$.subscribe(value => {
             this.selectedData = value;
+            for(let key in this.selectedData){
+                this.selectedData[key].label=this.selectedData[key].label.split('\\')[this.selectedData[key].label.split('\\').length-1];
+                //console.log("KEY",this.selectedData[key]);
+            }
             console.log('File',this.selectedData);
             this.detectChanges();
         });
@@ -475,11 +479,14 @@ export class WorkspaceFileBaseImportComponent extends BaseContainer implements O
         if(o.hasOwnProperty('label')) {
           o.children = o.label.children;
           //console.log('SPLIT', o.label.data.file.split('\\')[o.label.data.file.split('\\').length-1]);
-          //o.label = o.label.data.file.split('\\')[o.label.data.file.split('\\').length-1];
-          o.label = o.label.data.customName;
+          o.label = o.label.data.file.split('\\')[o.label.data.file.split('\\').length-1];
+          //o.label = o.label.data.customName;
         } else {
-            //o.label = o.label.data.file.split('\\')[o.label.data.file.split('\\').length-1];
-            o.label = o.label.data.customName;
+            o.label = o.data.file.split('\\')[o.data.file.split('\\').length-1];
+            o.collapsedIcon='fa fa-folder';
+            o.expandedIcon='fa fa-folder-open';
+            o.data='folder';
+            //o.label = o.data.customName;
         }
         this.changeData(o.children)
       });
@@ -491,8 +498,9 @@ export class WorkspaceFileBaseImportComponent extends BaseContainer implements O
             this.objectTemp = this.directoryTree.children;
             /*while (this.objectTemp) {
                 this.changeData(this.objectTemp);
-            }*
-            return json =JSON.stringify(this.object);
-   */ }
+            }
+            return json =JSON.stringify(this.object);*/
+
+    }
 
 }
