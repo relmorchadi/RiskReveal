@@ -1,118 +1,37 @@
 package com.scor.rr.domain.importfile;
 
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+
 import javax.persistence.*;
 import java.util.Objects;
 
 @Entity
 @Table(name = "MetadataHeaderSection")
+@Data @NoArgsConstructor @EqualsAndHashCode
 public class MetadataHeaderSectionEntity {
     public static final String MANDATORY_Y = "Y";
     public static final String MANDATORY_N = "N";
     public static final String MANDATORY_D = "D";
 
-    private int id;
-    private String metadataAttribute;
-    private String description;
-    private String dataType;
-    private String mandatory;
-    private String format;
-    private String assertValue;
-    private String defaultValue;
-
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "MetadataHeaderSectionId", nullable = false)
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    @Basic
-    @Column(name = "MetadataAttribute", length = 100)
-    public String getMetadataAttribute() {
-        return metadataAttribute;
-    }
-
-    public void setMetadataAttribute(String metadataAttribute) {
-        this.metadataAttribute = metadataAttribute;
-    }
-
-    @Basic
-    @Column(name = "Description", length = 5000)
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    @Basic
-    @Column(name = "DataType", length = 100)
-    public String getDataType() {
-        return dataType;
-    }
-
-    public void setDataType(String dataType) {
-        this.dataType = dataType;
-    }
-
-    @Basic
+    private String id;
+    @Column(name = "Align")
+    private String align;
+    @Column(name = "MetadataAttribute")
+    private String metadataAttribute;
+    @Column(name = "Description")
+    private String description;
+    @Column(name = "DataType")
+    private String dataType;
     @Column(name = "Mandatory")
-    public String getMandatory() {
-        return mandatory;
-    }
-
-    public void setMandatory(String mandatory) {
-        this.mandatory = mandatory;
-    }
-
-    @Basic
+    private String mandatory;
     @Column(name = "Format")
-    public String getFormat() {
-        return format;
-    }
-
-    public void setFormat(String format) {
-        this.format = format;
-    }
-
-    @Basic
+    private String format;
     @Column(name = "AssertValue")
-    public String getAssertValue() {
-        return assertValue;
-    }
-
-    public void setAssertValue(String assertValue) {
-        this.assertValue = assertValue;
-    }
-
-    @Basic
+    private String assertValue;
     @Column(name = "DefaultValue")
-    public String getDefaultValue() {
-        return defaultValue;
-    }
-
-    public void setDefaultValue(String defaultValue) {
-        this.defaultValue = defaultValue;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        MetadataHeaderSectionEntity that = (MetadataHeaderSectionEntity) o;
-        return id == that.id &&
-                Objects.equals(metadataAttribute, that.metadataAttribute) &&
-                Objects.equals(description, that.description) &&
-                Objects.equals(dataType, that.dataType);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, metadataAttribute, description, dataType);
-    }
+    private String defaultValue;
 }
