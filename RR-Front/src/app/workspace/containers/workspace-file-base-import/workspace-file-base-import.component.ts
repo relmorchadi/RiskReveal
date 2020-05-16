@@ -112,7 +112,7 @@ export class WorkspaceFileBaseImportComponent extends BaseContainer implements O
         this.fileBase$.subscribe(value => {
             this.fileBase = _.merge({}, value);
             this.directoryTree = _.merge({}, this.fileBase.folders);
-            console.log(this.fileBase);
+            console.log('FileBase',this.fileBase);
             console.log('1',this.directoryTree);
 
             if(this.directoryTree.hasOwnProperty('data')) {
@@ -131,7 +131,7 @@ export class WorkspaceFileBaseImportComponent extends BaseContainer implements O
             this.directoryTree[this.indice]= this.changeData(this.directoryTree[this.indice]);
         }*/
             //console.log(this.directoryTree);
-            //     this.detectChanges();
+            this.detectChanges();
         });
         this.selectedData$.subscribe(value => {
             this.selectedData = value;
@@ -368,22 +368,20 @@ export class WorkspaceFileBaseImportComponent extends BaseContainer implements O
             this.selectedData = value;
             for(let key in this.selectedData){
                 this.selectedData[key].label=this.selectedData[key].label.split('\\')[this.selectedData[key].label.split('\\').length-1];
-                //console.log("KEY",this.selectedData[key]);
             }
-            console.log('File',this.selectedData);
+            console.log('File111',this.selectedData);
+            //console.log('FILTER',this.selectedData.filter(o=>o.label.indexOf('XXXXXX')));
             this.detectChanges();
         });
         this.fileBase$.subscribe(value => {
             this.fileBase.files = this.selectedData;
             console.log('File222',this.fileBase.files);
+            console.log('FileBase/SelectedFiles',this.fileBase.selectedFiles);
             this.detectChanges();
         });
+        //console.log('FILTER',this.selectedData.filter(o=>o.label.indexOf('TP10271')!=null));
         this.allCheckedImportedFiles = false;
         this.indeterminateImportedFiles = false;
-        /*console.log(this.fileBase.files);
-        for(this.index=0;this.index<this.fileBase.files.length;this.index++){
-          console.log(this.fileBase.files[this.index].selected);
-        }*/
     }
 
     nodeUnselect(event) {
@@ -503,4 +501,8 @@ export class WorkspaceFileBaseImportComponent extends BaseContainer implements O
 
     }
 
+    onFilter(value,field){
+        this.selectedData=this.selectedData.filter(o=>o.field.indexOf(value));
+    }
+//TP10271
 }
