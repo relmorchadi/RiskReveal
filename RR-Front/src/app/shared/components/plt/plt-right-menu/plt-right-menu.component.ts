@@ -432,11 +432,11 @@ export class PltRightMenuComponent extends BaseContainer implements OnInit, OnDe
             takeWhile(v => !_.isNil(v)),
             take(2),
             this.unsubscribeOnDestroy
-        ).subscribe( selectedProject => {
-      this.workspaceCurrency = selectedProject ? selectedProject.currency : null;
+        ).subscribe( currency => {
+      this.workspaceCurrency = currency
       this.summaryEpMetricsConfig = {
         ...this.summaryEpMetricsConfig,
-        selectedCurrency: selectedProject ? selectedProject.currency : null
+        selectedCurrency: currency
       };
       this.detectChanges();
     });

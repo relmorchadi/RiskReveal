@@ -1,0 +1,11 @@
+<i [ngClass]="{ 'icon-history-alt iconYellow': params?.value =='In progress',
+                                         'icon-check-circle iconGreen': params?.value=='Valid' ,
+                                         'icon-lock-alt iconRed': params?.value=='Locked',
+                                         'icon-error_24px iconRed2': params?.value=='Fail',
+                                         'icon-star iconBlue': params?.value=='Pending',
+                                         'icon-report_problem_24px iconYellow2': params?.value=='Requires Regeneration' }"
+   [nz-tooltip]="params?.value"
+   class="tooltipMsg"
+   style="vertical-align: super;"
+>
+</i>

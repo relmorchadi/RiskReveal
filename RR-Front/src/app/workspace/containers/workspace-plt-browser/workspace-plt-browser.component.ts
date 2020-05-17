@@ -45,6 +45,7 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
   searchAddress: string;
   workspaceId: string;
   uwy: number;
+  workspaceType: string;
   params: any;
   lastSelectedId;
   managePopUp: boolean;
@@ -297,12 +298,13 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
     this.destroy();
   }
 
-  patchState({data: {leftNavbarCollapsed, wsId, uwYear, projects}}): void {
+  patchState({data: {leftNavbarCollapsed, wsId, uwYear, projects, marketChannel}}): void {
     this.leftIsHidden = leftNavbarCollapsed;
     this.params = {
       workspaceContextCode: wsId,
       workspaceUwYear: uwYear
     };
+    this.workspaceType = marketChannel;
     this.selectedProject = _.find(projects, project => project.selected);
   }
 

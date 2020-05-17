@@ -4,7 +4,7 @@ import javax.persistence.*;
 import java.util.Objects;
 
 @Entity
-@Table(name = "MetadataHeaderSection", schema = "dbo", catalog = "RiskReveal")
+@Table(name = "MetadataHeaderSection")
 public class MetadataHeaderSectionEntity {
     public static final String MANDATORY_Y = "Y";
     public static final String MANDATORY_N = "N";
@@ -20,6 +20,7 @@ public class MetadataHeaderSectionEntity {
     private String defaultValue;
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "MetadataHeaderSectionId", nullable = false)
     public int getId() {
         return id;

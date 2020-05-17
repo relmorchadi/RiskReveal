@@ -209,6 +209,7 @@ public class ImportFileService {
         File file = new File(path);
         ImportFileLossDataHeader importFileLossDataHeader = parseLossDataTableHeader(file);
         return importFileLossDataHeader.getMetadata();
+        //return importFileLossDataHeader;
     }
 
     public Map<String, String> readPLTdata(String path) {

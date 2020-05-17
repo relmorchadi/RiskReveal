@@ -199,7 +199,7 @@ export class TableHandlerImp implements TableHandlerInterface, OnDestroy {
   private resolveColumns = (columns) => {
     this.updateColumns(columns);
     this.updateTotalColumnWidth(columns);
-    this.updateLoading(false);
+    //this.updateLoading(false);
     //save to store
     this.saveColumns(this.params, columns);
 
@@ -259,7 +259,7 @@ export class TableHandlerImp implements TableHandlerInterface, OnDestroy {
     this.params = params;
 
     const init$ = this._api.filterByProject({
-      projectId: selectedProject.projectId
+      projectId: selectedProject ? selectedProject.projectId + '' : null
     }).pipe(
         take(1),
         share()
@@ -272,7 +272,7 @@ export class TableHandlerImp implements TableHandlerInterface, OnDestroy {
         );
 
 
-    //this.updateLoading(true);
+    this.updateLoading(true);
 
     initialized$
         .pipe(
@@ -586,7 +586,7 @@ export class TableHandlerImp implements TableHandlerInterface, OnDestroy {
 
   filterByProjectId(projectId: number) {
     const filter$ = this._api.filterByProject({
-      projectId: projectId
+      projectId: projectId + ''
     }).pipe(share());
 
 

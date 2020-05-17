@@ -150,7 +150,7 @@ export class DashboardState implements NgxsOnInit {
 
         return this.dashboardAPI.getFacDashboardResources(dataParams).pipe(
             tap((data: any) => {
-                const fixData = _.map(this._formatDate(data.content), item => ({...item, carStatus: _.startCase(_.capitalize(item.carStatus))}));
+                const fixData = _.map(this._formatDate(data.content), item => ({...item, carStatus: _.startCase(_.capitalize(item.carStatus)), contractID: item.contractName, contractName: item.contractId}));
                 ctx.patchState(produce(ctx.getState(), draft => {
                     draft.data.assignedFac[identifier] = fixData;
                     draft.data.assignedDataCounter[identifier] = data.refCount;
@@ -169,8 +169,8 @@ export class DashboardState implements NgxsOnInit {
 
     private _formatDate(data) {
         return _.map(data, item => {
-            const formatCDate = moment(item.creationDate).format('DD-MM-YYYY');
-            const formatLDate = moment(item.lastUpdateDate).format('DD-MM-YYYY');
+            const formatCDate = item.creationDate === null ? null : moment(item.creationDate).format('DD-MM-YYYY');
+            const formatLDate = item.lastUpdateDate === null ? null : moment(item.lastUpdateDate).format('DD-MM-YYYY');
             return {...item, creationDate: formatCDate, lastUpdateDate: formatLDate}
         })
     }

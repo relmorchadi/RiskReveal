@@ -2,20 +2,16 @@ package com.scor.rr.rest;
 
 import com.scor.rr.domain.dto.*;
 import com.scor.rr.domain.dto.TargetBuild.AssignTagToPltsRequest;
-import com.scor.rr.domain.dto.TargetBuild.PLTHeaderDeleteRequest;
 import com.scor.rr.domain.dto.TargetBuild.PLTManagerViewRequest;
 import com.scor.rr.domain.dto.TargetBuild.PLTManagerViewResponse;
-import com.scor.rr.domain.entities.GroupedPLTs;
-import com.scor.rr.domain.entities.PLTManagerView;
+import com.scor.rr.domain.entities.PLTManager.GroupedPLTs;
 import com.scor.rr.service.PltBrowserService;
 import com.scor.rr.service.TagService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
 
 
 @RestController

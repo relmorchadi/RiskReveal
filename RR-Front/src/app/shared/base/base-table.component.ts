@@ -27,6 +27,7 @@ export class BaseTable extends BaseContainer implements TableInterface , OnInit,
 
   @Input() params: any;
   @Input() selectedProject: any;
+  @Input() workspaceType: any;
   @Output() actionDispatcher: EventEmitter<Message> = new EventEmitter();
 
   @ViewChild('tableContainer') container;
@@ -81,9 +82,10 @@ export class BaseTable extends BaseContainer implements TableInterface , OnInit,
   ngOnChanges(changes: SimpleChanges): void {
     const {
       params,
-      selectedProject
+      selectedProject,
+      workspaceType
     } = changes;
-    this.initTable(params, selectedProject);
+    this.initTable(params, selectedProject, workspaceType);
     this.selectedProjectFilter(selectedProject);
   }
 
@@ -105,10 +107,11 @@ export class BaseTable extends BaseContainer implements TableInterface , OnInit,
     this._handler.initApi(`${backendUrl()}plt/`);
   }
 
-  initTable(params, selectedProject) {
-    if(this.params && !this.tableInitialized && selectedProject && selectedProject.previousValue != selectedProject.currentValue) {
+  initTable(params, selectedProject, wsType) {
+    if(this.params && !this.tableInitialized && wsType && selectedProject && selectedProject.previousValue != selectedProject.currentValue) {
       this.tableInitialized = true;
-      this._handler.initTable(this.params, selectedProject.currentValue);
+      console.log(params, selectedProject, wsType);
+      this._handler.initTable(this.params, wsType.currentValue == 'FAC' ? selectedProject.currentValue : null);
     }
   }
 
@@ -174,7 +177,6 @@ export class BaseTable extends BaseContainer implements TableInterface , OnInit,
 
   rowsChange(rows) {
     if(rows != this.rows && rows) {
-      console.log("Resized : ", rows);
       this._handler.setPageSize(rows);
       this.rows = rows;
     }
