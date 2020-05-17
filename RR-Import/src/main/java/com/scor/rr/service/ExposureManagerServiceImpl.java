@@ -9,6 +9,7 @@ import com.scor.rr.domain.dto.ExposureManagerRefDto;
 import com.scor.rr.repository.*;
 import com.scor.rr.service.abstraction.DivisionService;
 import com.scor.rr.service.abstraction.ExposureManagerService;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.poi.hssf.usermodel.HSSFDataFormat;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.FillPatternType;
@@ -22,6 +23,7 @@ import org.springframework.stereotype.Service;
 import java.io.ByteArrayOutputStream;
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toMap;
 
@@ -34,8 +36,6 @@ import static java.util.stream.Collectors.toMap;
 @Service
 public class ExposureManagerServiceImpl implements ExposureManagerService {
 
-    @Autowired
-    private CurrencyRepository currencyRepository;
 
     @Autowired
     private FinancialPerspectiveRepository financialPerspectiveRepository;
@@ -66,7 +66,6 @@ public class ExposureManagerServiceImpl implements ExposureManagerService {
         exposureManagerRefDto.setCurrencies(Arrays.asList("USD", "CAD", "GBP", "EUR", "SGD"));
         exposureManagerRefDto.setFinancialPerspectives(financialPerspectiveRepository.findSelectableCodes());
         ProjectConfigurationForeWriter pcfw = projectConfigurationForeWriterRepository.findByProjectId(projectId);
-        exposureManagerRefDto.setDivisions(divisionService.getDivisions(pcfw != null ? pcfw.getCaRequestId() : null));
         exposureManagerRefDto.setSummariesDefinitions(exposureViewDefinitionRepository.findExposureViewDefinitionsAliases());
         exposureManagerRefDto.setPortfolios(modelPortfolioRepository.findPortfolioNamesByProjectId(projectId));
 
@@ -82,6 +81,10 @@ public class ExposureManagerServiceImpl implements ExposureManagerService {
                         portfoliosAndCurrenciesByDivision.put(division, portfolioCurrency);
                     });
         }
+
+        exposureManagerRefDto.setDivisions(
+                divisionService.getDivisions(pcfw != null ? pcfw.getCaRequestId() : null)
+                        .stream().filter(e -> divisions.contains(e.getDivisionNumber())).collect(Collectors.toList()));
 
         exposureManagerRefDto.setPortfoliosAndCurrenciesByDivision(portfoliosAndCurrenciesByDivision);
         return exposureManagerRefDto;
@@ -111,7 +114,9 @@ public class ExposureManagerServiceImpl implements ExposureManagerService {
                     exposureManagerData.getExpectedTiv().subtract(exposureManagerData.getTotalTiv()) : null);
             Map<String, Object> map = new HashMap<>(totalRow);
             map.remove("Unmapped");
-            map.values().removeAll(Collections.singleton(null));
+            map.remove("expectedTIV");
+            CollectionUtils.filter(map.values(), Objects::nonNull);
+
             exposureManagerData.setRegionPerils(map);
 
             exposureManagerDto.setFrozenRow(exposureManagerData);
@@ -146,7 +151,7 @@ public class ExposureManagerServiceImpl implements ExposureManagerService {
                     exposureManagerDto.setColumns(new ArrayList<>(map.keySet()));
                 }
 
-                map.values().removeAll(Collections.singleton(null));
+                CollectionUtils.filter(map.values(), Objects::nonNull);
                 exposureManagerData.setRegionPerils(map);
 
                 data.add(exposureManagerData);
@@ -172,7 +177,10 @@ public class ExposureManagerServiceImpl implements ExposureManagerService {
         Map<String, Object> totalRow = exposureSummaryDataRepository.getTotalRowExposureData(params.getProjectId(),
                 params.getPortfolioName(), params.getSummaryType(), params.getDivision(), params.getCurrency(), params.getFinancialPerspective(), params.getType());
 
-        totalRow = totalRow
+        Map<String, Object> map = new HashMap<>(totalRow);
+        CollectionUtils.filter(map.values(), Objects::nonNull);
+
+        map = map
                 .entrySet()
                 .stream()
                 .sorted(this.valueComparator().reversed())
@@ -285,7 +293,7 @@ public class ExposureManagerServiceImpl implements ExposureManagerService {
                 fixedValues.put(index++, "expectedTIV");
 
 
-                for (String fieldName : totalRow.keySet()) {
+                for (String fieldName : map.keySet()) {
                     if (!fixedValues.containsValue(fieldName) && !fieldName.equalsIgnoreCase("Unmapped")) {
                         dataCell = firstDataRow.createCell(columnCount++);
                         dataCell.setCellValue(fieldName);
@@ -311,7 +319,7 @@ public class ExposureManagerServiceImpl implements ExposureManagerService {
                     firstDataRow.getCell(i).setCellStyle(style);
                 }
 
-                values.add(0, totalRow);
+                values.add(0, map);
                 for (Map<String, Object> t : values) {
                     XSSFRow dataRow = sheet.createRow(rowCount++);
                     for (columnCount = 0; columnCount < fixedValues.size(); columnCount++) {
@@ -354,7 +362,13 @@ public class ExposureManagerServiceImpl implements ExposureManagerService {
     }
 
     private Comparator<Map.Entry> valueComparator() {
-        return Comparator.comparing(e -> ((BigDecimal) e.getValue()));
+        return Comparator.comparing(e -> {
+                    if (e != null && e.getValue() != null)
+                        return ((BigDecimal) e.getValue());
+                    else
+                        return new BigDecimal(0);
+                }
+        );
     }
 
     @Override

@@ -1,6 +1,6 @@
 package com.scor.rr.domain.dto;
 
-import com.scor.rr.domain.entities.UserTag;
+import com.scor.rr.domain.entities.PLTManager.UserTag;
 
 import java.util.List;
 

@@ -10,6 +10,6 @@ import java.util.List;
 
 public interface CarDivisionsRepository extends JpaRepository<CarDivisions, Long> {
 
-    @Query("SELECT cd.divisionNumber FROM CarDivisions cd WHERE cd.carRequestId = :carRequestId")
+    @Query("SELECT cd.divisionNumber FROM CarDivisions cd WHERE cd.carRequestId = :carRequestId ORDER BY cd.divisionNumber ASC")
     List<String> findAllDivisions(@Param("carRequestId") String carRequestId);
 }

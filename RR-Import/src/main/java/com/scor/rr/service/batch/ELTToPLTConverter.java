@@ -330,6 +330,7 @@ public class ELTToPLTConverter extends AbstractWriter {
             if (SecurityContextHolder.getContext() != null && SecurityContextHolder.getContext().getAuthentication() != null) {
                 scorPltHeaderEntity.setCreatedBy(((UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser().getUserId());
             }
+            scorPltHeaderEntity.setEntity(1);
             scorPltHeaderEntity.setCloningSourceId(null);
             scorPltHeaderEntity.setDefaultPltName("Pure-" + targetRapEntities.indexOf(targetRapEntity)); // FIXME: 16/07/2016
             scorPltHeaderEntity.setCreatedDate(new Date());

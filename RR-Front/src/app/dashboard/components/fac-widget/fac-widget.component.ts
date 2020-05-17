@@ -122,8 +122,6 @@ export class FacWidgetComponent extends BaseContainer implements OnInit {
       this.dataCounterAssigned =  _.get(value, `${this.identifier}`, 10);
       this.detectChanges();
     });
-
-
   }
 
   selectTab(index) {

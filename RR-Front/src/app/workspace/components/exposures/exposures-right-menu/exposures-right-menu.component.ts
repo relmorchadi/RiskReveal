@@ -43,4 +43,8 @@ export class ExposuresRightMenuComponent implements OnInit, OnDestroy {
         }
 
     }
+
+    toUpperCase(type: any) {
+        return type.charAt(0).toUpperCase() + type.slice(1);
+    }
 }

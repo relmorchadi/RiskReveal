@@ -2,7 +2,7 @@ import {CUSTOM_ELEMENTS_SCHEMA, NgModule} from '@angular/core';
 import {COMPONENTS} from './components';
 import {CONTAINERS} from './containers';
 import {DIRECTIVES} from './directives';
-import {FilterByPathPipe, PIPES} from './pipes';
+import {PIPES} from './pipes';
 import {RouterModule} from '@angular/router';
 import {SharedModule} from '../shared/shared.module';
 import {NgMasonryGridModule} from 'ng-masonry-grid';
@@ -24,7 +24,6 @@ import {AddRemovePopUpComponent} from './components/calibration/add-remove-pop-u
 import {PopUpPltTableComponent} from './components/calibration/add-remove-pop-up/pop-up-plt-table/pop-up-plt-table.component';
 import {CalibrationMainTableComponent} from './components/calibration/calibration-main-table/calibration-main-table.component';
 import {InuringCanvasTabComponent} from './components/inuring/inuring-canvas-tab/inuring-canvas-tab.component';
-import {AttachPltPopUpComponent} from './components/scopeCompleteness/attachPlt-pop-up/attach-plt-pop-up/attach-plt-pop-up.component';
 import {jsPlumbToolkitModule} from 'jsplumbtoolkit-angular';
 import {jsPlumbToolkitDragDropModule} from 'jsplumbtoolkit-angular-drop';
 import {Dialogs} from 'jsplumbtoolkit';
@@ -47,15 +46,24 @@ import {GetDeltaPipe} from "./pipes/get-delta.pipe";
 import {FinancialUnitPipe} from "./pipes/financial-unit.pipe";
 import {ExchangeRatePipe} from "../shared/pipes/exchange-rate.pipe";
 import { AttachPltsPopUpComponent } from './components/scopeCompleteness/attach-plts-pop-up/attach-plts-pop-up.component';
+import {AgGridModule} from "@ag-grid-community/angular";
+import {CustomBooleanFilter} from "../shared/components/grid/custom-boolean-filter/custom-boolean-filter.component";
+import {CustomBooleanFloatingFilter} from "../shared/components/grid/custom-boolean-floating-filter/custom-boolean-floating-filter.component";
+import {StatusCellRenderer} from "../shared/components/grid/status-cell-renderer/status-cell-renderer.component";
+import {BooleanCellRenderer} from "../shared/components/grid/boolean-cell-renderer/boolean-cell-renderer.component";
+import {DateCellRenderer} from "../shared/components/grid/date-cell-renderer/date-cell-renderer.component";
+import {NumberCellRenderer} from "../shared/components/grid/number-cell-renderer/number-cell-renderer.component";
 
 @NgModule({
   entryComponents: [...COMPONENTS, ...CONTAINERS, ...INURING_NODES],
   declarations: [
     ...COMPONENTS, ...CONTAINERS,
-    ...PIPES, ...DIRECTIVES,
+    FrozenColumnsFilterPipe,
+    ...PIPES, ...DIRECTIVES, TagsComponent, LastAdjustmentMatrixComponent, AdjustmentPopUpComponent, AddRemovePopUpComponent, PopUpPltTableComponent, CalibrationMainTableComponent, InuringCanvasTabComponent, EditContractPopUpComponent, EditEdgePopUpComponent, ParseIdPipe, ReturnPeriodPopUpComponent, AddRemovePopUpNewComponent, PopUpPltTableNewComponent, CalibrationSortAndFilterPipe, AttachPltsPopUpComponent
 
   ],
   imports: [
+    AgGridModule.withComponents([ CustomBooleanFilter, CustomBooleanFloatingFilter, StatusCellRenderer, BooleanCellRenderer, DateCellRenderer, NumberCellRenderer]),
     GridsterModule,
     SharedModule,
     FormsModule,
@@ -76,14 +84,14 @@ import { AttachPltsPopUpComponent } from './components/scopeCompleteness/attach-
     jsPlumbToolkitModule,
     jsPlumbToolkitDragDropModule,
     ResizableModule,
-    ContextMenuModule
+    ContextMenuModule,
+
   ],
   exports: [
-    RouterModule,
-    FilterByPathPipe
+    RouterModule
   ],
   providers: [
-    ...SERVICE,...PIPES,
+    ...SERVICE,...PIPES, GetMetricPipe, CalibrationSortAndFilterPipe, ConfirmationService, FilterGroupedPltsPipe, SortGroupedPltsPipe, GetDeltaPipe, FinancialUnitPipe, ExchangeRatePipe, FrozenColumnsFilterPipe
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })

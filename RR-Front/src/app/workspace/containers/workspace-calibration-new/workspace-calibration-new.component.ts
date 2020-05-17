@@ -194,10 +194,13 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
   ngOnInit() {
     this.workspaceCurrency= null;
 
-    this.select(WorkspaceState.getSelectedProject).subscribe( project => {
+    combineLatest(
+        this.select(WorkspaceState.getSelectedProject),
+        this.select(WorkspaceState.getCurrentWS)
+    ).subscribe( ([selectedProject, currentWs]) => {
       this.tableConfig = {
-          ...this.tableConfig,
-        filterData: project ? { ...this.tableConfig.filterData, projectId: project.projectId } : this.tableConfig.filterData
+        ...this.tableConfig,
+        filterData: currentWs.marketChannel == 'FAC' && selectedProject ? { ...this.tableConfig.filterData, projectId: selectedProject.projectId } : this.tableConfig.filterData
       };
       this.detectChanges();
     });
@@ -357,11 +360,11 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
         .pipe(
             takeWhile(v => !_.isNil(v)),
             this.unsubscribeOnDestroy
-        ).subscribe( selectedProject => {
-          this.workspaceCurrency = selectedProject ? selectedProject.currency : null;
+        ).subscribe( currency => {
+          this.workspaceCurrency = currency
           this.tableConfig = {
               ...this.tableConfig,
-            selectedCurrency: selectedProject ? selectedProject.currency : null
+            selectedCurrency: currency
           };
           this.detectChanges();
     });
@@ -384,7 +387,6 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
       this.calibrationTableService.updateColumnsConfigCache(config);
 
       this.tableWidth = _.reduce([...this.columnsConfig.columns, ...this.columnsConfig.frozenColumns], (acc, curr) => curr ? acc + _.toNumber(curr.width) : acc, 0);
-      console.log("table width:", this.tableWidth);
 
       this.visibleFrozenColumns= _.slice(config.frozenColumns, 1);
       this.availableFrozenColumns= _.differenceBy(CalibrationTableService.frozenColsExpanded, config.frozenColumns, 'field');

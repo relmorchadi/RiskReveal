@@ -23,7 +23,6 @@ import { AngularResizeElementModule } from 'angular-resize-element';
 import {SERVICES} from "./services";
 import {WorkspaceModule} from "../workspace/workspace.module";
 
-
 @NgModule({
   declarations: [...COMPONENTS, ...PIPES, ...DIRECTIVES, TrimFormatPipe, TrimSecondaryFormatPipe],
     imports: [

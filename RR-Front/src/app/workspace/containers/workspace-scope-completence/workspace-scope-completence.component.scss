@@ -9,6 +9,7 @@
 .a-app-wrapper {
   .a-app-body {
     background-color: #FFFFFF;
+    height: calc(100vh - 160px);
 
     .header-divider {
       display: flex;
@@ -34,6 +35,7 @@
     .table-wrap {
       padding: 20px 0;
       margin: auto;
+      height: calc(100% - 65px);
       width: 97%;
       overflow: hidden;
       display: block;

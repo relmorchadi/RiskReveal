@@ -90,7 +90,10 @@ export class WorkspaceState {
   }
 
   static getWorkspaceCurrency(wsIdentifier: string) {
-    return createSelector([WorkspaceState], (state: WorkspaceModel) => _.find(state.content[wsIdentifier].projects, pr => pr.selected));
+    return createSelector([WorkspaceState], (state: WorkspaceModel) => {
+      const ws = state.content[wsIdentifier];
+      return ws.marketChannel == 'TTY' ? ws.currency :  _.find(ws.projects, pr => pr.selected).currency;
+    });
   }
 
   static getWorkspaceEffectiveDate(wsIdentifier: string) {
@@ -444,12 +447,6 @@ export class WorkspaceState {
   static getFinancialPerspective(state: WorkspaceModel) {
     const wsIdentifier = state.currentTab.wsIdentifier;
     return state.content[wsIdentifier].riskLink.financialPerspective;
-  }
-
-  @Selector()
-  static getImportStatus(state: WorkspaceModel) {
-    const wsIdentifier = state.currentTab.wsIdentifier;
-    return state.content[wsIdentifier].riskLink.importPLTs;
   }
 
   /***********************************
