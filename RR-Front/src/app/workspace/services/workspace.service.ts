@@ -524,24 +524,29 @@ export class WorkspaceService {
   loadProjectsByWorkspace(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.LoadProjectByWorkspace) {
     const {wsId, uwYear} = payload;
     const wsIdentifier = wsId + '-' + uwYear;
-    this.projectApi.getProjectsByWorkspace(wsId, uwYear).subscribe(data => {
-      const state = ctx.getState();
-      let projects = data as Array<any>;
+    return this.projectApi.getProjectsByWorkspace(wsId, uwYear)
+        .pipe(
+            tap(data => {
+              const state = ctx.getState();
+              let projects = data as any[];
 
-      const selectedProject = state.content[wsIdentifier].projects.filter( item => item.selected);
+              const selectedProject = state.content[wsIdentifier].projects.filter( item => item.selected);
 
-      const selectedProjectId = selectedProject.length > 0 ? selectedProject[0].projectId : 0;
+              const selectedProjectId = selectedProject.length > 0 ? selectedProject[0].projectId : 0;
 
-      projects.map(prj=> {
-        prj.selected = prj.projectId === selectedProjectId;
-        return prj;
-      });
+              projects.map(prj=> {
+                prj.selected = prj.projectId === selectedProjectId;
+                prj.projectType = prj.carRequestId === null ? 'TREATY' : 'FAC';
+                return prj;
+              });
 
+              ctx.patchState(produce(ctx.getState(), draft => {
+                draft.content[wsIdentifier].projects = projects.reverse();
+              }))
 
-      return ctx.patchState(produce(ctx.getState(), draft => {
-        draft.content[wsIdentifier].projects = data;
-      }))
-    })
+            })
+        );
+
   }
   deleteProject(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.DeleteProject) {
     const {projectId, wsId, uwYear} = payload;

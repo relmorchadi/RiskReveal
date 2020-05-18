@@ -5,10 +5,7 @@ import com.scor.rr.configuration.security.UserPrincipal;
 import com.scor.rr.domain.*;
 import com.scor.rr.domain.dto.ClonePltsRequest;
 import com.scor.rr.exceptions.ExceptionCodename;
-import com.scor.rr.repository.ModelAnalysisEntityRepository;
-import com.scor.rr.repository.PltHeaderRepository;
-import com.scor.rr.repository.ProjectRepository;
-import com.scor.rr.repository.WorkspaceRepository;
+import com.scor.rr.repository.*;
 import com.scor.rr.service.adjustement.AdjustmentNodeOrderService;
 import com.scor.rr.service.adjustement.AdjustmentNodeProcessingService;
 import com.scor.rr.service.adjustement.AdjustmentNodeService;
@@ -32,6 +29,8 @@ import java.util.Optional;
 public class CloningScorPltHeaderService {
 
 
+    @Autowired
+    private AdjustmentThreadRepository adjustmentThreadRepository;
     @Autowired
     ModelAnalysisEntityRepository modelAnalysisEntityRepository;
 
@@ -160,6 +159,19 @@ public class CloningScorPltHeaderService {
 
             ProjectEntity sourceProject = this.projectRepository.findById(sourcePlt.getProjectId()).get();
 
+            // clone the pure plt header
+
+            Optional<AdjustmentThread> optionalAdjustmentThread = this.adjustmentThreadRepository.findByFinalPLT(sourcePlt);
+            Long sourcePurePltId = null;
+            if(optionalAdjustmentThread.isPresent())
+                sourcePurePltId = optionalAdjustmentThread.get().getInitialPLT().getPltHeaderId();
+
+            PltHeaderEntity newPurePlt = this.cloneScorPltHeader(sourcePurePltId);
+            AdjustmentThread newAdjustmentThread = new AdjustmentThread();
+            newAdjustmentThread.setInitialPLT(newPurePlt);
+            newAdjustmentThread.setFinalPLT(newPLT);
+            this.adjustmentThreadRepository.save(newAdjustmentThread);
+
             // get or create target project (depends on clone type)
             switch(request.getCloningType()) {
                 case "KEEP_PROJECT_NAME":
@@ -206,19 +218,20 @@ public class CloningScorPltHeaderService {
             }
             // @TODO: FIX THIS !!!!!!!!!!!!
             // copy plt files
-          /*  try {
+            try {
                 File dstFile = this.copyPltFile(sourcePlt, newPLT ,
-                        "/scor/data/ihub/v4/Facultative/Contracts/" + request.getTargetWorkspaceContextCode()
-                                + "/" + request.getTargetWorkspaceUwYear() + "/" +
-                        this.projectRepository.findById(newPLT.getProjectId()).get().getProjectName()
+                        "C:\\dev\\projects\\test\\Facultative\\Contracts\\"  + request.getTargetWorkspaceContextCode()
+                                + "\\" + request.getTargetWorkspaceUwYear() + "\\"  +
+                                this.projectRepository.findById(newPLT.getProjectId()).get().getProjectName()
                 );
                 newPLT.setLossDataFilePath(dstFile.getParent());
                 newPLT.setLossDataFileName(dstFile.getName());
             } catch (Exception e) {
                 e.printStackTrace();
             }
-*/
-            newPLT.setCloningSourceId(sourcePlt.getPltHeaderId());
+
+            newPurePlt.setProjectId(newPLT.getProjectId());
+            this.pltHeaderRepository.save(newPurePlt);
             pltsResults.add(this.pltHeaderRepository.save(newPLT));
         }
         return pltsResults;
@@ -231,7 +244,8 @@ public class CloningScorPltHeaderService {
 
             PltHeaderEntity newPLT = new PltHeaderEntity(plt);
             newPLT.setCreatedDate(RRDateUtils.getDateNow());
-            newPLT.setIsLocked(false);
+            newPLT.setCloningSourceId(pltId);
+     //       newPLT.setIsLocked(false);
 
             return pltHeaderRepository.save(newPLT);
         } else {
@@ -241,9 +255,7 @@ public class CloningScorPltHeaderService {
 
     private File copyPltFile(PltHeaderEntity plt, PltHeaderEntity newPLT, String targetPath) throws Exception {
 
-        //System.out.println(">>>>>>>>>>>>>> source: " + plt.getLossDataFilePath());
-        //System.out.println(">>>>>>>>>>>>>> new: " + newPLT.getLossDataFilePath());
-        String dstFilePath = "/scor/data/ihub/v4/Facultative/Contracts/" + targetPath ;
+        String dstFilePath = targetPath ;
         File sourceFile = new File(plt.getLossDataFilePath(), plt.getLossDataFileName());
         File dstFile = new File(dstFilePath, "PLT_" + newPLT.getPltHeaderId() + "_" + newPLT.getPltType() + "_" + sdf.format(new Date()) + ".bin");
         UtilsMethod.copyFile(sourceFile, dstFile);

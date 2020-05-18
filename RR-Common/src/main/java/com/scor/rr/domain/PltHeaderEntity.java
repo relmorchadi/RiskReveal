@@ -168,6 +168,8 @@ public class PltHeaderEntity {
 //        this.adjustmentBasisByFkCurrentBasisId = other.adjustmentBasisByFkCurrentBasisId;
         this.entity = other.entity;
 //        this.marketChannel = other.marketChannel;
+        this.lossDataFilePath = other.lossDataFilePath;
+        this.lossDataFileName = other.lossDataFileName;
     }
 }
 
