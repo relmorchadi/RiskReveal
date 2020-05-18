@@ -14,6 +14,7 @@ import java.util.List;
 @NoArgsConstructor
 public class RLDataSourcesDto {
 
+    private Long rlSavedDataSourceId;
     private Long rlDataSourceId;
     private String dataSourceName;
     private Long dataSourceId;
@@ -39,6 +40,7 @@ public class RLDataSourcesDto {
     }
 
     public RLDataSourcesDto(RLSavedDataSource rlSavedDataSource) {
+        this.setRlSavedDataSourceId(rlSavedDataSource.getRlSavedDataSourceId());
         this.setDataSourceId(rlSavedDataSource.getDataSourceId());
         this.setDataSourceName(rlSavedDataSource.getDataSourceName());
         this.setDataSourceType(rlSavedDataSource.getDataSourceType());

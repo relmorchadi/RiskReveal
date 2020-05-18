@@ -183,11 +183,13 @@ public class ConfigurationServiceImpl implements ConfigurationService {
     }
 
     @Override
-    public List<RLDataSourcesDto> getDefaultDataSources(Long userId) {
-
+    public List<RLDataSourcesDto> getDefaultDataSources() {
+        Long userId= null;
         if (SecurityContextHolder.getContext().getAuthentication() != null)
             userId = ((UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser().getUserId();
-
+        else {
+            throw new RuntimeException("No security context found");
+        }
         return rlSavedDataSourceRepository.findByUserId(userId).stream()
                 .map(RLDataSourcesDto::new).collect(toList());
     }
@@ -394,5 +396,10 @@ public class ConfigurationServiceImpl implements ConfigurationService {
     @Override
     public void deletePortfolioSummary(List<Long> rlPortfolioIds) {
         rlPortfolioSelectionRepository.deleteByPortfolioIdIn(rlPortfolioIds);
+    }
+
+    @Override
+    public void deleteSavedSataSourceById(Long savedDataSourceId) {
+        rlSavedDataSourceRepository.deleteById(savedDataSourceId);
     }
 }
