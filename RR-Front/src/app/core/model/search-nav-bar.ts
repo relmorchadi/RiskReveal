@@ -1,6 +1,7 @@
 import {ShortCut} from "./shortcut.model";
 
-export class SearchNavBar {
+export class SearchNavBarItem {
+
   contracts: any;
   showResult: boolean;
   showLastSearch: boolean;
@@ -24,6 +25,11 @@ export class SearchNavBar {
   searchContent: any;
   emptyResult: boolean;
   showSavedSearch: boolean;
+}
+export class SearchNavBar {
+  globalSearch: SearchNavBarItem;
+  cloneDataWsSearch: SearchNavBarItem;
+  actualSearchType: string;
 }
 
 

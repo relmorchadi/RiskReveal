@@ -18,10 +18,10 @@ import {
   closeSearch,
   LoadRecentSearch,
   LoadShortCuts,
-  showSavedSearch
+  showSavedSearch, SwitchSearchType
 } from '../../../store/actions/search-nav-bar.action';
 import {Actions, Select, Store} from '@ngxs/store';
-import {SearchNavBar} from '../../../model/search-nav-bar';
+import {SearchNavBar, SearchNavBarItem} from '../../../model/search-nav-bar';
 import * as _ from 'lodash';
 import {Subject, Subscription} from "rxjs";
 import {HelperService} from "../../../../shared/helper.service";
@@ -56,7 +56,7 @@ export class SearchMenuItemComponent extends BaseContainer implements OnInit, On
   contractFilterFormGroup: FormGroup;
   subscriptions: Subscription;
   scrollParams;
-  state: SearchNavBar = null;
+  state: SearchNavBarItem = null;
   private unSubscribe$: Subject<void>;
   searchMode: string = null;
   mainSearchMode: string = 'Fac';
@@ -67,9 +67,10 @@ export class SearchMenuItemComponent extends BaseContainer implements OnInit, On
   showListOfShortCuts: boolean;
   possibleShortCuts: {shortCutLabel: any, type: any}[];
 
+  @Input('searchType') searchType = 'globalSearch';
   @Input('state')
   set setState(value) {
-    this.state = _.clone(value);
+    this.state = _.clone(value[this.searchType]);
     this.detectChanges();
   }
 
@@ -340,4 +341,12 @@ export class SearchMenuItemComponent extends BaseContainer implements OnInit, On
   useAlternative() {
     return this.resetToDash ? this.searchMode : this.mainSearchMode;
   }
+
+  onSearchBarFocus() {
+
+    console.log(this.searchType);
+    this.dispatch(new SwitchSearchType(this.searchType));
+
+  }
+  
 }

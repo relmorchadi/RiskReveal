@@ -20,8 +20,10 @@ import {StatusCellRenderer} from "./grid/status-cell-renderer/status-cell-render
 import {BooleanCellRenderer} from "./grid/boolean-cell-renderer/boolean-cell-renderer.component";
 import {NumberCellRenderer} from "./grid/number-cell-renderer/number-cell-renderer.component";
 import {DateCellRenderer} from "./grid/date-cell-renderer/date-cell-renderer.component";
+import {SearchMenuItemComponent} from "../../core/components/navbar/search-menu-item/search-menu-item.component";
 
 export const COMPONENTS = [
+  SearchMenuItemComponent,
   ChipTagComponent,
   TableComponent,
   PltRightMenuComponent,

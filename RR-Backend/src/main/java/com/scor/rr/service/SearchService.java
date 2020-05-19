@@ -338,12 +338,6 @@ public class SearchService {
         String countQueryString = facSearchQuery.generateCountQuery(request.getFilter(), request.getKeyword());
         Query resultsQuery = entityManager.createNativeQuery(resultsQueryString);
         Query countQuery = entityManager.createNativeQuery(countQueryString);
-        System.out.println("******************************");
-        System.out.println(request.getSort());
-        System.out.println("******************************");
-        System.out.println(resultsQuery);
-        System.out.println(countQuery);
-        System.out.println(request);
         List<Object[]> resultList = resultsQuery.getResultList();
         Object total = countQuery.getSingleResult();
         List<FacContractSearchResult> result = mapFacContract(resultList);

@@ -21,6 +21,7 @@ import {StateSubscriber} from '../../../model/state-subscriber';
 import {SystemTagsService} from '../../../../shared/services/system-tags.service';
 import * as leftMenuStore from "../../../../shared/components/plt/plt-left-menu/store";
 import {$e} from "codelyzer/angular/styles/chars";
+import {SearchNavBarState} from "../../../../core/store/states";
 
 @Component({
   selector: 'app-workspace-project-popup',
@@ -28,6 +29,8 @@ import {$e} from "codelyzer/angular/styles/chars";
   styleUrls: ['./workspace-project-popup.component.scss'],
 })
 export class WorkspaceProjectPopupComponent extends BaseContainer implements OnInit, StateSubscriber {
+
+  @Select(SearchNavBarState) searchState$;
 
   leftMenuInputs: leftMenuStore.Input;
 

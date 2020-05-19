@@ -12,12 +12,13 @@
                (onDoublePoints)="onDoublePoints($event)"
                #searchInput
                formControlName="globalKeyword"
+               (focus)="onSearchBarFocus()"
                (click)="focusInput($event)"
                class="search-input" type="text" nz-input [placeholder]="'Search for ' + useAlternative() || 'Treaty' ">
     </nz-input-group>
 
     <ng-template #prefixIconTag>
-        <div class="prefix-wrapper">
+        <div class="prefix-wrapper" *ngIf="state">
             <button class="code-button" [(nzVisible)]="state.visible" (click)="openClose()" nz-popover
                     [nzContent]="tagDropdown" nzPlacement="bottomLeft" nzTrigger="click">
                 <i class="icon-code_24px"></i>
@@ -48,7 +49,7 @@
     </ng-template>
 
     <ng-template #searchDropdown>
-        <div class="search-contextual-table" nz-menu style="height: 300px; overflow: auto; width: 750px">
+        <div class="search-contextual-table" nz-menu style="height: 300px; overflow: auto; width: 750px; z-index: 99">
             <!-- List Of Shortcuts -->
 
             <div scrollManager class="search-history" *ngIf="state?.showLastSearch; else basicTable">

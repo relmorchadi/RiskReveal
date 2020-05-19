@@ -21,7 +21,7 @@ import {
   showSavedSearch,
   toggleSavedSearch,
   UpdateBadges,
-  DeleteSearchItem, LoadRecentSearch
+  DeleteSearchItem, LoadRecentSearch, SwitchSearchType
 } from '../actions';
 import {forkJoin, of} from 'rxjs';
 import {SearchNavBar} from '../../model/search-nav-bar';
@@ -36,7 +36,7 @@ import {ShortCut} from "../../model/shortcut.model";
 import {DashboardState} from "./dashboard.state";
 import {DashboardModel} from "../../model/dashboard.model";
 
-const initiaState: SearchNavBar = {
+const initSearchItem = {
   contracts: null,
   showResult: false,
   showLastSearch: false,
@@ -61,6 +61,11 @@ const initiaState: SearchNavBar = {
   shortcutFormKeysMapper: {},
   searchContent: {value: null}
 };
+const initiaState: SearchNavBar = {
+  globalSearch: initSearchItem,
+  cloneDataWsSearch: initSearchItem,
+  actualSearchType: 'globalSearch',
+  };
 @State<SearchNavBar>({
   name: 'searchBar',
   defaults: initiaState
@@ -88,52 +93,62 @@ export class SearchNavBarState implements NgxsOnInit {
 
   @Selector()
   static getLoadingState(state: SearchNavBar) {
-    return state.loading;
+    const searchType = state.actualSearchType;
+    return state[searchType].loading;
   }
 
   @Selector()
   static getData(state: SearchNavBar) {
-    return state.data;
+    const searchType = state.actualSearchType;
+    return state[searchType].data;
   }
 
   @Selector()
   static getSearchContent(state: SearchNavBar) {
-    return state.searchContent;
+    const searchType = state.actualSearchType;
+    return state[searchType].searchContent;
   }
 
   @Selector()
   static getSavedSearch(state: SearchNavBar) {
-    return state.savedSearch;
+    const searchType = state.actualSearchType;
+    return state[searchType].savedSearch;
   }
 
   @Selector()
   static getBadges(state: SearchNavBar) {
-    return state.badges;
+    const searchType = state.actualSearchType;
+    return state[searchType].badges;
   }
 
   @Selector()
   static getSearchTarget(state: SearchNavBar) {
-    return state.searchTarget;
+    const searchType = state.actualSearchType;
+    return state[searchType].searchTarget;
   }
 
   @Selector()
   static getShowSavedSearch(state: SearchNavBar) {
-    return state.showSavedSearch;
+    const searchType = state.actualSearchType;
+    return state[searchType].showSavedSearch;
   }
 
   @Selector()
   static getShortCuts(state: SearchNavBar) {
-    return state.shortcuts;
+    const searchType = state.actualSearchType;
+    return state[searchType].shortcuts;
   }
 
   @Selector()
   static getMapTableNameToBadgeKey(state: SearchNavBar) {
-    return state.mapTableNameToBadgeKey;
+    const searchType = state.actualSearchType;
+    return state[searchType].mapTableNameToBadgeKey;
   }
 
   @Selector()
   static getActualGlobalKeyword(state: SearchNavBar) {
-    return state.actualGlobalKeyword;
+    const searchType = state.actualSearchType;
+    return state[searchType].actualGlobalKeyword;
   }
 
 
@@ -147,11 +162,11 @@ export class SearchNavBarState implements NgxsOnInit {
       .pipe(
         tap( (shortCuts: any[]) => {
           ctx.patchState(produce(ctx.getState(), (draft: SearchNavBar) => {
-             draft.shortcuts = _.filter(shortCuts, shortCut => !_.includes(["SECTION_NAME", "UW_UNIT"], shortCut.mappingTable) && (shortCut.mappingTable !== "PROJECT_ID" || shortCut.type !== 'TTY')
+             draft[draft.actualSearchType].shortcuts = _.filter(shortCuts, shortCut => !_.includes(["SECTION_NAME", "UW_UNIT"], shortCut.mappingTable) && (shortCut.mappingTable !== "PROJECT_ID" || shortCut.type !== 'TTY')
                  && (shortCut.mappingTable !== "CLIENT_NAME" || shortCut.type !== 'FAC') && (shortCut.mappingTable !== "PLT" || shortCut.type !== 'TTY'));
-             draft.mapTableNameToBadgeKey = this._badgesService.initMappers(_.filter(shortCuts, shortCut => !_.includes(["SECTION_NAME", "UW_UNIT"], shortCut.mappingTable) && (shortCut.mappingTable !== "PROJECT_ID" || shortCut.type !== 'TTY')
+             draft[draft.actualSearchType].mapTableNameToBadgeKey = this._badgesService.initMappers(_.filter(shortCuts, shortCut => !_.includes(["SECTION_NAME", "UW_UNIT"], shortCut.mappingTable) && (shortCut.mappingTable !== "PROJECT_ID" || shortCut.type !== 'TTY')
                  && (shortCut.mappingTable !== "CLIENT_NAME" || shortCut.type !== 'FAC') && (shortCut.mappingTable !== "PLT" || shortCut.type !== 'TTY')));
-             draft.shortcutFormKeysMapper = this._badgesService.initShortCutsFromKeysMapper(_.map(shortCuts,({shortCutLabel, shortCutAttribute, mappingTable, type}) => new ShortCut(shortCutLabel, shortCutAttribute, mappingTable, type)))
+             draft[draft.actualSearchType].shortcutFormKeysMapper = this._badgesService.initShortCutsFromKeysMapper(_.map(shortCuts,({shortCutLabel, shortCutAttribute, mappingTable, type}) => new ShortCut(shortCutLabel, shortCutAttribute, mappingTable, type)))
           }));
         })
       )
@@ -171,8 +186,8 @@ export class SearchNavBarState implements NgxsOnInit {
     let expression: any = keyword;
     const state = ctx.getState();
 
-    const facShortcuts = _.filter(state.shortcuts, (stc: any) => stc.type === 'FAC');
-    const treatyShortcuts = _.filter(state.shortcuts, (stc: any) => stc.type === 'TTY');
+    const facShortcuts = _.filter(state[state.actualSearchType].shortcuts, (stc: any) => stc.type === 'FAC');
+    const treatyShortcuts = _.filter(state[state.actualSearchType].shortcuts, (stc: any) => stc.type === 'TTY');
     const searchShortCut = searchMode === 'Treaty' ? treatyShortcuts : facShortcuts;
     const checkShortCut: any[] = this.checkShortCut(searchShortCut, expression) || [];
 
@@ -181,9 +196,12 @@ export class SearchNavBarState implements NgxsOnInit {
     }
 
     ctx.patchState({
-      data: [],
-      emptyResult: false,
-      loading: true
+      [state.actualSearchType]: {
+        ...state[state.actualSearchType],
+        data: [],
+        emptyResult: false,
+        loading: true,
+      }
     });
 
     const api = (expr, mapping) => (searchMode === 'Treaty' ? this.searchLoader(expr, mapping) : this.searchLoaderFac(expr, mapping));
@@ -214,10 +232,13 @@ export class SearchNavBarState implements NgxsOnInit {
           }
 
           return of(ctx.patchState({
-            loading: false,
-            searchValue: keyword,
-            emptyResult: checkShortCut[0] ? _.isEmpty( _.flatten(result.content) ) : _.every(data, table => _.isEmpty( _.flatten(table) )),
-            data
+            [state.actualSearchType]: {
+              ...state[state.actualSearchType],
+              loading: false,
+              searchValue: keyword,
+              emptyResult: checkShortCut[0] ? _.isEmpty( _.flatten(result.content) ) : _.every(data, table => _.isEmpty( _.flatten(table) )),
+              data
+            }
           }));
         }),
         catchError(err => {
@@ -231,23 +252,28 @@ export class SearchNavBarState implements NgxsOnInit {
   @Action(SearchInputFocusAction)
   searchInputFocus(ctx: StateContext<SearchNavBar>, {inputValue}) {
     ctx.patchState(produce(ctx.getState(), draftState => {
-      draftState.showLastSearch = inputValue === '' || inputValue.length < 2;
-      draftState.showResult = !(inputValue === '' || inputValue.length < 2) ? true : draftState.showResult;
-      draftState.visibleSearch = true;
-      draftState.visible = false;
+      draftState[draftState.actualSearchType].showLastSearch = inputValue === '' || inputValue.length < 2;
+      draftState[draftState.actualSearchType].showResult = !(inputValue === '' || inputValue.length < 2) ? true : draftState[draftState.actualSearchType].showResult;
+      draftState[draftState.actualSearchType].visibleSearch = true;
+      draftState[draftState.actualSearchType].visible = false;
     }));
   }
 
   @Action(SelectBadgeAction)
   addBadge(ctx: StateContext<SearchNavBar>, {badge, keyword, searchMode}: SelectBadgeAction) {
+
+    const state = ctx.getState();
     if (badge !== null) {
       ctx.patchState({
-        badges: [...ctx.getState().badges, badge],
-        showLastSearch: true,
-        showResult: true,
-        keywordBackup: keyword
+        [state.actualSearchType]: {
+          ...state[state.actualSearchType],
+          badges: [...state[state.actualSearchType].badges, badge],
+          showLastSearch: true,
+          showResult: true,
+          keywordBackup: keyword
+        }
       });
-      if (keyword && keyword.length && ctx.getState().visibleSearch)
+      if (keyword && keyword.length && state[state.actualSearchType].visibleSearch)
         ctx.dispatch(new SearchContractsCountAction({keyword, searchMode}));
     }
   }
@@ -256,7 +282,10 @@ export class SearchNavBarState implements NgxsOnInit {
   updateBadges(ctx: StateContext<SearchNavBar>, {payload}: UpdateBadges) {
     const badges = payload;
     ctx.patchState({
-      badges: [...badges]
+      [ctx.getState().actualSearchType]: {
+        ...ctx.getState()[ctx.getState().actualSearchType],
+        badges: [...badges]
+      }
     });
   }
 
@@ -264,57 +293,65 @@ export class SearchNavBarState implements NgxsOnInit {
   @Action(ClearSearchValuesAction)
   clearSearchValues(ctx: StateContext<SearchNavBar>) {
     ctx.patchState({
-      searchValue: '',
-      showResult: false,
-      visibleSearch: false,
-      visible: false,
-      showClearIcon: false,
-      badges: []
+      [ctx.getState().actualSearchType]: {
+        ...ctx.getState()[ctx.getState().actualSearchType],
+        searchValue: '',
+        showResult: false,
+        visibleSearch: false,
+        visible: false,
+        showClearIcon: false,
+        badges: []
+      }
     });
   }
 
   @Action(LoadRecentSearchAction)
   loadRecentSearchFromLocalStorage(ctx: StateContext<SearchNavBar>) {
-    ctx.patchState({recentSearch: (JSON.parse(localStorage.getItem('items')) || []).slice(0, 5)});
+    ctx.patchState({
+      [ctx.getState().actualSearchType]: {
+        ...ctx.getState()[ctx.getState().actualSearchType],
+        recentSearch: (JSON.parse(localStorage.getItem('items')) || []).slice(0, 5)
+      }
+    });
   }
 
   @Action(DeleteLastBadgeAction)
   deleteLastBadge(ctx: StateContext<SearchNavBar>) {
     ctx.patchState(produce(ctx.getState(), draftState => {
-      draftState.badges = draftState.badges.slice(0, draftState.badges.length - 1);
+      draftState[draftState.actualSearchType].badges = draftState[draftState.actualSearchType].badges.slice(0, draftState[draftState.actualSearchType].badges.length - 1);
     }));
   }
 
   @Action(DeleteAllBadgesAction)
   deleteAllBadges(ctx: StateContext<SearchNavBar>) {
     ctx.patchState(produce(ctx.getState(), draftState => {
-      draftState.badges = [];
+      draftState[draftState.actualSearchType].badges = [];
     }));
   }
 
   @Action(CloseBadgeByIndexAction)
   closeBadgeByIndex(ctx: StateContext<SearchNavBar>, {index}: CloseBadgeByIndexAction) {
     ctx.patchState(produce(ctx.getState(), draftState => {
-      draftState.badges = _.toArray(_.omit(ctx.getState().badges, index));
+      draftState[draftState.actualSearchType].badges = _.toArray(_.omit(draftState[draftState.actualSearchType].badges, index));
     }));
   }
 
   @Action(SearchInputValueChange)
   searchInputValueChange(ctx: StateContext<SearchNavBar>, {value}) {
     ctx.patchState(produce(ctx.getState(), draft => {
-      draft.searchValue = value;
-      draft.showLastSearch = value === '' || value.length < 2;
-      draft.showResult = !(value === '' || value.length < 2);
-      draft.visibleSearch = value !== '';
-      draft.visible = false;
+      draft[draft.actualSearchType].searchValue = value;
+      draft[draft.actualSearchType].showLastSearch = value === '' || value.length < 2;
+      draft[draft.actualSearchType].showResult = !(value === '' || value.length < 2);
+      draft[draft.actualSearchType].visibleSearch = value !== '';
+      draft[draft.actualSearchType].visible = false;
     }));
   }
 
   @Action(showSavedSearch)
   showSavedSearch(ctx: StateContext<SearchNavBar>, action: showSavedSearch) {
     ctx.patchState(produce(ctx.getState(), draft => {
-      draft.visibleSearch= false;
-      draft.showSavedSearch = true
+      draft[draft.actualSearchType].visibleSearch= false;
+      draft[draft.actualSearchType].showSavedSearch = true
     }));
   }
 
@@ -325,27 +362,27 @@ export class SearchNavBarState implements NgxsOnInit {
         const {
           badges,
           newExpr
-        } = this._badgesService.generateBadges(expression, draft.shortcutFormKeysMapper);
+        } = this._badgesService.generateBadges(expression, draft[draft.actualSearchType].shortcutFormKeysMapper);
         console.log({
           badges,
           newExpr
         });
-        draft.actualGlobalKeyword = newExpr;
+        draft[draft.actualSearchType].actualGlobalKeyword = newExpr;
         let newBadges = [];
         if(newExpr) {
           newBadges = [{key: "global search", operator: "LIKE", value: newExpr}, ...badges];
         } else {
-          let oldGlobalKeyword = _.find(ctx.getState().badges, e => e.key == "global search");
+          let oldGlobalKeyword = _.find(draft[draft.actualSearchType].badges, e => e.key == "global search");
           if(oldGlobalKeyword) {
             newBadges = [{key: "global search", operator: "LIKE", value: oldGlobalKeyword.value}, ...badges]
           } else {
             newBadges = badges;
           }
         }
-        draft.badges = newBadges;
-        draft.searchContent = {value: newBadges};
+        draft[draft.actualSearchType].badges = newBadges;
+        draft[draft.actualSearchType].searchContent = {value: newBadges};
       }
-      draft.visibleSearch = false;
+      draft[draft.actualSearchType].visibleSearch = false;
     }));
     ctx.dispatch(new Navigate(['/search']));
   }
@@ -357,10 +394,10 @@ export class SearchNavBarState implements NgxsOnInit {
       throw new Error('Search without keyword or value');
     }
     ctx.patchState(produce(ctx.getState(), draft => {
-      draft.searchContent = {value: _.isEmpty(badges) ? keyword : badges};
-      draft.recentSearch = _.uniqWith([[...draft.badges], ...draft.recentSearch].slice(0, 5), _.isEqual).filter(item => !_.isEmpty(item));
-      localStorage.setItem('items', JSON.stringify(draft.recentSearch));
-      draft.visibleSearch = false;
+      draft[draft.actualSearchType].searchContent = {value: _.isEmpty(badges) ? keyword : badges};
+      draft[draft.actualSearchType].recentSearch = _.uniqWith([[...draft[draft.actualSearchType].badges], ...draft[draft.actualSearchType].recentSearch].slice(0, 5), _.isEqual).filter(item => !_.isEmpty(item));
+      localStorage.setItem('items', JSON.stringify(draft[draft.actualSearchType].recentSearch));
+      draft[draft.actualSearchType].visibleSearch = false;
     }));
     ctx.dispatch(new Navigate(['/search']));
   }
@@ -368,44 +405,50 @@ export class SearchNavBarState implements NgxsOnInit {
   @Action(CloseTagByIndexAction)
   closeTagByIndexAction(ctx: StateContext<SearchNavBar>, {index}) {
     ctx.patchState(produce(ctx.getState(), draft => {
-      draft.searchContent.value = _.toArray(_.omit(draft.searchContent.value, index));
-      draft.badges = draft.searchContent.value;
+      draft[draft.actualSearchType].searchContent.value = _.toArray(_.omit(draft[draft.actualSearchType].searchContent.value, index));
+      draft[draft.actualSearchType].badges = draft[draft.actualSearchType].searchContent.value;
     }))
   }
 
   @Action(CloseGlobalSearchAction)
   closeGlobalSearchAction(ctx: StateContext<SearchNavBar>) {
     ctx.patchState(produce(ctx.getState(), draft => {
-      draft.searchValue= '';
-      draft.actualGlobalKeyword= '';
+      draft[draft.actualSearchType].searchValue= '';
+      draft[draft.actualSearchType].actualGlobalKeyword= '';
     }));
   }
 
   @Action(CloseAllTagsAction)
   closeAllTagsAction(ctx: StateContext<SearchNavBar>) {
     ctx.patchState(produce(ctx.getState(), draft => {
-      draft.searchContent.value = null;
-      draft.badges = [];
+      draft[draft.actualSearchType].searchContent.value = null;
+      draft[draft.actualSearchType].badges = [];
     }));
   }
 
   @Action(CloseSearchPopIns)
   closeSearchPopins(ctx: StateContext<SearchNavBar>) {
     ctx.patchState(produce(ctx.getState(), draft => {
-      draft.visible = false;
-      draft.visibleSearch = false;
+      draft[draft.actualSearchType].visible = false;
+      draft[draft.actualSearchType].visibleSearch = false;
     }));
   }
 
   @Action(LoadSavedSearch)
   loadSavedSearch(ctx: StateContext<SearchNavBar>, {payload}: LoadSavedSearch) {
     return this._searchService.getSavedSearch({
-      searchType: _.upperCase(ctx.getState().searchTarget)
+      searchType: _.upperCase(ctx.getState()[ctx.getState().actualSearchType].searchTarget)
     })
       .pipe(
         tap( savedSearch => {
           ctx.patchState({
-            savedSearch:  _.map(savedSearch, item => ({..._.pick(item, ['label', 'userId', 'id']), badges: item.items}))
+            [ctx.getState().actualSearchType]: {
+              ...ctx.getState()[ctx.getState().actualSearchType],
+              savedSearch: _.map(savedSearch, item => ({
+                ..._.pick(item, ['label', 'userId', 'id']),
+                badges: item.items
+              }))
+            }
           })
         })
       )
@@ -431,8 +474,11 @@ export class SearchNavBarState implements NgxsOnInit {
       .pipe(
         tap(
           (recentSearch: any) => ctx.patchState({
-            searchTarget,
-            recentSearch: recentSearch
+            [ctx.getState().actualSearchType]: {
+              ...ctx.getState()[ctx.getState().actualSearchType],
+              searchTarget,
+              recentSearch: recentSearch
+            }
           })
         )
       )
@@ -441,12 +487,18 @@ export class SearchNavBarState implements NgxsOnInit {
   @Action(LoadMostUsedSavedSearch)
   loadMostUsedSavedSearch(ctx: StateContext<SearchNavBar>, {payload}: LoadMostUsedSavedSearch) {
     return this._searchService.getMostUsedSavedSearch({
-      searchType: _.upperCase(ctx.getState().searchTarget)
+      searchType: _.upperCase(ctx.getState()[ctx.getState().actualSearchType].searchTarget)
     })
       .pipe(
         tap( mostUsedSavedSearch => {
           ctx.patchState({
-            mostUsedSavedSearch:  _.map(mostUsedSavedSearch, item => ({..._.pick(item, ['label', 'userId', 'id']), badges: item.items}))
+            [ctx.getState().actualSearchType]: {
+              ...ctx.getState()[ctx.getState().actualSearchType],
+              mostUsedSavedSearch: _.map(mostUsedSavedSearch, item => ({
+                ..._.pick(item, ['label', 'userId', 'id']),
+                badges: item.items
+              }))
+            }
           })
         })
       )
@@ -464,7 +516,7 @@ export class SearchNavBarState implements NgxsOnInit {
       .pipe(
         tap( searchItem => {
           ctx.patchState(produce(ctx.getState(), draft => {
-            draft.savedSearch = [...draft.savedSearch, {..._.pick(searchItem, ['label', 'userId', 'id']), badges: searchItem.items}];
+            draft[draft.actualSearchType].savedSearch = [...draft[draft.actualSearchType].savedSearch, {..._.pick(searchItem, ['label', 'userId', 'id']), badges: searchItem.items}];
           }))
         })
       )
@@ -473,7 +525,7 @@ export class SearchNavBarState implements NgxsOnInit {
   @Action(toggleSavedSearch)
   toggleSavedSearch(ctx: StateContext<SearchNavBar>, {payload}: toggleSavedSearch) {
     ctx.patchState(produce(ctx.getState(), draft => {
-      draft.showSavedSearch = !draft.showSavedSearch
+      draft[draft.actualSearchType].showSavedSearch = !draft[draft.actualSearchType].showSavedSearch
     }));
   }
 
@@ -481,7 +533,14 @@ export class SearchNavBarState implements NgxsOnInit {
   closeSearch(ctx: StateContext<SearchNavBar>, {payload}: closeSearch) {
     const search = payload;
     ctx.patchState(produce(ctx.getState(), draft => {
-      draft.visibleSearch = false;
+      draft[draft.actualSearchType].visibleSearch = false;
+    }));
+  }
+
+  @Action(SwitchSearchType)
+  switchSearchType(ctx: StateContext<SearchNavBar>, {payload}: SwitchSearchType) {
+    ctx.patchState(produce(ctx.getState(), draft => {
+      draft.actualSearchType = payload;
     }));
   }
 
