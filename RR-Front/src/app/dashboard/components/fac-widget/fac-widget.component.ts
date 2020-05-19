@@ -1,27 +1,17 @@
-import {
-  ChangeDetectorRef,
-  Component,
-  ElementRef,
-  EventEmitter,
-  Input,
-  OnInit,
-  Output,
-  TemplateRef,
-  ViewChild
-} from '@angular/core';
-import {DashboardState, GeneralConfigState} from '../../../core/store/states';
+import {ChangeDetectorRef, Component, ElementRef, EventEmitter, Input, OnInit, Output, TemplateRef, ViewChild} from '@angular/core';
 import {NzDropdownContextComponent, NzDropdownService, NzMenuItemDirective} from 'ng-zorro-antd';
-import * as _ from 'lodash';
-import {Select, Store} from '@ngxs/store';
 import * as workspaceActions from '../../../workspace/store/actions/workspace.actions';
-import {WsApi} from '../../../workspace/services/api/workspace.api';
+import {DashboardState, GeneralConfigState} from '../../../core/store/states';
 import {DashboardApi} from "../../../core/service/api/dashboard.api";
-import {forkJoin} from "rxjs";
-import * as moment from "moment";
-import {BaseContainer} from "../../../shared/base";
-import {Router} from "@angular/router";
+import {WsApi} from '../../../workspace/services/api/workspace.api';
 import * as fromHD from "../../../core/store/actions";
+import {BaseContainer} from "../../../shared/base";
 import {debounce} from "../../utilities/debounce";
+import {Select, Store} from '@ngxs/store';
+import {Router} from "@angular/router";
+import * as moment from "moment";
+import {forkJoin} from "rxjs";
+import * as _ from 'lodash';
 
 @Component({
   selector: 'app-fac-widget',
@@ -69,12 +59,12 @@ export class FacWidgetComponent extends BaseContainer implements OnInit {
   editName = false;
   tabIndex = 1;
 
-  data: any = [];
-  dataCounter = 10;
-  dataAssigned: any = [];
   dataCounterAssigned = 10;
-  rows: any;
   secondaryLoad = false;
+  dataAssigned: any = [];
+  dataCounter = 10;
+  data: any = [];
+  rows: any;
 
   filters = {};
   newSort = {};
@@ -138,10 +128,6 @@ export class FacWidgetComponent extends BaseContainer implements OnInit {
     }))
   }
 
-  filterAssign() {
-    return _.filter(this.data, item => item.assignedAnalyst === 'Nathalie Dulac');
-  }
-
   valueFavChange(event) {
 
   }
@@ -151,7 +137,6 @@ export class FacWidgetComponent extends BaseContainer implements OnInit {
   }
 
   sortChange(event) {
-    console.log('sortCahnge')
     this.globalSort = event.newSort;
     this.sortList = event.newSortingList;
     const carStatus = this.carStatus[this.widgetId];

@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy,
+  ChangeDetectionStrategy, ChangeDetectorRef,
   Component, ElementRef,
   EventEmitter,
   HostListener,
@@ -18,6 +18,9 @@ import {
   distinctUntilChanged,
   filter, debounce
 } from "rxjs/operators";
+import {BaseContainer} from "../../base";
+import {Router} from "@angular/router";
+import {Store} from "@ngxs/store";
 
 @Component({
   selector: 'app-table',
@@ -25,7 +28,7 @@ import {
   styleUrls: ['./table.component.scss'],
   //changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class TableComponent implements OnInit {
+export class TableComponent extends BaseContainer implements OnInit {
   get sortedData(): any {
     return this._sortedData;
   }
@@ -135,7 +138,8 @@ export class TableComponent implements OnInit {
   selectedRows: any = [];
   lastSelectedIndex = null;
 
-  constructor() {
+  constructor(_baseRouter: Router, _baseCdr: ChangeDetectorRef, _baseStore: Store) {
+    super(_baseRouter, _baseCdr, _baseStore);
   }
 
   ngOnInit() {
