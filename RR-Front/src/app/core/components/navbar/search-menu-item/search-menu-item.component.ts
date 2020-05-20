@@ -56,7 +56,7 @@ export class SearchMenuItemComponent extends BaseContainer implements OnInit, On
   contractFilterFormGroup: FormGroup;
   subscriptions: Subscription;
   scrollParams;
-  state: SearchNavBarItem = null;
+  state: SearchNavBar = null;
   private unSubscribe$: Subject<void>;
   searchMode: string = null;
   mainSearchMode: string = 'Fac';
@@ -70,7 +70,7 @@ export class SearchMenuItemComponent extends BaseContainer implements OnInit, On
   @Input('searchType') searchType = 'globalSearch';
   @Input('state')
   set setState(value) {
-    this.state = _.clone(value[this.searchType]);
+    this.state = _.clone(value);
     this.detectChanges();
   }
 
@@ -157,7 +157,7 @@ export class SearchMenuItemComponent extends BaseContainer implements OnInit, On
   onEnter(evt) {
     evt.preventDefault();
     const globalKeywordBadge = this.convertExpressionToBadge(this.globalKeyword);
-    const expr = this.convertBadgeToExpression(globalKeywordBadge ? [...this.state.badges, globalKeywordBadge ] : this.state.badges);
+    const expr = this.convertBadgeToExpression(globalKeywordBadge ? [...this.state[this.searchType].badges, globalKeywordBadge ] : this.state[this.searchType].badges);
     this.store.dispatch(new SearchActions.ExpertModeSearchAction(expr));
     this.contractFilterFormGroup.get('globalKeyword').patchValue('');
   }
@@ -214,12 +214,12 @@ export class SearchMenuItemComponent extends BaseContainer implements OnInit, On
   }
 
   private _contractChoicesSearch(keyword) {
-    if (keyword && keyword.length && this.state.visibleSearch)
+    if (keyword && keyword.length && this.state[this.searchType].visibleSearch)
       this.store.dispatch(new SearchActions.SearchContractsCountAction({keyword, searchMode: this.useAlternative()}));
   }
 
   addBadgeFromResultList(key) {
-    this.selectSearchBadge(this.mapTableNameToBadgeKey[key], this.state.actualGlobalKeyword);
+    this.selectSearchBadge(this.mapTableNameToBadgeKey[key], this.state[this.searchType].actualGlobalKeyword);
   }
 
   closeSearchBadge(status, index) {
@@ -238,7 +238,9 @@ export class SearchMenuItemComponent extends BaseContainer implements OnInit, On
   }
 
   focusInput(event) {
-    if(!this.state.visibleSearch) {
+    console.log(this.searchType, this.state[this.state.actualSearchType]);
+    console.log('state', this.state );
+    if(!this.state[this.searchType].visibleSearch) {
       if (this.searchConfigPopInVisible) this.searchConfigPopInVisible = false;
       this._searchService.setvisibleDropdown(false);
       this.store.dispatch(new SearchActions.SearchInputFocusAction(event.target.value));
@@ -249,10 +251,10 @@ export class SearchMenuItemComponent extends BaseContainer implements OnInit, On
   openClose(): void {
     if (this.searchConfigPopInVisible)
       this.searchConfigPopInVisible = false;
-    if (this.state.visibleSearch)
+    if (this.state[this.searchType].visibleSearch)
       this.store.dispatch(new SearchActions.PatchSearchStateAction([{key: 'visibleSearch', value: false}, {
         key: 'visible',
-        value: !this.state.visible
+         value: !this.state[this.searchType].visible
       }]));
     this.togglePopup();
   }
@@ -262,7 +264,7 @@ export class SearchMenuItemComponent extends BaseContainer implements OnInit, On
   }
 
   tableHeader(tableMapping) {
-      const shortcuts = _.find(this.filterBySearchMode(this.state.shortcuts),
+      const shortcuts = _.find(this.filterBySearchMode(this.state[this.searchType].shortcuts),
               item => item.mappingTable === tableMapping).shortCutLabel;
       return shortcuts;
   }
@@ -298,7 +300,8 @@ export class SearchMenuItemComponent extends BaseContainer implements OnInit, On
   }
 
   onChangeTagValue(badge) {
-    let index = _.findIndex(this.state.badges, row => row.key == badge.key);
+    // @ts-ignore
+    let index = _.findIndex(this.state[this.searchType].badges, row => row.key == badge.key);
     this.store.dispatch(new SearchActions.CloseBadgeByIndexAction(index));
     if (this.globalKeyword.length > 0) {
       this.store.dispatch(new SearchActions.SelectBadgeAction(this.convertExpressionToBadge(this.globalKeyword), this.globalKeyword, this.useAlternative()));
@@ -322,7 +325,7 @@ export class SearchMenuItemComponent extends BaseContainer implements OnInit, On
   }
 
   closeSearch() {
-    if (!this.state.visibleSearch) {
+    if (!this.state[this.searchType].visibleSearch) {
       this.store.dispatch(new closeSearch())
     }
   }
@@ -344,9 +347,8 @@ export class SearchMenuItemComponent extends BaseContainer implements OnInit, On
 
   onSearchBarFocus() {
 
-    console.log(this.searchType);
     this.dispatch(new SwitchSearchType(this.searchType));
 
   }
-  
+
 }

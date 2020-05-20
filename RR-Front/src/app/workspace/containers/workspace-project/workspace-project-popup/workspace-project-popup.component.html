@@ -13,7 +13,7 @@
           appendTo="body"
           [modal]="true"
           [responsive]="true"
-          [baseZIndex]="-1"
+          [baseZIndex]="1"
           [maximizable]="true"
           (onHide)="onHide()"
           (onShow)="onShow()">
@@ -35,9 +35,9 @@
         <h4 >
           Select Workspace
         </h4>
-<!--
-        <search-menu-item [state]="searchState$ | async" searchType="'cloneDataWsSearch'"></search-menu-item>
--->
+
+        <search-menu-item [state]="searchState$ | async" searchType="cloneDataWsSearch"></search-menu-item>
+
       </ng-container>
       <i (click)="isVisible=false" style="cursor: pointer" class="icon-close_24px"></i>
     </div>

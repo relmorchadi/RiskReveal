@@ -61,6 +61,10 @@ td, th {
   }
 }
 
+::ng-deep .search-contextual-table {
+  z-index: 99 !important;
+
+}
 .search-contextual-table {
   ::ng-deep div.ant-table-header {
     margin-bottom: -15px !important;
