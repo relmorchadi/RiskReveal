@@ -2,16 +2,14 @@
     <p-table *ngIf="tableConfig.data != null  else noDataFound"
              [columns]="tableConfig.columns" [frozenColumns]="tableConfig.frozenColumns"
              [frozenValue]="tableConfig.frozenRow" [value]="tableConfig.data"
-             [scrollable]="true"
-             syncScroll
-             [resizableColumns]="true"
-             [customSort]="true"
+             [scrollable]="true" syncScroll
+             [resizableColumns]="true" [customSort]="true"
              (sortFunction)="onSort($event)"
-             scrollHeight="calc( 100vh - 435px )" frozenWidth="520px">
+             scrollHeight="calc( 100vh - 435px )" frozenWidth="660px">
         <ng-template pTemplate="colgroup" let-columns>
             <colgroup>
                 <col *ngFor="let col of columns"
-                     [ngStyle]="{'width':col.field == 'country'?'150px':'100px'}">
+                     [ngStyle]="{'width':col.field == 'country'? '160px' : '120px'}">
             </colgroup>
         </ng-template>
         <ng-template pTemplate="frozenheader" let-columns>
@@ -43,7 +41,7 @@
                     <td [colSpan]="col.field == 'country' ? 2 : 1">
                         <b *ngIf="rowData[col.field] == 'TOTAL'">{{rowData[col.field]}}</b>
                         <div   *ngIf="rowData[col.field] != 'TOTAL'"
-                               appRrNumber [number]="rowData[col.field]" [config]="numberConfig"class="total-row">
+                               appRrNumber [number]="rowData[col.field] | financialUnit: selectedHeaderConfig?.financialUnits" [config]="numberConfig" class="total-row">
                         </div>
                     </td>
                 </ng-container>
@@ -52,7 +50,7 @@
         <ng-template pTemplate="frozenbody" let-rowData let-rowIndex="rowIndex" let-columns="columns">
             <tr (mouseenter)="hoveredRow = rowIndex;"
                 (mouseleave)="hoveredRow = null"
-                [ngClass]="{'row-hover':hoveredRow == rowIndex}">
+                [ngClass]="{'row-hover': hoveredRow == rowIndex}">
                 <ng-container *ngFor="let col of columns">
                     <ng-container *ngIf="col.field == 'country'">
                         <td class="ui-resizable-column"
@@ -79,9 +77,8 @@
                     </ng-container>
                     <ng-container *ngIf="col.field != 'country'">
                         <td class="ui-resizable-column">
-                            <div    appRrNumber [number]="rowData[col.field]" [config]="numberConfig"
-                                    class="text-ellipsis"
-                                    style="font-size: 12px;font-weight: 400;text-align: right">
+                            <div appRrNumber [number]="rowData[col.field] | financialUnit: selectedHeaderConfig?.financialUnits" [config]="numberConfig"
+                                 class="text-ellipsis" style="font-size: 12px;font-weight: 400;text-align: right">
                             </div>
                         </td>
                     </ng-container>
@@ -95,8 +92,7 @@
                 <ng-container *ngFor="let col of columns">
                     <ng-container>
                         <td class="ui-resizable-column" style="text-align: start; !important;">
-                            <div    appRrNumber [number]="rowData[col.field]" [config]="numberConfig">
-                            </div>
+                            <div appRrNumber [number]="rowData[col.field] | financialUnit: selectedHeaderConfig?.financialUnits" [config]="numberConfig"></div>
                         </td>
                     </ng-container>
                 </ng-container>
@@ -108,8 +104,7 @@
 <ng-template #metricRow let-class="class" let-rowIndex let-rowData="rowData" >
     <td [ngClass]="class">
         <i *ngIf="hoveredRow == rowIndex || selectedRowRegionPeril == rowIndex"
-           (click)="filterRowRegionPeril(rowData,rowIndex)"
-           class="icon-remove_red_eye_24px"
+           (click)="filterRowRegionPeril(rowData,rowIndex)" class="icon-remove_red_eye_24px"
            [ngClass]="{'eye-icon': selectedRowRegionPeril != rowIndex,
                        'eye-icon-selected': selectedRowRegionPeril == rowIndex}">
         </i>

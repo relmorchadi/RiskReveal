@@ -20,6 +20,7 @@
 
       <div class="exposures-main-table">
         <exposures-main-table (actionDispatcher)="mainTableActionDispatcher($event)"
+                              [selectedHeaderConfig]="selectedHeaderConfig"
                               [sortConfig]="sortConfig"
                               [numberConfig]="numberConfig"
                               [tableConfig]="tableConfig$ | async">

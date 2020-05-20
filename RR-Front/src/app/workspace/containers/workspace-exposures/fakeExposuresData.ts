@@ -20,7 +20,7 @@ export const FAKEDATA = {
     { field: 'country', header: 'Metric' },
     { field: 'expectedTiv', header: 'Expected' },
     { field: 'totalTiv', header: 'TOTAL' },
-    { field: 'diff', header: 'Diff' }],
+    { field: 'tivDiff', header: 'Diff' }],
     values:[
     { metric: "Australia",state:"", stateCount:1, expected:8020743, total:8020743, diff:null, euws:2352215411, iteq:5326451254,nahu:2552153234},
     { metric: "Austria",state:"" , stateCount:1, expected:786786, total:8020743, diff:null, pteq:2352215411, nzeq:5326451254,nahu:2552153234 },
@@ -49,12 +49,13 @@ export const FAKEDATA = {
         euws:2352215411, iteq:5326451254,greq:2552153234,treq:355471821,
         pteq:2352215411, nzeq:5326451254,nahu:2552153234,useq:355471821,
         cneq:2352215411, cnty:5326451254,jpws:2552153234 }]
-}
+};
+
 export const HEADERCONFIG = {
-    currencies:[{header:'USD',value:'USD'},{header:'EUR',value:'EUR'}],
-    divisions:[/*{header:'Division 1',value:'division1'},{header:'Division 2',value:'division2'}*/],
-    exposureViews:[{header:'TIV',value:'TIV'},{header:'Avg TIV',value:'avgTIV'},{header:'#Risk',value:'locationCount'},{header:'%',value:'percentage'}],
-    financialUnits:[{header:'Unit',value:'unit'},{header:'Thousands',value:'thousands'},{header:'Millions',value:'millions'},{header:'Billions',value:'billions'}],
-    portfolios : [{header:'Portfolio 1',value:'portfolio1'},{header:'Portfolio 2',value:'portfolio2'}],
-    view:''
-}
+    currencies: [{header:'USD', value:'USD'}, {header:'EUR', value:'EUR'}],
+    divisions: [/*{header:'Division 1',value:'division1'},{header:'Division 2',value:'division2'}*/],
+    exposureViews: [{header:'TIV', value:'TIV'}, {header:'Avg TIV', value:'avgTIV'}, {header:'#Risk', value:'locationCount'}, {header:'%', value:'percentage'}],
+    financialUnits: [{header:'Unit', value:'Unit'}, {header:'Thousands', value:'Thousands'}, {header:'Million', value:'Million'}, {header:'Billion', value:'Billion'}],
+    portfolios : [{header:'Portfolio 1', value:'portfolio1'}, {header:'Portfolio 2', value:'portfolio2'}],
+    view: ''
+};
