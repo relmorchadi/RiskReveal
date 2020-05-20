@@ -238,6 +238,7 @@
                       <span (click)="toggleItemsListRDM(itemsE)" class="logo" style="background: #0700CF;">E</span>
                       <span (click)="toggleItemsListRDM(itemsE)" [title]="itemsE.name"
                             class="text">{{itemsE?.name}}</span>
+                      <span class="reference-instance">{{itemsE.instanceId}}</span>
                       <ng-container *ngIf="!itemsE.scanning">
                         <span class="reference">{{getNumberOfSelected(itemsE, 'portfolio')}}/{{itemsE.count}}</span>
 <!--                        <span class="reference" *ngIf="getNumberElement(itemsE, 'portfolio') === 0">0/{{itemsE.count}}</span>-->
@@ -263,6 +264,7 @@
                       <span (click)="toggleItemsListRDM(itemsR)" class="logo" style="background: #03DAC4">R</span>
                       <span (click)="toggleItemsListRDM(itemsR)" [title]="itemsR?.name"
                             class="text">{{itemsR?.name}}</span>
+                      <span class="reference-instance">{{itemsR.instanceId}}</span>
                       <ng-container *ngIf="!itemsR?.scanning">
                         <span class="reference">{{getNumberOfSelected(itemsR, 'analysis')}}/{{itemsR.count}}</span>
 <!--                        <span class="reference" *ngIf="getNumberElement(itemsR, 'analysis') === 0">0/{{itemsR.count}}</span>-->
