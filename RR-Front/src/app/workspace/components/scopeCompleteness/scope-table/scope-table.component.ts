@@ -1,5 +1,5 @@
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import {Select, Store} from "@ngxs/store";
+import {Actions, ofActionCompleted, ofActionDispatched, ofActionSuccessful, Select, Store} from "@ngxs/store";
 import {WorkspaceState} from "../../../store/states";
 import {BaseContainer} from "../../../../shared/base";
 import {Router} from "@angular/router";
@@ -46,6 +46,7 @@ export class ScopeTableComponent extends BaseContainer implements OnInit {
   regionCodes: any = {};
   targetCodes: any = {};
   projectType: any;
+  loading = false;
   columns;
   keys;
 
@@ -73,11 +74,12 @@ export class ScopeTableComponent extends BaseContainer implements OnInit {
   @Select(WorkspaceState.getOverrideStatus) overrideStatus$;
   overrideStatus;
   @Select(WorkspaceState.getScopeContext) scopeContext$;
-  accumulationStatus;
+  accumulationStatus = 'Scope Only';
   sortBy;
   filterBy;
 
-  constructor( _baseStore: Store, _baseRouter: Router, _baseCdr: ChangeDetectorRef) {
+  constructor( _baseStore: Store, _baseRouter: Router, _baseCdr: ChangeDetectorRef,
+               private actions: Actions) {
     super(_baseRouter, _baseCdr, _baseStore);
   }
 
@@ -86,14 +88,24 @@ export class ScopeTableComponent extends BaseContainer implements OnInit {
       this.selectedProject = value;
       this.projectType = _.get(value, 'projectType', 'FAC');
       this.dispatch(new SelectScopeProject({projectId: this.selectedProject.projectId}));
+      this.loading = true;
       if (this.accumulationStatus === 'Pricing' ) {
-        this.dispatch([new LoadScopeCompletenessPricingData()]);
+        this.dispatch([new LoadScopeCompletenessPricingData()]).subscribe(() => {}, () => {}, () => {
+          this.loading = false;
+          this.detectChanges();
+        });
         this.overrideStop();
       } else if (this.accumulationStatus === 'Scope Only') {
-        this.dispatch(new LoadScopeCompletenessData());
+        this.dispatch([new LoadScopeCompletenessData(), new LoadScopePLTsData()]).subscribe(() => {}, () => {}, () => {
+          this.loading = false;
+          this.detectChanges();
+        });
         this.overrideStop();
       } else if (this.accumulationStatus === 'Pending') {
-        this.dispatch([new LoadScopeCompletenessAccumulationInfo()]);
+        this.dispatch([new LoadScopeCompletenessAccumulationInfo()]).subscribe(() => {}, () => {}, () => {
+          this.loading = false;
+          this.detectChanges();
+        });
       }
       this.detectChanges();
     });
@@ -101,14 +113,24 @@ export class ScopeTableComponent extends BaseContainer implements OnInit {
     this.scopeContext$.pipe().subscribe(value => {
       this.filterBy = _.get(value, 'filterBy');
       this.sortBy = _.get(value, 'sortBy');
-      this.accumulationStatus = _.get(value, 'accumulationStatus');
+      this.accumulationStatus = _.get(value, 'accumulationStatus', this.accumulationStatus);
       this.dispatch(new SelectScopeProject({projectId: this.selectedProject.projectId}));
+      this.loading = true;
       if (this.accumulationStatus === 'Pricing' ) {
-        this.dispatch([new LoadScopeCompletenessPricingData(), new PatchScopeOfCompletenessState({overrideAll: false})]);
+        this.dispatch([new LoadScopeCompletenessPricingData(), new PatchScopeOfCompletenessState({overrideAll: false})]).subscribe(() => {}, () => {}, () => {
+          this.loading = false;
+          this.detectChanges();
+        });
       } else if (this.accumulationStatus === 'Scope Only') {
-        this.dispatch([new LoadScopeCompletenessData(), new PatchScopeOfCompletenessState({overrideAll: false})]);
+        this.dispatch([new LoadScopeCompletenessData(), new PatchScopeOfCompletenessState({overrideAll: false})]).subscribe(() => {}, () => {}, () => {
+          this.loading = false;
+          this.detectChanges();
+        });
       } else if (this.accumulationStatus === 'Pending') {
-        this.dispatch([new LoadScopeCompletenessAccumulationInfo()]);
+        this.dispatch([new LoadScopeCompletenessAccumulationInfo()]).subscribe(() => {}, () => {}, () => {
+          this.loading = false;
+          this.detectChanges();
+        });
       }
       this.detectChanges();
     });
@@ -247,15 +269,16 @@ export class ScopeTableComponent extends BaseContainer implements OnInit {
   }
 
   checkColumnAttached(column, index) {
+    const dataSource = this.accumulationStatus === 'Pending' ? this.pendingData : this.scopeData;
     let checked = true;
     let overriddenOnly = true;
     let holder = [];
     if (this.sortBy === 'Minimum Grain / RAP') {
-      _.forEach(this.pendingData.regionPerils, rp => {
+      _.forEach(dataSource.regionPerils, rp => {
         holder.push(this.checkExpected(rp, column, index));
       })
     } else {
-      _.forEach(this.pendingData.targetRaps, tr => {
+      _.forEach(dataSource.targetRaps, tr => {
         holder.push(this.checkExpected(tr, column, index));
       })
     }

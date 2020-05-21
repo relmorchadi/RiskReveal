@@ -67,9 +67,6 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
   @Select(WorkspaceState.getSelectedProject) selectedProject$;
   selectedProject: any;
   tabStatus: any;
-
-  @Select(WorkspaceState.getImportStatus) importStatus$;
-  importStatus: any;
   @Select(WorkspaceState.getOverrideStatus) overrideStatus$;
   overrideStatus;
   @Select(WorkspaceState.getScopeContext) scopeContext$;
@@ -80,6 +77,7 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
   removeOverrideRow = false;
 
   wsStatus: any;
+  importStatus: any;
   currentWsIdentifier: any;
   workspace: any;
   index: any;
@@ -113,11 +111,6 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
         this.currentWsIdentifier = curTab.wsIdentifier;
         this.detectChanges();
       });
-
-    this.importStatus$.pipe(this.unsubscribeOnDestroy).subscribe(value => {
-      this.importStatus = value;
-      this.detectChanges();
-    });
 
     this.state$.pipe(this.unsubscribeOnDestroy).subscribe(value => {
       this.state = _.get(value, 'data', null);
@@ -157,7 +150,7 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
     this.scopeContext$.pipe().subscribe(value => {
       this.selectedSortBy = _.get(value, 'sortBy');
       this.accumulationStatus = _.get(value, 'accumulationStatus');
-      this.filterBy = _.get(value, 'filterBy')
+      this.filterBy = _.get(value, 'filterBy');
       this.detectChanges();
     });
 
@@ -180,13 +173,6 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
 
   publishFacToPricing() {
     //this.dispatch(new fromWs.PublishToPricingFacProject());
-  }
-
-  observeRouteParams() {
-    return this.route.params.pipe(tap(({wsId, year}) => {
-      this.workspaceId = wsId;
-      this.uwy = year;
-    }));
   }
 
   ngOnDestroy(): void {
@@ -238,268 +224,6 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
     let res = {};
     _.forEach(_.groupBy(data, e => e[SortConfig[type][0]]), (e, k) => res[k] = _.groupBy(e, dt => dt[SortConfig[type][1]]));
     return res;
-  }
-
-  /** get which icon to be shown in the parent depending on the children's icons **/
-  checkExpected(item, rowData) {
-    let checked = 'not';
-    let holder = [];
-    if (this.selectedSortBy == 'Minimum Grain / RAP') {
-      item.regionPerils.forEach(reg => {
-        if (reg.id == rowData.id) {
-
-          reg.targetRaps.forEach(res => {
-            rowData.child.forEach(des => {
-              if (des.id == res.id) {
-                if (res.attached) {
-                  holder.push('attached');
-                }
-                if (res.overridden) {
-                  holder.push('overridden');
-                }
-                if (!res.attached && !res.overridden) {
-                  // const check = _.get(this.listOfPltsData, `${rowData.id}.${des.id}`, null)
-                  // const check = this.listOfPltsData[rowData.id][des.id]
-                  // if (check != null) {
-                  if (this.listOfPltsData[rowData.id] && this.listOfPltsData[rowData.id][des.id]) {
-                    if (this.listOfPltsData[rowData.id][des.id].length) {
-                      holder.push('dispoWs');
-                    }
-                  } else {
-                    holder.push('checked');
-                  }
-                }
-              }
-            });
-          });
-        }
-      });
-    }
-    if (this.selectedSortBy === 'RAP / Minimum Grain') {
-      item.targetRaps.forEach(reg => {
-        if (reg.id === rowData.id) {
-
-          reg.regionPerils.forEach(res => {
-            rowData.child.forEach(des => {
-              if (des.id === res.id) {
-                if (res.attached) {
-                  holder.push('attached');
-                }
-                if (res.overridden) {
-                  holder.push('overridden');
-                }
-                if (!res.attached && !res.overridden) {
-                  if (this.listOfPltsData[des.id] && this.listOfPltsData[des.id][rowData.id]) {
-                    if (this.listOfPltsData[des.id][rowData.id].length) {
-                      holder.push('dispoWs');
-                    }
-                  } else {
-                    holder.push('checked');
-                  }
-                }
-              }
-            });
-          });
-        }
-      });
-    }
-
-    if (_.includes(holder, 'dispoWs')) {
-      checked = 'dispoWs';
-    } else if (_.includes(holder, 'checked')) {
-      checked = 'checked';
-    } else if (_.includes(holder, 'attached')) {
-      checked = 'attached';
-    } else if (_.includes(holder, 'overridden')) {
-      checked = 'overridden';
-    }
-    if (rowData.override) {
-      if (checked == 'checked' || checked == 'dispoWs') {
-        checked = 'override';
-      }
-    }
-    if (checked == 'attached') {
-      this.treatySections[0].forEach(ts => {
-        if (ts.id == item.id) {
-          ts.regionPerils.forEach(rg => {
-            if (rg.id == rowData.id) {
-              rg.attached = true;
-            }
-          });
-          ts.targetRaps.forEach(tr => {
-            if (tr.id == rowData.id) {
-              tr.attached = true;
-            }
-          });
-        }
-      });
-    } else {
-      this.treatySections[0].forEach(ts => {
-        if (ts.id == item.id) {
-          ts.regionPerils.forEach(rg => {
-            if (rg.id == rowData.id) {
-              rg.attached = false;
-            }
-          });
-          ts.targetRaps.forEach(tr => {
-            if (tr.id == rowData.id) {
-              tr.attached = false;
-            }
-          });
-        }
-      });
-    }
-
-    if (checked == 'overridden') {
-      this.treatySections[0].forEach(ts => {
-        if (ts.id == item.id) {
-          ts.regionPerils.forEach(rg => {
-            if (rg.id == rowData.id) {
-              rg.overridden = true;
-            }
-          });
-          ts.targetRaps.forEach(tr => {
-            if (tr.id == rowData.id) {
-              tr.overridden = true;
-            }
-          });
-        }
-      });
-    } else {
-      this.treatySections[0].forEach(ts => {
-        if (ts.id == item.id) {
-          ts.regionPerils.forEach(rg => {
-            if (rg.id == rowData.id) {
-              rg.overridden = false;
-            }
-          });
-          ts.targetRaps.forEach(tr => {
-            if (tr.id == rowData.id) {
-              tr.overridden = false;
-            }
-          });
-        }
-      });
-    }
-
-    if (checked == 'overridden' && this.removeOverride) {
-      checked = 'cancelOverride';
-    }
-    return checked;
-  }
-
-  /** get the child's icon independently of others**/
-  checkExpectedTwo(item, grain, rowData) {
-    let checked = 'not';
-
-    if (this.selectedSortBy == 'Minimum Grain / RAP') {
-      item.regionPerils.forEach(reg => {
-        if (reg.id == rowData.id) {
-          reg.targetRaps.forEach(des => {
-            if (des.id == grain.id) {
-              if (des.attached) {
-                checked = 'attached';
-              }
-              if (des.overridden) {
-                checked = 'overridden';
-              }
-              if (!des.attached && !des.overridden) {
-                const check = _.get(this.listOfPltsData, `${rowData.id}.${grain.id}`, null);
-                if (check != null) {
-                  if (this.listOfPltsData[rowData.id][grain.id]) {
-                    if (this.listOfPltsData[rowData.id][grain.id].length) {
-                      checked = 'dispoWs';
-                    }
-                  }
-                } else {
-                  checked = 'checked';
-                }
-              }
-            }
-          });
-        }
-      });
-    }
-    if (this.selectedSortBy == 'RAP / Minimum Grain') {
-      item.targetRaps.forEach(reg => {
-        if (reg.id == rowData.id) {
-          reg.regionPerils.forEach(des => {
-            if (des.id == grain.id) {
-              if (des.attached) {
-                checked = 'attached';
-              }
-              if (des.overridden) {
-                checked = 'overridden';
-              }
-              if (!des.attached && !des.overridden) {
-                const check = _.get(this.listOfPltsData, `${grain.id}.${rowData.id}`, null);
-                if (check != null) {
-                  if (this.listOfPltsData[grain.id][rowData.id]) {
-                    if (this.listOfPltsData[grain.id][rowData.id].length) {
-                      checked = 'dispoWs';
-                    }
-                  }
-                } else {
-                  checked = 'checked';
-                }
-              }
-            }
-          });
-        }
-      });
-    }
-
-    if (rowData.override || grain.override) {
-      if (checked == 'checked' || checked == 'dispoWs') {
-        checked = 'override';
-      }
-    }
-
-    if (this.removeOverride && checked == 'overridden') {
-      checked = 'override';
-    }
-
-    return checked;
-  }
-
-  /** get the plt's icon depending on the treatysections**/
-  checkAttached(item, rowData, grain, plt) {
-    let checked = 'not';
-    if (this.selectedSortBy == 'Minimum Grain / RAP') {
-      item.regionPerils.forEach(reg => {
-        if (reg.id == rowData.id) {
-          reg.targetRaps.forEach(des => {
-            if (des.id == grain.id) {
-              if (des.attached) {
-                des.pltsAttached.forEach(plts => {
-                  if (plts.pltId == plt.pltId) {
-                    checked = "attached";
-                  }
-                });
-              }
-            }
-          });
-        }
-      });
-    }
-    if (this.selectedSortBy == 'RAP / Minimum Grain') {
-      item.targetRaps.forEach(reg => {
-        if (reg.id == rowData.id) {
-          reg.regionPerils.forEach(des => {
-            if (des.id == grain.id) {
-              if (des.attached) {
-                des.pltsAttached.forEach(plts => {
-                  if (plts.pltId == plt.pltId) {
-                    checked = 'attached';
-                  }
-                });
-              }
-            }
-          });
-        }
-      });
-    }
-    return checked;
   }
 
   /**switching to the override mode for the whole table**/

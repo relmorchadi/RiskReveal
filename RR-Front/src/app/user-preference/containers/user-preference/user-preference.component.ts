@@ -54,7 +54,7 @@ export class UserPreferenceComponent extends BaseContainer implements OnInit {
 
   importPage: any;
   financialPerspectiveELT: any;
-  selectedFinancialPerspectiveELT = [];
+  selectedFinancialPerspectiveELT = '';
   financialPerspectiveEPM: any;
   selectedFinancialPerspectiveEPM: any;
   targetCurrency: any;
@@ -84,6 +84,11 @@ export class UserPreferenceComponent extends BaseContainer implements OnInit {
 
   state: GeneralConfig = null;
 
+  defaultDataSources= [
+    {name: 'Example EDM', type: 'EDM'},
+    {name: 'Example RDM', type: 'RDM'}
+  ];
+
   constructor(public location: Location,
               private cdRef: ChangeDetectorRef,
               private actions$: Actions,
@@ -108,6 +113,8 @@ export class UserPreferenceComponent extends BaseContainer implements OnInit {
         this.detectChanges();
       }
     );
+
+    this.loadDefaultDataSources();
 
     this.dateConfig$.pipe().subscribe(value => {
       this.shortDate = value.shortDate;
@@ -158,6 +165,16 @@ export class UserPreferenceComponent extends BaseContainer implements OnInit {
     this.state$.subscribe(value => this.state = _.merge({}, value));
   }
 
+  loadDefaultDataSources(){
+    this.riskApi.getDefaultDataSources()
+        .pipe(this.unsubscribeOnDestroy)
+        .subscribe(
+        (dataSources: any) => {
+          this.defaultDataSources= dataSources;
+        }
+    );
+  }
+
   changeTimeZone(event) {
     this.dispatch(new PatchTimeZoneAction({value: event}))
   }
@@ -204,9 +221,7 @@ export class UserPreferenceComponent extends BaseContainer implements OnInit {
   }
 
   saveChanges() {
-    let financialPerspective = '';
     let country = '';
-    _.forEach(this.selectedFinancialPerspectiveELT, item => financialPerspective = financialPerspective + item + ' ');
     _.forEach(this.selectedCountries, item => country = country + item.countryCode + ' ');
     //_.forEach(state.contractOfInterest.uwUnit, item => uwUnit = uwUnit + item.id + ' ');
     
@@ -215,8 +230,8 @@ export class UserPreferenceComponent extends BaseContainer implements OnInit {
       decimalThousandSeparator: this.decimalThousandSeparator,
       defaultRmsInstance: this.selectedRMSInstance,
       display: null,
-      financialPerspectiveELT: financialPerspective,
-      financialPerspectiveEPM: this.selectedFinancialPerspectiveEPM,
+      financialPerspectiveELT: this.selectedFinancialPerspectiveELT,
+      financialPerspectiveEPM: this.selectedFinancialPerspectiveEPM, // to be deleted
       importPage: this.importPage,
       longDate: this.longDate,
       longTime: this.longTime,
@@ -237,6 +252,17 @@ export class UserPreferenceComponent extends BaseContainer implements OnInit {
 
   changeSearch(event) {
     this.store$.dispatch(new PatchSearchStateAction({key: 'searchTarget', value: event}));
+  }
+
+  deleteDefaultDataSource(ds){
+    this.riskApi.deleteSavedDataSourceById(ds.rlSavedDataSourceId)
+        .pipe(this.unsubscribeOnDestroy)
+        .subscribe(() => {
+          this.notification.createNotification('Information',
+              'Default Data Source successfully deleted',
+              'info', 'bottomRight', 4000);
+          this.defaultDataSources= _.filter(this.defaultDataSources, (item:any) => item.rlSavedDataSourceId != ds.rlSavedDataSourceId)
+        })
   }
 
 }

@@ -82,7 +82,7 @@
 
           <ng-container *ngIf="accumulationStatus === 'Pricing'">
             <div style="margin-left: 10px">
-              <button (click)="publishFacToPricing()" class="a-buttons-outlined">Publish to Pricing</button>
+              <button (click)="publishFacToPricing()" class="a-buttons-contained">Publish to Pricing</button>
             </div>
             <div class="published-dataInfo" *ngIf="checkImport(selectedProject)">
               <div><span class="font-weight-bold">Published:</span> {{selectedProject?.publishedDate | date: 'dd/MM/yyyy'}}</div>

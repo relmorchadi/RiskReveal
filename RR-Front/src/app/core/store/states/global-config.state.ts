@@ -149,7 +149,7 @@ export class GeneralConfigState implements NgxsOnInit {
               };
               draft.riskLink = {
                 importPage: data.importPage,
-                financialPerspectiveELT: data.financialPerspectiveELT.trim().split(' ') || [],
+                financialPerspectiveELT: data.financialPerspectiveELT,
                 financialPerspectiveEPM: data.financialPerspectiveEPM,
                 targetCurrency: data.targetCurrency,
                 targetAnalysisCurrency: data.targetAnalysisCurrency,

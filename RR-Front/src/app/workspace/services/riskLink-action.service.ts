@@ -912,7 +912,7 @@ export class RiskLinkStateService {
 
                                 const wsIdentifier = _.get(draft, 'currentTab.wsIdentifier');
                                 let riskLinkContext: RiskLink = draft.content[wsIdentifier].riskLink;
-                                riskLinkContext.setRefData(refData, config.rmsInstance);
+                                riskLinkContext.setRefData(refData, config.rmsInstance, config.financialPerspectiveELT, config.targetCurrency);
                                 riskLinkContext.setType(type);
                                 draft.content[wsIdentifier].riskLink = _.merge({}, riskLinkContext);
                                 draft.content[wsIdentifier].riskLink.analysis.data = [];

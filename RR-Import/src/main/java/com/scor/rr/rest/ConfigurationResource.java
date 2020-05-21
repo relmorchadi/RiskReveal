@@ -161,9 +161,20 @@ public class ConfigurationResource {
     }
 
     @GetMapping(value = "get-default-data-sources")
-    public ResponseEntity<?> getDefaultDataSources(@RequestParam Long projectId, @RequestParam Long userId, @RequestParam String instanceId) {
+    public ResponseEntity<?> getDefaultDataSources() {
         try {
-            return new ResponseEntity<>(configurationService.getDefaultDataSources(userId), HttpStatus.OK);
+            return new ResponseEntity<>(configurationService.getDefaultDataSources(), HttpStatus.OK);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return new ResponseEntity<>("An error has occurred", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @DeleteMapping(value = "saved-data-source")
+    public ResponseEntity<?> deleteSavedDataSource(@RequestParam Long savedDataSourceId) {
+        try {
+            configurationService.deleteSavedSataSourceById(savedDataSourceId);
+            return new ResponseEntity<>(HttpStatus.OK);
         } catch (Exception ex) {
             ex.printStackTrace();
             return new ResponseEntity<>("An error has occurred", HttpStatus.INTERNAL_SERVER_ERROR);
@@ -207,12 +218,12 @@ public class ConfigurationResource {
     }
 
     @GetMapping(value = "get-global-data-sources")
-    public ResponseEntity<?> getGlobalDataSources(@RequestParam Long projectId, @RequestParam Long userId) {
+    public ResponseEntity<?> getGlobalDataSources(@RequestParam Long projectId) {
         try {
             if (configurationService.checkIfProjectHasScannedDataSources(projectId))
                 return new ResponseEntity<>(new GlobalDataSourceDto(true, configurationService.getDataSourcesWithSelectedAnalysis(projectId)), HttpStatus.OK);
             else
-                return new ResponseEntity<>(new GlobalDataSourceDto(false, configurationService.getDefaultDataSources(userId)), HttpStatus.OK);
+                return new ResponseEntity<>(new GlobalDataSourceDto(false, configurationService.getDefaultDataSources()), HttpStatus.OK);
         } catch (Exception ex) {
             return new ResponseEntity<>("Operation Failed", HttpStatus.INTERNAL_SERVER_ERROR);
         }
