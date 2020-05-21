@@ -1,7 +1,7 @@
 package com.scor.rr.service;
 
 import com.scor.rr.domain.entities.PLTDetails.PLTDetailSummary;
-import com.scor.rr.domain.entities.PLTManagerView;
+import com.scor.rr.domain.entities.PLTManager.PLTManagerView;
 import com.scor.rr.domain.WorkspaceEntity;
 import com.scor.rr.repository.PLTDetailSummaryRepository;
 import com.scor.rr.repository.WorkspaceEntityRepository;
@@ -37,9 +37,9 @@ public class PLTDetailService {
 
             if(pltDetailSummaryOpt.isPresent()) {
                 pltDetailSummary =  pltDetailSummaryOpt.get();
-                pltDetailSummary.setTags(pltBrowserService.appendTagsToPLTs(new HashSet<PLTManagerView>(){{
-                    add(pltManagerView);
-                }}, ws).getTags());
+//                pltDetailSummary.setTags(pltBrowserService.appendTagsToPLTs(new HashSet<PLTManagerView>(){{
+//                    add(pltManagerView);
+//                }}, ws).getTags());
 
                 return pltDetailSummary;
             }

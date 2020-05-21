@@ -437,12 +437,6 @@ export class WorkspaceState {
     return state.content[wsIdentifier].riskLink.financialPerspective;
   }
 
-  @Selector()
-  static getImportStatus(state: WorkspaceModel) {
-    const wsIdentifier = state.currentTab.wsIdentifier;
-    return state.content[wsIdentifier].riskLink.importPLTs;
-  }
-
   /***********************************
    *
    * Inuring Selectors
