@@ -1,7 +1,7 @@
 <div class="workspace-main-content">
   <app-pin
-    (pinWs)="pinWorkspace()"
-    [active]="!workspaceInfo?.isPinned"
+    (onPin)="pinWorkspace()"
+    [pinned]="!workspaceInfo?.isPinned"
     style="position: absolute; right: 30px; top: 20px;"
   >
   </app-pin>

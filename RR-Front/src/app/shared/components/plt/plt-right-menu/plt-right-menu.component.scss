@@ -418,6 +418,8 @@
         position: absolute;
         right: 10px;
         top: 16px;
+        display: flex;
+        align-items: center;
 
         i {
           padding: 5px;
@@ -426,6 +428,7 @@
           color: #9C99EC;
           font-size: 24px;
           cursor: pointer;
+          margin: 5px 5px;
         }
       }
     }

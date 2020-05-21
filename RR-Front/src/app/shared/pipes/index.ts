@@ -23,6 +23,7 @@ import {RrNumberPipe} from "./rr-number.pipe";
 import {HasStatusPipe} from "./has-status.pipe";
 import {TableFilterPipe} from "./table-filter.pipe";
 import {GetIdentifiersPipe} from "./get-identifiers.pipe";
+import {IncludesPipe} from "./includes.pipe";
 
 export const PIPES = [
     RRDatePipe,
@@ -48,8 +49,9 @@ export const PIPES = [
     ExchangeRatePipe,
     RrNumberPipe,
     HasStatusPipe,
-      TableFilterPipe,
-      GetIdentifiersPipe
+    TableFilterPipe,
+    GetIdentifiersPipe,
+    IncludesPipe
 ];
 
 export * from './trim-secondary-format.pipe';

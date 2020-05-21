@@ -2,8 +2,8 @@
   <div class="a-app-header">
     <h4>Results</h4>
     <app-pin
-      (pinWs)="pinWorkspace()"
-      [active]="!workspaceInfo?.isPinned"
+      (onPin)="pinWorkspace()"
+      [pinned]="!workspaceInfo?.isPinned"
     >
     </app-pin>
   </div>

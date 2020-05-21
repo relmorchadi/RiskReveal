@@ -13,8 +13,8 @@
   <div class="a-app-header">
     <h4>Expected Scope & Completeness</h4>
     <app-pin
-      (pinWs)="pinWorkspace()"
-      [active]="!workspaceInfo?.isPinned"
+            (onPin)="pinWorkspace()"
+            [pinned]="!workspaceInfo?.isPinned"
     >
     </app-pin>
   </div>
