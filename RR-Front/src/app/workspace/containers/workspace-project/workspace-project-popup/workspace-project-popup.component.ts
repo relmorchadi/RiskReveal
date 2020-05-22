@@ -75,19 +75,17 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
      /*    {field: 'openInHere', header: '', width: '20px', type: 'icon', class: 'icon-fullscreen_24px', visible: true/*, handler: (option) => option.forEach(dt => this.openWorkspace(dt.workSpaceId, dt.uwYear)), display: false, sorted: false, filtered: false},
          {field: 'openInPopup', header: '', width: '20px', type: 'icon', class: 'icon-open_in_new_24px', visible: true/*, handler: (option) => option.forEach(dt => this.popUpWorkspace(dt.workSpaceId, dt.uwYear)), display: false, sorted: false, filtered: false}
      */];
-   columnsFac =   [
-       {field: 'checkbox', header: '', width: '20px', visible: true, display: true, sorted: true, filtered: false, type: 'checkbox', class: 'icon-check_24px',},
-       {field: 'client', header: 'Client', width: '90px', type: 'text', visible: true, display: true, sorted: true, filtered: true, queryParam: 'ClientCode'},
-       {field: 'uwYear', header: 'Uw Year', width: '90px', type: 'text', visible: true, display: true, sorted: true, filtered: true, queryParam: 'UWYear'},
-       {field: 'workspaceName', header: 'Contract Code', width: '160px', type: 'text', visible: true, display: true, sorted: true, filtered: true, queryParam: 'WorkspaceName'},
-       {field: 'workSpaceContextCode', header: 'Contract Name', width: '90px', type: 'text', visible: true, display: true, sorted: true, filtered: true, queryParam: 'WorkspaceContextCode'},
-       {field: 'uwAnalysis', header: 'Uw Analysis', width: '90px', type: 'text', visible: true, display: true, sorted: true, filtered: true, queryParam: 'uwAnalysis'},
-       {field: 'carequestId', header: 'CAR ID', width: '70px', type: 'text', visible: true, display: true, sorted: true, filtered: true, queryParam: 'CARequestId'},
-       {field: 'carStatus', header: 'CAR Status', width: '90px', type: 'text', visible: true, display: true, sorted: true, filtered: true, queryParam: 'CARStatus'},
-       {field: 'assignedTo', header: 'Assigned User', width: '90px', type: 'text', visible: true, display: true, sorted: true, filtered: true, queryParam: 'AssignedTo'},
-       /*  {field: 'openInHere', header: '', width: '20px', type: 'icon', class: 'icon-fullscreen_24px', visible: true, /*handler: (option) => option.forEach(dt => this.openWorkspace(dt.workspaceName, dt.uwYear)), display: false, sorted: false, filtered: false},
-           {field: 'openInPopup', header: '', width: '20px', type: 'icon', class: 'icon-open_in_new_24px', visible: true, /*handler: (option) => option.forEach(dt => this.popUpWorkspace(dt.workspaceName, dt.uwYear)), display: false, sorted: false, filtered: false}
-    */  ];
+   columnsFac = [
+     {field: 'checkbox', header: '', width: '20px', visible: true, display: true, sorted: true, filtered: false, type: 'checkbox', class: 'icon-check_24px',},
+     {field: 'client', header: 'Client', width: '90px', type: 'text', visible: true, display: true, sorted: true, filtered: true, queryParam: 'CLIENT_CODE'},
+     {field: 'uwYear', header: 'Uw Year', width: '90px', type: 'text', visible: true, display: true, sorted: true, filtered: true, queryParam: 'UW_YEAR'},
+     {field: 'workspaceContextCode', header: 'Contract Code', width: '160px', type: 'text', visible: true, display: true, sorted: true, filtered: true, queryParam: 'CONTRACT_CODE'},
+     {field: 'workspaceName', header: 'Contract Name', width: '90px', type: 'text', visible: true, display: true, sorted: true, filtered: true, queryParam: 'CONTRACT_NAME'},
+     {field: 'uwAnalysis', header: 'Uw Analysis', width: '90px', type: 'text', visible: true, display: true, sorted: true, filtered: true, queryParam: 'uwAnalysis'},
+     {field: 'carequestId', header: 'CAR ID', width: '70px', type: 'text', visible: true, display: true, sorted: true, filtered: true, queryParam: 'CAR_ID'},
+     {field: 'carStatus', header: 'CAR Status', width: '90px', type: 'text', visible: true, display: true, sorted: true, filtered: true, queryParam: 'carStatus'},
+     {field: 'assignedTo', header: 'Assigned User', width: '90px', type: 'text', visible: true, display: true, sorted: true, filtered: true, queryParam: 'USR'},
+   ];
   paginationOption = {currentPage: 0, page: 0, size: 40, total: '-'};
   contracts = [];
   loading;
@@ -402,7 +400,7 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
     ).subscribe( () => this.d.unsubscribe());
 
     this.getProjects().subscribe((projects: any) => {
-      this.updateLeftMenuInputs('projects', _.map(projects, p => ({...p, selected: false})));
+      this.updateLeftMenuInputs('projects', _.map(projects, p => ({...p, selected: false})).filter(p => p.carRequestId == null));
       this.detectChanges();
     });
 
@@ -659,7 +657,10 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
           if(ar)
           if(ar.plts) {
             ar.plts.forEach(d => d.visible = true);
-            ar.plts.filter(p => p.pltType == "THREAD");
+            ar.plts = ar.plts.filter(p => p.pltType == "THREAD")
+                .filter(plt => this.leftMenuInputs.projects.some(project => plt.projectId == project.projectId));
+            console.log(ar);
+            data = ar;
           }
           this.updateLeftMenuInputs('systemTagsCount', this.systemTagService.countSystemTags(data? data.tag: null));
           this.setInputs('selectedListOfPlts', []);
@@ -727,7 +728,7 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
         });
 */
         this.getProjects().subscribe((projects: any) => {
-          this.updateLeftMenuInputs('projects', _.map(projects, p => ({...p, selected: false})));
+          this.updateLeftMenuInputs('projects', _.map(projects, p => ({...p, selected: false})).filter(p => p.carRequestId == null));
           this.detectChanges();
         });
 

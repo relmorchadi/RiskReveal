@@ -3,7 +3,11 @@
     <div class="div-title">
       <span class="title">PLTs</span>
       <div class="single-col-button">
-        <button class="a-buttons-contained" style="margin-left: 10px;" (click)="cloneFrom()">clone from</button>
+        <button [ngClass]="{'a-buttons-contained': selectedProject?.carRequestId == null,
+                            'a-buttons-contained-disabled-mini': selectedProject?.carRequestId != null}"
+                style="margin-left: 10px;" (click)="cloneFrom()"
+                [disabled]="selectedProject.carRequestId != null"
+        >clone from</button>
       </div>
     </div>
     <div class="right">

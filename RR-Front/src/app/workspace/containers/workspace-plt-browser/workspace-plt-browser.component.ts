@@ -388,6 +388,7 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
   }
 
   onSelectPlt(payload: any) {
+    console.log(this.selectedProject);
     this.selectedPlt = {
       ...this.selectedPlt,
       [payload.id]: {
@@ -398,6 +399,7 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
   }
   clonePlt() {
     this.dispatch(new SetDefaultCloneWsTarget());
+    console.log(this.currentWs);
     this.dispatch(new SetCloneDataWsSource({
       plts: Object.keys(this.selectedPlt).filter(id => this.selectedPlt[id].selected).map(id => ({
         pltId: id,
@@ -406,7 +408,7 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
       wsId: this.currentWs.workspaceContextCode,
       uwYear: this.currentWs.uwYear,
       detail: this.currentWs.cedantName + ' | ' + this.currentWs.workspaceName + ' | ' + this.currentWs.uwYear +
-          ' | ' + this.currentWs.workspaceContextCode
+          ' | ' + this.currentWs.wsId
     }));
     const {wsId, uwYear} = this.currentWs;
     this.dispatch(

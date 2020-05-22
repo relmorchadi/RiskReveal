@@ -455,6 +455,7 @@ export class WorkspaceCloneDataComponent extends BaseContainer implements OnInit
 
     if (currentSourceOfItems == 'from') {
       this.patchProjectForm('from', {
+        plts: [],
         wsId: $event.workspaceContextCode,
         uwYear: $event.uwYear,
         detail: $event.client + ' | ' + $event.workspaceName + ' | ' + $event.uwYear + ' | ' + $event.workspaceContextCode
