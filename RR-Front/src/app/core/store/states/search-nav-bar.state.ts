@@ -91,6 +91,8 @@ export class SearchNavBarState implements NgxsOnInit {
     return state;
   }
 
+  static
+
   @Selector()
   static getLoadingState(state: SearchNavBar) {
     const searchType = state.actualSearchType;

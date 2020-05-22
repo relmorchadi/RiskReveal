@@ -151,6 +151,7 @@ export class SearchMenuItemComponent extends BaseContainer implements OnInit, On
   }
 
   onDoublePoints = _.debounce(($event: KeyboardEvent) => {
+    console.log($event);
     this.contractFilterFormGroup.get('globalKeyword').patchValue(this.badgeService.transformKeyword(this.globalKeyword, this.useAlternative()));
   }, 350);
 
@@ -301,7 +302,7 @@ export class SearchMenuItemComponent extends BaseContainer implements OnInit, On
 
   onChangeTagValue(badge) {
 
-    let index = _.findIndex(this.state[this.searchType].badges, row => row.key == badge.key);
+    let index = _.findIndex(this.state[this.searchType].badges, (row: any) => row.key == badge.key);
     this.store.dispatch(new SearchActions.CloseBadgeByIndexAction(index));
     if (this.globalKeyword.length > 0) {
       this.store.dispatch(new SearchActions.SelectBadgeAction(this.convertExpressionToBadge(this.globalKeyword), this.globalKeyword, this.useAlternative()));
