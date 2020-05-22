@@ -417,7 +417,7 @@ ul.ant-dropdown-menu.ant-dropdown-menu-root.ant-dropdown-menu-light.ant-dropdown
                 flex: 1;
               }
 
-              .reference {
+              .reference, .reference-instance {
                 color: rgba(0, 0, 0, 0.35);
                 font-size: 11px;
                 border: 1px solid transparent;
@@ -426,6 +426,11 @@ ul.ant-dropdown-menu.ant-dropdown-menu-root.ant-dropdown-menu-light.ant-dropdown
                 background-color: rgba(0, 0, 0, 0.05);
                 text-align: center;
                 padding: 1px 3px 1px 1px;
+              }
+
+              .reference-instance{
+                margin-right: 10px;
+                min-width: 55px;
               }
 
               .loading {
