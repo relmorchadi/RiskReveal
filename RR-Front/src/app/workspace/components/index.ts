@@ -1,6 +1,5 @@
 import {LeftMenuComponent} from "./left-menu/left-menu.component";
 import {ProjectsListComponent} from "./project/projects-list/projects-list.component";
-import {PinComponent} from './pin/pin.component';
 import {WorkspaceRouterComponent} from './workspace-router/workspace-router.component';
 import {ScopeTableComponent} from "./scopeCompleteness/scope-table/scope-table.component";
 import {InuringDatatableComponent} from "./inuring";
@@ -54,7 +53,6 @@ export const COMPONENTS = [
     AttachPltsPopUpComponent,
     LeftMenuComponent,
     ProjectsListComponent,
-    PinComponent,
     ScopeTableComponent,
     WorkspaceRouterComponent,
     InuringDatatableComponent,

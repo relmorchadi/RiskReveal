@@ -104,6 +104,8 @@ export class PltRightMenuComponent extends BaseContainer implements OnInit, OnDe
   //Sub
   exchangeRatesSubscription: Subscription;
 
+  isPinned: boolean;
+
   constructor(
       _baseStore: Store, _baseRouter: Router, _baseCdr: ChangeDetectorRef,
       private calibrationAPI: CalibrationAPI,
@@ -461,13 +463,7 @@ export class PltRightMenuComponent extends BaseContainer implements OnInit, OnDe
     this.loadTab(index);
   }
 
-  closeDrawer(outside) {
-    if(outside || this.inputs.visible) {
-      this.actionDispatcher.emit({
-        type: rightMenuStore.closeDrawer
-      })
-    }
-  }
+
 
   popupActionHandler(action: Message) {
     switch (action.type) {
@@ -915,6 +911,19 @@ export class PltRightMenuComponent extends BaseContainer implements OnInit, OnDe
         selectedCurveType: filteredCurves
       }
     }
+  }
+
+  closeDrawer(outside) {
+    if( (outside || this.inputs.visible) && !this.isPinned) {
+      this.actionDispatcher.emit({
+        type: rightMenuStore.closeDrawer
+      })
+    }
+  }
+
+  pinMenu() {
+    event.stopPropagation();
+    this.isPinned = !this.isPinned;
   }
 
 
