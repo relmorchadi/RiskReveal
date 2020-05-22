@@ -27,15 +27,17 @@ import {FAKEDATA} from "../../../containers/workspace-exposures/fakeExposuresDat
 
 export class ExposuresMainTableComponent implements OnInit, AfterViewInit, OnDestroy {
 
-
-    @Input('tableConfig') tableConfig: ExposuresMainTableConfig;
     @Output('actionDispatcher') actionDispatcher: EventEmitter<any> = new EventEmitter<any>();
-    @Input('sortConfig') sortConfig: any;
+
+    @Input("selectedHeaderConfig") selectedHeaderConfig: any;
     @Input('numberConfig') numberConfig: any;
+    @Input('tableConfig') tableConfig: ExposuresMainTableConfig;
+    @Input('sortConfig') sortConfig: any;
+
     private selectedRowRegionPeril: any;
-    private hoveredRow: any;
     private filteredColumn: string;
     private frozenColumns: any;
+    private hoveredRow: any;
 
     constructor(private store: Store, changeDetectorRef: ChangeDetectorRef) {
         this.selectedRowRegionPeril = null;

@@ -34,7 +34,7 @@ export class ExposuresApi {
     }
 
     loadRightMenuContent(type: any) {
-        console.log('reached API ==> ', type);
+        /*console.log('reached API ==> ', type);*/
         switch (type) {
             case 'portfolio': {
                 return this.portfolioDetails;
@@ -46,9 +46,7 @@ export class ExposuresApi {
     }
 
     loadHeaderConfig(projectId) {
-        console.log('reached API ==> ', projectId);
         return this._http.get(this.URL + 'references?projectId=' + projectId)
-
     }
 
     sortTableColumn(sortConfig) {
@@ -56,32 +54,32 @@ export class ExposuresApi {
     }
 
     changeCurrency(currency: any) {
-        console.log('reached API ==> ', currency);
+        //console.log('reached API ==> ', currency);
         return of<ExposuresMainTableConfig>(this.fakeTableConfig);
     }
 
     changeFinancialUnit(financialUnit: any) {
-        console.log('reached API ==> ', financialUnit);
+        //console.log('reached API ==> ', financialUnit);
         return of<ExposuresMainTableConfig>(this.fakeTableConfig);
     }
 
     changeDivision(division: any) {
-        console.log('reached API ==> ', division);
+        //console.log('reached API ==> ', division);
         return of<ExposuresMainTableConfig>(this.fakeTableConfig);
     }
 
     changePortfolio(portfolio: any) {
-        console.log('reached API ==> ', portfolio);
+        //console.log('reached API ==> ', portfolio);
         return of<ExposuresMainTableConfig>(this.fakeTableConfig);
     }
 
     changeView(view: any) {
-        console.log('reached API ==> ', view);
+        //console.log('reached API ==> ', view);
         return of<ExposuresMainTableConfig>(this.fakeTableConfig);
     }
 
     exportTable(headerConfig) {
-        console.log(headerConfig);
+        //console.log(headerConfig);
         return this._http.post(this.URL + 'exposure-manager-export-data',headerConfig, { observe: 'response',responseType: 'blob' });
     }
 }

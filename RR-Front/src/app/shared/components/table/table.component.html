@@ -75,7 +75,7 @@
             </div>
             <div *ngIf="col?.type === 'date'" style="display:flex">
               <i class="icon-calendar-alt" style="margin-right: 4px"></i>
-              <span class="text-wrapper">{{rowData[col?.field]}}</span>
+              <span class="text-wrapper">{{rowData[col?.field] | rRDate: 'shortFormat': 'date': dateConfig}}</span>
             </div>
             <div class="fav-status-info" (click)="updateFavValue(rowData)" *ngIf="col?.type === 'favStatus'">
               <i *ngIf="!rowData[col?.field]" class="icon-star_outline_24px"></i>
@@ -196,7 +196,7 @@
               (dblclick)="doubleClickRow(rowData)"
               (click)="selectRow(rowData, i)">
             <div *ngIf="col?.type !== 'favStatus' && col?.type !== 'rowStatus'" style="display:flex">
-              <i *ngIf="col?.type === 'date'" class="icon-calendar-alt"></i>
+              <i *ngIf="col?.type === 'date'" style="margin-right: 4px" class="icon-calendar-alt"></i>
               <span  *ngIf="col?.type !== 'date'" [title]="rowData[col?.field]" class="text-wrapper">{{rowData[col?.field]}}</span>
               <span  *ngIf="col?.type === 'date'" class="text-wrapper">
                 {{rowData[col?.field] | rRDate: 'shortFormat': 'date': dateConfig}}</span>
