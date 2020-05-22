@@ -3,6 +3,7 @@ import {Router} from '@angular/router';
 import {BaseContainer} from "../../../shared/base";
 import {Select, Store} from "@ngxs/store";
 import {WorkspaceState} from "../../store/states";
+import * as rightMenuStore from "../../../shared/components/plt/plt-right-menu/store";
 
 
 @Component({
@@ -14,6 +15,8 @@ export class LeftMenuComponent extends BaseContainer implements OnInit, OnDestro
 
   @Input('isCollapsed')
   isCollapsed;
+
+  isPinned: boolean;
 
   @Output('toggleCollapse')
   toggleCollapseEmitter: EventEmitter<boolean>;
@@ -62,6 +65,19 @@ export class LeftMenuComponent extends BaseContainer implements OnInit, OnDestro
 
   ngOnDestroy(): void {
     this.destroy();
+  }
+
+  closeDrawer(outside) {
+    if( (outside || this.isCollapsed) && !this.isPinned) {
+      event.stopPropagation();
+      event.preventDefault();
+      this.toggleCollapseEmitter.emit(outside || !this.isCollapsed);
+    }
+  }
+
+  pinMenu() {
+    event.stopPropagation();
+    this.isPinned = !this.isPinned;
   }
 
 

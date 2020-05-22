@@ -300,7 +300,7 @@ export class SearchMenuItemComponent extends BaseContainer implements OnInit, On
   }
 
   onChangeTagValue(badge) {
-    // @ts-ignore
+
     let index = _.findIndex(this.state[this.searchType].badges, row => row.key == badge.key);
     this.store.dispatch(new SearchActions.CloseBadgeByIndexAction(index));
     if (this.globalKeyword.length > 0) {

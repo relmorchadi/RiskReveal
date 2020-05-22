@@ -35,6 +35,7 @@
     "@ngxs/storage-plugin": "^3.4.1-dev.master-ab0a0cc",
     "@ngxs/store": "3.4.1-dev.master-543c32f",
     "ag-grid-angular": "^23.1.0",
+    "ag-grid-community": "^23.1.1",
     "angular-gridster2": "^7.1.0",
     "angular-resizable-element": "^3.2.6",
     "angular-resize-element": "^1.0.17",

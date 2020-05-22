@@ -21,6 +21,7 @@ import {BooleanCellRenderer} from "./grid/boolean-cell-renderer/boolean-cell-ren
 import {NumberCellRenderer} from "./grid/number-cell-renderer/number-cell-renderer.component";
 import {DateCellRenderer} from "./grid/date-cell-renderer/date-cell-renderer.component";
 import {SearchMenuItemComponent} from "../../core/components/navbar/search-menu-item/search-menu-item.component";
+import {PinComponent} from "./pin/pin.component";
 
 export const COMPONENTS = [
   SearchMenuItemComponent,
@@ -45,7 +46,8 @@ export const COMPONENTS = [
   StatusCellRenderer,
   BooleanCellRenderer,
   NumberCellRenderer,
-  DateCellRenderer
+  DateCellRenderer,
+  PinComponent
 ];
 
 export * from './table/table.component';

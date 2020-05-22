@@ -25,6 +25,7 @@ import {TableFilterPipe} from "./table-filter.pipe";
 import {GetIdentifiersPipe} from "./get-identifiers.pipe";
 import {FilterByPathPipe} from "./filter-by-path.pipe";
 import {BoldSpanPipe} from "../../core/pipes";
+import {IncludesPipe} from "./includes.pipe";
 
 export const PIPES = [
     BoldSpanPipe,
@@ -52,8 +53,9 @@ export const PIPES = [
     ExchangeRatePipe,
     RrNumberPipe,
     HasStatusPipe,
-      TableFilterPipe,
-      GetIdentifiersPipe
+    TableFilterPipe,
+    GetIdentifiersPipe,
+    IncludesPipe
 ];
 
 export * from './trim-secondary-format.pipe';
