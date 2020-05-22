@@ -243,12 +243,12 @@ export class PltStateService {
       wsIdentifier,
       forDelete
     } = payload;
-
+    console.log(payload);
     let inComingData = {};
     _.forEach(plts, (v, k) => {
-
       inComingData[k] = {
-        selected: v.type
+        selected: v.type,
+        projectId: v.projectId
       };
     });
 
@@ -679,6 +679,54 @@ export class PltStateService {
       return ctx.dispatch(new LoadProjectByWorkspace({wsId: targetWorkspaceContextCode, uwYear: targetWorkspaceUwYear}));
 
     }
+  }
+  setCloneDataWsSource(ctx: StateContext<WorkspaceModel>, payload: any) {
+
+    const {
+      wsIdentifier
+    } = ctx.getState().currentTab;
+
+    ctx.patchState(produce(ctx.getState(), draft => {
+      draft.content[wsIdentifier].cloneData.workspaceSource = payload;
+    }));
+  }
+
+  setDefaultCloneWsTarget(ctx: StateContext<WorkspaceModel>) {
+
+    const state = ctx.getState();
+    const wsId = state.currentTab.wsIdentifier;
+    const sourceWs = {
+      wsId: state.content[wsId].wsId,
+      uwYear: state.content[wsId].uwYear,
+      plts: [],
+      detail: state.content[wsId].cedantName + ' | ' + state.content[wsId].workspaceName +
+          ' | ' + state.content[wsId].uwYear + ' | ' + state.content[wsId].wsId
+    };
+    ctx.patchState(produce(ctx.getState(), draft => {
+      draft.content[wsId].cloneData.workspaceTarget = sourceWs;
+    }));
+  }
+
+  setCloneDataWsTarget(ctx: StateContext<WorkspaceModel>, payload: any) {
+
+    const {
+      wsIdentifier
+    } = ctx.getState().currentTab;
+
+    ctx.patchState(produce(ctx.getState(), draft => {
+      draft.content[wsIdentifier].cloneData.workspaceTarget = payload;
+    }));
+  }
+
+  setCloneDataSelectedPlts(ctx: StateContext<WorkspaceModel>, payload: any) {
+
+    const {
+      wsIdentifier
+    } = ctx.getState().currentTab;
+
+    ctx.patchState(produce(ctx.getState(), draft => {
+      draft.content[wsIdentifier].cloneData.selectedPLTs = payload;
+    }));
   }
 
 }

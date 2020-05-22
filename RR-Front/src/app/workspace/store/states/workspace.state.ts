@@ -107,6 +107,17 @@ export class WorkspaceState {
   }
 
   @Selector()
+  static getCurrentWorkspaceDetail(state: WorkspaceModel) {
+    const wsId = state.currentTab.wsIdentifier;
+    return {
+      uwYear: state.content[wsId].uwYear,
+      workspaceName: state.content[wsId].workspaceName,
+      cedantName: state.content[wsId].cedantName,
+      wsId
+    };
+  }
+
+  @Selector()
   static getCurrentTab(state: WorkspaceModel) {
     return state.currentTab;
   }
@@ -193,10 +204,25 @@ export class WorkspaceState {
   static getCloneConfig(state: WorkspaceModel) {
     return state.content[state.currentTab.wsIdentifier].pltManager['cloneConfig'];
   }
+  @Selector()
+  static getCloneDataSelectedPlts(state: WorkspaceModel) {
+    return state.content[state.currentTab.wsIdentifier].cloneData.selectedPLTs;
+  }
+
+  @Selector()
+  static getCloneDataWsSource(state: WorkspaceModel) {
+    return state.content[state.currentTab.wsIdentifier].cloneData.workspaceSource;
+  }
+
+  @Selector()
+  static getCloneDataWsTarget(state: WorkspaceModel) {
+    return state.content[state.currentTab.wsIdentifier].cloneData.workspaceTarget;
+  }
+
 
   @Selector()
   static getCloningStatus(state: WorkspaceModel) {
-    return state.cloningStatus;
+     return state.cloningStatus;
   }
 
   @Selector()
@@ -668,6 +694,26 @@ export class WorkspaceState {
   @Action(fromPlt.CommitCloneSuccess)
   commitCloneSuccess(ctx: StateContext<WorkspaceModel>, {payload}: fromPlt.CommitCloneSuccess) {
     return this.pltStateService.commitCloneSuccess(ctx, payload);
+  }
+
+  @Action(fromPlt.SetCloneDataWsTarget)
+  setCloneDataWsTarget(ctx: StateContext<WorkspaceModel>, {payload}: fromPlt.SetCloneDataWsTarget) {
+    return this.pltStateService.setCloneDataWsTarget(ctx, payload);
+  }
+
+  @Action(fromPlt.SetCloneDataWsSource)
+  setCloneDataWsSource(ctx: StateContext<WorkspaceModel>, {payload}: fromPlt.SetCloneDataWsSource) {
+    return this.pltStateService.setCloneDataWsSource(ctx, payload);
+  }
+
+  @Action(fromPlt.SetDefaultCloneWsTarget)
+  setDefaultCloneWsTarget(ctx: StateContext<WorkspaceModel>) {
+    return this.pltStateService.setDefaultCloneWsTarget(ctx);
+  }
+
+  @Action(fromPlt.SetCloneDataSelectedPlts)
+  setCloneDataSelectedPlts(ctx: StateContext<WorkspaceModel>, {payload}: fromPlt.SetCloneDataSelectedPlts) {
+    return this.pltStateService.setCloneDataSelectedPlts(ctx, payload);
   }
 
   setCloneConfig(ctx: StateContext<WorkspaceModel>, {payload}: fromPlt.setCloneConfig) {

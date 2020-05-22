@@ -34,6 +34,8 @@ interface SourceData {
 })
 export class WorkspaceCloneDataComponent extends BaseContainer implements OnInit, StateSubscriber {
 
+  @Select(WorkspaceState.getCloneDataWsSource) getCloneDataWsSource$;
+  @Select(WorkspaceState.getCloneDataWsTarget) getCloneDataWsTarget$;
   @Select(WorkspaceState.getCurrentTab) currentTab$;
   @Select(WorkspaceState.getCloningStatus) cloningStatus$;
 
@@ -155,9 +157,14 @@ export class WorkspaceCloneDataComponent extends BaseContainer implements OnInit
   }
 
   patchProjectForm(key, value) {
-    this.projectsForm.patchValue({
-      [key]: value
-    });
+
+    if (key == 'from') {
+      this.dispatch(new fromWS.SetCloneDataWsSource(value));
+    }
+    if (key == 'to') {
+      this.dispatch(new fromWS.SetCloneDataWsTarget(value));
+    }
+
   }
 
   getFormValueByKey(key) {
@@ -167,8 +174,9 @@ export class WorkspaceCloneDataComponent extends BaseContainer implements OnInit
   loadProjects(wsId, uwYear) {
     forkJoin(
       this.wsApi.searchWorkspace(wsId, uwYear)
-    ).subscribe(([{projects}]: any) => {
-      this.listOfProjects = projects;
+    ).subscribe((data: any) => {
+
+      this.listOfProjects = data[0].projects;
       this.detectChanges();
 
     });
@@ -207,7 +215,11 @@ export class WorkspaceCloneDataComponent extends BaseContainer implements OnInit
 
   ngOnInit() {
 
-    this.cloningStatus$.subscribe(status => this.cloningStatus = status);
+    this.cloningStatus$.subscribe(status => {
+      console.log(status);
+      this.cloningStatus = status
+      this.detectChanges();
+    });
 
  //   this.data$ = this.store.select(GeneralConfigState.getTablePreference('pageTst', 'tabblename'));
    //   this.data$.subscribe(t => console.log(t));
@@ -225,7 +237,7 @@ export class WorkspaceCloneDataComponent extends BaseContainer implements OnInit
         wsId
       } = from;
 
-      if (wsId && uwYear) {
+      if (wsId != '' && uwYear != '') {
         this.loadProjects(wsId, uwYear);
         this.detectChanges();
       } else {
@@ -268,6 +280,53 @@ export class WorkspaceCloneDataComponent extends BaseContainer implements OnInit
       if (payload.wsIdentifier != this.workspaceId + "-" + this.uwy) this.destroy();
     });
 
+
+
+    this.getCloneDataWsSource$.subscribe(ws => {
+      console.log(ws);
+      if (ws == null) {
+        this.patchProjectForm('from', {
+          detail: '',
+          plts: [],
+          wsId: '',
+          uwYear: ''
+        });
+      } else {
+        this.summaryCache['Pre-Inured PLTs'] = {
+          ...this.summaryCache['Pre-Inured PLTs'],
+          value : ws.plts.length
+        };
+        this.summaryCache['Sources Projects'] = {
+          ...this.summaryCache['Pre-Inured PLTs'],
+          value : Array.from(new Set(ws.plts.map(p => p.projectId))).length
+        };
+
+        this.cloneConfig = {
+          ...this.cloneConfig,
+          summary: {...this.summaryCache}
+        };
+        this.projectsForm.patchValue({
+          'from': ws
+        });
+      }
+    });
+
+    this.getCloneDataWsTarget$.subscribe(ws => {
+      if (ws == null) {
+        this.dispatch(new fromWS.SetDefaultCloneWsTarget());
+      }
+      this.projectsForm.patchValue({
+        'to': ws == null ? {
+          detail: '',
+          plts: [],
+          wsId: '',
+          uwYear: ''
+        } : ws
+      });
+    });
+
+    //this.dispatch(new fromWS.S());
+    /*
     combineLatest(
       this.select(WorkspaceState.getCloneConfig),
       this.route$.params,
@@ -277,6 +336,7 @@ export class WorkspaceCloneDataComponent extends BaseContainer implements OnInit
       this.uwy = year;
       let navigationWsId = _.get(navigationPayload, 'payload.wsId', null);
       let navigationUwYear = _.get(navigationPayload, 'payload.uwYear', null);
+      console.log(navigationPayload);
 
       if (_.get(navigationPayload, 'from', null) == 'pltBrowser' && navigationWsId && navigationWsId == wsId && navigationUwYear && navigationUwYear == year) {
         if (_.get(navigationPayload, 'type', null) == 'cloneFrom') {
@@ -352,6 +412,7 @@ export class WorkspaceCloneDataComponent extends BaseContainer implements OnInit
       this.toCache = {...this.getFormValueByKey('to')};
       this.detectChanges();
     })
+    */
   }
 
   setSubTitle(number: number) {
@@ -413,22 +474,22 @@ export class WorkspaceCloneDataComponent extends BaseContainer implements OnInit
     'Pre-Inured PLTs': {
       'icon': 'icon-assignment_24px',
       'color': '#c38fff',
-      'value': 14
+      'value': 0
     },
     'Post-Inured PLTs': {
       'icon': 'fa fa-code-fork',
       'color': '#c38fff',
-      'value': 7
+      'value': 0
     },
     'Inuring Packages': {
       'icon': 'icon-layer-group',
       'color': '#f5a623',
-      'value': 5
+      'value': 0
     },
     'Sources Projects': {
       'icon': 'icon-assignment_24px',
       'color': '#33d0bb',
-      'value': 8
+      'value': 0
     }
   }
 
@@ -470,6 +531,10 @@ export class WorkspaceCloneDataComponent extends BaseContainer implements OnInit
       this.summaryCache['Pre-Inured PLTs'] = {
         ...this.summaryCache['Pre-Inured PLTs'],
         value : this.getFormValueByKey('from').plts.length
+      };
+      this.summaryCache['Sources Projects'] = {
+        ...this.summaryCache['Pre-Inured PLTs'],
+        value : Array.from(new Set(this.getFormValueByKey('from').plts.map(p => p.projectId))).length
       };
       this.cloneConfig = {
         ...this.cloneConfig,
@@ -599,8 +664,9 @@ export class WorkspaceCloneDataComponent extends BaseContainer implements OnInit
   }
 
   clone() {
+
     let body = {
-      pltIds: this.getFormValueByKey('from').plts,
+      pltIds: this.getFormValueByKey('from').plts.map(p => p.pltId),
       cloningType: '',
       newProjectName: '',
       newProjectDescription: '',
@@ -634,7 +700,6 @@ export class WorkspaceCloneDataComponent extends BaseContainer implements OnInit
         };
         break;
     }
-
 
     this.dispatch(new fromWS.CommitClone(body));
 

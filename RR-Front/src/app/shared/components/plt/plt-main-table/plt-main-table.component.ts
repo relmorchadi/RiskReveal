@@ -67,7 +67,7 @@ export class PltMainTableComponent implements OnInit {
   }
 
   checkAll($event) {
-    console.log($event);
+
     this.actionDispatcher.emit({
       type: tableStore.onCheckAll,
       payload: this.tableInputs.showDeleted
@@ -287,25 +287,26 @@ export class PltMainTableComponent implements OnInit {
     })
   }
 
-  selectSinglePLT(pltId: number, $event: boolean) {
+  selectSinglePLT(pltId: number, projectId: number, $event: boolean) {
 
     this.actionDispatcher.emit({
       type: tableStore.toggleSelectedPlts,
       payload: {
         [pltId]: {
-          type: $event
+          type: $event,
+          projectId
         }
       }
     })
   }
 
-  handlePLTClick(pltId, i: number, $event: MouseEvent) {
+  handlePLTClick(pltId, i: number, projectId: number, $event: MouseEvent) {
 
 
     const isSelected = _.findIndex(!this.tableInputs.showDeleted ? this.tableInputs.selectedListOfPlts : this.tableInputs.selectedListOfDeletedPlts, el => el == pltId) >= 0;
     if ($event.ctrlKey || $event.shiftKey) {
       this.lastClick = 'withKey';
-      this.handlePLTClickWithKey(pltId, i, !isSelected, $event);
+      this.handlePLTClickWithKey(pltId, i, projectId, !isSelected, $event);
     } else {
       this.lastSelectedId = i;
       this.actionDispatcher.emit({
@@ -319,9 +320,9 @@ export class PltMainTableComponent implements OnInit {
     }
   }
 
-  private handlePLTClickWithKey(pltId: number, i: number, isSelected: boolean, $event: MouseEvent) {
+  private handlePLTClickWithKey(pltId: number, i: number, projectId: number, isSelected: boolean, $event: MouseEvent) {
     if ($event.ctrlKey) {
-      this.selectSinglePLT(pltId, isSelected);
+      this.selectSinglePLT(pltId, projectId, isSelected);
       this.lastSelectedId = i;
       return;
     }

@@ -159,6 +159,35 @@ export class CommitCloneSuccess {
   }
 }
 
+export class SetCloneDataWsSource {
+  static readonly type = '[PLT Main] Set workspace source';
+
+  constructor(public payload: any) {
+  }
+}
+
+export class SetCloneDataWsTarget {
+  static readonly type = '[PLT Main] Set workspace target';
+
+  constructor(public payload: any) {
+  }
+}
+
+export class SetCloneDataSelectedPlts {
+  static readonly type = '[PLT Main] Set selected Plts';
+
+  constructor(public payload: any) {
+  }
+}
+
+export class SetDefaultCloneWsTarget {
+  static readonly type = '[PLT Main] Default Clone Ws Target';
+
+  constructor() {
+  }
+}
+
+
 export class AddNewTag {
   static readonly type = '[PLT Main] Add New Tag';
 

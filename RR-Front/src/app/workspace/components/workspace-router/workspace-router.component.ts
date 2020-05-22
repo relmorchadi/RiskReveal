@@ -88,7 +88,8 @@ export class WorkspaceRouterComponent implements OnInit, OnChanges {
     console.log(route);
     const {wsId, uwYear} = this.state.data;
     this.store.dispatch(
-      [new UpdateWsRouting(this.state.wsIdentifier, route), new Navigate(route ? [`workspace/${wsId}/${uwYear}/${route}`] : [`workspace/${wsId}/${uwYear}/projects`])]
+      [new UpdateWsRouting(this.state.wsIdentifier, route),
+        new Navigate(route ? [`workspace/${wsId}/${uwYear}/${route}`] : [`workspace/${wsId}/${uwYear}/projects`])]
     );
   }
 

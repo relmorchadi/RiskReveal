@@ -8,9 +8,9 @@ import {
 } from '@angular/core';
 import {NzDropdownContextComponent, NzDropdownService, NzMenuItemDirective} from 'ng-zorro-antd';
 import * as _ from 'lodash';
-import {Actions, ofActionSuccessful, Store} from '@ngxs/store';
+import {Actions, ofActionSuccessful, Select, Store} from '@ngxs/store';
 import * as fromWorkspaceStore from '../../store';
-import {SelectProject, WorkspaceState} from '../../store';
+import {SelectProject, SetCloneDataWsSource, SetDefaultCloneWsTarget, WorkspaceState} from '../../store';
 import {switchMap, tap} from 'rxjs/operators';
 import {ActivatedRoute, Router} from '@angular/router';
 import {Message} from '../../../shared/message';
@@ -25,6 +25,9 @@ import {ExcelService} from '../../../shared/services/excel.service';
 import produce from "immer";
 import {TableHandlerImp} from "../../../shared/implementations/table-handler.imp";
 import {TableServiceImp} from "../../../shared/implementations/table-service.imp";
+import * as fromWS from "../../store/states/workspace.state";
+import {UpdateWsRouting} from "../../store";
+import {Navigate} from "@ngxs/router-plugin";
 
 @Component({
   selector: 'app-workspace-plt-browser',
@@ -38,6 +41,8 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
   leftMenuInputs: leftMenuStore.Input;
   collapsedTags: boolean= true;
   @ViewChild('leftMenu') leftMenu: any;
+  @Select(WorkspaceState.getCurrentWorkspaces) currentWs$;
+  currentWs: any;
 
   isColManagerVisible: boolean;
 
@@ -140,6 +145,7 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
   openedPlt: any;
 
   ngOnInit() {
+    this.currentWs$.subscribe(ws => this.currentWs = ws);
 
     this.handler.visibleColumns$.subscribe((cols) => {
       this.visibleColumns = cols;
@@ -187,7 +193,7 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
     })
   }
 
-  selectedPlt: any;
+  selectedPlt = {};
   tagForMenu: any;
   addTagModalPlaceholder: any;
   showDeleted: boolean;
@@ -372,9 +378,42 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
     switch (action.type) {
       case 'View Detail':
         this.openPltInDrawer(action.payload);
+        break;
+      case 'Toggle check box':
+        this.onSelectPlt(action.payload);
+        break;
+      case 'Commit clone':
+        this.clonePlt();
     }
   }
 
+  onSelectPlt(payload: any) {
+    this.selectedPlt = {
+      ...this.selectedPlt,
+      [payload.id]: {
+        selected: payload.selected,
+        projectId: this.selectedProject.projectId
+      }
+    };
+  }
+  clonePlt() {
+    this.dispatch(new SetDefaultCloneWsTarget());
+    this.dispatch(new SetCloneDataWsSource({
+      plts: Object.keys(this.selectedPlt).filter(id => this.selectedPlt[id].selected).map(id => ({
+        pltId: id,
+        projectId: this.selectedPlt[id].projectId
+      })),
+      wsId: this.currentWs.workspaceContextCode,
+      uwYear: this.currentWs.uwYear,
+      detail: this.currentWs.cedantName + ' | ' + this.currentWs.workspaceName + ' | ' + this.currentWs.uwYear +
+          ' | ' + this.currentWs.workspaceContextCode
+    }));
+    const {wsId, uwYear} = this.currentWs;
+    this.dispatch(
+        [new UpdateWsRouting(wsId + '-' + uwYear, 'CloneData'),
+          new Navigate([`workspace/${wsId}/${uwYear}/CloneData`])]
+    );
+  }
   closePltInDrawer() {
     this.dispatch(new fromWorkspaceStore.ClosePLTinDrawer({
       wsIdentifier: this.workspaceId + '-' + this.uwy

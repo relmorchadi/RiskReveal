@@ -167,7 +167,13 @@ export class WorkspaceService {
             selectedFiles: null,
             importedPLTs: null
           },
-          inuring: defaultInuringState
+          inuring: defaultInuringState,
+          cloneData: {
+            workspaceSource: null,
+            workspaceTarget: null,
+            selectedPLTs: []
+          }
+
         };
         draft.loading = false;
         draft.currentTab = {...draft.currentTab,
@@ -312,7 +318,12 @@ export class WorkspaceService {
               selectedFiles: null,
               importedPLTs: null
             },
-            inuring: defaultInuringState
+            inuring: defaultInuringState,
+            cloneData: {
+              workspaceSource: null,
+              workspaceTarget: null,
+              selectedPLTs: []
+            }
           }
         }));
       }

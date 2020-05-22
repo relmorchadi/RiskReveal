@@ -90,55 +90,43 @@ public class CloningScorPltHeaderService {
     }
 
     public ProjectEntity getCloningIntoProject(String cloningType, Integer workspaceUwYear, String workspaceContextCode,
-                                               String projectName, String projectDescription, Long existingProjectId)
+                                               String projectName, String projectDescription, Long existingProjectId,
+                                               List<PltHeaderEntity> pltsResults)
     throws com.scor.rr.exceptions.RRException{
-        //System.out.println("[clone data]: creating target project; cloning type : " + cloningType);
-        //System.out.println(projectDescription + " " + projectName);
         if (this.workspaceRepository.findByWorkspaceContextCodeAndWorkspaceUwYear(workspaceContextCode, workspaceUwYear).isPresent()) {
             WorkspaceEntity workspaceTarget = this.workspaceRepository.findByWorkspaceContextCodeAndWorkspaceUwYear
                     (workspaceContextCode, workspaceUwYear).get();
-            Optional<ProjectEntity> projs = this.projectRepository.findByProjectNameAndWorkspaceId(projectName, workspaceTarget.getWorkspaceId());
-            if (projs.isPresent()) {
-                return projs.get();
-            } else {
-                /**
-                 *  CREATE PROJECT
-                 */
-                return this.createNewProject(workspaceUwYear,
-                        workspaceContextCode,
-                        projectName,
-                        projectDescription);
-            }
-
-/*            switch(cloningType) {
+            switch(cloningType) {
                 case "KEEP_PROJECT_NAME":
-                    Optional<ProjectEntity> projs = this.projectRepository.findByProjectNameAndWorkspaceId(projectName, workspaceTarget.getWorkspaceId());
-                    if (projs.isPresent()) {
-                        return projs.get();
-                    } else {
-                        /**
-                         *  CREATE PROJECT
-                        return this.createNewProject(workspaceUwYear,
-                                workspaceContextCode,
-                                projectName,
-                                projectDescription);
+                    for(PltHeaderEntity plt : pltsResults) {
+                        ProjectEntity project = this.projectRepository.findById(plt.getProjectId()).get();
+                        if (project.getProjectName().equals(projectName)){
+                            return project;
+                        }
                     }
                 case "NEW_PROJECT":
+                    for(PltHeaderEntity plt : pltsResults) {
+                        ProjectEntity project = this.projectRepository.findById(plt.getProjectId()).get();
+                        if (project.getProjectName().equals(projectName)){
+                            return project;
+                        }
+                    }
                     return this.createNewProject(workspaceUwYear,
                             workspaceContextCode,
                             projectName,
                             projectDescription);
                 case "EXISTING_PROJECT":
-                    Optional<ProjectEntity> existingProjects = this.projectRepository.findById(existingProjectId);
-                    if (existingProjects.isPresent()) {
-                        return existingProjects.get();
+                    Optional<ProjectEntity> projs = this.projectRepository.findById(existingProjectId);
+                    if (projs.isPresent()) {
+                        return projs.get();
                     } else {
                         throw new com.scor.rr.exceptions.RRException(ExceptionCodename.PROJECT_NOT_FOUND, 1);
                     }
                 default:
-                    return null;
+                    throw new com.scor.rr.exceptions.RRException(ExceptionCodename.PROJECT_NOT_FOUND, 1);
             }
-  */      } else {
+
+        } else {
             throw new com.scor.rr.exceptions.RRException(ExceptionCodename.WORKSPACE_NOT_FOUND, 1);
         }
     }
@@ -147,10 +135,6 @@ public class CloningScorPltHeaderService {
             throws com.scor.rr.exceptions.RRException{
 
         List<PltHeaderEntity> pltsResults = new ArrayList<PltHeaderEntity>();
-
-        System.out.println("************************** request ");
-        System.out.println(request);
-
 
         for(Long pltId : request.getPltIds()) {
             // create new plt header entity
@@ -171,37 +155,6 @@ public class CloningScorPltHeaderService {
             newAdjustmentThread.setInitialPLT(newPurePlt);
             newAdjustmentThread.setFinalPLT(newPLT);
             this.adjustmentThreadRepository.save(newAdjustmentThread);
-
-            // get or create target project (depends on clone type)
-            switch(request.getCloningType()) {
-                case "KEEP_PROJECT_NAME":
-                    newPLT.setProjectId(this.getCloningIntoProject(
-                            request.getCloningType(),
-                            request.getTargetWorkspaceUwYear(),
-                            request.getTargetWorkspaceContextCode(),
-                            sourceProject.getProjectName(),
-                            sourceProject.getProjectDescription(),
-                            request.getExistingProjectId()).getProjectId());
-                    break;
-                case "NEW_PROJECT":
-                    newPLT.setProjectId(this.getCloningIntoProject(
-                            request.getCloningType(),
-                            request.getTargetWorkspaceUwYear(),
-                            request.getTargetWorkspaceContextCode(),
-                            request.getNewProjectName(),
-                            request.getNewProjectDescription(),
-                            request.getExistingProjectId()).getProjectId());
-                    break;
-                case "EXISTING_PROJECT":
-                    newPLT.setProjectId(this.getCloningIntoProject(
-                            request.getCloningType(),
-                            request.getTargetWorkspaceUwYear(),
-                            request.getTargetWorkspaceContextCode(),
-                            null,
-                            null,
-                            request.getExistingProjectId()).getProjectId());
-                    break;
-            }
             // clone model analysis
             Optional<ModelAnalysisEntity> modelAnalysisEntity = this.modelAnalysisEntityRepository.findById(sourcePlt.getModelAnalysisId());
             if (modelAnalysisEntity.isPresent()) {
@@ -230,6 +183,36 @@ public class CloningScorPltHeaderService {
                 e.printStackTrace();
             }
 
+
+            // get or create target project (depends on clone type)
+            switch(request.getCloningType()) {
+                case "KEEP_PROJECT_NAME":
+                    newPLT.setProjectId(this.getCloningIntoProject(
+                            request.getCloningType(),
+                            request.getTargetWorkspaceUwYear(),
+                            request.getTargetWorkspaceContextCode(),
+                            sourceProject.getProjectName(),
+                            sourceProject.getProjectDescription(),
+                            request.getExistingProjectId(), pltsResults).getProjectId());
+                    break;
+                case "NEW_PROJECT":
+                    newPLT.setProjectId(this.getCloningIntoProject(request.getCloningType(),
+                            request.getTargetWorkspaceUwYear(),
+                            request.getTargetWorkspaceContextCode(),
+                            request.getNewProjectName(),
+                            request.getNewProjectDescription(),
+                            request.getExistingProjectId(), pltsResults).getProjectId());
+                    break;
+                case "EXISTING_PROJECT":
+                    newPLT.setProjectId(this.getCloningIntoProject(
+                            request.getCloningType(),
+                            request.getTargetWorkspaceUwYear(),
+                            request.getTargetWorkspaceContextCode(),
+                            null,
+                            null,
+                            request.getExistingProjectId(),pltsResults).getProjectId());
+                    break;
+            }
             newPurePlt.setProjectId(newPLT.getProjectId());
             this.pltHeaderRepository.save(newPurePlt);
             pltsResults.add(this.pltHeaderRepository.save(newPLT));

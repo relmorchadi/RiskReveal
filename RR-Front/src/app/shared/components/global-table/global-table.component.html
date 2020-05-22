@@ -3,7 +3,7 @@
     <div class="div-title">
       <span class="title">PLTs</span>
       <div class="single-col-button">
-        <button class="a-buttons-contained" style="margin-left: 10px;">clone from</button>
+        <button class="a-buttons-contained" style="margin-left: 10px;" (click)="cloneFrom()">clone from</button>
       </div>
     </div>
     <div class="right">
@@ -86,7 +86,7 @@
                 <div style="padding-left: 9px;">
                   <label nz-checkbox
                          [nzChecked]="selectedIds[row.pltId]"
-                         (nzCheckedChange)="onCheckBox(row.pltId, i, $event)"></label>
+                         (nzCheckedChange)="onCheckBox(row.pltId,  i, $event)"></label>
                 </div>
               </td>
               <td (click)="onRowSelect(row.pltId, i, $event)" *ngFor="let col of cols">

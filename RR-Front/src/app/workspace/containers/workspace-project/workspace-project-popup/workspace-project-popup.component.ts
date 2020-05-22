@@ -338,7 +338,6 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
     }));
 
     this.getPlts().subscribe((data) => {
-
       this.updateLeftMenuInputs('systemTagsCount', this.systemTagService.countSystemTags(data));
 
       this.setInputs('listOfPltsCache', _.map(data, (v, k) => ({...v, pltId: k})));
@@ -653,6 +652,7 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
         }));
 
         this.getPlts().subscribe((data) => {
+
           console.log(data);
 
           let ar = data;
@@ -667,10 +667,13 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
 
           _.forEach(data, (v, k) => {
             if (v.selected) {
-
-              this.setInputs('selectedListOfPlts', _.concat(this.getInputs('selectedListOfPlts'), k));
+              this.setInputs('selectedListOfPlts', _.concat(this.getInputs('selectedListOfPlts'),
+                  {
+                    pltId: k,
+                    projectId: v.projectId
+                  }));
                this.updateMenuKey('basket', _.concat(this.getRightMenuKey('basket'), {
-                pltId: v.pltId,
+                pltId: v,
                 ...v
               }));
            }
@@ -816,6 +819,7 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
   }
 
   toggleSelectPlts(plts: any) {
+    console.log(plts)
     this.dispatch(new fromWorkspaceStore.ToggleSelectPlts({
       wsIdentifier: this.getInputs('wsId') + '-' + this.getInputs('uwYear'),
       plts,
@@ -876,10 +880,10 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
 
   setSelectedProjects($event) {
 
-    console.log('selectedProject', $event);
+
     this.setInputs('selectedProject', $event);
     this.updateLeftMenuInputs('projects', _.map(this.leftMenuInputs.projects, p => ({...p, selected: +p.projectId == +$event})));
-    console.log(this.leftMenuInputs.projects);
+
   }
 
   clear() {
@@ -964,7 +968,6 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
   }
 
   tableActionDispatcher(action: Message) {
-
     switch (action.type) {
       case tableStore.filterData:
         this.updateTable('filterData', action.payload);
@@ -1059,7 +1062,7 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
   }
 
   resetPath() {
-    console.log('reset');
+
     this.setInputs('selectedProject', 0);
     this.updateTableAndTagsInputs('filterData', _.omit(this.getTableInputKey('filterData'), 'project'));
     this.updateLeftMenuInputs('projects', _.map(this.leftMenuInputs.projects, p => ({...p, selected: false})));
@@ -1133,7 +1136,7 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
 
         }
         else {
-          console.log(action.payload);
+
 
           action.payload.visible.forEach(avCol => {
             avCol.visible = true;
@@ -1143,7 +1146,7 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
           });
           if(this.marketChannel === 'FAC') {
             this.columnsFac = [...action.payload.visible, ...action.payload.available]
-            console.log(this.columnsFac)
+
           } else {
             this.columnsTreaty = [...action.payload.visible, ...action.payload.available]
           }
