@@ -6,5 +6,5 @@ import {ScrollItemDirective} from "./scroll-item.directive";
 export const DIRECTIVES= [KeyDownScrollDirective, ScrollToParentDirective, ScrollManagerDirective, ScrollItemDirective]
 
 export * from './scroll-to-parent.directive';
-export * from './search-input.directive';
+export * from '../../shared/directives/search-input.directive';
 export * from './key-down-scroll.directive';

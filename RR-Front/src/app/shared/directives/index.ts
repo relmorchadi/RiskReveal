@@ -4,7 +4,7 @@ import {ScrollIndicatorDirective} from "./scroll-indicator.directive";
 import {SyncScrollDirective} from "./sync-scroll.directive";
 import {TableRowsDirective} from "./table-rows.directive";
 import {RrNumberDirective} from "./rr-number.directive";
-import {SearchInputDirective} from "../../core/directives";
+import {SearchInputDirective} from "./search-input.directive";
 
 export const DIRECTIVES = [SearchInputDirective, HighlightDirective, ScrollerDirective, ScrollIndicatorDirective, SyncScrollDirective, TableRowsDirective, RrNumberDirective];
 

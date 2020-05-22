@@ -24,8 +24,8 @@ import {HasStatusPipe} from "./has-status.pipe";
 import {TableFilterPipe} from "./table-filter.pipe";
 import {GetIdentifiersPipe} from "./get-identifiers.pipe";
 import {FilterByPathPipe} from "./filter-by-path.pipe";
-import {BoldSpanPipe} from "../../core/pipes";
 import {IncludesPipe} from "./includes.pipe";
+import {BoldSpanPipe} from "./bold-span.pipe";
 
 export const PIPES = [
     BoldSpanPipe,
