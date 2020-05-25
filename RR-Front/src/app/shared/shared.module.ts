@@ -21,7 +21,13 @@ import { TrimSecondaryFormatPipe } from './pipes/trim-secondary-format.pipe';
 import {NgxEchartsModule} from 'ngx-echarts';
 import { AngularResizeElementModule } from 'angular-resize-element';
 import {SERVICES} from "./services";
-
+import {AgGridModule} from "@ag-grid-community/angular";
+import {CustomBooleanFilter} from "./components/grid/custom-boolean-filter/custom-boolean-filter.component";
+import {CustomBooleanFloatingFilter} from "./components/grid/custom-boolean-floating-filter/custom-boolean-floating-filter.component";
+import {StatusCellRenderer} from "./components/grid/status-cell-renderer/status-cell-renderer.component";
+import {BooleanCellRenderer} from "./components/grid/boolean-cell-renderer/boolean-cell-renderer.component";
+import {DateCellRenderer} from "./components/grid/date-cell-renderer/date-cell-renderer.component";
+import {NumberCellRenderer} from "./components/grid/number-cell-renderer/number-cell-renderer.component";
 
 @NgModule({
   declarations: [...COMPONENTS, ...PIPES, ...DIRECTIVES, TrimFormatPipe, TrimSecondaryFormatPipe],
@@ -65,7 +71,7 @@ import {SERVICES} from "./services";
     ProgressSpinnerModule,
     ...COMPONENTS,
     ...PIPES,
-    ...DIRECTIVES
+    ...DIRECTIVES,
   ]
 })
 export class SharedModule { }

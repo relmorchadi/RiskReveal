@@ -15,6 +15,7 @@ import {WorkspaceScopeCompletenceComponent} from './workspace-scope-completence/
 import {WorkspaceProjectPopupComponent} from './workspace-project/workspace-project-popup/workspace-project-popup.component';
 import {CreateProjectPopupComponent} from './workspace-project/create-project-popup/create-project-popup.component';
 import {WorkspaceCalibrationNewComponent} from "./workspace-calibration-new/workspace-calibration-new.component";
+import {PltBrowserComponent} from "./plt-browser-new/plt-browser.component";
 
 export const CONTAINERS = [
   WorkspaceMainComponent,
@@ -33,7 +34,8 @@ export const CONTAINERS = [
   WorkspaceScopeCompletenceComponent,
   WorkspaceProjectPopupComponent,
   CreateProjectPopupComponent,
-  WorkspaceCalibrationNewComponent
+  WorkspaceCalibrationNewComponent,
+  PltBrowserComponent
 ];
 
 export * from './workspace-risk-link/workspace-risk-link.component';

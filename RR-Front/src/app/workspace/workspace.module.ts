@@ -47,6 +47,13 @@ import {GetDeltaPipe} from "./pipes/get-delta.pipe";
 import {FinancialUnitPipe} from "./pipes/financial-unit.pipe";
 import {ExchangeRatePipe} from "../shared/pipes/exchange-rate.pipe";
 import { AttachPltsPopUpComponent } from './components/scopeCompleteness/attach-plts-pop-up/attach-plts-pop-up.component';
+import {AgGridModule} from "@ag-grid-community/angular";
+import {CustomBooleanFilter} from "../shared/components/grid/custom-boolean-filter/custom-boolean-filter.component";
+import {CustomBooleanFloatingFilter} from "../shared/components/grid/custom-boolean-floating-filter/custom-boolean-floating-filter.component";
+import {StatusCellRenderer} from "../shared/components/grid/status-cell-renderer/status-cell-renderer.component";
+import {BooleanCellRenderer} from "../shared/components/grid/boolean-cell-renderer/boolean-cell-renderer.component";
+import {DateCellRenderer} from "../shared/components/grid/date-cell-renderer/date-cell-renderer.component";
+import {NumberCellRenderer} from "../shared/components/grid/number-cell-renderer/number-cell-renderer.component";
 
 @NgModule({
   entryComponents: [...COMPONENTS, ...CONTAINERS, ...INURING_NODES],
@@ -57,6 +64,7 @@ import { AttachPltsPopUpComponent } from './components/scopeCompleteness/attach-
 
   ],
   imports: [
+    AgGridModule.withComponents([ CustomBooleanFilter, CustomBooleanFloatingFilter, StatusCellRenderer, BooleanCellRenderer, DateCellRenderer, NumberCellRenderer]),
     GridsterModule,
     SharedModule,
     FormsModule,

@@ -13,6 +13,7 @@ import {Navigate} from "@ngxs/router-plugin";
 import {Store} from "@ngxs/store";
 import * as _ from 'lodash';
 import {WorkspaceCalibrationNewComponent} from "../../containers/workspace-calibration-new/workspace-calibration-new.component";
+import {PltBrowserComponent} from "../../containers/plt-browser-new/plt-browser.component";
 
 /**
  * @Component Workspace Router
@@ -44,6 +45,7 @@ export class WorkspaceRouterComponent implements OnInit, OnChanges {
     //Activity: {component: WorkspaceActivityComponent, selector: (state) => state},
     PltBrowser: {component: WorkspacePltBrowserComponent, selector: (state) => state.pltManager},
     RiskLink: {component: WorkspaceRiskLinkComponent, selector: (state) => state},
+    PltManager: {component: PltBrowserComponent, selector: (state) => state},
     //FileBasedImport: {component: WorkspaceFileBaseImportComponent, selector: (state) => state},
     CloneData: {component: WorkspaceCloneDataComponent, selector: (state) => state},
     Exposures: {component: WorkspaceExposuresComponent, selector: (state) => state},

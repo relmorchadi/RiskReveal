@@ -259,7 +259,7 @@ export class TableHandlerImp implements TableHandlerInterface, OnDestroy {
     this.params = params;
 
     const init$ = this._api.filterByProject({
-      projectId: selectedProject.projectId
+      projectId: selectedProject ? selectedProject.projectId + '' : null
     }).pipe(
         take(1),
         share()
@@ -586,7 +586,7 @@ export class TableHandlerImp implements TableHandlerInterface, OnDestroy {
 
   filterByProjectId(projectId: number) {
     const filter$ = this._api.filterByProject({
-      projectId: projectId
+      projectId: projectId + ''
     }).pipe(share());
 
 

@@ -7,5 +7,5 @@ public class UpdateColumnFilterCriteriaRequest {
     Long viewContextId;
     Long viewContextColumnId;
     String filterCriteria;
-    Long projectId;
+    String projectId;
 }

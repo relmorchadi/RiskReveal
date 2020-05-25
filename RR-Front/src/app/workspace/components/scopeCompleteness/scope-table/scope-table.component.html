@@ -60,7 +60,7 @@
 
       <div class="center-header" *ngIf="col.type === 'contractCol'">
         {{col.topHeader}}<br/>
-        <i class="icon-check_circle_24px" *ngIf="checkColumnAttached(col, i)" style="font-size: 22px;color: #60E7DA;"></i>
+        <i class="icon-check_circle_24px" *ngIf="checkColumnAttached(col, i)" style="font-size: 26px;color: #60E7DA;"></i>
       </div>
 
       <div *ngIf="col.type === 'commentary'">
@@ -153,16 +153,17 @@
                 </span>
                 </div>
               </div>
+
               <div *ngIf="checkExpected(rowData, col, i) == 'attached'" class="icon-holder" nz-tooltip
                    [nzTitle]="attached">
                 <div class="icon-holder">
                   <ng-container>
-                    <i class="icon-check_circle_24px" [ngStyle]="{'color': checkUnexpected(rowData, col) ? '#60E7DA' : 'orange'}" style="font-size: 22px;"></i>
+                    <i class="icon-check_circle_24px" [ngStyle]="{'color': checkUnexpected(rowData, col) ? 'orange' : '#60E7DA'}" style="font-size: 26px;"></i>
                   </ng-container>
                 </div>
               </div>
               <ng-template #attached>
-                Qualifying PLTs Attached
+                Qualifying PLTs Attached <span *ngIf="checkUnexpected(rowData, col)">Where not expected</span>
               </ng-template>
             </ng-container>
 
@@ -255,11 +256,11 @@
               <div *ngIf="checkExpected(rowData, col, i) == 'attached'" class="icon-holder" nz-tooltip
                    [nzTitle]="attached">
                 <div class="icon-holder">
-                  <i class="icon-check_circle_24px" [ngStyle]="{'color': checkUnexpected(rowData, col) ? 'orange' : '#60E7DA'}" style="font-size: 22px;"></i>
+                  <i class="icon-check_circle_24px" [ngStyle]="{'color': checkUnexpected(rowData, col) ? 'orange' : '#60E7DA'}" style="font-size: 26px;"></i>
                 </div>
               </div>
               <ng-template #attached>
-                Qualifying PLTs Attached
+                Qualifying PLTs Attached <span *ngIf="checkUnexpected(rowData, col)">Where not expected</span>
               </ng-template>
 
 
@@ -279,7 +280,7 @@
                 <div class="inner-line">
                   <div class="grain-info-wrapper" (click)="expandInnerTR(row.id, rowData.id)">
                     <div style="width: 20px;">
-                      <i class="icon-check_circle_24px" *ngIf="checkRowAttached(rowData, row)" style="font-size: 22px;color: #60E7DA;"></i>
+                      <i class="icon-check_circle_24px" *ngIf="checkRowAttached(rowData, row)" style="font-size: 26px; color: #60E7DA; display: flex; margin-top: 4px;"></i>
                     </div>
                     <i *ngIf="!targetInnerCodes[row.id + rowData.id]" class="icon-keyboard_arrow_right_24px arrow-key-design"></i>
                     <i *ngIf="targetInnerCodes[row.id + rowData.id]" class="icon-keyboard_arrow_down_24px arrow-key-design"></i>
@@ -338,11 +339,11 @@
 
                   <div *ngIf="checkChildExpected(row, rowData, col, i) == 'attached'" class="icon-holder">
                     <div nz-tooltip [nzTitle]="attached">
-                      <i class="icon-check_circle_24px" [ngStyle]="{'color': row.expected[col.columnContext] ? '#60E7DA' : 'orange'}" style="font-size: 22px;"></i>
+                      <i class="icon-check_circle_24px" [ngStyle]="{'color': row.expected[col.columnContext] ? '#60E7DA' : 'orange'}" style="font-size: 26px;"></i>
                     </div>
                   </div>
                   <ng-template #attached>
-                    Qualifying PLTs Attached
+                    Qualifying PLTs Attached <span *ngIf="!row.expected[col.columnContext]">Where not expected</span>
                   </ng-template>
 
                   <div *ngIf="checkChildExpected(row, rowData, col, i)  == 'dispoWs'" class="icon-holder" nz-tooltip
@@ -375,7 +376,7 @@
         <ng-container *ngFor="let plt of row?.pltsAttached">
           <tr *ngIf="targetInnerCodes[row.id + rowData.id]" class="row-hover">
             <ng-container *ngFor="let col of columns; let pltIndex = index">
-              <ng-conatiner *ngIf="filterColumn(col, pltIndex)">
+              <ng-container *ngIf="filterColumn(col, pltIndex)">
                 <th *ngIf="col.type === 'multi'" class="inner-line">
                   <div class="grain-info-wrapper">
                     <div class="td-wrapper-tags">
@@ -395,11 +396,11 @@
                 </th>
                 <th *ngIf="col.type === 'contractCol'" class="divided-col">
                   <div class="icon-holder" *ngIf="attachedPLTToDivision(plt, pltIndex)">
-                    <i class="icon-check_circle_24px" [ngStyle]="{'color': row.expected[col.columnContext] ? '#60E7DA' : 'orange'}" style="font-size: 20px;"></i>
+                    <i class="icon-check_circle_24px" [ngStyle]="{'color': row.expected[col.columnContext] ? '#60E7DA' : 'orange'}" style="font-size: 24px;"></i>
                   </div>
                 </th>
                 <th *ngIf="col.type === 'commentary'" class="divided-col"></th>
-              </ng-conatiner>
+              </ng-container>
             </ng-container>
           </tr>
         </ng-container>
@@ -415,7 +416,7 @@
                 <div class="inner-line">
                   <div class="grain-info-wrapper" (click)="expandInnerRP(row.id, rowData.id)">
                     <div style="width: 20px;">
-                      <i class="icon-check_circle_24px" *ngIf="checkRowAttached(rowData, row)" style="font-size: 22px;color: #60E7DA;"></i>
+                      <i class="icon-check_circle_24px" *ngIf="checkRowAttached(rowData, row)" style="font-size: 26px; color: #60E7DA; display: flex; margin-top: 4px;"></i>
                     </div>
                     <i *ngIf="!regionInnerCodes[row.id + rowData.id]" class="icon-keyboard_arrow_right_24px arrow-key-design"></i>
                     <i *ngIf="regionInnerCodes[row.id + rowData.id]" class="icon-keyboard_arrow_down_24px arrow-key-design"></i>
@@ -474,11 +475,11 @@
 
                   <div *ngIf="checkChildExpected(row, rowData, col, i) == 'attached'" class="icon-holder">
                     <div nz-tooltip [nzTitle]="attached">
-                      <i class="icon-check_circle_24px" [ngStyle]="{'color': row.expected[col.columnContext] ? '#60E7DA' : 'orange'}" style="font-size: 22px;"></i>
+                      <i class="icon-check_circle_24px" [ngStyle]="{'color': row.expected[col.columnContext] ? '#60E7DA' : 'orange'}" style="font-size: 26px;"></i>
                     </div>
                   </div>
                   <ng-template #attached>
-                    Qualifying PLTs Attached
+                    Qualifying PLTs Attached <span *ngIf="!row.expected[col.columnContext]">Where not expected</span>
                   </ng-template>
 
                   <div *ngIf="checkChildExpected(row, rowData, col, i)  == 'dispoWs'" class="icon-holder" nz-tooltip
@@ -531,7 +532,7 @@
                 </th>
                 <th *ngIf="col.type === 'contractCol'" class="divided-col">
                   <div class="icon-holder" *ngIf="attachedPLTToDivision(plt, pltIndex)">
-                    <i class="icon-check_circle_24px" [ngStyle]="{'color': row.expected[col.columnContext] ? '#60E7DA' : 'orange'}" style="font-size: 20px;"></i>
+                    <i class="icon-check_circle_24px" [ngStyle]="{'color': row.expected[col.columnContext] ? '#60E7DA' : 'orange'}" style="font-size: 24px;"></i>
                   </div>
                 </th>
                 <th *ngIf="col.type === 'commentary'" class="divided-col"></th>

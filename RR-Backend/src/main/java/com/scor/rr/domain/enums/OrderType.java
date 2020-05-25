@@ -1,7 +1,7 @@
 package com.scor.rr.domain.enums;
 
 public enum OrderType {
-    ASC("asc"), DESC("desc");
+    asc("asc"), desc("desc");
 
     private String order;
 

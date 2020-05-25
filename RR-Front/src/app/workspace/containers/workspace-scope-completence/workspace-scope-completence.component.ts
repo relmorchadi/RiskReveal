@@ -179,22 +179,7 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
   }
 
   publishFacToPricing() {
-    this.dispatch(new fromWs.PublishToPricingFacProject());
-  }
-
-  showPackage() {
-    let check = false;
-    if (this.treatySections !== undefined) {
-      if (_.differenceWith(this.treatySectionContainer, this.treatySections[0], _.isEqual).length !== 0) {
-        this.showPendingOption = true;
-        check = !this.showCancelOverrideButton() && !this.showOverrideButton();
-      } else {
-        check = false;
-        this.showPendingOption = false;
-      }
-      check ? this.accumulationStatus = 'Pending' : this.accumulationStatus = 'Scope Only';
-    }
-    return check;
+    //this.dispatch(new fromWs.PublishToPricingFacProject());
   }
 
   observeRouteParams() {
