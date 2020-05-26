@@ -165,6 +165,7 @@ public class ImportFileService {
 
     public Long launchFileBasedImport(String instanceId,
                                             String nonrmspicId,
+                                            Long fileBasedImportConfigId,
                                             String userId,
                                             String projectId,
                                             String fileImportSourceResultIds) {
@@ -190,6 +191,7 @@ public class ImportFileService {
                     .addString("periodBasis", (String) properties.get("periodBasis"))
                     .addLong("importSequence", (Long) properties.get("importSequence"))
                     .addString("nonrmspicId", nonrmspicId)
+                    .addLong("fileBasedImportConfigId", fileBasedImportConfigId)
                     .addString("userId", userId)
                     .addString("projectId", projectId)
                     .addString("fileImportSourceResultIds", fileImportSourceResultIds);
@@ -1096,8 +1098,8 @@ public class ImportFileService {
             Map<String, String> metadata = importFileLossDataHeader.getMetadata();
 
             //TODO
-            fileImportSourceResult.setFileBasedImportConfig(fileBasedImportConfigDB.getFileBasedImportConfig().intValue());
-            fileImportSourceResult.setFileBasedImportConfigId(fileBasedImportConfigDB.getFileBasedImportConfig().intValue());
+            fileImportSourceResult.setFileBasedImportConfig(fileBasedImportConfigDB.getFileBasedImportConfigId().intValue());
+            fileImportSourceResult.setFileBasedImportConfigId(fileBasedImportConfigDB.getFileBasedImportConfigId().intValue());
             fileImportSourceResult.setResultName(metadata.get("ResultsName"));
             fileImportSourceResult.setTargetRAPCode(sourceFileImport.getTargetRapCode());
             fileImportSourceResult.setProjectId(fileBasedImportConfigDB.getProjectId().intValue());
