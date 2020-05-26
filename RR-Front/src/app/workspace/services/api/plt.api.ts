@@ -36,4 +36,16 @@ export class PltApi {
     return this.http.post(`${this.URLn}/grouped`, payload)
   }
 
+  public saveTableConfig(payload: any) {
+    return this.http.post(`${this.URLn}/config`, payload)
+  }
+
+  public checkConfig(params: any) {
+    return this.http.get(`${this.URLn}/config/check`, { params })
+  }
+
+  public getConfig(params: any) {
+    return this.http.get(`${this.URLn}/config`, { params })
+  }
+
 }

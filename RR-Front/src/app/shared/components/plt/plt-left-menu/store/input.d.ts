@@ -2,6 +2,7 @@ export interface Input {
   wsId: string;
   uwYear: number;
   projects: any[];
+  selectedProject?: any;
   showDeleted: boolean;
   deletedPltsLength?: number;
   filterData: any;

@@ -1,0 +1,30 @@
+@import "../../../../node_modules/@ag-grid-community/all-modules/dist/styles/ag-grid.scss";
+@import "../../../../node_modules/@ag-grid-community/all-modules/dist/styles/ag-theme-alpine/sass/ag-theme-alpine-mixin.scss";
+
+.ag-theme-alpine {
+  @include ag-theme-alpine((
+          font-family: ("Rubik", sans-serif)
+  ));
+}
+
+.ag-root-wrapper {
+  border: none !important;
+}
+
+.grid-selected-row {
+  background-color: #f4f8be !important;
+}
+
+.ag-theme-alpine .ag-checkbox-input-wrapper.ag-indeterminate::after,
+.ag-theme-alpine .ag-checkbox-input-wrapper.ag-checked::after
+{
+  color: #0700CF;
+}
+
+.ag-header-row-column {
+  background-color: white;
+}
+
+.ag-header-row-floating-filter {
+  background-color: #F5F5F5;
+}
