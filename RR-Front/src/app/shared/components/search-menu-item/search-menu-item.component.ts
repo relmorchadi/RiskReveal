@@ -9,28 +9,28 @@ import {
   ViewChild
 } from '@angular/core';
 import {FormBuilder, FormGroup} from '@angular/forms';
-import {SearchService} from '../../../service';
+import {SearchService} from '../../../core/service';
 import { first, takeUntil} from 'rxjs/operators';
-import {NotificationService} from '../../../../shared/notification.service';
+import {NotificationService} from '../../notification.service';
 import {Router} from '@angular/router';
-import * as SearchActions from '../../../store/actions/search-nav-bar.action';
+import * as SearchActions from '../../../core/store/actions/search-nav-bar.action';
 import {
   closeSearch,
   LoadRecentSearch,
   LoadShortCuts,
   showSavedSearch, SwitchSearchType
-} from '../../../store/actions/search-nav-bar.action';
+} from '../../../core/store/actions/search-nav-bar.action';
 import {Actions, Select, Store} from '@ngxs/store';
-import {SearchNavBar, SearchNavBarItem} from '../../../model/search-nav-bar';
+import {SearchNavBar, SearchNavBarItem} from '../../../core/model/search-nav-bar';
 import * as _ from 'lodash';
 import {Subject, Subscription} from "rxjs";
-import {HelperService} from "../../../../shared/helper.service";
-import {BadgesService } from "../../../service/badges.service";
-import {ShortCut} from "../../../model/shortcut.model";
-import {DashboardState, SearchNavBarState} from "../../../store/states";
-import {BaseContainer} from "../../../../shared/base";
-import {DashboardApi} from "../../../service/api/dashboard.api";
-import {PatchSearchStateAction} from "../../../store/actions/search-nav-bar.action";
+import {HelperService} from "../../helper.service";
+import {BadgesService } from "../../../core/service/badges.service";
+import {ShortCut} from "../../../core/model/shortcut.model";
+import {DashboardState, SearchNavBarState} from "../../../core/store/states";
+import {BaseContainer} from "../../base";
+import {DashboardApi} from "../../../core/service/api/dashboard.api";
+import {PatchSearchStateAction} from "../../../core/store/actions/search-nav-bar.action";
 
 
 @Component({
@@ -301,7 +301,7 @@ export class SearchMenuItemComponent extends BaseContainer implements OnInit, On
 
   onChangeTagValue(badge) {
 
-    let index = _.findIndex(this.state[this.searchType].badges, (row:any) => row.key == badge.key);
+    let index = _.findIndex(this.state[this.searchType].badges, (row: any) => row.key == badge.key);
     this.store.dispatch(new SearchActions.CloseBadgeByIndexAction(index));
     if (this.globalKeyword.length > 0) {
       this.store.dispatch(new SearchActions.SelectBadgeAction(this.convertExpressionToBadge(this.globalKeyword), this.globalKeyword, this.useAlternative()));
