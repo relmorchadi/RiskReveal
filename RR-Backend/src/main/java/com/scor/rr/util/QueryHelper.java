@@ -80,7 +80,7 @@ public class QueryHelper {
     }
 
     private void addSearchClause(ExpertModeFilter expertModeFilter, List<String> sc){
-        sc.add(generateClause(expertModeFilter.getKey(),expertModeFilter.getValue(),expertModeFilter.getOperator()));
+        sc.add(generateClause(expertModeFilter.getField(),expertModeFilter.getValue(),expertModeFilter.getOperator()));
     }
 
     private String generateClause(String columnName, String keyword, Operator operator){

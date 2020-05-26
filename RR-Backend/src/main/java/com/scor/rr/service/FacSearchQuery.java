@@ -66,7 +66,7 @@ public class FacSearchQuery implements QueryInterface {
 
     @Override
     public void addSearchClause(ExpertModeFilter expertModeFilter, List<String> sc) {
-        sc.add(generateClause(expertModeFilter.getKey(),expertModeFilter.getValue(),expertModeFilter.getOperator()));
+        sc.add(generateClause(expertModeFilter.getField(),expertModeFilter.getValue(),expertModeFilter.getOperator()));
     }
 
     @Override
