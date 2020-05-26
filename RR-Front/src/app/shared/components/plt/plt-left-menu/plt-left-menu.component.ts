@@ -35,6 +35,20 @@ export class PltLeftMenuComponent implements OnInit {
     return new Date(d);
   }
 
+  selectWorkspace() {
+    this.actionDispatcher.emit({
+      type: 'filterByProject',
+      payload: null
+    })
+  }
+
+  selectProject(project) {
+    this.actionDispatcher.emit({
+      type: 'filterByProject',
+      payload: project
+    })
+  }
+
   resetPath(){
     this.actionDispatcher.emit({
       type: leftMenuStore.resetPath,

@@ -54,6 +54,7 @@ import {StatusCellRenderer} from "../shared/components/grid/status-cell-renderer
 import {BooleanCellRenderer} from "../shared/components/grid/boolean-cell-renderer/boolean-cell-renderer.component";
 import {DateCellRenderer} from "../shared/components/grid/date-cell-renderer/date-cell-renderer.component";
 import {NumberCellRenderer} from "../shared/components/grid/number-cell-renderer/number-cell-renderer.component";
+import {GroupedCellRenderer} from "../shared/components/grid/grouped-cell-renderer/grouped-cell-renderer.component";
 
 @NgModule({
   entryComponents: [...COMPONENTS, ...CONTAINERS, ...INURING_NODES],
@@ -64,7 +65,7 @@ import {NumberCellRenderer} from "../shared/components/grid/number-cell-renderer
 
   ],
   imports: [
-    AgGridModule.withComponents([ CustomBooleanFilter, CustomBooleanFloatingFilter, StatusCellRenderer, BooleanCellRenderer, DateCellRenderer, NumberCellRenderer]),
+    AgGridModule.withComponents([ CustomBooleanFilter, CustomBooleanFloatingFilter, StatusCellRenderer, BooleanCellRenderer, DateCellRenderer, NumberCellRenderer, GroupedCellRenderer]),
     GridsterModule,
     SharedModule,
     FormsModule,
