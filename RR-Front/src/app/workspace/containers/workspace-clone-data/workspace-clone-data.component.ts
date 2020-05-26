@@ -216,7 +216,7 @@ export class WorkspaceCloneDataComponent extends BaseContainer implements OnInit
   ngOnInit() {
 
     this.cloningStatus$.subscribe(status => {
-      console.log(status);
+
       this.cloningStatus = status
       this.detectChanges();
     });
@@ -283,7 +283,7 @@ export class WorkspaceCloneDataComponent extends BaseContainer implements OnInit
 
 
     this.getCloneDataWsSource$.subscribe(ws => {
-      console.log(ws);
+
       if (ws == null) {
         this.patchProjectForm('from', {
           detail: '',
@@ -458,14 +458,14 @@ export class WorkspaceCloneDataComponent extends BaseContainer implements OnInit
         plts: [],
         wsId: $event.workspaceContextCode,
         uwYear: $event.uwYear,
-        detail: $event.client + ' | ' + $event.workspaceName + ' | ' + $event.uwYear + ' | ' + $event.workspaceContextCode
+        detail: $event.workspaceContextCode + ' | ' + $event.workspaceName + ' | ' + $event.uwYear + ' | ' + $event.workspaceContextCode
       })
     }
     if (currentSourceOfItems == 'to') {
       this.patchProjectForm('to', {
         wsId: $event.workSpaceId,
         uwYear: $event.uwYear,
-        detail: $event.client + ' | ' + $event.workspaceName + ' | ' + $event.uwYear + ' | ' + $event.workspaceContextCode
+        detail: $event.workspaceContextCode + ' | ' + $event.workspaceName + ' | ' + $event.uwYear + ' | ' + $event.workspaceContextCode
       })
     }
 

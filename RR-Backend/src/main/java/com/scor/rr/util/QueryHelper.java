@@ -22,6 +22,7 @@ public class QueryHelper {
     @PostConstruct
     private void feedCountMapper() {
 
+        searchCountMapper.put("COUNTRY_NAME", "CountryName");
         searchCountMapper.put("CLIENT_NAME", "CedantName");
         searchCountMapper.put("CLIENT_CODE", "CedantCode");
         searchCountMapper.put("UW_YEAR", "UWYear");
@@ -53,13 +54,15 @@ public class QueryHelper {
     ////////////////////////////////////////////////////////////////////////////////////
 
     public String generateSqlQuery(List<ExpertModeFilter> filter, List<ExpertModeSort> sort, String keyword, int offset, int size){
+
         String sqlWithoutOffset = generateSqlQueryWithoutOffset(filter, sort,keyword);
         String orderByClause = generateOrderClause(sort);
         String sqlWithoutOffsetQuery = sqlWithoutOffset + " order by c.WorkSpaceId, c.UwYear desc ";
         String offsetQuery = " OFFSET " + offset + " ROWS FETCH NEXT " + size + " ROWS ONLY";
 
         String query= orderByClause.isEmpty() ? sqlWithoutOffsetQuery : sqlWithoutOffset + " order by " + orderByClause;
-
+        System.out.println("************************ query**********************");
+        System.out.println(query);
         return query.concat(offsetQuery);
     }
 
@@ -77,7 +80,7 @@ public class QueryHelper {
     }
 
     private void addSearchClause(ExpertModeFilter expertModeFilter, List<String> sc){
-        sc.add(generateClause(expertModeFilter.getField(),expertModeFilter.getValue(),expertModeFilter.getOperator()));
+        sc.add(generateClause(expertModeFilter.getKey(),expertModeFilter.getValue(),expertModeFilter.getOperator()));
     }
 
     private String generateClause(String columnName, String keyword, Operator operator){

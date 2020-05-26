@@ -80,14 +80,15 @@ export class PltStateService {
       params
     } = payload;
 
-
+    console.log(params);
     return this.wsApi.searchWorkspace(params.workspaceId,params.uwy)
       .pipe(
         mergeMap((ws: any) => {
 
 
           const {workspaceId, uwy } = params;
-          const {workspaceName, programName, cedantName, projects} = ws;
+          console.log(ws);
+          const {projects} = ws;
           const wsIdentifier = `${workspaceId}-${uwy}`;
           (projects || []).length > 0 ? ws.projects= this._selectProject(projects, 0) : null;
           ctx.patchState(produce(ctx.getState(), draft => {

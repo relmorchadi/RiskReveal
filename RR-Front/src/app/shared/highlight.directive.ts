@@ -39,7 +39,6 @@ export class HighlightDirective {
 
   excludeCheck(target) {
     const nodes = Array.from(document.querySelectorAll(this.exclude)) as Array<HTMLElement>;
-    console.log(nodes);
     for (let excludedNode of nodes) {
       if (excludedNode.contains(target)) {
         return true;

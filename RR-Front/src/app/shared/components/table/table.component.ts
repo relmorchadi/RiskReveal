@@ -202,7 +202,7 @@ export class TableComponent implements OnInit {
   }
 
   selectRow(row: any, index: number) {
-    console.log(row, index);
+
 /**    if ((window as any).event.ctrlKey) {
       row.selected = !row.selected;
       this.lastSelectedIndex = index;
@@ -353,7 +353,7 @@ export class TableComponent implements OnInit {
   }
 
   resize(event) {
-    console.log('resize', event);
+
     this.resizeTable.emit(event);
   }
 
