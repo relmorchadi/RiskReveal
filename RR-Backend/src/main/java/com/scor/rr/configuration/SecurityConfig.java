@@ -30,6 +30,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.csrf().disable().exceptionHandling()
                 .authenticationEntryPoint(unauthorizedHandler).and()
                 .cors().and().authorizeRequests()
+                .antMatchers("api/workspace/projects").permitAll()
                 .antMatchers("/api/**")
                 .authenticated().and()
                 .addFilterBefore(getJwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);

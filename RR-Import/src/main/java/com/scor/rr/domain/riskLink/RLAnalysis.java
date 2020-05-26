@@ -3,7 +3,9 @@ package com.scor.rr.domain.riskLink;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.scor.rr.domain.RdmAnalysis;
 import com.scor.rr.domain.RdmAnalysisBasic;
+import com.scor.rr.domain.dto.AnalysisHeader;
 import com.scor.rr.domain.dto.ExpectedFinancialPerspective;
 import com.scor.rr.domain.dto.RLAnalysisToTargetRAPDto;
 import com.scor.rr.domain.enums.ScanLevelEnum;
@@ -200,6 +202,48 @@ public class RLAnalysis {
         this.lastScan = new Date();
     }
 
+    public RLAnalysis(RdmAnalysis rdmAnalysis, AnalysisHeader rlAnalysisHeader, Long projectId, Long rlModelDataSourceId) {
+        this.entity = 1;
+        this.rlModelDataSourceId = rlModelDataSourceId;
+        this.projectId = projectId;
+        this.rdmId = rlAnalysisHeader.getRdmId();
+        this.rdmName = rlAnalysisHeader.getRdmName();
+        this.rlId = rdmAnalysis.getAnalysisId();
+        this.analysisName = rdmAnalysis.getAnalysisName();
+        this.analysisDescription = rdmAnalysis.getDescription();
+        this.defaultGrain = rdmAnalysis.getDefaultGrain(); // TO Check
+        this.exposureType = rdmAnalysis.getExposureType();
+        this.exposureTypeCode = rdmAnalysis.getExposureTypeCode();
+        this.edmNameSourceLink = rdmAnalysis.getEdmNameSourceLink();
+        this.exposureId = rdmAnalysis.getExposureId();
+        this.analysisCurrency = rdmAnalysis.getAnalysisCurrency();
+        this.rlExchangeRate = rdmAnalysis.getRmsExchangeRate();
+        this.typeCode = rdmAnalysis.getTypeCode();
+        this.analysisType = rdmAnalysis.getAnalysisType(); // Not sure
+        this.runDate = new Date();
+        this.region = rdmAnalysis.getRegion();
+        this.peril = rdmAnalysis.getPeril();
+        this.subPeril = rdmAnalysis.getSubPeril();
+        this.lossAmplification = rdmAnalysis.getLossAmplification();
+        this.analysisMode = rdmAnalysis.getAnalysisMode();;
+        this.engineTypeCode = rdmAnalysis.getEngineTypeCode();
+        this.engineType = rdmAnalysis.getEngineType();
+        this.engineVersion = rdmAnalysis.getEngineVersion();
+        this.engineVersionMajor = rdmAnalysis.getEngineVersionMajor();
+        this.profileName = rdmAnalysis.getProfileName();
+        this.profileKey = rdmAnalysis.getProfileKey();
+        this.purePremium = rdmAnalysis.getPurePremium().doubleValue();
+        this.exposureTIV = rdmAnalysis.getExposureTiv();
+//        this.groupType = rdmAnalysis.getGroupTypeName();
+//        this.cedant = rdmAnalysis.getCedant();
+//        this.lob = rdmAnalysis.getLobName();
+        this.regionName = rdmAnalysis.getRegion();
+        this.scanStatus = 1;
+        this.scanLevel = ScanLevelEnum.get(scanStatus);
+        this.lastScan = new Date();
+    }
+
+    // @Todo : review this
     public Boolean compare(RdmAnalysisBasic rdmAnalysisBasic){
         return rdmAnalysisBasic.getAnalysisName() != this.analysisName || rdmAnalysisBasic.getDescription() != this.description  || rdmAnalysisBasic.getEngineVersion()!=this.engineVersion
                 ||rdmAnalysisBasic.getAnalysisCurrency() != this.analysisCurrency || rdmAnalysisBasic.getTypeName() != this.analysisType || rdmAnalysisBasic.getRegion() != this.region

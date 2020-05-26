@@ -22,6 +22,8 @@ public class ValidationError {
     private String columnName;
     @Column(name = "RowIndex")
     private Integer rowIndex;
+    @Column(name = "ColumnIndex")
+    private Integer columnIndex;
     @Column(name = "ErrorDescription")
     private String errorDescription;
 
@@ -30,15 +32,17 @@ public class ValidationError {
     @JsonIgnore
     private BulkImportFile file;
 
-    public ValidationError(String columnName, Integer rowIndex, String errorDescription) {
+    public ValidationError(String columnName, Integer rowIndex, Integer columnIndex, String errorDescription) {
         this.columnName = columnName;
         this.rowIndex = rowIndex;
+        this.columnIndex = columnIndex;
         this.errorDescription = errorDescription;
     }
 
-    public ValidationError(String columnName, Integer rowIndex, String errorDescription, BulkImportFile file) {
+    public ValidationError(String columnName, Integer rowIndex, Integer columnIndex, String errorDescription, BulkImportFile file) {
         this.columnName = columnName;
         this.rowIndex = rowIndex;
+        this.columnIndex = columnIndex;
         this.errorDescription = errorDescription;
         this.file = file;
     }

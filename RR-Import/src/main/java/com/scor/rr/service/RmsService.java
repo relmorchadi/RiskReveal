@@ -38,6 +38,7 @@ import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
 
+
 @Component
 public class RmsService {
 
@@ -151,15 +152,16 @@ public class RmsService {
                 projectId
         ).get(0);
     }
-/**
-    public DetailedScanResult detailedScan(DetailedScanDto detailedScanDto) {
-        return new DetailedScanResult(
-                scanAnalysisDetail(detailedScanDto.getRlAnalysisList(), detailedScanDto.getProjectId()).stream()
-                        .map(analysis -> modelMapper.map(analysis, RLAnalysisDetailedDto.class))
-                        .collect(Collectors.toList()),
-                scanPortfolioDetail(detailedScanDto.getInstanceId(), detailedScanDto.getRlPortfolioList(), detailedScanDto.getProjectId()));
-    }
-*/
+
+    /**
+     * public DetailedScanResult detailedScan(DetailedScanDto detailedScanDto) {
+     * return new DetailedScanResult(
+     * scanAnalysisDetail(detailedScanDto.getRlAnalysisList(), detailedScanDto.getProjectId()).stream()
+     * .map(analysis -> modelMapper.map(analysis, RLAnalysisDetailedDto.class))
+     * .collect(Collectors.toList()),
+     * scanPortfolioDetail(detailedScanDto.getInstanceId(), detailedScanDto.getRlPortfolioList(), detailedScanDto.getProjectId()));
+     * }
+     */
     public DetailedScanResult paralleledDetailedScan(DetailedScanDto detailedScanDto) {
 
         List<Future<List<RLAnalysis>>> analysisFutures = new ArrayList<>();
@@ -383,8 +385,6 @@ public class RmsService {
     public List<RLAnalysis> scanAnalysisDetail(List<AnalysisHeader> rlAnalysisList, Long projectId, String fp) {
 
         Map<MultiKey, List<Long>> analysisByRdms = new HashMap<>();
-        Map<Long, RLAnalysis> cache = new HashMap<>();
-
 
         List<RLAnalysis> allScannedAnalysis = new ArrayList<>();
 
@@ -395,10 +395,6 @@ public class RmsService {
 
             rlAnalysisList.stream().map(item -> new MultiKey(item.getRdmId(), item.getRdmName())).distinct()
                     .forEach(key -> analysisByRdms.put(key, this.getAnalysisIdByRdm((Long) key.getKey(0), (String) key.getKey(1), rlAnalysisList)));
-
-//            rlSourceEpHeaderRepository.deleteByRLAnalysisIdList(rlAnalysisList.stream().map(AnalysisHeader::getRlAnalysisId).collect(toList()));
-//            ExecutorService executorService = Executors.newFixedThreadPool(1);
-//            executorService.execute(() -> this.getSourceEpHeaders(analysisByRdms, epPoints, fpCodes, projectId, instanceId));
 
             for (Map.Entry<MultiKey, List<Long>> multiKeyListEntry : analysisByRdms.entrySet()) {
 
@@ -424,7 +420,7 @@ public class RmsService {
                             String systemRegionPeril = this.resolveSystemRegionPeril(rlAnalysis);
                             rlAnalysis.setSystemRegionPeril(systemRegionPeril != null ? systemRegionPeril : rlAnalysis.getRpCode());
                             rlAnalysis.setScanLevel(ScanLevelEnum.Detailed);
-                            List<ExpectedFinancialPerspective> expectedFinancialPerspectives= this.getExpectedFinancialPersp(
+                            List<ExpectedFinancialPerspective> expectedFinancialPerspectives = this.getExpectedFinancialPersp(
                                     dataSource.getInstanceId(),
                                     rdmId,
                                     rdmName,
@@ -525,6 +521,15 @@ public class RmsService {
             }
         }
         return allScannedPortfolios;
+    }
+
+    public void scanAnalysisForBulkImport(AnalysisHeader rlAnalysisHeader, Long projectId, String fp, String instanceId, Long rlModelDataSourceId) {
+
+        this.listRdmAnalysis(instanceId, rlAnalysisHeader.getRdmId(), rlAnalysisHeader.getRdmName(),
+                Collections.singletonList(rlAnalysisHeader.getAnalysisId())).stream()
+                .map(e -> new RLAnalysis(e, rlAnalysisHeader, projectId, rlModelDataSourceId))
+                .forEach(analysis -> rlAnalysisRepository.save(analysis));
+
     }
 
     private List<Long> getAnalysisIdByRdm(Long rdmId, String rdmName, List<AnalysisHeader> rlAnalysisList) {
@@ -1228,7 +1233,6 @@ public class RmsService {
         }
     }
 
-
     private static class CreateEdmSummaryStoredProc extends StoredProcedure {
         private String sqlProc;
 
@@ -1346,4 +1350,6 @@ public class RmsService {
             this.associatedAnalysisRegions = associatedAnalysisRegions;
         }
     }
+
 }
+
