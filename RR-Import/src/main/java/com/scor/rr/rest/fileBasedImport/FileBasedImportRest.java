@@ -1,5 +1,7 @@
 package com.scor.rr.rest.fileBasedImport;
 
+import com.scor.rr.domain.importfile.FileBasedImportConfig;
+import com.scor.rr.domain.importfile.FileImportSourceResult;
 import com.scor.rr.service.fileBasedImport.ImportFileService;
 import com.scor.rr.domain.importfile.FileBasedImportConfigRequest;
 import com.scor.rr.exceptions.RRException;
@@ -7,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -58,7 +62,7 @@ public class FileBasedImportRest {
     }
 
     @GetMapping("retrieveTextFiles")
-    public List<String> retrieveTextFiles(String path) {
+    public List<Map<String,String>> retrieveTextFiles(String path) {
         return importFileService.retrieveTextFiles(path);
     }
 
@@ -66,6 +70,11 @@ public class FileBasedImportRest {
     public ResponseEntity<?> updateFileBasedConfig(@RequestBody FileBasedImportConfigRequest request) throws RRException {
         importFileService.updateFileBasedConfig(request);
         return ResponseEntity.ok("Updated Successfully");
+    }
+
+    @PostMapping("persisteFileBasedImportConfig")
+    public List<FileImportSourceResult> persisteFileBasedImportConfig(@RequestBody FileBasedImportConfigRequest request)  {
+        return importFileService.persisteFileBasedImportConfig(request);
     }
 
     @GetMapping("retrieveFileBasedConfig")
@@ -81,4 +90,7 @@ public class FileBasedImportRest {
                                             String fileImportSourceResultIds) {
         return importFileService.launchFileBasedImport(instanceId, nonrmspicId, userId, projectId, fileImportSourceResultIds);
     }
+
+
+
 }

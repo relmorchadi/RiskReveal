@@ -8,6 +8,7 @@ import com.scor.rr.domain.model.PathNode;
 import com.scor.rr.domain.model.TreeNode;
 import com.scor.rr.exceptions.RRException;
 import com.scor.rr.repository.*;
+import freemarker.template.utility.StringUtil;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.collections.keyvalue.MultiKey;
 import org.apache.commons.io.FilenameUtils;
@@ -24,12 +25,16 @@ import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.annotation.CreatedDate;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -209,7 +214,32 @@ public class ImportFileService {
         File file = new File(path);
         ImportFileLossDataHeader importFileLossDataHeader = parseLossDataTableHeader(file);
         return importFileLossDataHeader.getMetadata();
-        //return importFileLossDataHeader;
+    }
+
+    public List<FileImportSourceResult> persisteFileBasedImportConfig(FileBasedImportConfigRequest request) {
+        List<FileImportSourceResult> fileImportSourceResults=new ArrayList<>();
+        FileBasedImportConfig fileBasedImportConfig=new FileBasedImportConfig();
+        fileBasedImportConfig.setProjectId(Long.parseLong(request.getProjectId()));
+        //fileBasedImportConfig.setSelectedFolderSourcePath(folderPath);
+        fileBasedImportConfigRepository.save(fileBasedImportConfig);
+        System.out.println("taille"+request.getSelectedFileSourcePath().size());
+        for(String filePath : request.getSelectedFileSourcePath()) {
+            System.out.println("filePath" + filePath);
+            Map<String, String> maps = new HashMap<>();
+            //String fileName=filePath.split("\\")[filePath.split("\\").length-1];
+            maps = readMetadata(filePath);
+            FileImportSourceResult fileImportSourceResult = new FileImportSourceResult();
+            fileImportSourceResult.setResultName(maps.get("ResultsName"));
+            fileImportSourceResult.setFinancialPerspective(maps.get("FinPerspectiveDesc"));
+            fileImportSourceResult.setModelVersion(maps.get("Model_Version"));
+            fileImportSourceResult.setFilePath(filePath);
+            fileImportSourceResult.setProjectId(Integer.parseInt(request.getProjectId()));
+            //fileImportSourceResult.setFileName(fileName);
+            fileImportSourceResult.setFileBasedImportConfigId(fileBasedImportConfig.getFileBasedImportConfigId().intValue());
+            fileImportSourceResultRepository.save(fileImportSourceResult);
+            fileImportSourceResults.add(fileImportSourceResult);
+        }
+        return fileImportSourceResults;
     }
 
     public Map<String, String> readPLTdata(String path) {
@@ -484,7 +514,8 @@ public class ImportFileService {
         importFileLossDataHeader.getMetadata().put("File_Name", file.getName());
         importFileLossDataHeader.getMetadata().put("File_Path", file.getParent().replace(getRootFilePath(), ""));
         Date lastUpdated = new Date(file.lastModified());
-        importFileLossDataHeader.getMetadata().put("File_Last_Update_Date", new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(lastUpdated));
+        //importFileLossDataHeader.getMetadata().put("File_Last_Update_Date", new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(lastUpdated));
+        importFileLossDataHeader.getMetadata().put("File_Last_Update_Date", new SimpleDateFormat("yyyy-MM-dd").format(lastUpdated));
         try {
             importFileLossDataHeader.setLastScanDate(new Date());
             br =  new BufferedReader(new FileReader(file));
@@ -515,31 +546,31 @@ public class ImportFileService {
                     value = line.substring(idx+1);
                 }
 
-                if (i == 2) {
+                /*if (i == 4) {
                     if (!name.equals("LossTableHeaderProducer")) {
-                        importFileLossDataHeader.getScanErrors().add("LossTableHeaderProducer must be present in the second line of the file");
+                        importFileLossDataHeader.getScanErrors().add("LossTableHeaderProducer must be present in the fourth line of the file");
                         return importFileLossDataHeader;
                     }
                 }
                 
                 if (i == 3) {
                     if (!name.equals("LossTableHeaderFormat")) {
-                        importFileLossDataHeader.getScanErrors().add("LossTableHeaderFormat must be present in the second third of the file");
+                        importFileLossDataHeader.getScanErrors().add("LossTableHeaderFormat must be present in the third of the file");
                         return importFileLossDataHeader;
                     }
                 }
 
-                if (i == 4) {
-                    if (!name.equals("FileFormatVersion")) {
-                        importFileLossDataHeader.getScanErrors().add("FileFormatVersion must be present in the fourth line of the file");
+                if (i == 2) {
+                    if (!name.equals("File_Version")) {
+                        importFileLossDataHeader.getScanErrors().add("FileVersion must be present in the second line of the file");
                         return importFileLossDataHeader;
                     }
-                }
+                }*/
                 
                 MetadataHeaderSectionEntity metadataDefinition = metadataDefinitionMap.get(name.toUpperCase()); // name la metadataDefinition.getMetadataAttribute()
                 if (metadataDefinition == null) {
                     log.warn("Metadata {} not recognised", name);
-                    importFileLossDataHeader.getMetadata().put("[" + name + "]", value);
+                    importFileLossDataHeader.getMetadata().put(name, value);
                 } else {
                     importFileLossDataHeader.getMetadata().put(String.valueOf(metadataDefinition.getMetadataAttribute()), value);
                 }
@@ -1004,7 +1035,7 @@ public class ImportFileService {
         }
     }
 
-    public List<String> retrieveTextFiles(String path) {
+    /*public List<String> retrieveTextFiles(String path) {
         List<String> textFiles = new ArrayList<>();
         File repo = new File(path);
         if (repo.isDirectory()) {
@@ -1018,6 +1049,28 @@ public class ImportFileService {
             }
         }
         return textFiles;
+    }*/
+
+    public List<Map<String, String>> retrieveTextFiles(String path){
+        List<Map<String,String>> maps=new ArrayList<>();
+        File repo = new File(path);
+        if (repo.isDirectory()) {
+            File fList[] = repo.listFiles();
+            if (fList != null) {
+                for (int i = 0; i < fList.length; i++) {
+                    if ("txt".equalsIgnoreCase(FilenameUtils.getExtension(fList[i].getName()))) {
+                        Map<String, String> map=new HashMap<>();
+                        Map<String,String> mapTemp=readMetadata(fList[i].getPath());
+                        map.put("label",fList[i].getPath());
+                        map.put("createdAt",mapTemp.get("CreateDate").split(" ")[0]);
+                        // new SimpleDateFormat("yyyy-MM-dd").format(lastUpdated)
+                        map.put("updatedAt",mapTemp.get("File_Last_Update_Date"));
+                        maps.add(map);
+                    }
+                }
+            }
+        }
+        return maps;
     }
 
     public void updateFileBasedConfig(FileBasedImportConfigRequest request) throws RRException {
@@ -1097,8 +1150,8 @@ public class ImportFileService {
             Map<String, String> metadata = importFileLossDataHeader.getMetadata();
 
             //TODO
-            fileImportSourceResult.setFileBasedImportConfig(fileBasedImportConfigDB.getFileBasedImportConfig().intValue());
-            fileImportSourceResult.setFileBasedImportConfigId(fileBasedImportConfigDB.getFileBasedImportConfig().intValue());
+            fileImportSourceResult.setFileBasedImportConfigId(fileBasedImportConfigDB.getFileBasedImportConfigId().intValue());
+            fileImportSourceResult.setFileBasedImportConfigId(fileBasedImportConfigDB.getFileBasedImportConfigId().intValue());
             fileImportSourceResult.setResultName(metadata.get("ResultsName"));
             fileImportSourceResult.setTargetRAPCode(sourceFileImport.getTargetRapCode());
             fileImportSourceResult.setProjectId(fileBasedImportConfigDB.getProjectId().intValue());

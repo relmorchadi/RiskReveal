@@ -8,15 +8,20 @@ import javax.persistence.*;
 import java.util.Date;
 
 @Entity
-@Table(name = "FileBasedImportConfig", schema = "dbo", catalog = "RiskReveal")
+@Table(name = "FileBasedImportConfig", schema = "dbo")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class FileBasedImportConfig {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @Column(name = "FileBasedImportConfigId")
+    private Long fileBasedImportConfigId;
+
+    /*@Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Column(name = "FileBasedImportConfig")
-    private Long fileBasedImportConfig;
+    private Long fileBasedImportConfig;*/
 
     @Column(name = "ProjectImportRunId")
     private Long projectImportRunId;

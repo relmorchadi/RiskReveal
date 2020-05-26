@@ -28,7 +28,7 @@
         <div style="width: 77%">
           <div style="display: flex; justify-content: space-between;">
         <span class="body-1 menu-left-header" style="border-top: 4px solid #0700CF;">
-          Text Files Available
+          Files Available
         </span>
             <div class="menu-icon-wrap" style="font-size: 22px; padding: 12px 20px 0;">
               <nz-dropdown [nzTrigger]="'hover'" *ngIf="!collapseSearchFiles" [nzPlacement]="'topRight'">
@@ -73,7 +73,7 @@
                     </div>-->
           <div class="summary-info" style="min-height: 251px" *ngIf="!collapseSearchFiles" [ngClass]="{'empty-table': getFileLength()}">
             <p-table #iTable [columns]="importedFiles" [scrollable]="true" scrollHeight="189px"
-                     [resizableColumns]="true" [value]="selectedData  | tableSortAndFilter : [sortData,filterData]" onsort="onSort($event)">
+                     [resizableColumns]="true" [value]="selectedDataTemp  | tableSortAndFilter : [sortData,filterData]" onsort="onSort($event)">
               <ng-template let-columns pTemplate="colgroup">
                 <colgroup>
                   <ng-container *ngFor="let col of columns">
@@ -102,12 +102,12 @@
 
                         <div class="search-bar-table">
                           <i class="fa fa-search" style="margin: 6px 4px 4px 6px"></i>
-                          <input (input)="iTable.filter($event.target.value, col.field, col.filterMatchMode)" pInputText
+                          <input (input)="onFilterFile($event.target.value, col.field)" pInputText
                                  type="text" [ngModel]="filterTable">
                         </div>
 
                       </div>
-                      <div *ngIf="col.field === 'selected'" style="display:flex; justify-content: center">
+                      <div *ngIf="col.field === 'selected'" style="display:flex; ">
                         <label style="margin-top:20px" nz-checkbox [ngModel]="allCheckedImportedFiles" (ngModelChange)="updateAllChecked('ImportedFiles')"
                                [nzIndeterminate]="indeterminateImportedFiles"></label>
                       </div>
@@ -121,7 +121,7 @@
                 <tr [ngClass]="{'active_contract_item': rowData?.selected}">
                   <ng-container *ngFor="let col of columns">
                     <td *ngIf="col.visible && !col.edit" [ngClass]="{'selected-item': rowData?.selected}">
-                      <div *ngIf="col.type === 'select'" style="display: flex; justify-content: center">
+                      <div *ngIf="col.type === 'select'" style="display: flex; ">
                         <label (ngModelChange)="checkRow($event, i, 'files')" [ngModel]="rowData.selected"
                                nz-checkbox></label>
                       </div>
@@ -196,7 +196,7 @@
           <p-table #iTable [columns]="pltColumns" [scrollable]="true" [scrollHeight]="getHeight()"
                    [(contextMenuSelection)]="contextSelectedItem" [dataKey]="'FileName'" [rowTrackBy]="rowTrackBy"
                    [contextMenu]="cm" [resizableColumns]="true" columnResizeMode="expand"
-                   [value]="fileBase?.selectedFiles | tableSortAndFilter : [sortData,filterData]" onsort="onSort($event)" frozenWidth="485px">
+                   [value]="fileBaseTemp?.selectedFiles | tableSortAndFilter : [sortData,filterData]" onsort="onSort($event)" frozenWidth="485px">
             <ng-template let-columns pTemplate="colgroup">
               <colgroup>
                 <ng-container *ngFor="let col of columns">
@@ -225,13 +225,13 @@
 
                       <div class="search-bar-table">
                         <i class="fa fa-search" style="margin: 6px 4px 4px 6px"></i>
-                        <input (input)="iTable.filter($event.target.value, col.field, col.filterMatchMode)" pInputText
+                        <input (input)="onFilterPLT($event.target.value, col.field)" pInputText
                                type="text" [ngModel]="filterTable">
                       </div>
 
                     </div>
 
-                    <div *ngIf="col.field === 'selected'" style="display:flex; justify-content: center">
+                    <div *ngIf="col.field === 'selected'" style="display:flex">
                       <label style="margin-top:20px" nz-checkbox [ngModel]="allCheckedImportedPlts" (ngModelChange)="updateAllChecked('ImportedPlts')"
                              [nzIndeterminate]="indeterminateImportedPlts"></label>
                     </div>
@@ -247,7 +247,7 @@
                   (click)="selectedPlt = rowData">
                 <ng-container *ngFor="let col of columns">
                   <th *ngIf="col.visible && !col.edit">
-                    <div *ngIf="col.type === 'select'" style="display: flex; justify-content: center">
+                    <div *ngIf="col.type === 'select'" style="display: flex">
                       <label (ngModelChange)="checkRow($event, i, 'plt')" [ngModel]="rowData.selected"
                              nz-checkbox></label>
                     </div>
@@ -281,7 +281,7 @@
                          class="text-data">{{rowData[col.field] | date:'dd/MM/yyyy'}}</div>
                     <div *ngIf="col.type === 'action'"
                          [ngClass]="{'highlight-temp': rowData.highlight}"
-                         class="text-data" style="display: flex;justify-content: center;"><i class="icon-trash-alt"></i>
+                         class="text-data" style="display: flex;justify-content: center;"><i class="icon-trash-alt" (click)="toggleDelete(rowData,i)"></i>
                     </div>
                   </th>
                 </ng-container>
@@ -297,17 +297,18 @@
       </div>
 
       <div style="padding: 10px 10px 0; display: flex; justify-content: flex-end;width: 100%;">
-        <button *ngIf="fileBase?.files?.length > 0" class="a-buttons-contained-micro">
+        <button *ngIf="fileBase?.files?.length > 0" (click)="runImport()" class="a-buttons-contained-micro">
           IMPORT
         </button>
       </div>
+
     </div>
 
-    <div class="menu-detail-wrapper" *ngIf="selectedPlt != null">
+    <div class="menu-detail-wrapper" *ngIf="selectedPlt != null" (click)="selectedPlt = null" >
       <h4 class="menu-left-header"
           style="border-top: 4px solid #0700CF;padding: 25px 0 25px 24px;width: 75%;">
         Attributes Of Selected PLT
-        <i (click)="selectedPlt = null" class="icon-chevron_right_24px"></i>
+        <i class="icon-chevron_right_24px"></i>
       </h4>
       <div>
         <ul>
@@ -317,11 +318,11 @@
           </li>
           <li>
             <span class="list-key subtitle-2">File Path :</span>
-            <span class="list-value">{{selectedPlt.User}}</span>
+            <span class="list-value">{{selectedPlt.File_Path}}</span>
           </li>
           <li>
             <span class="list-key subtitle-2">Last Updated :</span>
-            <span class="list-value"></span>
+            <span class="list-value">{{selectedPlt.File_Last_Update_Date}}</span>
           </li>
           <li>
             <span class="list-key subtitle-2">File Version :</span>
@@ -423,7 +424,7 @@
 <p-dialog
         [visible]="managePopUp"
         [closable]="false"
-        styleClass="m-dialog-modal-lg-h"
+        styleClass="m-dialog-modal-m-h"
         appendTo="body"
         [modal]="true"
         [autoZIndex]="false"
@@ -469,3 +470,24 @@
     </div>
   </p-footer>
 </p-dialog>
+
+
+<p-dialog
+        [visible]="deletePopUp"
+        [closable]="false"
+        styleClass="m-dialog-modal-sm-f"
+        appendTo="body"
+        [modal]="true"
+        [autoZIndex]="false"
+        [responsive]="true"
+>
+
+  <p>ARE YOU SURE YOU WANT TO ABORT THIS PLT ?</p>
+  <p-footer>
+    <div class="footer">
+      <button (click)="toggleDelete(null,null) " class="a-button-text-cancel">Cancel</button>
+      <button class="a-buttons-contained" (click)="deleteRow(this.DataToDelete,this.IndiceToDelete)">Yes</button>
+    </div>
+  </p-footer>
+</p-dialog>
+
