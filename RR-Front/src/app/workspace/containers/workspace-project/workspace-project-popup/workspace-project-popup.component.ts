@@ -443,6 +443,9 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
       type: this.marketChannel == 'FAC' ? 'FAC'  : 'TREATY'
     };
 
+
+    params.filter = params.filter.map(f => ({...f, key: f.field, field: f.key}));
+
     this.searchService.expertModeSearch(params)
       .subscribe((data: any) => {
 
@@ -610,7 +613,7 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
 
     this.selectedWorkspace = event;
 
-    console.log(event)
+    
     this.updateTableAndTagsInputs('wsId', this.marketChannel === 'FAC'? event.workspaceContextCode : event.workSpaceId);
     this.updateTableAndTagsInputs('uwYear', event.uwYear);
   }

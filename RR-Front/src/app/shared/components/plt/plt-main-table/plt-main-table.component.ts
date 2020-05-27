@@ -59,7 +59,8 @@ export class PltMainTableComponent implements OnInit {
   }
 
   ngOnInit() {
-
+    console.log(this.tableInputs);
+    this.detectChanges();
   }
 
   getCurrentPlts(){

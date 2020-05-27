@@ -438,8 +438,8 @@ public class SearchService {
     private void saveRecentExpertModeSearch(ExpertModeFilterRequest request) {
         UserRrEntity user = ((UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser();
         String keyword;
-        System.out.println(request);
-        System.out.println("**************************");
+
+
         keyword = (request.getKeyword() == null ? "" : request.getKeyword()).replace("%", "").trim();
 
 

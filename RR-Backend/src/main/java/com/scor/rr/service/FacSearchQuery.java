@@ -43,8 +43,10 @@ public class FacSearchQuery implements QueryInterface {
         String offsetQuery = " OFFSET " + offset + " ROWS FETCH NEXT " + size + " ROWS ONLY";
 
         String query= orderByClause.isEmpty() ? sqlWithoutOffsetQuery : sqlWithoutOffset + " order by " + orderByClause;
-        System.out.println("**************");
+
+        System.out.println(filter);
         System.out.println(query);
+
         return query.concat(offsetQuery);
     }
 
@@ -57,8 +59,8 @@ public class FacSearchQuery implements QueryInterface {
 
     @Override
     public Collection<? extends String> generateSearchClause(List<ExpertModeFilter> filter) {
-        System.out.println("******************** filter **********");
-        System.out.println(filter);
+
+
         List<String> sc = new ArrayList<>();
         filter.forEach(expertModeFilter -> addSearchClause(expertModeFilter,sc));
         return sc;
@@ -71,8 +73,8 @@ public class FacSearchQuery implements QueryInterface {
 
     @Override
     public String generateClause(String columnName, String keyword, Operator operator) {
-        System.out.println("******************** columnName *********");
-        System.out.println(columnName);
+
+
         switch (operator) {
             case EQUAL:
                 return " c." + this.facSearchCountMapper.get(columnName) + " = '" + escape(keyword) + "' ";

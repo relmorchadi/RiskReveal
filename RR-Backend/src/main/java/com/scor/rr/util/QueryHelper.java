@@ -61,8 +61,8 @@ public class QueryHelper {
         String offsetQuery = " OFFSET " + offset + " ROWS FETCH NEXT " + size + " ROWS ONLY";
 
         String query= orderByClause.isEmpty() ? sqlWithoutOffsetQuery : sqlWithoutOffset + " order by " + orderByClause;
-        System.out.println("************************ query**********************");
-        System.out.println(query);
+
+
         return query.concat(offsetQuery);
     }
 
