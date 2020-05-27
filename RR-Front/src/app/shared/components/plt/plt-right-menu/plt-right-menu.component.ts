@@ -914,6 +914,7 @@ export class PltRightMenuComponent extends BaseContainer implements OnInit, OnDe
   }
 
   closeDrawer(outside) {
+    console.log("[E]", outside);
     if( (outside || this.inputs.visible) && !this.isPinned) {
       this.actionDispatcher.emit({
         type: rightMenuStore.closeDrawer

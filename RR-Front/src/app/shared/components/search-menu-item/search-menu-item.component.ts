@@ -151,7 +151,6 @@ export class SearchMenuItemComponent extends BaseContainer implements OnInit, On
   }
 
   onDoublePoints = _.debounce(($event: KeyboardEvent) => {
-    console.log($event);
     this.contractFilterFormGroup.get('globalKeyword').patchValue(this.badgeService.transformKeyword(this.globalKeyword, this.useAlternative()));
   }, 350);
 

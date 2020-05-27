@@ -73,7 +73,7 @@
                     <div class="dropdown-wrap-title">
                         <span class="dropdown-title">Financial Units</span>
                         <span class="dropdown-item-selected">
-                            {{selectedHeaderConfig.financialUnits ?  selectedHeaderConfig.financialUnits :"choose"}}
+                            {{selectedHeaderConfig.financialUnits ?  selectedHeaderConfig.financialUnits : "choose"}}
                         </span>
                     </div>
                     <div class="dropdown-icon">
@@ -91,7 +91,7 @@
             <nz-dropdown *ngIf="headerConfig.divisions.length > 0"
                          [nzTrigger]="'click'" [nzOverlayStyle]="{ 'max-height': '136px','overflow': 'auto'}"
                          style="margin-left: 10px;margin-top: 15px;">
-                <div class="dropdown-wrap" [style.width]="'95px'" nz-dropdown>
+                <div class="dropdown-wrap" [style.width]="'105px'" nz-dropdown>
                     <div class="dropdown-wrap-title">
                         <span class="dropdown-title">Division</span>
                         <span class="dropdown-item-selected">
@@ -104,7 +104,7 @@
                 </div>
                 <ul nz-menu>
                     <li *ngFor="let division of headerConfig?.divisions" nz-menu-item
-                        (click)="changeDivision(division)">
+                        (click)="changeDivision(division, division.divisionNumber)">
                         Division N°{{division.divisionNumber}}
                     </li>
                 </ul>
@@ -117,7 +117,7 @@
             <nz-dropdown  *ngIf="headerConfig.portfolios.length > 0"
                           [nzTrigger]="'click'" [nzOverlayStyle]="{ 'max-height': '136px','overflow': 'auto'}"
                           style="margin-left: 10px;margin-top: 15px;">
-                <div class="dropdown-wrap" [style.width]="'95px'" nz-dropdown>
+                <div class="dropdown-wrap" [style.width]="'155px'" nz-dropdown>
                     <div class="dropdown-wrap-title">
                         <span class="dropdown-title">Portfolio</span>
                         <span class="dropdown-item-selected">
@@ -129,8 +129,7 @@
                     </div>
                 </div>
                 <ul nz-menu>
-                    <li *ngFor="let portfolio of headerConfig?.portfolios"  nz-menu-item
-                        (click)="changePortfolio(portfolio)">
+                    <li *ngFor="let portfolio of filterPortfoliosByDivision()"  nz-menu-item (click)="changePortfolio(portfolio)">
                         {{portfolio}}
                     </li>
                 </ul>
