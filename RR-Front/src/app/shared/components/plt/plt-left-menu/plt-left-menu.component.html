@@ -26,7 +26,8 @@
             [ngClass]="{'active-path': project.projectId === leftMenuInputs.selectedProject?.projectId}">
           <i [ngClass]="{ 'icon-assignment_24px': !project.carRequestId  , 'icon-copy': project.carRequestId }" ></i>
           <span class="body-list" [nz-tooltip]="project.carRequestId ? project.carRequestId + ' ' + project.carRequestStatus : (project.projectName + ' ' + (project.projectId | reFormatPID) + ' ' + (toDate(project.creationDate) | date: 'y'))">
-            {{( project.carRequestId ? project.carRequestId + ' ' + project.carRequestStatus : (project.projectName + ' ' + project.projectId | reFormatPID) + ' ' + (toDate(project.creationDate) | date: 'y'))}}
+            {{( project.carRequestId ? project.carRequestId + ' ' + project.carRequestStatus :
+                  (project.projectName + ' ' + project.projectId | reFormatPID) + ' ' + (toDate(project.creationDate) | date: 'y'))}}
           </span>
         </li>
         <li>

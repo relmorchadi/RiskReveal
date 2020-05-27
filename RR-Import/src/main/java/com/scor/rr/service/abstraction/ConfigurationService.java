@@ -30,7 +30,7 @@ public interface ConfigurationService {
 
     void saveDefaultDataSources(DataSourcesDto dataSourcesDto);
 
-    List<RLDataSourcesDto> getDefaultDataSources(Long userId);
+    List<RLDataSourcesDto> getDefaultDataSources();
 
     ProjectImportRunEntity checkIfProjectHasBeenImportedBefore(Long projectId);
 
@@ -61,4 +61,6 @@ public interface ConfigurationService {
     void deleteAnalysisSummary(List<Long> rlAnalysisId);
 
     void deletePortfolioSummary(List<Long> rlPortfolioId);
+
+    void deleteSavedSataSourceById(Long savedDataSourceId);
 }

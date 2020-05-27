@@ -11,7 +11,7 @@ import java.util.Date;
 public class LossDataHeaderEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "LossDataHeaderId")
     private Long lossDataHeaderId;
     @Column(name = "Entity")

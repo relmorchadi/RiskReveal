@@ -24,17 +24,18 @@ import {first, map} from "rxjs/operators";
 export class WorkspaceExposuresComponent extends BaseContainer implements OnInit, StateSubscriber {
 
     @Select(WorkspaceState.getSelectedProject) selectedProject$;
-    wsIdentifier;
-    workspaceInfo: any;
-    tableConfig$: Observable<ExposuresMainTableConfig>;
-    tableConfig: ExposuresMainTableConfig;
+    selectedHeaderConfig: any;
     tableColumnsConfig$: Observable<any>;
+    regionPerilFilter: string;
     rightMenuConfig$: Observable<ExposuresRightMenuConfig>;
     headerConfig$: Observable<ExposuresHeaderConfig>;
+    workspaceInfo: any;
+    headerConfig: any;
+    wsIdentifier;
+    tableConfig$: Observable<ExposuresMainTableConfig>;
+    tableConfig: ExposuresMainTableConfig;
     sortConfig: any;
-    selectedHeaderConfig: any;
     projectId: any;
-    regionPerilFilter: string;
 
     constructor(_baseStore: Store, _baseRouter: Router, _baseCdr: ChangeDetectorRef,
                 private exposuresTableService: ExposuresTableService,
@@ -60,7 +61,7 @@ export class WorkspaceExposuresComponent extends BaseContainer implements OnInit
             exposureView: null,
             financialPerspective: null,
             financialUnits: null
-        }
+        };
         this.tableConfig = new ExposuresMainTableConfig();
     }
 
@@ -71,6 +72,7 @@ export class WorkspaceExposuresComponent extends BaseContainer implements OnInit
                 this.projectId = project.projectId;
                 this.headerConfig$ = this.exposuresHeaderService.loadHeaderConfig(this.projectId);
                 this.headerConfig$.subscribe(headerConfig => {
+                    this.headerConfig = headerConfig;
                     if (headerConfig)
                         this.initSelectedHeaderConfig(headerConfig);
                 }, () => {
@@ -115,6 +117,7 @@ export class WorkspaceExposuresComponent extends BaseContainer implements OnInit
     }
 
     initSelectedHeaderConfig(headerConfig) {
+        if (headerConfig.divisions[0])
         this.selectedHeaderConfig = {
             division: headerConfig.divisions[0],
             portfolio: headerConfig.portfolios[0],
@@ -203,7 +206,9 @@ export class WorkspaceExposuresComponent extends BaseContainer implements OnInit
                 break;
             }
             case 'changeDivision' : {
-                this.selectedHeaderConfig.division = $event.payload;
+                this.selectedHeaderConfig.division = $event.payload.division;
+                const DivisionDivide = _.get(this.headerConfig.portfoliosAndCurrenciesByDivision, `${$event.payload.divisionNum}`);
+                this.selectedHeaderConfig.portfolio = _.keys(DivisionDivide)[0];
                 this.tableConfig$ = this.exposuresTableService.loadTableConfig(
                     {
                         ...this.selectedHeaderConfig,
@@ -223,7 +228,7 @@ export class WorkspaceExposuresComponent extends BaseContainer implements OnInit
                 break;
             }
             case 'changeView' : {
-                this.selectedHeaderConfig.exposureView = $event.payload.value;
+                this.selectedHeaderConfig.exposureView = $event.payload.header;
                 this.tableConfig$ = this.exposuresTableService.loadTableConfig(
                     {
                         ...this.selectedHeaderConfig,
@@ -241,7 +246,6 @@ export class WorkspaceExposuresComponent extends BaseContainer implements OnInit
                 break;
             }
             case 'exportExposuresTable' : {
-                console.log('here');
                 this.exposuresTableService.exportTable({
                     ...this.selectedHeaderConfig,
                     projectId: this.projectId

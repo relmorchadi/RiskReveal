@@ -142,7 +142,7 @@ export class RiskApi {
         })
     }
 
-    getDefaultDataSources(instanceId, projectId: any, userId='1'): Observable<any> {
+    getDefaultDataSources(instanceId?, projectId?: any, userId='1'): Observable<any> {
         return this.http.get(`${this.IMPORT_URL}import/config/get-default-data-sources`,{
             params: {
                 instanceId,
@@ -206,5 +206,9 @@ export class RiskApi {
 
     deleteAnalysisSummary(rlAnalysisId: any, projectId: any) {
         return this.http.delete(`${this.IMPORT_URL}import/config/delete-analysis-summary`, {params: {projectId, rlAnalysisId}});
+    }
+
+    deleteSavedDataSourceById(savedDataSourceId){
+        return this.http.delete(`${this.IMPORT_URL}import/config/saved-data-source`, {params: {savedDataSourceId}})
     }
 }

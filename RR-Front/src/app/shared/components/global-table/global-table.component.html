@@ -2,6 +2,13 @@
   <div class="title-as-tab">
     <div class="div-title">
       <span class="title">PLTs</span>
+      <div class="single-col-button">
+        <button [ngClass]="{'a-buttons-contained': selectedProject?.carRequestId == null,
+                            'a-buttons-contained-disabled-mini': selectedProject?.carRequestId != null}"
+                style="margin-left: 10px;" (click)="cloneFrom()"
+                [disabled]="selectedProject.carRequestId != null"
+        >clone from</button>
+      </div>
     </div>
     <div class="right">
       <nz-dropdown [nzTrigger]="'click'" [nzPlacement]="'bottomRight'" >
@@ -83,7 +90,7 @@
                 <div style="padding-left: 9px;">
                   <label nz-checkbox
                          [nzChecked]="selectedIds[row.pltId]"
-                         (nzCheckedChange)="onCheckBox(row.pltId, i, $event)"></label>
+                         (nzCheckedChange)="onCheckBox(row.pltId,  i, $event)"></label>
                 </div>
               </td>
               <td (click)="onRowSelect(row.pltId, i, $event)" *ngFor="let col of cols">

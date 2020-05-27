@@ -55,12 +55,19 @@ export class ExposuresTableService {
             frozenRow: tableConfig.frozenRow.regionPerils != {} ? [{...tableConfig.frozenRow, ...tableConfig.frozenRow.regionPerils}] : [],
             frozenColumns: tableConfig.data ? FAKEDATA.frozenColumns : []
         };
-        console.log('tableConfig ===========> ',res);
+        console.log('tableConfig ===========> ',res, tableConfig);
         return res;
     }
 
     constructHeaderConfig(headerConfig) {
-
+        let view:any;
+        if (headerConfig.exposureView == '#Risk') {
+            view = 'locationCount'
+        }else if (headerConfig.exposureView == 'Avg TIV') {
+            view = 'avgTIV'
+        }else {
+            view = 'TIV'
+        }
         return {
             currency:headerConfig.currency,
             division:headerConfig.division.divisionNumber,
@@ -72,7 +79,7 @@ export class ExposuresTableService {
             requestTotalRow:true,
             summaryType:'Summary By Country',
             regionPerilFilter: headerConfig.regionPerilFilter ? headerConfig.regionPerilFilter : null,
-            type:headerConfig.exposureView
+            type:view
         }
     }
 }

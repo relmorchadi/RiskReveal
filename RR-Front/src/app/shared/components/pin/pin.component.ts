@@ -7,8 +7,11 @@ import {Store} from '@ngxs/store';
   styleUrls: ['./pin.component.scss']
 })
 export class PinComponent implements OnInit {
-  @Output('pinWs') pinWorkspaceAction: any = new EventEmitter<any>();
-  @Input('active') active;
+
+  @Output('onPin') onPin: any = new EventEmitter<any>();
+
+  @Input('pinned') pinned;
+  @Input('asIcon') asIcon;
 
   constructor(private store: Store) {
   }
@@ -16,8 +19,8 @@ export class PinComponent implements OnInit {
   ngOnInit() {
   }
 
-  pinWorkspace() {
-    this.pinWorkspaceAction.emit();
+  pin() {
+    this.onPin.emit();
   }
 
 }

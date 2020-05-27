@@ -437,7 +437,10 @@ public class SearchService {
     private void saveRecentExpertModeSearch(ExpertModeFilterRequest request) {
         UserRrEntity user = ((UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser();
         String keyword;
-        keyword = Optional.of(request.getKeyword()).orElse("").replace("%", "").trim();
+        System.out.println(request);
+        System.out.println("**************************");
+        keyword = (request.getKeyword() == null ? "" : request.getKeyword()).replace("%", "").trim();
+
 
         if(!keyword.equals("") || request.getFilter().size() > 0) {
             List<RecentSearch> recentSearches = recentSearchRepository.findByUserIdAndTypeOrderBySearchDateDesc(user.getUserId(), request.getType().getSearchType());

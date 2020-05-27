@@ -16,7 +16,10 @@
             </div>
           </a>
           <ul nz-menu>
-            <li nz-menu-item *ngFor="let currency of constants?.currencies" (click)="currencyChange(currency)">
+            <li nz-menu-item>
+              <input type="text" [ngModel]="currencyFilter" (click)="preventPropagation()" (ngModelChange)="onFilterCurrencies($event)">
+            </li>
+            <li nz-menu-item *ngFor="let currency of constants?.currencies | includes : currencyFilter" (click)="currencyChange(currency)">
               {{currency}}
             </li>
           </ul>

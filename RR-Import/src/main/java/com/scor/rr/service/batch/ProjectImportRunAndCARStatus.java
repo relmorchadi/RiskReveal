@@ -136,12 +136,16 @@ public class ProjectImportRunAndCARStatus {
         UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl(generateScopeAndCompletenessURL)
                 .queryParam("fileName", carId);
 
-        ResponseEntity<?> response = restTemplate
-                .exchange(uriBuilder.toUriString(), HttpMethod.POST, request, String.class);
+        try {
+            ResponseEntity<?> response = restTemplate
+                    .exchange(uriBuilder.toUriString(), HttpMethod.POST, request, String.class);
 
-        if (response.getStatusCode().equals(HttpStatus.OK))
-            log.info("Scope and Completeness data generation has ended successfully for the CAR with Id {}", carId);
-        else
-            log.info("Scope and Completeness data generation has failed for the CAR with Id {} for reason : {}", carId, response.toString());
+            if (response.getStatusCode().equals(HttpStatus.OK))
+                log.info("Scope and Completeness data generation has ended successfully for the CAR with Id {}", carId);
+            else
+                log.info("Scope and Completeness data generation has failed for the CAR with Id {} for reason : {}", carId, response.toString());
+        }catch (Exception exp){
+            exp.printStackTrace();
+        }
     }
 }

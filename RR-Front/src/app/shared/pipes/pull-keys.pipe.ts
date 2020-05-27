@@ -7,7 +7,8 @@ import * as _ from 'lodash';
 export class PickKeysPipe implements PipeTransform {
 
   transform(value: any, keys?: any): any {
-    return _.pick(value, keys);
+    return value;
+ //   return _.pick(value, keys);
   }
 
 }

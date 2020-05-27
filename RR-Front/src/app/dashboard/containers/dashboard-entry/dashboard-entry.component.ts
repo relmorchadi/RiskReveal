@@ -50,9 +50,9 @@ export class DashboardEntryComponent extends BaseContainer implements OnInit {
   @Select(DashboardState.getRefData) refWidget$;
   @Select(DashboardState.getSelectedTab) tabIndex$;
 
+  editedWidget: any;
   dashboards: any;
   refWidget: any;
-  editedWidget: any;
 
   searchInput: ElementRef;
   @ViewChild('searchInput') set assetInput(elRef: ElementRef) {
@@ -131,7 +131,6 @@ export class DashboardEntryComponent extends BaseContainer implements OnInit {
         dragHandleClass: 'drag-handler',
         ignoreContentClass: 'no-drag',
         stop: (item, itemComponent) => {
-          itemComponent.itemChanged
           this.changeWidgetHeight(item, itemComponent.$item);
         },
       },
@@ -382,6 +381,7 @@ export class DashboardEntryComponent extends BaseContainer implements OnInit {
   }
 
   saveColumns(event) {
+    console.log(event);
     let tableCols = _.map(event, (item, index: number) => {
       return {columnId: item.columnId,
         order: index + 1,

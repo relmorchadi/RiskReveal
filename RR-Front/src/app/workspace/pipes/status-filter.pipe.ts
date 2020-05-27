@@ -17,7 +17,7 @@ export class StatusFilterPipe implements PipeTransform {
     if (!isFilter) return res;
     _.forEach(value, (thread)=>{
       _.forEach(status, (v, k)=>{
-        if (v){
+        if (v && thread.status){
           if (thread.status.replace(' ','').toLowerCase() ==
             k.replace(' ','').toLowerCase()) res = [...res, thread];
 

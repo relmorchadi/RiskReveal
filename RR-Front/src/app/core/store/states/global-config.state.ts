@@ -1,12 +1,14 @@
 import {GeneralConfig} from '../../model';
 import * as _ from 'lodash';
-import {Action, NgxsOnInit, Selector, State, StateContext} from '@ngxs/store';
+import {Action, createSelector, NgxsOnInit, Selector, State, StateContext} from '@ngxs/store';
 import * as fromGeneralConfig from '../actions';
 import {Data} from '../../model/data';
 import produce from "immer";
 import {from, of} from "rxjs";
 import {catchError, map, mergeMap, tap} from "rxjs/operators";
 import {GlobalConfigApi} from '../../service/api/global-config.api';
+import {TablePreferencesApi} from "../../service/api/table-preferences.api";
+import {WorkspaceModel} from "../../../workspace/model";
 
 const initiateState: GeneralConfig = {
   userPreferenceId: null,
@@ -43,7 +45,8 @@ const initiateState: GeneralConfig = {
     returnPeriod: {data: [], selected: []},
     display: '',
   },
-  users: []
+  users: [],
+  tablePreference: []
 };
 
 @State<GeneralConfig>({
@@ -54,7 +57,7 @@ export class GeneralConfigState implements NgxsOnInit {
 
   ctx = null;
 
-  constructor(private globalAPI: GlobalConfigApi) {
+  constructor(private globalAPI: GlobalConfigApi, private tablePreferencesApi: TablePreferencesApi) {
 
   }
 
@@ -99,6 +102,12 @@ export class GeneralConfigState implements NgxsOnInit {
   static getAllUsers(state:GeneralConfig) {
     return state.users;
   }
+
+  static getTablePreference(uIPage: string, tableName: string) {
+    return createSelector([GeneralConfigState], (state: GeneralConfig) =>
+        state.tablePreference);
+  }
+
 
   /**
    * Commands
@@ -149,7 +158,7 @@ export class GeneralConfigState implements NgxsOnInit {
               };
               draft.riskLink = {
                 importPage: data.importPage,
-                financialPerspectiveELT: data.financialPerspectiveELT.trim().split(' ') || [],
+                financialPerspectiveELT: data.financialPerspectiveELT,
                 financialPerspectiveEPM: data.financialPerspectiveEPM,
                 targetCurrency: data.targetCurrency,
                 targetAnalysisCurrency: data.targetAnalysisCurrency,
@@ -239,6 +248,17 @@ export class GeneralConfigState implements NgxsOnInit {
         tap(data => {
           ctx.patchState(produce(ctx.getState(), draft => {
             draft.users = data;
+          }))
+        })
+    )
+  }
+
+  @Action(fromGeneralConfig.GetTablePreference)
+  GetTablePreference(ctx: StateContext<GeneralConfig>, {payload}: fromGeneralConfig.GetTablePreference) {
+    return this.tablePreferencesApi.getTablePreference(payload.uIPage, payload.tableName).pipe(
+        tap(data => {
+          ctx.patchState(produce(ctx.getState(), draft => {
+            draft.tablePreference.push(data);
           }))
         })
     )

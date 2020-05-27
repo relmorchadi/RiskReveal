@@ -140,6 +140,7 @@ public class PltHeaderEntity {
     public PltHeaderEntity(PltHeaderEntity other) {
         this.pltType = other.pltType;
         this.isLocked = other.isLocked;
+        this.perilCode = other.perilCode;
         this.pltSimulationPeriods = other.pltSimulationPeriods;
         this.generatedFromDefaultAdjustment = other.generatedFromDefaultAdjustment;
         this.currencyCode = other.getCurrencyCode();
@@ -167,6 +168,8 @@ public class PltHeaderEntity {
 //        this.adjustmentBasisByFkCurrentBasisId = other.adjustmentBasisByFkCurrentBasisId;
         this.entity = other.entity;
 //        this.marketChannel = other.marketChannel;
+        this.lossDataFilePath = other.lossDataFilePath;
+        this.lossDataFileName = other.lossDataFileName;
     }
 }
 
