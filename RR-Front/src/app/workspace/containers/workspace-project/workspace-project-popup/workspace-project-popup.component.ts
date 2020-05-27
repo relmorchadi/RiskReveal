@@ -613,7 +613,7 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
 
     this.selectedWorkspace = event;
 
-    
+
     this.updateTableAndTagsInputs('wsId', this.marketChannel === 'FAC'? event.workspaceContextCode : event.workSpaceId);
     this.updateTableAndTagsInputs('uwYear', event.uwYear);
   }
