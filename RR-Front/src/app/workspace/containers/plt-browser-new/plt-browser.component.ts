@@ -38,7 +38,6 @@ import {GroupedCellRenderer} from "../../../shared/components/grid/grouped-cell-
 import {GridApi, ColumnApi, RowNode} from 'ag-grid-community';
 import {PltTableService} from "../../services/helpers/plt-table.service";
 import {iif} from "rxjs";
-import {__asyncValues} from "tslib";
 
 @Component({
   selector: 'plt-browser',
@@ -69,7 +68,8 @@ export class PltBrowserComponent extends BaseContainer implements OnInit, OnDest
     onSelectionChanged: Function,
     onColumnRowGroupChanged: Function,
     getRowClass: Function,
-    sideBare: any
+    sideBare: any,
+    getContextMenuItems: Function
   };
 
   isModalVisible: boolean;
@@ -189,6 +189,18 @@ export class PltBrowserComponent extends BaseContainer implements OnInit, OnDest
         ],
         defaultToolPanel: 'columns',
         hiddenByDefault: true
+      },
+      getContextMenuItems: (params) => {
+        console.log(params);
+        return [{
+          name: 'View Detail',
+          action: () => {
+            this.openedPlt = params.node.data;
+            this.updateMenuKey('pltHeaderId', params.node.data.pltId);
+            this.updateMenuKey('visible', true);
+            console.log(this.rightMenuInputs);
+          },
+        }]
       }
     };
     this.lastSelectedId = null;
@@ -790,9 +802,6 @@ export class PltBrowserComponent extends BaseContainer implements OnInit, OnDest
   }
 
   onManageColumns({availableList , visibleList}) {
-    console.log(availableList)
-    // this.gridColumnApi.setColumnsVisible(_.map(availableList, col => col.colId), false);
-    // this.gridColumnApi.setColumnsVisible(_.map(visibleList, col => col.colId), true);
     this.gridColumnApi.setColumnState([...visibleList, ...availableList])
     this.isModalVisible= false;
     this.availableList = [];

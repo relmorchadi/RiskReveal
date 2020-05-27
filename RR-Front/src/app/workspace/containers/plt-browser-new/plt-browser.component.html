@@ -85,6 +85,8 @@
 
                 [getRowClass]="gridParams?.getRowClass"
 
+                [getContextMenuItems]="gridParams?.getContextMenuItems"
+
                 (columnResized)="saveNewColumnsState($event)"
                 (columnPinned)="saveNewColumnsState()"
                 (columnVisible)="saveNewColumnsState()"
