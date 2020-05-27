@@ -1,15 +1,21 @@
-import { Component, OnInit } from '@angular/core';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit} from '@angular/core';
 import {Location} from "@angular/common";
 import * as _ from "lodash";
 import * as XLSX from 'xlsx';
 import {AllModules} from "@ag-grid-enterprise/all-modules";
+import {UploadXHRArgs} from "ng-zorro-antd";
+import {BulkImportApi} from "../../service/api/bulk-import.api";
+import {BaseContainer} from "../../../shared/base";
+import {Store} from "@ngxs/store";
+import {Router} from "@angular/router";
 
 @Component({
   selector: 'app-import',
   templateUrl: './import.component.html',
-  styleUrls: ['./import.component.scss']
+  styleUrls: ['./import.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ImportContainer implements OnInit {
+export class ImportContainer extends BaseContainer implements OnInit {
 
   public modules = AllModules;
 
@@ -26,7 +32,15 @@ export class ImportContainer implements OnInit {
     rowSelection: 'multiple' | 'single'
   };
 
-  constructor(public location: Location) {
+  file: File;
+  fileUploaded: boolean;
+
+  constructor(
+      _baseStore: Store, _baseRouter: Router, _baseCdr: ChangeDetectorRef,
+      public location: Location,
+      private api: BulkImportApi,
+  ) {
+    super(_baseRouter, _baseCdr, _baseStore);
     this.gridParams = {
       rowModelType: "clientSide",
       rowData: [],
@@ -72,6 +86,7 @@ export class ImportContainer implements OnInit {
       rowSelection: "multiple",
       getChildCount: () => {}
     }
+    this.fileUploaded = false;
   }
 
   ngOnInit() {
@@ -84,8 +99,6 @@ export class ImportContainer implements OnInit {
   onGridReady(params) {
     this.gridApi = params.api;
     this.gridColumnApi = params.columnApi;
-
-
   }
 
   columnMapping = {
@@ -93,10 +106,22 @@ export class ImportContainer implements OnInit {
     uWYear: "workspaceUwYear"
   };
 
-  onFileChange(evt: any) {
-    /* wire up file reader */
-    const target: DataTransfer = <DataTransfer>(evt.target);
-    if (target.files.length !== 1) throw new Error('Cannot use multiple files');
+  onBeforeUpload = (file) => {
+    this.file = file;
+    this.readFile(this.file);
+    this.startValidation(this.file);
+
+    return false;
+  };
+
+  onFileChange(evt) {
+    this.file = (evt.target).files[0];
+    this.readFile(this.file);
+    this.startValidation(this.file);
+    
+  }
+
+  readFile(file) {
     const reader: FileReader = new FileReader();
     reader.onload = (e: any) => {
       /* read workbook */
@@ -108,6 +133,16 @@ export class ImportContainer implements OnInit {
       const ws: XLSX.WorkSheet = wb.Sheets[wsname];
 
       /* save data */
+      console.log(_.map(<any>(XLSX.utils.sheet_to_json(ws, {})), (row) => {
+        let newRow = {};
+
+        _.forEach(row, (v, k) => {
+          let col = _.lowerFirst(k);
+          newRow[this.columnMapping[col] ? this.columnMapping[col] : col] = v;
+        });
+
+        return newRow;
+      }));
       this.gridApi.setRowData(_.map(<any>(XLSX.utils.sheet_to_json(ws, {})), (row) => {
         let newRow = {};
 
@@ -118,9 +153,17 @@ export class ImportContainer implements OnInit {
 
         return newRow;
       }));
-
+      this.fileUploaded = true;
+      this.detectChanges();
     };
-    reader.readAsBinaryString(target.files[0]);
+    reader.readAsBinaryString(file);
+  }
+
+  startValidation(file) {
+    const formData = new FormData();
+    formData.append('payload', file);
+    console.log(formData);
+    this.api.uploadAndValidate(formData).subscribe( r => console.log(r));
   }
 
 }

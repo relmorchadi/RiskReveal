@@ -10,6 +10,7 @@ import {StatusCellRenderer} from "../shared/components/grid/status-cell-renderer
 import {BooleanCellRenderer} from "../shared/components/grid/boolean-cell-renderer/boolean-cell-renderer.component";
 import {DateCellRenderer} from "../shared/components/grid/date-cell-renderer/date-cell-renderer.component";
 import {NumberCellRenderer} from "../shared/components/grid/number-cell-renderer/number-cell-renderer.component";
+import {SERVICES} from "../shared/services";
 
 @NgModule({
   declarations: [
@@ -20,6 +21,9 @@ import {NumberCellRenderer} from "../shared/components/grid/number-cell-renderer
     RoutingModule,
     AgGridModule.withComponents([ CustomBooleanFilter, CustomBooleanFloatingFilter, StatusCellRenderer, BooleanCellRenderer, DateCellRenderer, NumberCellRenderer]),
     SharedModule
+  ],
+  providers: [
+      ...SERVICES
   ]
 })
 export class ImportModule { }
