@@ -11,6 +11,7 @@ import {BooleanCellRenderer} from "../shared/components/grid/boolean-cell-render
 import {DateCellRenderer} from "../shared/components/grid/date-cell-renderer/date-cell-renderer.component";
 import {NumberCellRenderer} from "../shared/components/grid/number-cell-renderer/number-cell-renderer.component";
 import {SERVICES} from "../shared/services";
+import {ErrorCellRenderer} from "../shared/components/grid/error-cell-renderer/error-cell-renderer.component";
 
 @NgModule({
   declarations: [
@@ -19,7 +20,7 @@ import {SERVICES} from "../shared/services";
   imports: [
     CommonModule,
     RoutingModule,
-    AgGridModule.withComponents([ CustomBooleanFilter, CustomBooleanFloatingFilter, StatusCellRenderer, BooleanCellRenderer, DateCellRenderer, NumberCellRenderer]),
+    AgGridModule.withComponents([ CustomBooleanFilter, CustomBooleanFloatingFilter, StatusCellRenderer, BooleanCellRenderer, DateCellRenderer, NumberCellRenderer, ErrorCellRenderer]),
     SharedModule
   ],
   providers: [

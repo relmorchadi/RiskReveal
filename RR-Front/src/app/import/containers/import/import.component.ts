@@ -8,6 +8,9 @@ import {BulkImportApi} from "../../service/api/bulk-import.api";
 import {BaseContainer} from "../../../shared/base";
 import {Store} from "@ngxs/store";
 import {Router} from "@angular/router";
+import {GridApi, ColumnApi} from 'ag-grid-community';
+import {ErrorCellRenderer} from "../../../shared/components/grid/error-cell-renderer/error-cell-renderer.component";
+import {ErrorValue} from "../../types/erroValue.type";
 
 @Component({
   selector: 'app-import',
@@ -19,8 +22,8 @@ export class ImportContainer extends BaseContainer implements OnInit {
 
   public modules = AllModules;
 
-  gridApi: any;
-  gridColumnApi: any;
+  gridApi: GridApi;
+  gridColumnApi: ColumnApi;
   gridParams: {
     rowModelType: 'serverSide' | 'infinite' | 'clientSide',
     rowData: any[],
@@ -35,6 +38,8 @@ export class ImportContainer extends BaseContainer implements OnInit {
   file: File;
   fileUploaded: boolean;
 
+  headerErrors: TableErrorType[];
+
   constructor(
       _baseStore: Store, _baseRouter: Router, _baseCdr: ChangeDetectorRef,
       public location: Location,
@@ -44,49 +49,31 @@ export class ImportContainer extends BaseContainer implements OnInit {
     this.gridParams = {
       rowModelType: "clientSide",
       rowData: [],
-      columnDefs: [
-        { headerName: "Workspace Reference", field: "workspaceContextCode" },
-        { headerName: "Workspace Context", field: "workspaceContext" },
-        { headerName: "UwYear", field: "workspaceUwYear" },
-        { headerName: "Instance", field: "instance" },
-        { headerName: "Type", field: "type" },
-        { headerName: "Date Source Name", field: "dataSourceName" },
-        { headerName: "Object Source Id", field: "objectSourceId" },
-        { headerName: "Object Source Name", field: "objectSourceName" },
-        { headerName: "Object Source Desc", field: "objectSourceDesc" },
-        { headerName: "Region", field: "region" },
-        { headerName: "Peril", field: "peril" },
-        { headerName: "Currency", field: "currency" },
-        { headerName: "Target Currency", field: "targetCurrency" },
-        { headerName: "Financial Perspective", field: "financialPerspective" },
-        { headerName: "Region Peril", field: "regionPeril" },
-        { headerName: "Override Reason", field: "overrideReasonRegionPeril" },
-        { headerName: "PEQT Id", field: "peqtId" },
-        { headerName: "PEQT Name", field: "peqtName" },
-        { headerName: "Occurrence Basis", field: "occurrenceBasisOccurrenceBasis" },
-        { headerName: "Unit Multiplier", field: "unitMultiplier" },
-        { headerName: "Unit Multiplier Basis", field: "unitMultiplierBasis" },
-        { headerName: "Unit Multiplier Narrative", field: "unitMultiplierNarrative" },
-        { headerName: "Proportion Pct", field: "proportionPct" },
-        { headerName: "Proportion Pct Basis", field: "proportionPctBasis" },
-        { headerName: "Proportion Pct Narrative", field: "proportionPctNarrative" },
-        { headerName: "Section Division Id", field: "sectionDivisionId" },
-        { headerName: "AutoPublish", field: "autoPublish" },
-        { headerName: "AppendReplace", field: "appendReplace" },
-      ],
+      columnDefs: [],
       autoGroupColumnDef: null,
       defaultColDef: {
         resizable: true,
         sortable: true,
         enableRowGroup: false,
         floatingFilter: false,
-        filter: 'agTextColumnFilter'
+        filter: 'agTextColumnFilter',
+        cellRenderer: 'errorCellRenderer',
+        cellStyle: function(params) {
+          if( params.value instanceof ErrorValue) {
+            return {color: 'white', backgroundColor: '#dc3545'};
+          } else {
+            return null;
+          }
+        }
       },
-      frameworkComponents: null,
+      frameworkComponents: {
+        errorCellRenderer: ErrorCellRenderer
+      },
       rowSelection: "multiple",
       getChildCount: () => {}
-    }
+    };
     this.fileUploaded = false;
+    this.headerErrors = [];
   }
 
   ngOnInit() {
@@ -101,12 +88,9 @@ export class ImportContainer extends BaseContainer implements OnInit {
     this.gridColumnApi = params.columnApi;
   }
 
-  columnMapping = {
-    workspaceReference: "workspaceContextCode",
-    uWYear: "workspaceUwYear"
-  };
-
   onBeforeUpload = (file) => {
+    this.headerErrors = [];
+
     this.file = file;
     this.readFile(this.file);
     this.startValidation(this.file);
@@ -115,6 +99,8 @@ export class ImportContainer extends BaseContainer implements OnInit {
   };
 
   onFileChange(evt) {
+    this.headerErrors = [];
+
     this.file = (evt.target).files[0];
     this.readFile(this.file);
     this.startValidation(this.file);
@@ -131,28 +117,34 @@ export class ImportContainer extends BaseContainer implements OnInit {
       /* grab first sheet */
       const wsname: string = wb.SheetNames[0];
       const ws: XLSX.WorkSheet = wb.Sheets[wsname];
-
-      /* save data */
-      console.log(_.map(<any>(XLSX.utils.sheet_to_json(ws, {})), (row) => {
+      const columns = [];
+      const data = _.map(<any>(XLSX.utils.sheet_to_json(ws, {})), (row, i) => {
         let newRow = {};
+        const initCols = _.toNumber(i) == 0;
 
-        _.forEach(row, (v, k) => {
-          let col = _.lowerFirst(k);
-          newRow[this.columnMapping[col] ? this.columnMapping[col] : col] = v;
+        _.forEach(row, (v, headerName) => {
+          let field = _.camelCase(headerName);
+          if(initCols) {
+            columns.push({
+              field,
+              headerName: headerName
+            })
+          }
+          newRow[field] = v;
         });
 
         return newRow;
-      }));
-      this.gridApi.setRowData(_.map(<any>(XLSX.utils.sheet_to_json(ws, {})), (row) => {
-        let newRow = {};
-
-        _.forEach(row, (v, k) => {
-          let col = _.lowerFirst(k);
-          newRow[this.columnMapping[col] ? this.columnMapping[col] : col] = v;
-        });
-
-        return newRow;
-      }));
+      });
+      this.gridApi.setColumnDefs(columns);
+      console.log({
+        data, columns
+      })
+      this.gridApi.setRowData(data);
+      this.gridParams = {
+        ...this.gridParams,
+        rowData: data,
+        columnDefs: columns
+      };
       this.fileUploaded = true;
       this.detectChanges();
     };
@@ -162,7 +154,29 @@ export class ImportContainer extends BaseContainer implements OnInit {
   startValidation(file) {
     const formData = new FormData();
     formData.append('payload', file);
-    this.api.uploadAndValidate(formData).subscribe( r => console.log(r));
+    this.api.uploadAndValidate(formData).subscribe( ({errors}) => {
+      console.log(errors)
+      let data = this.gridParams.rowData;
+      _.forEach(errors, (err: TableErrorType) => {
+        if(err.columnIndex < 0) this.headerErrors.push(err);
+        else {
+          const {
+            columnIndex,
+            rowIndex,
+             errorDescription
+          } = err;
+
+          const value = data[rowIndex - 1][this.gridParams.columnDefs[columnIndex].field];
+
+          data[rowIndex - 1][this.gridParams.columnDefs[columnIndex].field] = new ErrorValue(
+              errorDescription,
+              rowIndex,
+              value
+          )
+        }
+      })
+      this.gridApi.setRowData(data);
+    });
   }
 
 }

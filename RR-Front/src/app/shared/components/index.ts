@@ -20,6 +20,7 @@ import {StatusCellRenderer} from "./grid/status-cell-renderer/status-cell-render
 import {BooleanCellRenderer} from "./grid/boolean-cell-renderer/boolean-cell-renderer.component";
 import {NumberCellRenderer} from "./grid/number-cell-renderer/number-cell-renderer.component";
 import {DateCellRenderer} from "./grid/date-cell-renderer/date-cell-renderer.component";
+import {ErrorCellRenderer} from "./grid/error-cell-renderer/error-cell-renderer.component";
 
 export const COMPONENTS = [
   ChipTagComponent,
@@ -43,7 +44,8 @@ export const COMPONENTS = [
   StatusCellRenderer,
   BooleanCellRenderer,
   NumberCellRenderer,
-  DateCellRenderer
+  DateCellRenderer,
+  ErrorCellRenderer
 ];
 
 export * from './table/table.component';

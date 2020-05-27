@@ -17,9 +17,19 @@
         <div class="cnt">
           <input #file style="display: none" type="file" (change)="onFileChange($event)">
           <button (click)="file.click()" class="a-buttons-outlined" style="color: #332ed7 ;border-color: #332ed7">
-            Import
+            Import Sheet
           </button>
           <div class="grid-cnt">
+              <nz-list
+                      *ngIf="headerErrors.length"
+                      [ngStyle]="{marginBottom: '7px'}"
+                      [nzDataSource]="headerErrors"
+                      nzBordered
+                      nzSize="small"
+                      [nzRenderItem]="item"
+              >
+                <ng-template #item let-item><nz-list-item [nzContent]="item?.columnName + ': ' +item?.errorDescription"></nz-list-item></ng-template>
+              </nz-list>
               <ag-grid-angular
                       #agGrid
                       [ngStyle]="{ display: fileUploaded ? 'block' :'none'}"
@@ -30,6 +40,7 @@
                       [defaultColDef]="gridParams?.defaultColDef"
                       [rowData]="gridParams?.rowData"
                       [modules]="modules"
+                      [frameworkComponents]="gridParams?.frameworkComponents"
                       (gridReady)="onGridReady($event)"
               ></ag-grid-angular>
             <nz-upload
