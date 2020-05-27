@@ -539,13 +539,10 @@ export class PltBrowserComponent extends BaseContainer implements OnInit, OnDest
 
     api$.pipe(
         switchMap(() => this.pltApi.checkConfig({tableName: this.tableName, tableContext: this.tableContext})),
-        switchMap((exist: any) => iif(
-            () =>  exist,
-            this.pltApi.getConfig({tableName: this.tableName, tableContext: this.tableContext}),
-            this.pltApi.saveTableConfig({tableName: this.tableName, tableContext: this.tableContext, config: JSON.stringify(PltTableService.config)})
-        ))
-    ).subscribe( ({columns}: any) => {
-      let config = JSON.parse(columns);
+        switchMap((exist: any) => this.pltApi.saveTableConfig({tableName: this.tableName, tableContext: this.tableContext, config: JSON.stringify(PltTableService.config)})),
+        tap(e => console.log(e))
+    ).subscribe( (payload: any) => {
+      let config = payload ? JSON.parse(_.get(payload, 'columns')) : PltTableService.config;
       this.gridApi.setColumnDefs(config.columns);
       this.gridApi.setSortModel(config.sort);
       this.gridInitialized= false;
