@@ -92,11 +92,11 @@
                 [getContextMenuItems]="gridParams?.getContextMenuItems"
 
                 (columnResized)="saveNewColumnsState($event)"
-                (columnPinned)="saveNewColumnsState()"
-                (columnVisible)="saveNewColumnsState()"
+                (columnPinned)="saveNewColumnsState(null)"
+                (columnVisible)="saveNewColumnsState(null)"
                 (columnMoved)="saveNewColumnsState($event)"
-                (filterChanged)="saveNewColumnsState()"
-                (sortChanged)="saveNewColumnsState()"
+                (filterChanged)="saveNewColumnsState(null)"
+                (sortChanged)="saveNewColumnsState(null)"
 
                 (gridReady)="onGridReady($event)"
                 (columnRowGroupChanged)="gridParams.onColumnRowGroupChanged($event)"
