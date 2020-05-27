@@ -118,7 +118,7 @@ export class ImportContainer extends BaseContainer implements OnInit {
     this.file = (evt.target).files[0];
     this.readFile(this.file);
     this.startValidation(this.file);
-    
+
   }
 
   readFile(file) {
@@ -162,7 +162,6 @@ export class ImportContainer extends BaseContainer implements OnInit {
   startValidation(file) {
     const formData = new FormData();
     formData.append('payload', file);
-    console.log(formData);
     this.api.uploadAndValidate(formData).subscribe( r => console.log(r));
   }
 

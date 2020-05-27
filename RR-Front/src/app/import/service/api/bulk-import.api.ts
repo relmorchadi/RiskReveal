@@ -15,6 +15,6 @@ export class BulkImportApi {
     }
 
     uploadAndValidate(params: any): Observable<any> {
-        return this.http.post(`${this.URL}upload-and-validate`, params, { headers: { 'Content-Type': 'multipart/form-data'}});
+        return this.http.post(`${this.URL}upload-and-validate`, params);
     }
 }
