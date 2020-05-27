@@ -35,19 +35,9 @@ public class BatchConfiguration {
 
 
     @Autowired
-    @Qualifier(value = "dbRms")
-    private DataSource dataSource;
-
-    @Autowired
     @Qualifier(value = "dataSource")
     private DataSource rrDataSource;
 
-    @Bean(name = "rrTransactionManager")
-    public DataSourceTransactionManager getDataSourceTransactionManager() {
-        DataSourceTransactionManager dataSourceTransactionManager = new DataSourceTransactionManager();
-        dataSourceTransactionManager.setDataSource(dataSource);
-        return dataSourceTransactionManager;
-    }
 
     @Bean(name = "theTransactionManager")
     public DataSourceTransactionManager getTransactionManager() {

@@ -12,7 +12,7 @@ import java.util.List;
 
 public interface RLPortfolioSelectionRepository extends JpaRepository<RLPortfolioSelection, Long> {
 
-    @Transactional(transactionManager = "rrTransactionManager")
+    @Transactional(transactionManager = "theTransactionManager")
     void deleteByProjectId(Long projectId);
 
     @Query("SELECT rlPortfolioSelectionId FROM RLPortfolioSelection WHERE projectId=:projectId")
@@ -23,7 +23,7 @@ public interface RLPortfolioSelectionRepository extends JpaRepository<RLPortfoli
     //@Procedure("dbo.uspRiskLinkDeletePortfolioSummary")
     @Modifying
     @Query("delete from RLPortfolioSelection WHERE rlPortfolio.rlPortfolioId in :ids")
-    @Transactional(transactionManager = "rrTransactionManager")
+    @Transactional(transactionManager = "theTransactionManager")
     void deleteByPortfolioIdIn(@Param("ids") List<Long> ids);
 
 }

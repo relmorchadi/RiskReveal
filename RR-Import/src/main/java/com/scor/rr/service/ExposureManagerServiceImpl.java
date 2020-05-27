@@ -19,6 +19,8 @@ import org.apache.poi.xssf.usermodel.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.ByteArrayOutputStream;
 import java.math.BigDecimal;
@@ -91,6 +93,7 @@ public class ExposureManagerServiceImpl implements ExposureManagerService {
     }
 
     @Override
+    @Transactional(transactionManager = "theTransactionManager", propagation = Propagation.REQUIRES_NEW)
     public ExposureManagerDto getExposureManagerData(ExposureManagerParamsDto params) {
 
         ExposureManagerDto exposureManagerDto = new ExposureManagerDto();
@@ -163,6 +166,7 @@ public class ExposureManagerServiceImpl implements ExposureManagerService {
     }
 
     @Override
+    @Transactional(transactionManager = "theTransactionManager", propagation = Propagation.REQUIRES_NEW)
     public byte[] exportExposureManagerData(ExposureManagerParamsDto params) {
 
         String userName = null;

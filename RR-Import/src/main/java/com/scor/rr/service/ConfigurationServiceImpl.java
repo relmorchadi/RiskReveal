@@ -165,7 +165,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
     }
 
     @Override
-    @Transactional(transactionManager = "rrTransactionManager")
+    @Transactional(transactionManager = "theTransactionManager")
     public void saveDefaultDataSources(DataSourcesDto dataSourcesDto) {
         Long userId = SecurityContextHolder.getContext().getAuthentication() != null ?
                 ((UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser().getUserId() :

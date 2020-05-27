@@ -129,11 +129,11 @@ public class JobManagerImpl extends JobManagerAbstraction {
         try {
             TaskEntity task = taskRepository.findById(taskId).orElse(null);
             // If the task was already running
-//            if (task != null && task.getJobExecutionId() != null && jobOperator.getRunningExecutions("importLossData").contains(task.getJobExecutionId())) {
-//                jobOperator.stop(task.getJobExecutionId());
-////                cancelTaskSteps(task);
-////                // If the task is still in queue
-//            } else
+            if (task != null && task.getJobExecutionId() != null && jobOperator.getRunningExecutions("importLossData").contains(task.getJobExecutionId())) {
+                jobOperator.stop(task.getJobExecutionId());
+                cancelTaskSteps(task);
+                // If the task is still in queue
+            } else
             if (task != null && task.getJobExecutionId() == null) {
                 RRJob runnable = (RRJob) executor.getQueue().stream().filter(e -> ((RRJob) e).getTask().getTaskId().equals(task.getTaskId())).findFirst().orElse(null);
                 if (runnable != null)
@@ -193,6 +193,7 @@ public class JobManagerImpl extends JobManagerAbstraction {
 
     // Find Jobs from spring batch default schema
     @Override
+    @Transactional(transactionManager = "theTransactionManager")
     public List<JobExecutionEntity> findRunningJobsForUser(String userId) {
         return jobExecutionRepository.findRunningJobsForUser(userId);
     }
@@ -266,7 +267,7 @@ public class JobManagerImpl extends JobManagerAbstraction {
     }
 
     @Override
-    @Transactional(transactionManager = "theTransactionManager")
+    //@Transactional(transactionManager = "theTransactionManager")
     public void onTaskError(Long taskId) {
         TaskEntity task = taskRepository.findById(taskId).orElse(null);
 
