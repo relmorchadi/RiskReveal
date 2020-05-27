@@ -80,6 +80,7 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
     this.addTagModalPlaceholder = 'Select a Tag';
     this.managePopUp = false;
     this.rightMenuInputs = {
+      init: true,
       basket: [],
       pltHeaderId: '',
       selectedTab: {
@@ -314,6 +315,7 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
     };
     this.workspaceType = marketChannel;
     this.selectedProject = _.find(projects, project => project.selected);
+    this.updateLeftMenuInputs('selectedProject', this.selectedProject);
   }
 
   protected detectChanges() {
@@ -332,6 +334,9 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
 
     switch (action.type) {
 
+      case 'filterByProject':
+        this.filterByProject(action.payload);
+        break;
       case leftMenuStore.emitFilters:
         this.emitFilters(action.payload);
         break;
@@ -353,6 +358,21 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
 
       case 'Detect Parent Changes':
         this.detectChanges();
+    }
+  }
+
+  filterByProject(project) {
+    console.log(project);
+    if(project) {
+      this.dispatch(new SelectProject({
+        wsIdentifier: this.workspaceId + '-' + this.uwy,
+        projectId: project.projectId
+      }))
+    }
+    else {
+      console.log(project);
+      this.selectedProject = null;
+      this.updateLeftMenuInputs('selectedProject', null)
     }
   }
 

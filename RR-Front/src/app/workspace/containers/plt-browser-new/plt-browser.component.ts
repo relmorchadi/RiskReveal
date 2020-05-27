@@ -43,8 +43,7 @@ import {iif} from "rxjs";
   selector: 'plt-browser',
   templateUrl: './plt-browser.component.html',
   styleUrls: ['./plt-browser.component.scss'],
-  providers: [ TableHandlerImp, TableServiceImp ],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  providers: [ TableHandlerImp, TableServiceImp ]
 })
 export class PltBrowserComponent extends BaseContainer implements OnInit, OnDestroy, StateSubscriber {
   //Grid
@@ -191,8 +190,7 @@ export class PltBrowserComponent extends BaseContainer implements OnInit, OnDest
         hiddenByDefault: true
       },
       getContextMenuItems: (params) => {
-        console.log(params);
-        return [{
+        return !params.node.group ? [{
           name: 'View Detail',
           action: () => {
             this.openedPlt = params.node.data;
@@ -200,7 +198,7 @@ export class PltBrowserComponent extends BaseContainer implements OnInit, OnDest
             this.updateMenuKey('visible', true);
             console.log(this.rightMenuInputs);
           },
-        }]
+        }] : [];
       }
     };
     this.lastSelectedId = null;
@@ -742,6 +740,11 @@ export class PltBrowserComponent extends BaseContainer implements OnInit, OnDest
     this.visibleList = groupedCols['false'] || [];
 
     this.isModalVisible = true;
+  }
+
+  resetGrid() {
+    this.gridApi.setColumnDefs(PltTableService.config.columns);
+    this.saveNewColumnsState(null);
   }
 
   saveNewColumnsState(e) {

@@ -1,4 +1,5 @@
 export interface Input {
+  init?: boolean;
   wsIdentifier?: string;
   visible: boolean;
   mode: string;
