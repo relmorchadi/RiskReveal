@@ -73,8 +73,8 @@ public class FileBasedImportRest {
     }
 
     @PostMapping("persisteFileBasedImportConfig")
-    public List<FileImportSourceResult> persisteFileBasedImportConfig(@RequestBody FileBasedImportConfigRequest request)  {
-        return importFileService.persisteFileBasedImportConfig(request);
+    public List<FileImportSourceResult> persisteFileBasedImportConfig(@RequestBody FileBasedImportConfigRequest request, String folderPath)  {
+        return importFileService.persisteFileBasedImportConfig(request,folderPath);
     }
 
     @GetMapping("retrieveFileBasedConfig")

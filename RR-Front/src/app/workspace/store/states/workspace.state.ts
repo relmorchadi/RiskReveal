@@ -461,11 +461,16 @@ export class WorkspaceState {
   }
 
   @Selector()
-  static getFileBaseSelectedFiles(state: WorkspaceModel) {
+  static getFileBaseFiles(state: WorkspaceModel) {
     const wsIdentifier = state.currentTab.wsIdentifier;
     return state.content[wsIdentifier].fileBaseImport.files;
   }
 
+    @Selector()
+    static getFileBaseSelectedFiles(state: WorkspaceModel) {
+        const wsIdentifier = state.currentTab.wsIdentifier;
+        return state.content[wsIdentifier].fileBaseImport.selectedFiles;
+    }
 
   /***********************************
    *

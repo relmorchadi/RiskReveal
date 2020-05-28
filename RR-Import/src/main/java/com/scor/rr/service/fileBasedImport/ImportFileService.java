@@ -216,17 +216,15 @@ public class ImportFileService {
         return importFileLossDataHeader.getMetadata();
     }
 
-    public List<FileImportSourceResult> persisteFileBasedImportConfig(FileBasedImportConfigRequest request) {
+    public List<FileImportSourceResult> persisteFileBasedImportConfig(FileBasedImportConfigRequest request, String folderPath) {
         List<FileImportSourceResult> fileImportSourceResults=new ArrayList<>();
         FileBasedImportConfig fileBasedImportConfig=new FileBasedImportConfig();
         fileBasedImportConfig.setProjectId(Long.parseLong(request.getProjectId()));
-        //fileBasedImportConfig.setSelectedFolderSourcePath(folderPath);
+        fileBasedImportConfig.setSelectedFolderSourcePath(folderPath);
         fileBasedImportConfigRepository.save(fileBasedImportConfig);
-        System.out.println("taille"+request.getSelectedFileSourcePath().size());
         for(String filePath : request.getSelectedFileSourcePath()) {
-            System.out.println("filePath" + filePath);
             Map<String, String> maps = new HashMap<>();
-            //String fileName=filePath.split("\\")[filePath.split("\\").length-1];
+            String fileName=filePath.split("/")[filePath.split("/").length-1];
             maps = readMetadata(filePath);
             FileImportSourceResult fileImportSourceResult = new FileImportSourceResult();
             fileImportSourceResult.setResultName(maps.get("ResultsName"));
@@ -234,7 +232,7 @@ public class ImportFileService {
             fileImportSourceResult.setModelVersion(maps.get("Model_Version"));
             fileImportSourceResult.setFilePath(filePath);
             fileImportSourceResult.setProjectId(Integer.parseInt(request.getProjectId()));
-            //fileImportSourceResult.setFileName(fileName);
+            fileImportSourceResult.setFileName(fileName);
             fileImportSourceResult.setFileBasedImportConfigId(fileBasedImportConfig.getFileBasedImportConfigId().intValue());
             fileImportSourceResultRepository.save(fileImportSourceResult);
             fileImportSourceResults.add(fileImportSourceResult);

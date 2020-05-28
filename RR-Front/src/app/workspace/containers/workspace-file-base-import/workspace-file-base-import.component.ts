@@ -63,7 +63,8 @@ export class WorkspaceFileBaseImportComponent extends BaseContainer implements O
     peril = [
         {color: '#E70010', content: 'EQ'},
         {color: '#008694', content: 'FL'},
-        {color: '#7BBE31', content: 'WS'}
+        {color: '#7BBE31', content: 'WS'},
+        {color: '#800000', content: 'TC'},//ajouter
     ];
 
     items = [
@@ -92,15 +93,23 @@ export class WorkspaceFileBaseImportComponent extends BaseContainer implements O
     filterData = [];
     index;
 
+    loadingFiles;
+    loadingPlts;
+
     @Select(WorkspaceState.getFileBasedData) fileBase$;
     fileBase: any;
 
     fileBaseTemp;
 
-    @Select(WorkspaceState.getFileBaseSelectedFiles) selectedData$;
+    @Select(WorkspaceState.getFileBaseFiles) selectedData$;
     selectedData;
 
     selectedDataTemp;
+
+    @Select(WorkspaceState.getFileBaseSelectedFiles) selectedFiles$;
+    selectedFiles;
+
+    selectedFilesTemp;
 
     constructor(private route: ActivatedRoute, _baseStore: Store, _baseRouter: Router, _baseCdr: ChangeDetectorRef) {
         super(_baseRouter, _baseCdr, _baseStore);
@@ -114,28 +123,34 @@ export class WorkspaceFileBaseImportComponent extends BaseContainer implements O
             };
         });
 
-        this.path = 'C:\\ManualBasedImportFile';
-        this.dispatch(new fromWs.LoadFileBasedFoldersAction(this.path));
-        this.fileBase$.subscribe(value => {
-            this.fileBase = _.merge({}, value);
-            this.fileBaseTemp = _.merge({}, value);
-            this.directoryTree = _.merge({}, this.fileBase.folders);
-            if(this.directoryTree.hasOwnProperty('data')) {
-                this.changeData(this.directoryTree.data);
-            }
+        this.path = 'C:\\ManualBasedImportFile'
 
-/*            for (let directoryTreeKey in this.directoryTree.data) {
-              console.log("FFFF",directoryTreeKey);
-                this.changeData(this.directoryTree[directoryTreeKey]);
-            }
-            /*for (this.indice = 0; this.indice < this.directoryTree.length; this.indice++) {
-              console.log("TTTT",this.directoryTree[this.indice]);
-            this.directoryTree[this.indice]= this.changeData(this.directoryTree[this.indice]);
-        }*/
-            this.detectChanges();
-        });
-        this.selectedData$.subscribe(value => {
+            this.dispatch(new fromWs.LoadFileBasedFoldersAction(this.path));
+            this.fileBase$.subscribe(value => {
+                    this.fileBase = _.merge({}, value);
+                    this.fileBaseTemp = _.merge({}, value);
+                    this.directoryTree = _.merge({}, this.fileBase.folders);
+
+                    if (this.directoryTree.hasOwnProperty('data')) {
+                        this.changeData(this.directoryTree.data);
+                    }
+                    /*for (let directoryTreeKey in this.directoryTree.data) {
+                        this.changeData(this.directoryTree[directoryTreeKey]);
+                    }*/
+                    this.detectChanges();
+            });
+
+        /*this.selectedData$.subscribe(value => {
+            console.log('selectedData',value);
             this.selectedData = value;
+            this.selectedDataTemp = value;
+            this.detectChanges();
+        });*/
+
+        this.selectedFiles$.subscribe(value => {
+            console.log('selectedFiles',value);
+            this.fileBase.selectedFiles = value;
+            this.fileBaseTemp.selectedFiles = value;
             this.detectChanges();
         });
 
@@ -143,6 +158,8 @@ export class WorkspaceFileBaseImportComponent extends BaseContainer implements O
         this.pltColumns = DataTables.PltDataTables;
         //this.directoryTree = _.merge({}, DataTables.directoryTree, this.fileBase.folders);
         this.importedFiles = DataTables.importedFiles;
+        this.loadingFiles=false;
+        this.loadingPlts=false;
     }
 
     saveColumns() {
@@ -366,6 +383,9 @@ export class WorkspaceFileBaseImportComponent extends BaseContainer implements O
     }
 
     nodeSelect(event) {
+        console.log('LFiles',this.loadingFiles )
+        this.loadingFiles = true;
+        console.log('LFiles',this.loadingFiles )
         this.nodePath = '\\' + event.node.label;
         this.nodeTemp = event.node;
         while (this.nodeTemp.parent) {
@@ -388,6 +408,8 @@ export class WorkspaceFileBaseImportComponent extends BaseContainer implements O
         });
         this.allCheckedImportedFiles = false;
         this.indeterminateImportedFiles = false;
+        this.loadingFiles=false;
+        console.log('LFiles',this.loadingFiles )
     }
 
     nodeUnselect(event) {
@@ -395,7 +417,12 @@ export class WorkspaceFileBaseImportComponent extends BaseContainer implements O
     }
 
     addForImport() {
+        console.log('LPLT',this.loadingPlts);
+        this.loadingPlts=true;
+        console.log('LPLT',this.loadingPlts);
         this.dispatch(new fromWs.AddFileForImportAction(this.nodePath));
+        this.loadingPlts=false;
+        console.log('LPLT',this.loadingPlts);
         //this.selectedPlt = this.fileBase.selectedFiles[0];
     }
 

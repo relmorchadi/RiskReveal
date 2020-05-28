@@ -73,7 +73,7 @@
                     </div>-->
           <div class="summary-info" style="min-height: 251px" *ngIf="!collapseSearchFiles" [ngClass]="{'empty-table': getFileLength()}">
             <p-table #iTable [columns]="importedFiles" [scrollable]="true" scrollHeight="189px"
-                     [resizableColumns]="true" [value]="selectedDataTemp  | tableSortAndFilter : [sortData,filterData]" onsort="onSort($event)">
+                     [resizableColumns]="true" [value]="selectedDataTemp  | tableSortAndFilter : [sortData,filterData]" onsort="onSort($event)" [loading]="loadingFiles">
               <ng-template let-columns pTemplate="colgroup">
                 <colgroup>
                   <ng-container *ngFor="let col of columns">
@@ -196,7 +196,7 @@
           <p-table #iTable [columns]="pltColumns" [scrollable]="true" [scrollHeight]="getHeight()"
                    [(contextMenuSelection)]="contextSelectedItem" [dataKey]="'FileName'" [rowTrackBy]="rowTrackBy"
                    [contextMenu]="cm" [resizableColumns]="true" columnResizeMode="expand"
-                   [value]="fileBaseTemp?.selectedFiles | tableSortAndFilter : [sortData,filterData]" onsort="onSort($event)" frozenWidth="485px">
+                   [value]="fileBaseTemp?.selectedFiles | tableSortAndFilter : [sortData,filterData]" onsort="onSort($event)" frozenWidth="485px" [loading]="loadingPlts">
             <ng-template let-columns pTemplate="colgroup">
               <colgroup>
                 <ng-container *ngFor="let col of columns">
