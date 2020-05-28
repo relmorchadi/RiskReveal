@@ -40,6 +40,19 @@ export class ImportContainer extends BaseContainer implements OnInit {
 
   headerErrors: TableErrorType[];
 
+  headerErrorsPanel= {
+    active: false,
+    disabled: true,
+    name: 'Header Errors',
+    icon: 'double-right',
+    customStyle: {
+      background: 'white',
+      'border-radius': '4px',
+      'margin-bottom': '24px',
+      border: '0px'
+    }
+  };
+
   constructor(
       _baseStore: Store, _baseRouter: Router, _baseCdr: ChangeDetectorRef,
       public location: Location,

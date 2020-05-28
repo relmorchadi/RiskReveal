@@ -83,7 +83,28 @@
     .grid-cnt {
       height: calc( 100vh - 380px);
       margin: 16px 0;
+      display: flex;
+      flex-flow: column;
     }
 
+  }
+
+  .panel-arrow {
+    color: #fff;
+    border-radius: 24px;
+    font-size: 19px;
+    width: 19px;
+    height: 19px;
+    display: -webkit-box;
+    display: flex;
+    cursor: pointer;
+    background-color: #0700CF;
+    margin-right: 16px;
+  }
+
+  ::ng-deep {
+    .ant-collapse-header {
+      display: flex;
+    }
   }
 }
