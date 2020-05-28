@@ -48,10 +48,15 @@ public class FacContractSearchResult {
     @Column(name = "ProjectName")
     private String projectName;
 
-    public FacContractSearchResult(String client, Integer uwYear, String workspaceContextCode, String workspaceName, String uwAnalysis, String carequestId, String carStatus, BigInteger assignedUser) {
+    @Column(name = "UserName")
+    private String userName;
+
+    public FacContractSearchResult(String client, Integer uwYear, String workspaceContextCode, String workspaceName, String uwAnalysis, String carequestId, String carStatus
+            , BigInteger assignedUser, String userName) {
         this.client = client;
         this.workspaceContextCode = workspaceContextCode;
         this.uwYear = uwYear;
+        this.userName = userName;
         this.workspaceName = workspaceName;
         this.uwAnalysis = uwAnalysis;
         this.carequestId = carequestId;

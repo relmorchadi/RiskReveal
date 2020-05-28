@@ -410,7 +410,7 @@ export class WorkspacesMenuItemComponent extends BaseContainer implements OnInit
           this.dispatch(new fromWS.InitWorkspace({}))
         } else {
           this.notificationService.createNotification('Information',
-            'There is no Opened Workspaces please try searching for some before!',
+            'You have no opened workspaces to display.',
             'error', 'bottomRight', 4000);
         }
       });

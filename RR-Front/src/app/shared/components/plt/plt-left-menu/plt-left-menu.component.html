@@ -16,7 +16,7 @@
               style="text-overflow: ellipsis;white-space: nowrap;overflow: hidden;"
               [ngClass]="{'active-path': project.selected}">
             <i class="icon-assignment_24px"></i>
-            <span class="tooltipMsg"
+            <span classm="tooltipMsg"
                   [nz-tooltip]="(project.projectId | reFormatPID) + ' ' +  project.name + ' ' + (toDate(project.creationDate) | date: 'y')">{{(project.projectId | reFormatPID) + ' ' + project.name + ' ' + (toDate(project.creationDate) | date: 'y')}}</span>
           </li>
         </ng-container>

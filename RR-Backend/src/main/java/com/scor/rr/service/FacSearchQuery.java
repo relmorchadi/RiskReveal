@@ -15,8 +15,8 @@ public class FacSearchQuery implements QueryInterface {
 
     Map<String, String> facSearchCountMapper = new HashMap();
 
-    String[] globalSearchColumns= {"ClientCode", "UWYear", "WorkspaceContextCode", "WorkspaceName", "UwAnalysis", "CARequestId", "CARStatus", "AssignedTo"};
-    String[] groupByColumns= {"ClientCode", "UWYear", "WorkspaceContextCode", "WorkspaceName", "UwAnalysis", "CARequestId", "CARStatus", "AssignedTo"};
+    String[] globalSearchColumns= {"ClientCode", "UWYear", "WorkspaceContextCode", "WorkspaceName", "UwAnalysis", "CARequestId", "CARStatus", "AssignedTo", "UserName"};
+    String[] groupByColumns= {"ClientCode", "UWYear", "WorkspaceContextCode", "WorkspaceName", "UwAnalysis", "CARequestId", "CARStatus", "AssignedTo", "UserName"};
 
     @PostConstruct
     private void feedCountMapper() {
@@ -29,6 +29,7 @@ public class FacSearchQuery implements QueryInterface {
         facSearchCountMapper.put("CAR_ID",  "CARequestId");
         facSearchCountMapper.put("CAR_STATUS", "CARStatus");
         facSearchCountMapper.put("USR", "AssignedTo");
+        facSearchCountMapper.put("USR_NAME", "UserName");
         facSearchCountMapper.put("PLT", "Plt");
         facSearchCountMapper.put("PROJECT_ID", "ProjectId");
         facSearchCountMapper.put("PROJECT_NAME", "ProjectName");
@@ -43,6 +44,9 @@ public class FacSearchQuery implements QueryInterface {
 
         String query= orderByClause.isEmpty() ? sqlWithoutOffsetQuery : sqlWithoutOffset + " order by " + orderByClause;
 
+        System.out.println(filter);
+        System.out.println(query);
+
         return query.concat(offsetQuery);
     }
 
@@ -55,6 +59,8 @@ public class FacSearchQuery implements QueryInterface {
 
     @Override
     public Collection<? extends String> generateSearchClause(List<ExpertModeFilter> filter) {
+
+
         List<String> sc = new ArrayList<>();
         filter.forEach(expertModeFilter -> addSearchClause(expertModeFilter,sc));
         return sc;
@@ -67,6 +73,8 @@ public class FacSearchQuery implements QueryInterface {
 
     @Override
     public String generateClause(String columnName, String keyword, Operator operator) {
+
+
         switch (operator) {
             case EQUAL:
                 return " c." + this.facSearchCountMapper.get(columnName) + " = '" + escape(keyword) + "' ";

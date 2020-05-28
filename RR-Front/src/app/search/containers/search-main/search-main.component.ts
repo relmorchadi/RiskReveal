@@ -165,7 +165,7 @@ export class SearchMainComponent extends BaseContainer implements OnInit, OnDest
   }
 
   openWorkspace(wsId, year) {
-    console.log(wsId, year, this.searchMode);
+
     if (this.searchMode === 'Treaty') {
       this.dispatch(new workspaceActions.OpenWS({wsId, uwYear: year, route: 'projects', type: 'TTY'}));
     } else {
@@ -284,7 +284,7 @@ export class SearchMainComponent extends BaseContainer implements OnInit, OnDest
       this.searchSub$ = this._searchService.expertModeSearch(params)
           .pipe(this.unsubscribeOnDestroy)
           .subscribe((data: any) => {
-            console.log(data.content);
+
             this.contracts = _.map(data.content, item => ({...item, selected: false}));
             this.loading = false;
             this.secondaryLoading = false;
@@ -419,7 +419,7 @@ export class SearchMainComponent extends BaseContainer implements OnInit, OnDest
         class: 'icon-check_24px',
       });
     }
-    console.log(this.columnsFac, this.extraColumnsFac);
+
     this.manageColumns = false;
     this.detectChanges();
   }
