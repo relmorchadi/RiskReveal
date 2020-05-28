@@ -114,6 +114,7 @@ export class PltRightMenuComponent extends BaseContainer implements OnInit, OnDe
       private numberPipe: RrNumberPipe
   ) {
     super(_baseRouter, _baseCdr, _baseStore);
+    console.log("init");
     this.selectedPLT= {};
     this.pltCache= {};
     this.pltPopUpItemConfig= [
