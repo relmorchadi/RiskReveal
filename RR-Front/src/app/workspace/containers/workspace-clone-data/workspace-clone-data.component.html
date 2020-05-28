@@ -119,7 +119,6 @@
             </div>
             <div class="form-group">
               <input formControlName="projectDescription" class="a-textfield-standard" type="text" placeholder="Project description" style="margin: 0 16px;">
-              <div *ngIf="_projectDescription.invalid && _projectDescription.dirty" class="input-err"><span *ngIf="_projectDescription.errors?.required">Description is required</span></div>
             </div>
           </div>
           <form [formGroup]="projectsForm" *ngIf="_projectStep.value == 1" class="input-group" style="position: relative;display: flex;flex-wrap: wrap;
