@@ -29,7 +29,40 @@
           </div>
         </div>
       </div>
-      <div class="tabset-right" [ngStyle]="{ 'width': leftIsHidden ? 'calc(100vw - ' + leftMenu.clientWidth +'px - 80px - 174px + 130px)' : 'calc(100vw - ' + leftMenu.clientWidth + 'px - 80px - 177px)'}">
+      <div
+              class="tabset-right"
+              [ngStyle]="{ 'width': leftIsHidden ? 'calc(100vw - ' + leftMenu.clientWidth +'px - 80px - 174px + 130px)' : 'calc(100vw - ' + leftMenu.clientWidth + 'px - 80px - 177px)'}"
+      >
+        <div class="title-as-tab">
+          <div class="div-title">
+            <span class="title">PLTs</span>
+          </div>
+          <div class="right">
+            <nz-dropdown [nzTrigger]="'click'" [nzPlacement]="'bottomRight'" >
+              <a style="max-height: 28px;display: flex;" nz-dropdown>
+                <i class="icon-settings_24px"></i>
+              </a>
+              <ul nz-menu style="font-size: 12px">
+
+                <li nz-menu-item (click)="onResetFilter()" >Reset Filters</li>
+                <li nz-menu-item (click)="onResetSort()" >Reset Sort</li>
+
+                <li nz-menu-divider></li>
+
+                <li nz-menu-item (click)="showDialog()" >Manage Columns</li>
+
+                <li nz-menu-divider></li>
+
+                <li nz-menu-item (click)="onExport()">Export</li>
+
+                <li nz-menu-divider></li>
+
+                <li nz-menu-item (click)="resetGrid()">Reset Grid</li>
+
+              </ul>
+            </nz-dropdown>
+          </div>
+        </div>
         <ag-grid-angular
                 #agGrid
                 style="width: 100%; height: 100%"
@@ -40,21 +73,36 @@
                 [frameworkComponents]="gridParams?.frameworkComponents"
 
                 [rowModelType]="gridParams?.rowModelType"
+                [immutableColumns]="gridParams?.immutableColumns"
 
                 [columnDefs]="gridParams?.columnDefs"
                 [defaultColDef]="gridParams?.defaultColDef"
                 [autoGroupColumnDef]="gridParams?.autoGroupColumnDef"
+                [sideBar]="gridParams?.sideBare"
+                [allowDragFromColumnsToolPanel]="true"
 
+                [rowSelection]="gridParams?.rowSelection"
+                [groupSelectsChildren]="true"
+                (selectionChanged)="gridParams.onSelectionChanged($event)"
 
                 [multiSortKey]="'ctrl'"
                 [animateRows]="true"
                 [cacheBlockSize]="50"
                 [getChildCount]="gridParams?.getChildCount"
 
-                (gridReady)="onGridReady($event)"
-                (columnRowGroupChanged)="onColumnRowGroupChanged($event)"
+                [getRowClass]="gridParams?.getRowClass"
 
-                purgeClosedRowNodes
+                [getContextMenuItems]="gridParams?.getContextMenuItems"
+
+                (columnResized)="saveNewColumnsState($event)"
+                (columnPinned)="saveNewColumnsState(null)"
+                (columnVisible)="saveNewColumnsState(null)"
+                (columnMoved)="saveNewColumnsState($event)"
+                (filterChanged)="saveNewColumnsState(null)"
+                (sortChanged)="saveNewColumnsState(null)"
+
+                (gridReady)="onGridReady($event)"
+                (columnRowGroupChanged)="gridParams.onColumnRowGroupChanged($event)"
         ></ag-grid-angular>
       </div>
     </div>
@@ -66,3 +114,9 @@
   (actionDispatcher)="rightMenuActionDispatcher($event)"
   [Inputs]="rightMenuInputs"
 ></app-plt-right-menu>
+
+<grid-col-manager *ngIf="isModalVisible"
+               [visibleList]="visibleList"
+               [availableList]="availableList"
+               (actionDispatcher)="handleManageColumnsActions($event)">
+</grid-col-manager>

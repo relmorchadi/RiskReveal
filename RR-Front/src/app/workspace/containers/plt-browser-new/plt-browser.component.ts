@@ -12,7 +12,7 @@ import * as _ from 'lodash';
 import {Actions, ofActionSuccessful, Store} from '@ngxs/store';
 import * as fromWorkspaceStore from '../../store';
 import {SelectProject, WorkspaceState} from '../../store';
-import {switchMap, tap} from 'rxjs/operators';
+import {mergeMap, share, switchMap, tap} from 'rxjs/operators';
 import {ActivatedRoute, Router} from '@angular/router';
 import {Message} from '../../../shared/message';
 import * as rightMenuStore from '../../../shared/components/plt/plt-right-menu/store/';
@@ -34,29 +34,48 @@ import {StatusCellRenderer} from "../../../shared/components/grid/status-cell-re
 import {BooleanCellRenderer} from "../../../shared/components/grid/boolean-cell-renderer/boolean-cell-renderer.component";
 import {NumberCellRenderer} from "../../../shared/components/grid/number-cell-renderer/number-cell-renderer.component";
 import {DateCellRenderer} from "../../../shared/components/grid/date-cell-renderer/date-cell-renderer.component";
+import {GroupedCellRenderer} from "../../../shared/components/grid/grouped-cell-renderer/grouped-cell-renderer.component";
+import {GridApi, ColumnApi, RowNode} from 'ag-grid-community';
+import {PltTableService} from "../../services/helpers/plt-table.service";
+import {iif} from "rxjs";
 
 @Component({
   selector: 'plt-browser',
   templateUrl: './plt-browser.component.html',
   styleUrls: ['./plt-browser.component.scss'],
-  providers: [ TableHandlerImp, TableServiceImp ],
-  changeDetection: ChangeDetectionStrategy.Default
+  providers: [ TableHandlerImp, TableServiceImp ]
 })
 export class PltBrowserComponent extends BaseContainer implements OnInit, OnDestroy, StateSubscriber {
   //Grid
-  private gridApi;
-  private gridColumnApi;
+  private tableContext: string = 'PLT Manager';
+  private tableName: string = 'main';
+
+  private gridApi: GridApi;
+  private gridColumnApi: ColumnApi;
+  private gridInitialized: boolean;
   public modules = AllModules;
   gridParams: {
     rowModelType: 'serverSide' | 'infinite' | 'clientSide',
     rowData: any[],
+    immutableColumns: boolean,
     columnDefs: any[],
     defaultColDef: any,
     autoGroupColumnDef: any,
     getChildCount: Function,
     frameworkComponents: any,
-    rowSelection: 'multiple' | 'single'
+    rowSelection: 'multiple' | 'single',
+    onSelectionChanged: Function,
+    onColumnRowGroupChanged: Function,
+    getRowClass: Function,
+    sideBare: any,
+    getContextMenuItems: Function
   };
+
+  isModalVisible: boolean;
+
+  visibleList = [];
+
+  availableList = [];
 
   rightMenuInputs: rightMenuStore.Input;
   leftMenuInputs: leftMenuStore.Input;
@@ -91,26 +110,39 @@ export class PltBrowserComponent extends BaseContainer implements OnInit, OnDest
     _baseStore: Store, _baseRouter: Router, _baseCdr: ChangeDetectorRef,
     private actions$: Actions,
     private handler: TableHandlerImp,
-    private pltApi: PltApi
+    private pltApi: PltApi,
+    private pltTableService: PltTableService
 
   ) {
     super(_baseRouter, _baseCdr, _baseStore);
     this.gridParams = {
-      rowModelType: "serverSide",
+      rowModelType: "clientSide",
+      immutableColumns: false,
       defaultColDef: {
         resizable: true,
         sortable: true,
         columnGroupShow: 'open',
         enableRowGroup: true,
         floatingFilter: true,
-        filter: 'agTextColumnFilter'
+        filter: 'agTextColumnFilter',
+        headerCheckboxSelection: function(params) {
+          let displayedColumns = params.columnApi.getAllDisplayedColumns();
+          return displayedColumns[0] === params.column;
+        },
+        checkboxSelection: function(params) {
+          let displayedColumns = params.columnApi.getAllDisplayedColumns();
+          return displayedColumns[0] === params.column;
+        },
+        headerCheckboxSelectionFilteredOnly: true
       },
-
       autoGroupColumnDef: {
         headerName: 'Group',
-        cellRenderer: 'agGroupCellRenderer'
+        cellRenderer: 'agGroupCellRenderer',
+        cellRendererParams: {
+          checkbox: false,
+        }
       },
-      columnDefs: [{field:"pltId", cellStyle: { textAlign: 'center' }, filter: "agNumberColumnFilter"},{field:"pltName"},{field:"pltType"},{field:"pltStatus", filter: "agSetColumnFilter", filterParams: { values: [ "Valid", 'In progress','Locked', 'Fail', 'Pending', 'Requires Regeneration' ] }, cellRenderer: 'statusCellRenderer'},{field:"groupedPlt",floatingFilterComponent: 'customBooleanFloatingFilter', filter: 'customBooleanFilter', cellRenderer: 'booleanCellRenderer'},{field:"grain"},{field:"arcPublication",floatingFilterComponent: 'customBooleanFloatingFilter', filter: 'customBooleanFilter', cellRenderer: 'booleanCellRenderer'},{field:"perilGroupCode"},{field:"regionPerilCode"},{field:"regionPerilDesc"},{field:"minimumGrainRPCode"},{field:"minimumGrainRPDescription"},{field:"financialPerspective"},{field:"targetRAPCode"},{field:"targetRAPDesc"},{field:"rootRegionPeril"},{field:"vendorSystem"},{field:"modellingDataSource"},{field:"analysisId", cellStyle: { textAlign: 'center' }},{field:"analysisName"},{field:"defaultOccurenceBasis"},{field:"occurenceBasis"},{field:"baseAdjustment",floatingFilterComponent: 'customBooleanFloatingFilter', filter: 'customBooleanFilter', cellRenderer: 'booleanCellRenderer'},{field:"defaultAdjustment",floatingFilterComponent: 'customBooleanFloatingFilter', filter: 'customBooleanFilter', cellRenderer: 'booleanCellRenderer'},{field:"clientAdjustment",floatingFilterComponent: 'customBooleanFloatingFilter', filter: 'customBooleanFilter', cellRenderer: 'booleanCellRenderer'},{field:"projectId", cellStyle: { textAlign: 'center' }},{field:"projectName"},{field:"workspaceContextCode"},{field:"client"},{field:"uwYear"},{field:"clonedPlt",floatingFilterComponent: 'customBooleanFloatingFilter', filter: 'customBooleanFilter', cellRenderer: 'booleanCellRenderer'},{field:"clonedSourcePlt"},{field:"clonedSourceProject"},{field:"clonedSourceWorkspace"},{field:"pltCcy"},{field:"aal", filter: 'agNumberColumnFilter', cellRenderer: 'numberCellRenderer'},{field:"cov", filter: 'agNumberColumnFilter', cellRenderer: 'numberCellRenderer'},{field:"stdDev", filter: 'agNumberColumnFilter', cellRenderer: 'numberCellRenderer'},{field:"oep10", filter: 'agNumberColumnFilter', cellRenderer: 'numberCellRenderer'},{field:"oep50", filter: 'agNumberColumnFilter', cellRenderer: 'numberCellRenderer'},{field:"oep100", filter: 'agNumberColumnFilter', cellRenderer: 'numberCellRenderer'},{field:"oep250", filter: 'agNumberColumnFilter', cellRenderer: 'numberCellRenderer'},{field:"oep500", filter: 'agNumberColumnFilter', cellRenderer: 'numberCellRenderer'},{field:"oep1000", filter: 'agNumberColumnFilter', cellRenderer: 'numberCellRenderer'},{field:"aep10", filter: 'agNumberColumnFilter', cellRenderer: 'numberCellRenderer'},{field:"aep50", filter: 'agNumberColumnFilter', cellRenderer: 'numberCellRenderer'},{field:"aep100", filter: 'agNumberColumnFilter', cellRenderer: 'numberCellRenderer'},{field:"aep250", filter: 'agNumberColumnFilter', cellRenderer: 'numberCellRenderer'},{field:"aep500", filter: 'agNumberColumnFilter', cellRenderer: 'numberCellRenderer'},{field:"aep1000", filter: 'agNumberColumnFilter', cellRenderer: 'numberCellRenderer'},{field:"createdDate", filter: 'agDateColumnFilter', cellRenderer: 'dateCellRenderer'},{field:"importedBy"},{field:"publishedBy"},{field:"archived"},{field:"archivedDate", filter: 'agDateColumnFilter', cellRenderer: 'dateCellRenderer'},{field:"deletedBy"},{field:"deletedDue"},{field:"deletedOn"},{field:"xactPublicationDate", filter: 'agDateColumnFilter', cellRenderer: 'dateCellRenderer'},{field:"xactPublication",floatingFilterComponent: 'customBooleanFloatingFilter', filter: 'customBooleanFilter', cellRenderer: 'booleanCellRenderer'},{field:"xactPriced",floatingFilterComponent: 'customBooleanFloatingFilter', filter: 'customBooleanFilter', cellRenderer: 'booleanCellRenderer'}],
+      columnDefs: [],
       rowData: null,
       getChildCount: (data) => data ? data.childCount : undefined,
       frameworkComponents: {
@@ -119,9 +151,55 @@ export class PltBrowserComponent extends BaseContainer implements OnInit, OnDest
         statusCellRenderer: StatusCellRenderer,
         booleanCellRenderer: BooleanCellRenderer,
         numberCellRenderer: NumberCellRenderer,
-        dateCellRenderer: DateCellRenderer
+        dateCellRenderer: DateCellRenderer,
+        groupCellRenderer: GroupedCellRenderer
       },
-      rowSelection: "multiple"
+      rowSelection: "multiple",
+      onSelectionChanged: (e) => {
+        this.gridApi.redrawRows();
+      },
+      onColumnRowGroupChanged: ($event) => {
+        this.gridColumnApi.setColumnsVisible(_.map(this.gridColumnApi.getRowGroupColumns(), col => col.getColId()), false);
+      },
+      getRowClass: ({node}: {node: RowNode}) => {
+        if(!node.group) {
+          if(node.isSelected()) return 'grid-selected-row';
+        }
+      },
+      sideBare: {
+        toolPanels: [
+          {
+            id: 'columns',
+            labelDefault: 'Columns',
+            labelKey: 'columns',
+            iconKey: 'columns',
+            toolPanel: 'agColumnsToolPanel',
+            toolPanelParams: {
+              suppressRowGroups: false,
+              suppressValues: true,
+              suppressPivots: true,
+              suppressPivotMode: true,
+              suppressSideButtons: false,
+              suppressColumnFilter: false,
+              suppressColumnSelectAll: true,
+              suppressColumnExpandAll: false,
+            },
+          },
+        ],
+        defaultToolPanel: 'columns',
+        hiddenByDefault: true
+      },
+      getContextMenuItems: (params) => {
+        return !params.node.group ? [{
+          name: 'View Detail',
+          action: () => {
+            this.openedPlt = params.node.data;
+            this.updateMenuKey('pltHeaderId', params.node.data.pltId);
+            this.updateMenuKey('visible', true);
+            console.log(this.rightMenuInputs);
+          },
+        }] : [];
+      }
     };
     this.lastSelectedId = null;
     this.drawerIndex = 0;
@@ -142,6 +220,7 @@ export class PltBrowserComponent extends BaseContainer implements OnInit, OnDest
       wsId: this.workspaceId,
       uwYear: this.uwy,
       projects: [],
+      selectedProject: null,
       showDeleted: false,
       filterData: {},
       filters: { systemTag: {}, userTag: []},
@@ -376,8 +455,8 @@ export class PltBrowserComponent extends BaseContainer implements OnInit, OnDest
 
     switch (action.type) {
 
-      case leftMenuStore.emitFilters:
-        this.emitFilters(action.payload);
+      case 'filterByProject':
+        this.filterByProject(action.payload);
         break;
       case leftMenuStore.resetPath:
         this.resetPath();
@@ -442,34 +521,65 @@ export class PltBrowserComponent extends BaseContainer implements OnInit, OnDest
     this.gridApi = params.api;
     this.gridColumnApi = params.columnApi;
 
-    let datasource = {
-      getRows: (params) => {
-        const valueCols = _.filter(this.gridColumnApi.getColumnState(), col => !_.includes(col.colId, "ag-grid") && !_.isNumber(col.rowGroupIndex))
-        console.log('[Datasource] - rows requested by grid: ', params.request);
-        _.forEach(params.request.rowGroupCols, col => {
-          this.gridColumnApi.setColumnVisible(col.field, false);
-        });
-        this.pltApi.getGroupedPLTs({
-            ...params.request,
-          filterModel: this.transformFilterModel(params.request.filterModel)
-        }).subscribe( (d: any) => {
-          let response = {
-            rows: d.rows,
-            lastRow: d.lastRow,
-            success: true
-          };
-          if (response.success) {
-            //this.gridApi.purgeServerSideCache();
-            params.successCallback(response.rows, response.lastRow);
-            this.gridColumnApi.autoSizeColumns(_.map(this.gridColumnApi.getAllColumns(), col => col.colId), false);
-            //this.gridApi.forEachNode((node, i) => console.log("[Node]", node))
-          } else {
-            params.failCallback();
-          }
-        });
-      },
-    };
-    params.api.setServerSideDatasource(datasource);
+    const api$ = this.pltApi.getGroupedPLTs({
+      ...params.request,
+      filterModel: this.transformFilterModel([]),
+      rowGroupCols: [],
+      groupKeys: [],
+      valueCols: [],
+      pivotCols: [],
+      pivotMode: false,
+      sortModel: [],
+      pureIds: [],
+    }).pipe(share());
+
+    api$.subscribe( (d: any) => {
+      this.gridApi.setRowData(d.rows);
+    });
+
+    api$.pipe(
+        switchMap(() => this.pltApi.checkConfig({tableName: this.tableName, tableContext: this.tableContext})),
+        switchMap((exist: any) => iif(
+            () =>  exist,
+            this.pltApi.getConfig({tableName: this.tableName, tableContext: this.tableContext}),
+            this.pltApi.saveTableConfig({tableName: this.tableName, tableContext: this.tableContext, config: JSON.stringify(PltTableService.config)})
+        ))
+    ).subscribe( ({columns}: any) => {
+      let config = JSON.parse(columns);
+      this.gridApi.setColumnDefs(config.columns);
+      this.gridApi.setSortModel(config.sort);
+      this.gridInitialized= false;
+      this.gridApi.setFilterModel(config.filter);
+      this.gridInitialized= false;
+      //this.gridColumnApi.autoSizeColumns(_.map(this.gridColumnApi.getAllColumns(), (col: any) => col.colId), false);
+    });
+
+    // let datasource = {
+    //   getRows: (params) => {
+    //     const valueCols = _.filter(this.gridColumnApi.getColumnState(), col => !_.includes(col.colId, "ag-grid") && !_.isNumber(col.rowGroupIndex))
+    //     console.log('[Datasource] - rows requested by grid: ', params.request);
+    //     _.forEach(params.request.rowGroupCols, col => {
+    //       this.gridColumnApi.setColumnVisible(col.field, false);
+    //     });
+    //     this.pltApi.getGroupedPLTs({
+    //         ...params.request,
+    //       filterModel: this.transformFilterModel(params.request.filterModel)
+    //     }).subscribe( (d: any) => {
+    //       let response = {
+    //         rows: d.rows,
+    //         lastRow: d.lastRow,
+    //         success: true
+    //       };
+    //       if (response.success) {
+    //         params.successCallback(response.rows, response.lastRow);
+    //         this.gridColumnApi.autoSizeColumns(_.map(this.gridColumnApi.getAllColumns(), (col: any) => col.colId), false);
+    //       } else {
+    //         params.failCallback();
+    //       }
+    //     });
+    //   },
+    // };
+    // params.api.setServerSideDatasource(datasource);
   }
 
   transformFilterModel(filterModel: any) {
@@ -566,10 +676,139 @@ export class PltBrowserComponent extends BaseContainer implements OnInit, OnDest
     equalsBoolean: "EQ_BOOL"
   };
 
+  filterByProject(project) {
+    if( project != this.leftMenuInputs.selectedProject){
+      this.updateLeftMenuInputs('selectedProject', project);
+      const filterModel = this.gridApi.getFilterModel();
+      this.gridApi.setFilterModel(project ? { ...filterModel, projectId: { type: 'equals', filter: project.projectId } } : _.omit(filterModel, 'projectId'));
+      this.gridApi.onFilterChanged();
+    }
+  }
 
+  onResetFilter() {
+    this.gridApi.setFilterModel({});
+  }
 
-  onColumnRowGroupChanged($event) {
-    //this.gridColumnApi.setColumnVisible($event.column.coldId, !$event.rowGroupActive)
+  onResetSort() {
+    this.gridApi.setSortModel({});
+  }
+
+  onExport() {
+    let data = [];
+    let columnsHeader = _.map(this.gridColumnApi.getAllColumns(), col => col.getColDef().field);
+    let filters = _.map(this.gridApi.getFilterModel(), (v, k) => {
+      const {
+        condition1,
+        condition2,
+        operator,
+        filter,
+        filterTo,
+        type
+      } = v;
+      let s = '';
+
+      if(filter) s = _.upperCase(type) + ' ' + ( filterTo ? filter + '-' + filterTo : filter );
+      else {
+        s = _.upperCase(condition1.type) + ' ' + ( condition1.filterTo ? condition1.filter + '-' + condition1.filterTo : condition1.filter );
+        s+= ' ' + _.upperCase(operator);
+        s+= ' ' + _.upperCase(condition2.type) + ' ' + ( condition2.filterTo ? condition2.filter + '-' + condition2.filterTo : condition2.filter );
+      }
+      return ({
+        Column: k,
+        Filter: s
+      })
+    });
+
+    this.gridApi.forEachNodeAfterFilterAndSort(function(rowNode, index) {
+      if(rowNode.data) data.push(rowNode.data);
+    });
+
+    this.excel.exportAsExcelFile(
+        [
+          { sheetData: data, sheetName: "Data", headerOptions: columnsHeader},
+          { sheetData: filters, sheetName: "Filters" ,headerOptions: ["Column", "Filter"]}
+        ],
+        `PLTList-${this.params.workspaceContextCode}-${this.params.workspaceUwYear}`
+    );
+  }
+
+  showDialog() {
+    console.log(this.gridColumnApi.getColumnState());
+    const groupedCols = _.groupBy(this.gridColumnApi.getColumnState(), 'hide');
+
+    this.availableList = groupedCols['true'] || [];
+    this.visibleList = groupedCols['false'] || [];
+
+    this.isModalVisible = true;
+  }
+
+  resetGrid() {
+    this.gridApi.setColumnDefs(PltTableService.config.columns);
+    this.saveNewColumnsState(null);
+  }
+
+  saveNewColumnsState(e) {
+    if((e && e.type == "columnResized") ? e.finished : this.gridInitialized) {
+      let order = {};
+
+      _.forEach(this.gridColumnApi.getColumnState(), (col, i) => {
+        order[col.colId] = i;
+      });
+
+      let cols = _.map(this.gridColumnApi.getAllColumns(), col => {
+        const {
+          cellStyle,
+          field,
+          filter,
+          cellRenderer
+        } = col.getColDef();
+        return ({
+          cellStyle,
+          cellRenderer,
+          field,
+          filter,
+          width: col.getActualWidth(),
+          maxWidth: col.getMaxWidth(),
+          minWidth: col.getMinWidth(),
+          pinned: col.getPinned(),
+          hide: !col.isVisible()
+        });
+      });
+      cols.sort( (a,b) => order[a.field] - order[b.field]);
+
+      this.pltApi.saveTableConfig({
+        tableName: this.tableName, tableContext: this.tableContext,
+        config: JSON.stringify({
+          columns: cols,
+          sort: this.gridApi.getSortModel(),
+          filter: this.gridApi.getFilterModel()
+        })
+      }).subscribe( (s: any) => {});
+    }
+    this.gridInitialized = true;
+  }
+
+  handleManageColumnsActions(action) {
+    switch (action.type) {
+
+      case "Manage Columns":
+        this.onManageColumns(action.payload);
+        break;
+
+      case "Close":
+        this.isModalVisible= false;
+        break;
+
+      default:
+        console.log(action);
+    }
+  }
+
+  onManageColumns({availableList , visibleList}) {
+    this.gridColumnApi.setColumnState([...visibleList, ...availableList])
+    this.isModalVisible= false;
+    this.availableList = [];
+    this.visibleList = [];
   }
 
 }
