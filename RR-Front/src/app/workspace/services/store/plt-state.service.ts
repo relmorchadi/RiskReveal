@@ -11,14 +11,16 @@ import produce from "immer";
 import {WsApi} from "../api/workspace.api";
 import {ADJUSTMENT_TYPE, ADJUSTMENTS_ARRAY} from "../../containers/workspace-calibration/data";
 import {TagsApi} from "../api/tags.api";
-import {loadAllPlts} from "../../store/actions";
+import {loadAllPlts, LoadProjectByWorkspace, LoadWS} from "../../store/actions";
+import {CloneDataApi} from "../api/cloneData.api";
+import {CloningStatus} from "../../model/CloningStatus";
 
 @Injectable({
   providedIn: 'root'
 })
 export class PltStateService {
 
-  constructor(private pltApi: PltApi,private wsApi: WsApi, private tagApi: TagsApi) {
+  constructor(private pltApi: PltApi,private wsApi: WsApi, private tagApi: TagsApi, private cloneDataApi: CloneDataApi) {
   }
 
   status = ['in progress', 'valid', 'locked', 'requires regeneration', 'failed'];
@@ -35,7 +37,9 @@ export class PltStateService {
     return this.pltApi.getAllPlts(params)
       .pipe(
         mergeMap((data) => {
-          ctx.patchState(produce(ctx.getState(), draft => {
+
+/*          ctx.patchState(produce(ctx.getState(), draft => {
+
             const {
               plts,
               deletedPlts,
@@ -50,10 +54,13 @@ export class PltStateService {
               data: _.merge({}, ...plts.map(plt => ({[plt.pltId]: this._appendPltMetaData(draft.content[wsIdentifier].pltManager.data,plt)}))),
               deleted: _.merge({}, ...deletedPlts.map(plt => ({[plt.pltId]: this._appendPltMetaData(draft.content[wsIdentifier].pltManager.deleted,plt)})))
             };
+
           }));
+  */
+
           return ctx.dispatch(new fromPlt.loadAllPltsSuccess({
             wsIdentifier: wsIdentifier,
-            userTags: data.tags
+            data: data
           }));
         }),
         catchError(err => ctx.dispatch(new fromPlt.loadAllPltsFail()))
@@ -73,10 +80,11 @@ export class PltStateService {
       params
     } = payload;
 
+
     return this.wsApi.searchWorkspace(params.workspaceId,params.uwy)
       .pipe(
         mergeMap((ws: any) => {
-          console.log(ws);
+
 
           const {workspaceId, uwy } = params;
           const {workspaceName, programName, cedantName, projects} = ws;
@@ -216,11 +224,13 @@ export class PltStateService {
 
   loadAllPltsSuccess(ctx: StateContext<WorkspaceModel>, payload: any) {
     const {
-      wsIdentifier
+      wsIdentifier,
+      data
     } = payload;
 
     ctx.patchState(produce(ctx.getState(), draft => {
       draft.content[wsIdentifier].pltManager.loading = false;
+      draft.content[wsIdentifier].pltManager.data = data;
       draft.content[wsIdentifier].loading = false;
     }));
 
@@ -233,11 +243,12 @@ export class PltStateService {
       wsIdentifier,
       forDelete
     } = payload;
-
+    console.log(payload);
     let inComingData = {};
     _.forEach(plts, (v, k) => {
       inComingData[k] = {
-        selected: v.type
+        selected: v.type,
+        projectId: v.projectId
       };
     });
 
@@ -637,4 +648,85 @@ export class PltStateService {
       draft.content[wsIdentifier].pltManager.initialized = true;
     }));
   }
+
+  commitClone(ctx: StateContext<WorkspaceModel>, payload: any) {
+    ctx.patchState(produce(ctx.getState(), draft => {
+      draft.cloningStatus = CloningStatus.onClone;
+    }));
+
+    return this.cloneDataApi.cloneData(payload).pipe(
+        mergeMap((r => {
+
+      return ctx.dispatch(new fromPlt.CommitCloneSuccess(payload));
+    })));
+
+  }
+
+  commitCloneSuccess(ctx: StateContext<WorkspaceModel>, payload: any) {
+
+    const {
+      targetWorkspaceContextCode,
+      targetWorkspaceUwYear
+    } = payload;
+
+    ctx.patchState(produce(ctx.getState(), draft => {
+      draft.cloningStatus = CloningStatus.cloneSucceed;
+    }));
+
+    const state = ctx.getState();
+    if (state.content[targetWorkspaceContextCode + '-' + targetWorkspaceUwYear]) {
+
+      return ctx.dispatch(new LoadProjectByWorkspace({wsId: targetWorkspaceContextCode, uwYear: targetWorkspaceUwYear}));
+
+    }
+  }
+  setCloneDataWsSource(ctx: StateContext<WorkspaceModel>, payload: any) {
+
+    const {
+      wsIdentifier
+    } = ctx.getState().currentTab;
+
+    ctx.patchState(produce(ctx.getState(), draft => {
+      draft.content[wsIdentifier].cloneData.workspaceSource = payload;
+    }));
+  }
+
+  setDefaultCloneWsTarget(ctx: StateContext<WorkspaceModel>) {
+
+    const state = ctx.getState();
+    const wsId = state.currentTab.wsIdentifier;
+    const sourceWs = {
+      wsId: state.content[wsId].wsId,
+      uwYear: state.content[wsId].uwYear,
+      plts: [],
+      detail: state.content[wsId].cedantName + ' | ' + state.content[wsId].workspaceName +
+          ' | ' + state.content[wsId].uwYear + ' | ' + state.content[wsId].wsId
+    };
+    ctx.patchState(produce(ctx.getState(), draft => {
+      draft.content[wsId].cloneData.workspaceTarget = sourceWs;
+    }));
+  }
+
+  setCloneDataWsTarget(ctx: StateContext<WorkspaceModel>, payload: any) {
+
+    const {
+      wsIdentifier
+    } = ctx.getState().currentTab;
+
+    ctx.patchState(produce(ctx.getState(), draft => {
+      draft.content[wsIdentifier].cloneData.workspaceTarget = payload;
+    }));
+  }
+
+  setCloneDataSelectedPlts(ctx: StateContext<WorkspaceModel>, payload: any) {
+
+    const {
+      wsIdentifier
+    } = ctx.getState().currentTab;
+
+    ctx.patchState(produce(ctx.getState(), draft => {
+      draft.content[wsIdentifier].cloneData.selectedPLTs = payload;
+    }));
+  }
+
 }

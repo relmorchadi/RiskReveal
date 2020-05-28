@@ -1,0 +1,14 @@
+<div class="custom-group-container" [ngStyle]="{ 'justify-content': isGroup ? 'space-between' : 'flex-end', marginLeft: offsetMargin}">
+  <label nz-checkbox
+         [nzChecked]="isSelected"
+         [nzIndeterminate]="isIndeterminate"
+         (nzCheckedChange)="onCheckChange()"
+  ></label>
+  <div class="inner-data" *ngIf="isGroup">
+    {{data?.value}} - ({{data?.childCount}})
+  </div>
+  <div class="expand-icon" *ngIf="isGroup">
+    <span *ngIf="isExpanded" class="ag-icon ag-icon-tree-open" (click)="collapse()"></span>
+    <span *ngIf="!isExpanded" class="ag-icon ag-icon-tree-closed" (click)="expand()"></span>
+  </div>
+</div>

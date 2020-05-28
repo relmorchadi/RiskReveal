@@ -20,9 +20,14 @@ import {StatusCellRenderer} from "./grid/status-cell-renderer/status-cell-render
 import {BooleanCellRenderer} from "./grid/boolean-cell-renderer/boolean-cell-renderer.component";
 import {NumberCellRenderer} from "./grid/number-cell-renderer/number-cell-renderer.component";
 import {DateCellRenderer} from "./grid/date-cell-renderer/date-cell-renderer.component";
+import {GroupedCellRenderer} from "./grid/grouped-cell-renderer/grouped-cell-renderer.component";
+import {GridColManager} from "./grid/grid-col-manager/grid-col-manager.component";
+import {SearchMenuItemComponent} from "./search-menu-item/search-menu-item.component";
+import {PinComponent} from "./pin/pin.component";
 import {ErrorCellRenderer} from "./grid/error-cell-renderer/error-cell-renderer.component";
 
 export const COMPONENTS = [
+  SearchMenuItemComponent,
   ChipTagComponent,
   TableComponent,
   PltRightMenuComponent,
@@ -45,6 +50,10 @@ export const COMPONENTS = [
   BooleanCellRenderer,
   NumberCellRenderer,
   DateCellRenderer,
+  PinComponent,
+  DateCellRenderer,
+  GroupedCellRenderer,
+  GridColManager,
   ErrorCellRenderer
 ];
 

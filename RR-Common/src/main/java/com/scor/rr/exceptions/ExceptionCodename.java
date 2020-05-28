@@ -3,8 +3,18 @@ package com.scor.rr.exceptions;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 public enum ExceptionCodename {
+    /*
+        This section is delegated to Projetc Exceptions
+    * */
+
+    PROJECT_NOT_FOUND("PROJECT NOT FOUND"),
+
+    /*
+    *  Generals Exceptions
+    * */
     UNKNOWN("ERROR.UNKNOWN"),
     PLT_NOT_FOUND("PLT NOT FOUND"),
+    MODEL_ANALYSIS_NOT_FOUND("MODEL ANALYSIS NOT FOUND"),
     NODE_NOT_FOUND("NODE NOT FOUND"),
     TYPE_NOT_FOUND("ADJUSTMENT TYPE NOT FOUND"),
     BASIS_NOT_FOUND("ADJUSTMENT BASIS NOT FOUND"),

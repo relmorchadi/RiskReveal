@@ -110,7 +110,7 @@ export class RiskLink {
         };
     }
 
-    setRefData(refData, defaultRmsInstance?) {
+    setRefData(refData, defaultRmsInstance?, defaultFp?, defaultTargetCurrency?) {
         this.financialValidator = {
             rmsInstance: {
                 data: refData.rmsInstances,
@@ -118,11 +118,11 @@ export class RiskLink {
             },
             financialPerspectiveELT: {
                 data: refData.financialPerspectives,
-                selected: refData.financialPerspectives[0]
+                selected: defaultFp ? _.first(_.filter(refData.financialPerspectives, fp => fp.code == defaultFp )) : refData.financialPerspectives[0]
             },
             targetCurrency: {
                 data: refData.currencies,
-                selected: refData.currencies[0]
+                selected: defaultTargetCurrency ? _.filter(_.filter(refData.currencies, c => c == defaultTargetCurrency )) : refData.currencies[0]
             },
             division: {
                 data: refData.division,

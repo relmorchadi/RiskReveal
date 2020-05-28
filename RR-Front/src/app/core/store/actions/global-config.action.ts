@@ -57,3 +57,9 @@ export class GetAllUsers {
   static readonly type = '[Global Configuration] Get All Users';
   constructor(public payload?: any) {}
 }
+
+export class GetTablePreference {
+  static readonly type = '[Global Configuration] get Table Preference';
+  constructor(public payload?: any) {}
+}
+

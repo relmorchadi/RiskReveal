@@ -1,3 +1,5 @@
+import {CloningStatus} from "./CloningStatus";
+
 export class WorkspaceModel {
   content: {
     [key: string]: any
@@ -15,6 +17,7 @@ export class WorkspaceModel {
   savedData: {riskLink: {
     edmrdmSelection: any
   }};
+  cloningStatus: CloningStatus;
   routing: string;
   loading: boolean;
   // paginationParams:any[];

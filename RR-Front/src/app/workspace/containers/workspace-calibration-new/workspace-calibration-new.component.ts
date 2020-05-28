@@ -1013,10 +1013,10 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
 
       case "Manage Frozen Columns":
         if(this.tableConfig.isExpanded) {
-          this.calibrationTableService.onManageFrozenColumnsExpand(action.payload);
+          this.calibrationTableService.onManageFrozenColumnsExpand(action.payload.visible);
 
         } else {
-          this.calibrationTableService.onManageFrozenColumnsUnexpand(action.payload);
+          this.calibrationTableService.onManageFrozenColumnsUnexpand(action.payload.visible);
         }
         this.isFrozenManageColumnsVisible = false;
         break;

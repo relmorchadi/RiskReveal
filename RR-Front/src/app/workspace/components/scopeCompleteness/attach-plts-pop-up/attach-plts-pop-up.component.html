@@ -188,6 +188,7 @@
                           <div *ngIf="col.selection === 'single'" class="center-checkbox">
                               <ng-container *ngIf="showApplicablePlts">
                                   <label *ngIf="attachable(rowData, col)" [nzChecked]="selectedForAttachment[rowData.pltHeaderId + col.id]"
+                                         [ngClass]="{'special-check': attachable(rowData, col)}"
                                          (nzCheckedChange)="selectPLTByDiv(rowData, col, $event)" nz-checkbox></label>
                               </ng-container>
                               <ng-container *ngIf="!showApplicablePlts">
@@ -197,7 +198,7 @@
                           </div>
                           <div *ngIf="col.selection === 'line'" class="center-checkbox">
                               <ng-container *ngIf="showApplicablePlts">
-                                  <label *ngIf="attachableMulti(rowData)" [nzChecked]="checkedRow(rowData)"
+                                  <label *ngIf="attachableMulti(rowData)" [nzChecked]="checkedRow(rowData)" [ngClass]="{'special-check': attachableMulti(rowData)}"
                                          (nzCheckedChange)="selectPLTByRow(rowData, $event)" nz-checkbox></label>
                               </ng-container>
                               <ng-container *ngIf="!showApplicablePlts">

@@ -26,8 +26,8 @@
 
     </div>
     <app-pin
-      (pinWs)="pinWorkspace()"
-      [active]="!workspace?.isPinned"
+      (onPin)="pinWorkspace()"
+      [pinned]="!workspace?.isPinned"
     >
     </app-pin>
   </div>

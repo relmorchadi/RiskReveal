@@ -2,8 +2,12 @@
   <p-contextMenu #cm [model]="tableInputs.contextMenuItems" appendTo="body"></p-contextMenu>
 </ng-container>
 <p-table
-  [columns]="tableInputs.pltColumns"
-  [value]="(tableInputs.showDeleted ? tableInputs.listOfDeletedPltsData : tableInputs.listOfPltsData) | tableSortAndFilter : [tableInputs.sortData, tableInputs.filterData] | systemTagFilter: [tableInputs.filters.systemTag] | falselyFilter: tableInputs.status"
+  [columns]="tableInputs.pltColumns.visible"
+  [value]="(tableInputs.showDeleted ? tableInputs.listOfDeletedPltsData : tableInputs.listOfPltsData)
+  | tableSortAndFilter : [tableInputs.sortData, tableInputs.filterData]
+  | systemTagFilter: [tableInputs.filters.systemTag]
+  | falselyFilter: tableInputs.status
+  |  filterByPath : selectedProject"
   [contextMenu]="cm"
   [scrollable]="true"
   [resizableColumns]="true"
@@ -123,7 +127,7 @@
           <td  *ngIf="col?.type == 'checkbox'" class="ui-resizable-column" [ngStyle]="{'width': col?.width + col?.unit }">
             <div style="padding-left: 9px;">
               <label nz-checkbox [nzChecked]="rowData.selected"
-                     (nzCheckedChange)="selectSinglePLT(rowData.pltId,$event)"></label>
+                     (nzCheckedChange)="selectSinglePLT(rowData.pltId,rowData.projectId,$event)"></label>
             </div>
           </td>
           <td  *ngIf="col?.type == 'checkbox-scope'" class="ui-resizable-column" [ngStyle]="{'width': col?.width + col?.unit }">
@@ -162,10 +166,10 @@
 
             </div>
           </td>
-          <td (click)="handlePLTClick(rowData.pltId,rowIndex,$event)" *ngIf="col?.type == 'id'" [ngStyle]="{'width': col?.width + col?.unit }">
+          <td (click)="handlePLTClick(rowData.pltId,rowData.projectId,rowIndex,$event)" *ngIf="col?.type == 'id'" [ngStyle]="{'width': col?.width + col?.unit }">
             <div class="text-elipsice" style="font-weight: bold;padding: 0 5px;" [ngStyle]="{'text-align' : col?.textAlign ? col?.textAlign : 'left'}">{{rowData.pltId}}</div>
           </td>
-          <td (click)="handlePLTClick(rowData.pltId,rowIndex,$event)" *ngIf="col?.type == 'field' && (col?.forDelete ? tableInputs.showDeleted : true)" [ngStyle]="{'width': col?.width + col?.unit }">
+          <td (click)="handlePLTClick(rowData.pltId,rowData.projectId,rowIndex,$event)" *ngIf="col?.type == 'field' && (col?.forDelete ? tableInputs.showDeleted : true)" [ngStyle]="{'width': col?.width + col?.unit }">
             <ng-container>
               <div class="text-elipsice" style="padding: 0 5px;" [ngStyle]="{'font-weight': i == 2 ? 'bold' : 'normal', 'text-align' : col?.textAlign ? col?.textAlign : 'left'}">
                 <span *ngIf="!col?.isNumeric && col?.fields != 'pltStatus'">
@@ -192,14 +196,14 @@
               </div>
             </ng-container>
           </td>
-          <td (click)="handlePLTClick(rowData.pltId,rowIndex,$event)" *ngIf="col?.type == 'peril'" [ngStyle]="{'width': col?.width + col?.unit , 'textAlign': 'center'}">
+          <td (click)="handlePLTClick(rowData.pltId,rowData.projectId,rowIndex,$event)" *ngIf="col?.type == 'peril'" [ngStyle]="{'width': col?.width + col?.unit , 'textAlign': 'center'}">
             <ng-container>
               <div class="text-elipsice peril-container" [ngStyle]="{'font-weight': i == 2 ? 'bold' : 'normal', 'background-color': perilColors[rowData[col?.fields]]}">{{ rowData[col.fields] }}</div>
             </ng-container>
           </td>
-          <td (click)="handlePLTClick(rowData.pltId,rowIndex,$event)" *ngIf="col?.type == 'date' && (col?.forDelete ? tableInputs.showDeleted : true)" [ngStyle]="{'width': col?.width + col?.unit }">
+          <td (click)="handlePLTClick(rowData.pltId,rowData.projectId,rowIndex,$event)" *ngIf="col?.type == 'date' && (col?.forDelete ? tableInputs.showDeleted : true)" [ngStyle]="{'width': col?.width + col?.unit }">
             <ng-container>
-              <div (click)="handlePLTClick(rowData.pltId,rowIndex,$event)" class="text-elipsice" style="padding: 0 5px;" [ngStyle]="{'font-weight': i == 2 ? 'bold' : 'normal'}">{{ (rowData[col.fields] | date) }}</div>
+              <div (click)="handlePLTClick(rowData.pltId,rowData.projectId,rowIndex,$event)" class="text-elipsice" style="padding: 0 5px;" [ngStyle]="{'font-weight': i == 2 ? 'bold' : 'normal'}">{{ (rowData[col.fields] | date) }}</div>
             </ng-container>
           </td>
           <td *ngIf="col?.type == 'icon' ||  col?.type == 'indicator'" [ngStyle]="{ 'width': col?.width + col?.unit }">

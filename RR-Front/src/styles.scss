@@ -6,12 +6,6 @@
 @import "../node_modules/jsplumbtoolkit/dist/css/jsplumbtoolkit-defaults.css";
 @import "../node_modules/jsplumbtoolkit/dist/css/jsplumbtoolkit-demo.css";
 @import "../src/assets/jsplumb/flowchart-builder/app.css";
-@import "../node_modules/@ag-grid-community/all-modules/dist/styles/ag-grid.scss";
-@import "../node_modules/@ag-grid-community/all-modules/dist/styles/ag-theme-alpine/sass/ag-theme-alpine-mixin.scss";
-
-.ag-theme-alpine {
-  @include ag-theme-alpine();
-}
 
 body {
   overflow: auto;

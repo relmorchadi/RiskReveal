@@ -167,7 +167,13 @@ export class WorkspaceService {
             selectedFiles: null,
             importedPLTs: null
           },
-          inuring: defaultInuringState
+          inuring: defaultInuringState,
+          cloneData: {
+            workspaceSource: null,
+            workspaceTarget: null,
+            selectedPLTs: []
+          }
+
         };
         draft.loading = false;
         draft.currentTab = {...draft.currentTab,
@@ -312,7 +318,12 @@ export class WorkspaceService {
               selectedFiles: null,
               importedPLTs: null
             },
-            inuring: defaultInuringState
+            inuring: defaultInuringState,
+            cloneData: {
+              workspaceSource: null,
+              workspaceTarget: null,
+              selectedPLTs: []
+            }
           }
         }));
       }
@@ -521,6 +532,33 @@ export class WorkspaceService {
       }))
   }
 
+  loadProjectsByWorkspace(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.LoadProjectByWorkspace) {
+    const {wsId, uwYear} = payload;
+    const wsIdentifier = wsId + '-' + uwYear;
+    return this.projectApi.getProjectsByWorkspace(wsId, uwYear)
+        .pipe(
+            tap(data => {
+              const state = ctx.getState();
+              let projects = data as any[];
+
+              const selectedProject = state.content[wsIdentifier].projects.filter( item => item.selected);
+
+              const selectedProjectId = selectedProject.length > 0 ? selectedProject[0].projectId : 0;
+
+              projects.map(prj=> {
+                prj.selected = prj.projectId === selectedProjectId;
+                prj.projectType = prj.carRequestId === null ? 'TREATY' : 'FAC';
+                return prj;
+              });
+
+              ctx.patchState(produce(ctx.getState(), draft => {
+                draft.content[wsIdentifier].projects = projects.reverse();
+              }))
+
+            })
+        );
+
+  }
   deleteProject(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.DeleteProject) {
     const {projectId, wsId, uwYear} = payload;
     const state = ctx.getState();

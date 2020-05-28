@@ -4,6 +4,7 @@
  */
 
 import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from "@angular/core";
+import * as _ from 'lodash';
 import {ExposuresHeaderConfig} from "../../../model/exposures-header-config.model";
 
 @Component({
@@ -12,10 +13,10 @@ import {ExposuresHeaderConfig} from "../../../model/exposures-header-config.mode
     styleUrls: ['./exposures-header.component.scss']
 })
 export class ExposuresHeaderComponent implements OnInit, OnDestroy {
-
-    @Input("headerConfig") headerConfig: any;
     @Output("actionDispatcher") actionDispatcher: EventEmitter<any> = new EventEmitter<any>();
+
     @Input("selectedHeaderConfig") selectedHeaderConfig: any;
+    @Input("headerConfig") headerConfig: any;
 
     constructor() {
 
@@ -36,12 +37,13 @@ export class ExposuresHeaderComponent implements OnInit, OnDestroy {
     changeFinancialUnit(financialUnit: any) {
         this.actionDispatcher.emit({type: 'changeFinancialUnit', payload: financialUnit});
     }
+
     changeFinancialPerspecctive(financialPerspective: any) {
         this.actionDispatcher.emit({type: 'changeFinancialPerspecctive', payload: financialPerspective});
     }
 
-    changeDivision(division: any) {
-        this.actionDispatcher.emit({type: 'changeDivision', payload: division});
+    changeDivision(division: any, id: number) {
+        this.actionDispatcher.emit({type: 'changeDivision', payload: {division, divisionNum: id}});
     }
 
     changePortfolio(portfolio: any) {
@@ -70,5 +72,12 @@ export class ExposuresHeaderComponent implements OnInit, OnDestroy {
 
     downloadYoyReport() {
         this.actionDispatcher.emit({type: 'downloadYoyReport', payload: null})
+    }
+
+    filterPortfoliosByDivision() {
+        return  _.filter(this.headerConfig.portfolios, item => {
+            const portfolios = _.keys(_.get(this.headerConfig.portfoliosAndCurrenciesByDivision, `${this.selectedHeaderConfig.division.divisionNumber}`));
+            return _.includes(portfolios, item)
+        })
     }
 }

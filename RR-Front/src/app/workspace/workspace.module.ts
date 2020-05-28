@@ -24,7 +24,6 @@ import {AddRemovePopUpComponent} from './components/calibration/add-remove-pop-u
 import {PopUpPltTableComponent} from './components/calibration/add-remove-pop-up/pop-up-plt-table/pop-up-plt-table.component';
 import {CalibrationMainTableComponent} from './components/calibration/calibration-main-table/calibration-main-table.component';
 import {InuringCanvasTabComponent} from './components/inuring/inuring-canvas-tab/inuring-canvas-tab.component';
-import {AttachPltPopUpComponent} from './components/scopeCompleteness/attachPlt-pop-up/attach-plt-pop-up/attach-plt-pop-up.component';
 import {jsPlumbToolkitModule} from 'jsplumbtoolkit-angular';
 import {jsPlumbToolkitDragDropModule} from 'jsplumbtoolkit-angular-drop';
 import {Dialogs} from 'jsplumbtoolkit';
@@ -54,17 +53,18 @@ import {StatusCellRenderer} from "../shared/components/grid/status-cell-renderer
 import {BooleanCellRenderer} from "../shared/components/grid/boolean-cell-renderer/boolean-cell-renderer.component";
 import {DateCellRenderer} from "../shared/components/grid/date-cell-renderer/date-cell-renderer.component";
 import {NumberCellRenderer} from "../shared/components/grid/number-cell-renderer/number-cell-renderer.component";
+import {GroupedCellRenderer} from "../shared/components/grid/grouped-cell-renderer/grouped-cell-renderer.component";
 
 @NgModule({
   entryComponents: [...COMPONENTS, ...CONTAINERS, ...INURING_NODES],
   declarations: [
     ...COMPONENTS, ...CONTAINERS,
     FrozenColumnsFilterPipe,
-    ...PIPES, ...DIRECTIVES, TagsComponent, LastAdjustmentMatrixComponent, AdjustmentPopUpComponent, AddRemovePopUpComponent, PopUpPltTableComponent, CalibrationMainTableComponent, InuringCanvasTabComponent, AttachPltPopUpComponent, EditContractPopUpComponent, EditEdgePopUpComponent, ParseIdPipe, ReturnPeriodPopUpComponent, AddRemovePopUpNewComponent, PopUpPltTableNewComponent, CalibrationSortAndFilterPipe, AttachPltsPopUpComponent
+    ...PIPES, ...DIRECTIVES, TagsComponent, LastAdjustmentMatrixComponent, AdjustmentPopUpComponent, AddRemovePopUpComponent, PopUpPltTableComponent, CalibrationMainTableComponent, InuringCanvasTabComponent, EditContractPopUpComponent, EditEdgePopUpComponent, ParseIdPipe, ReturnPeriodPopUpComponent, AddRemovePopUpNewComponent, PopUpPltTableNewComponent, CalibrationSortAndFilterPipe, AttachPltsPopUpComponent
 
   ],
   imports: [
-    AgGridModule.withComponents([ CustomBooleanFilter, CustomBooleanFloatingFilter, StatusCellRenderer, BooleanCellRenderer, DateCellRenderer, NumberCellRenderer]),
+    AgGridModule.withComponents([ CustomBooleanFilter, CustomBooleanFloatingFilter, StatusCellRenderer, BooleanCellRenderer, DateCellRenderer, NumberCellRenderer, GroupedCellRenderer]),
     GridsterModule,
     SharedModule,
     FormsModule,
