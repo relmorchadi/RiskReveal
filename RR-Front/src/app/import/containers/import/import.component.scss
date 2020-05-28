@@ -99,12 +99,17 @@
     display: flex;
     cursor: pointer;
     background-color: #0700CF;
-    margin-right: 16px;
+    position: absolute;
+    right: 16px;
+    margin: auto;
   }
 
   ::ng-deep {
     .ant-collapse-header {
       display: flex;
+    }
+    .ant-list-sm .ant-list-item {
+      padding-left: 60px;
     }
   }
 }

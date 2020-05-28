@@ -36,7 +36,8 @@ export class ImportContainer extends BaseContainer implements OnInit {
   };
 
   file: File;
-  fileUploaded: boolean;
+  isFileRead: boolean;
+  isFileValidated: boolean;
 
   headerErrors: TableErrorType[];
 
@@ -85,7 +86,8 @@ export class ImportContainer extends BaseContainer implements OnInit {
       rowSelection: "multiple",
       getChildCount: () => {}
     };
-    this.fileUploaded = false;
+    this.isFileRead = false;
+    this.isFileValidated = false;
     this.headerErrors = [];
   }
 
@@ -149,16 +151,13 @@ export class ImportContainer extends BaseContainer implements OnInit {
         return newRow;
       });
       this.gridApi.setColumnDefs(columns);
-      console.log({
-        data, columns
-      })
       this.gridApi.setRowData(data);
       this.gridParams = {
         ...this.gridParams,
         rowData: data,
         columnDefs: columns
       };
-      this.fileUploaded = true;
+      this.isFileRead = true;
       this.detectChanges();
     };
     reader.readAsBinaryString(file);
@@ -187,8 +186,10 @@ export class ImportContainer extends BaseContainer implements OnInit {
               value
           )
         }
-      })
+      });
       this.gridApi.setRowData(data);
+      this.isFileValidated= true;
+      this.detectChanges();
     });
   }
 
