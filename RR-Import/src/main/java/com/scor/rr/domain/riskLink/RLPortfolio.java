@@ -1,8 +1,9 @@
 package com.scor.rr.domain.riskLink;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.scor.rr.domain.EdmPortfolio;
 import com.scor.rr.domain.EdmPortfolioBasic;
-import com.scor.rr.domain.RdmAnalysisBasic;
+import com.scor.rr.domain.dto.PortfolioHeader;
 import com.scor.rr.domain.enums.ScanLevelEnum;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -71,15 +72,13 @@ public class RLPortfolio {
     private List<RLPortfolioAnalysisRegion> rlPortfolioAnalysisRegions;
 
 
-
     @ManyToOne
     @JoinColumn(name = "RLDataSourceId")
     @JsonBackReference
     private RLModelDataSource rlModelDataSource;
 
 
-
-    public RLPortfolio(EdmPortfolioBasic edmPortfolioBasic, RLModelDataSource edm,int scanStatus) {
+    public RLPortfolio(EdmPortfolioBasic edmPortfolioBasic, RLModelDataSource edm, int scanStatus) {
         this.entity = 1L;
         this.projectId = edm.getProjectId();
         this.edmId = edm.getRlId();
@@ -103,28 +102,68 @@ public class RLPortfolio {
         this.scanLevel = ScanLevelEnum.get(scanStatus);
         this.lastScan = new Date();
     }
-    public Boolean compare(EdmPortfolioBasic edmAnalysisBasic){
-        return edmAnalysisBasic.getName() != this.name || edmAnalysisBasic.getDescription() != this.description  || edmAnalysisBasic.getType() != this.type
-                ||edmAnalysisBasic.getNumber() != this.number  || edmAnalysisBasic.getPeril() != this.peril || edmAnalysisBasic.getAgSource() != this.agSource
-                ||edmAnalysisBasic.getAgCedant() != this.agCedent || edmAnalysisBasic.getAgCurrency() != this.agCurrency;
+
+    public RLPortfolio(EdmPortfolio edmPortfolio, Long projectId, RLModelDataSource rlModelDataSource) {
+        this.entity = 1L;
+        this.projectId = projectId;
+        this.edmId = edmPortfolio.getEdmId();
+        this.edmName = edmPortfolio.getEdmName();
+        this.rlId = edmPortfolio.getPortfolioId();
+        this.name = edmPortfolio.getName();
+        this.created = edmPortfolio.getCreated();
+        this.number = edmPortfolio.getNumber();
+        this.description = edmPortfolio.getDescription();
+        this.type = edmPortfolio.getType();
+        this.peril = edmPortfolio.getPeril();
+        this.agSource = edmPortfolio.getAgSource();
+        this.agCedent = edmPortfolio.getAgCedant();
+        this.agCurrency = edmPortfolio.getAgCurrency();
+        this.rlModelDataSource = rlModelDataSource;
+        this.scanStatus = 0;
+        this.scanLevel = ScanLevelEnum.get(scanStatus);
+        this.lastScan = new Date();
+    }
+
+    public Boolean compare(EdmPortfolioBasic edmAnalysisBasic) {
+        return edmAnalysisBasic.getName() != this.name || edmAnalysisBasic.getDescription() != this.description || edmAnalysisBasic.getType() != this.type
+                || edmAnalysisBasic.getNumber() != this.number || edmAnalysisBasic.getPeril() != this.peril || edmAnalysisBasic.getAgSource() != this.agSource
+                || edmAnalysisBasic.getAgCedant() != this.agCedent || edmAnalysisBasic.getAgCurrency() != this.agCurrency;
 
     }
 
-    public void updateBasic(EdmPortfolioBasic edmPortfolioBasic){
-             if(!StringUtils.equals(this.name,edmPortfolioBasic.getName())){               this.setName(edmPortfolioBasic.getName());}
-             if(!StringUtils.equals(this.description,edmPortfolioBasic.getDescription())){ this.setDescription(edmPortfolioBasic.getDescription());}
-             if(!StringUtils.equals(this.type,edmPortfolioBasic.getType())){               this.setType(edmPortfolioBasic.getType()); }
-             if(!StringUtils.equals(this.number,edmPortfolioBasic.getNumber())){           this.setNumber(edmPortfolioBasic.getNumber());}
-             if(!StringUtils.equals(this.peril,edmPortfolioBasic.getPeril())){             this.setPeril(edmPortfolioBasic.getPeril());}
-             if(!StringUtils.equals(this.agSource,edmPortfolioBasic.getAgSource())){       this.setAgSource(edmPortfolioBasic.getAgSource());}
-             if(!StringUtils.equals(this.agCedent,edmPortfolioBasic.getAgCedant())){       this.setAgCedent(edmPortfolioBasic.getAgCedant());}
-             if(!StringUtils.equals(this.agCurrency,edmPortfolioBasic.getAgCurrency())){   this.setAgCurrency(edmPortfolioBasic.getAgCurrency());}
+    public void updateBasic(EdmPortfolioBasic edmPortfolioBasic) {
+        if (!StringUtils.equals(this.name, edmPortfolioBasic.getName())) {
+            this.setName(edmPortfolioBasic.getName());
+        }
+        if (!StringUtils.equals(this.description, edmPortfolioBasic.getDescription())) {
+            this.setDescription(edmPortfolioBasic.getDescription());
+        }
+        if (!StringUtils.equals(this.type, edmPortfolioBasic.getType())) {
+            this.setType(edmPortfolioBasic.getType());
+        }
+        if (!StringUtils.equals(this.number, edmPortfolioBasic.getNumber())) {
+            this.setNumber(edmPortfolioBasic.getNumber());
+        }
+        if (!StringUtils.equals(this.peril, edmPortfolioBasic.getPeril())) {
+            this.setPeril(edmPortfolioBasic.getPeril());
+        }
+        if (!StringUtils.equals(this.agSource, edmPortfolioBasic.getAgSource())) {
+            this.setAgSource(edmPortfolioBasic.getAgSource());
+        }
+        if (!StringUtils.equals(this.agCedent, edmPortfolioBasic.getAgCedant())) {
+            this.setAgCedent(edmPortfolioBasic.getAgCedant());
+        }
+        if (!StringUtils.equals(this.agCurrency, edmPortfolioBasic.getAgCurrency())) {
+            this.setAgCurrency(edmPortfolioBasic.getAgCurrency());
+        }
         Date createdEdmPortfolioBasic = null;
-            try {
+        try {
             createdEdmPortfolioBasic = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS").parse(edmPortfolioBasic.getCreated());
         } catch (Exception ex) {
             ex.printStackTrace();
         }
-            if(!this.created.equals(createdEdmPortfolioBasic)){                 this.setCreated(createdEdmPortfolioBasic);}
-}
+        if (!this.created.equals(createdEdmPortfolioBasic)) {
+            this.setCreated(createdEdmPortfolioBasic);
+        }
+    }
 }

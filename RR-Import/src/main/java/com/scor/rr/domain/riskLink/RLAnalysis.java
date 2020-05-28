@@ -232,7 +232,7 @@ public class RLAnalysis {
         this.engineVersionMajor = rdmAnalysis.getEngineVersionMajor();
         this.profileName = rdmAnalysis.getProfileName();
         this.profileKey = rdmAnalysis.getProfileKey();
-        this.purePremium = rdmAnalysis.getPurePremium().doubleValue();
+        this.purePremium = rdmAnalysis.getPurePremium() != null ? rdmAnalysis.getPurePremium().doubleValue() : 0d;
         this.exposureTIV = rdmAnalysis.getExposureTiv();
 //        this.groupType = rdmAnalysis.getGroupTypeName();
 //        this.cedant = rdmAnalysis.getCedant();

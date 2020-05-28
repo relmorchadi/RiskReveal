@@ -523,13 +523,27 @@ public class RmsService {
         return allScannedPortfolios;
     }
 
-    public void scanAnalysisForBulkImport(AnalysisHeader rlAnalysisHeader, Long projectId, String fp, String instanceId, Long rlModelDataSourceId) {
+    public RLAnalysis scanAnalysisForBulkImport(AnalysisHeader rlAnalysisHeader, Long projectId, String fp, String instanceId, Long rlModelDataSourceId) {
 
-        this.listRdmAnalysis(instanceId, rlAnalysisHeader.getRdmId(), rlAnalysisHeader.getRdmName(),
+        return this.listRdmAnalysis(instanceId, rlAnalysisHeader.getRdmId(), rlAnalysisHeader.getRdmName(),
                 Collections.singletonList(rlAnalysisHeader.getAnalysisId())).stream()
-                .map(e -> new RLAnalysis(e, rlAnalysisHeader, projectId, rlModelDataSourceId))
-                .forEach(analysis -> rlAnalysisRepository.save(analysis));
+                .map(e -> {
+                    RLAnalysis analysis = new RLAnalysis(e, rlAnalysisHeader, projectId, rlModelDataSourceId);
+                    rlAnalysisRepository.save(analysis);
+                    return this.scanAnalysisDetail(Collections.singletonList(rlAnalysisHeader), projectId, fp);
+                }).findFirst().get().get(0);
 
+    }
+
+    public RLPortfolio scanPortfolioForBulkImport(PortfolioHeader rlPortfolioHeader, Long projectId, String instanceId, RLModelDataSource rlModelDataSource) {
+
+        return this.listEdmPortfolio(instanceId, rlPortfolioHeader.getEdmId(), rlPortfolioHeader.getEdmName(),
+                getPortfolioIdPortfolioTypeCurrencyByEdm(rlPortfolioHeader.getEdmId(), rlPortfolioHeader.getEdmName(), Collections.singletonList(rlPortfolioHeader))).stream()
+                .map(e -> {
+                    RLPortfolio portfolio = new RLPortfolio(e, projectId, rlModelDataSource);
+                    rlPortfolioRepository.save(portfolio);
+                    return this.scanPortfolioDetail(instanceId, Collections.singletonList(rlPortfolioHeader), projectId);
+                }).findFirst().get().get(0);
     }
 
     private List<Long> getAnalysisIdByRdm(Long rdmId, String rdmName, List<AnalysisHeader> rlAnalysisList) {
