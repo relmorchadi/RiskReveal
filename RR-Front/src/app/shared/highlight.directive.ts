@@ -1,4 +1,5 @@
 import { Directive, ElementRef, HostListener, Input, Output, EventEmitter } from '@angular/core';
+import * as _ from 'lodash'
 
 @Directive({
   selector: '[clickOutside]'
@@ -37,10 +38,10 @@ export class HighlightDirective {
     }
   }
 
-  excludeCheck(target) {
+  excludeCheck(target: HTMLElement) {
     const nodes = Array.from(document.querySelectorAll(this.exclude)) as Array<HTMLElement>;
     for (let excludedNode of nodes) {
-      if (excludedNode.contains(target)) {
+      if (excludedNode.contains(target) || _.some(_.split(this.exclude, ','), cls => target.classList.contains(_.trimStart(cls, '.')))) {
         return true;
       }
     }

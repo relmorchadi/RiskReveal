@@ -197,6 +197,7 @@ export class PltBrowserComponent extends BaseContainer implements OnInit, OnDest
             this.updateMenuKey('pltHeaderId', params.node.data.pltId);
             this.updateMenuKey('visible', true);
             console.log(this.rightMenuInputs);
+            this.detectChanges();
           },
         }] : [];
       }
@@ -296,6 +297,14 @@ export class PltBrowserComponent extends BaseContainer implements OnInit, OnDest
 
     this.observeRouteParamsWithSelector(() => this.getProjects()).subscribe((projects: any) => {
       this.updateLeftMenuInputs('projects', projects);
+      if(this.gridInitialized) {
+        const selectedProject = _.find(projects, project => project.selected);
+        const filterModel = this.gridApi.getFilterModel();
+        this.gridApi.setFilterModel(selectedProject ? { ...filterModel, projectId: { type: 'equals', filter: selectedProject.projectId } } : _.omit(filterModel, 'projectId'));
+        this.gridApi.onFilterChanged();
+        this.updateLeftMenuInputs('wsHeaderSelected', !!selectedProject);
+        this.updateLeftMenuInputs('selectedProject', selectedProject);
+      }
       this.detectChanges();
     });
 
@@ -546,9 +555,12 @@ export class PltBrowserComponent extends BaseContainer implements OnInit, OnDest
       this.gridApi.setColumnDefs(config.columns);
       this.gridApi.setSortModel(config.sort);
       this.gridInitialized= false;
-      this.gridApi.setFilterModel(config.filter);
+      const selectedProject = this.leftMenuInputs.projects && this.leftMenuInputs.projects.length ? _.find(this.leftMenuInputs.projects, project => project.selected) : null;
+      const filterModel = selectedProject ? { ...config.filter, projectId: { filterType: 'number', type: 'equals', filter: selectedProject.projectId } } : config.filter;
+      this.updateLeftMenuInputs('wsHeaderSelected', selectedProject);
+      this.updateLeftMenuInputs('selectedProject', selectedProject);
+      this.gridApi.setFilterModel(filterModel);
       this.gridInitialized= false;
-      //this.gridColumnApi.autoSizeColumns(_.map(this.gridColumnApi.getAllColumns(), (col: any) => col.colId), false);
     });
 
     // let datasource = {
@@ -674,12 +686,22 @@ export class PltBrowserComponent extends BaseContainer implements OnInit, OnDest
   };
 
   filterByProject(project) {
-    if( project != this.leftMenuInputs.selectedProject){
-      this.updateLeftMenuInputs('selectedProject', project);
-      const filterModel = this.gridApi.getFilterModel();
-      this.gridApi.setFilterModel(project ? { ...filterModel, projectId: { type: 'equals', filter: project.projectId } } : _.omit(filterModel, 'projectId'));
-      this.gridApi.onFilterChanged();
+    if(project) {
+      this.dispatch(new SelectProject({
+        wsIdentifier: this.workspaceId + '-' + this.uwy,
+        projectId: project.projectId
+      }));
+      this.updateLeftMenuInputs('wsHeaderSelected', false);
+    } else {
+      this.updateLeftMenuInputs('wsHeaderSelected', true);
+      this.filterTable(project);
     }
+  }
+
+  filterTable(project) {
+    const filterModel = this.gridApi.getFilterModel();
+    this.gridApi.setFilterModel(project ? { ...filterModel, projectId: { type: 'equals', filter: project.projectId } } : _.omit(filterModel, 'projectId'));
+    this.gridApi.onFilterChanged();
   }
 
   onResetFilter() {
