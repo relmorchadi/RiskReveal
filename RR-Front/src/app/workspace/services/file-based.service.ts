@@ -3,11 +3,12 @@ import {FileBaseApi} from './api/fileBase.api';
 import * as fromWs from '../store/actions';
 import * as _ from 'lodash';
 import produce from 'immer';
-import {mergeMap} from 'rxjs/internal/operators/mergeMap';
+import {mergeMap, MergeMapOperator} from 'rxjs/internal/operators/mergeMap';
 import {StateContext} from '@ngxs/store';
 import {WorkspaceModel} from '../model';
 import {forkJoin, of} from 'rxjs';
 import {catchError, switchMap} from 'rxjs/operators';
+import {forEach} from "@angular/router/src/utils/collection";
 
 @Injectable({
   providedIn: 'root'
@@ -30,7 +31,6 @@ export class FileBasedService {
               expandedIcon: 'fa fa-folder-open',
               collapsedIcon: 'fa fa-folder'
             }]);
-          console.log(data);
           return of(ctx.patchState(
             produce(
               ctx.getState(), draft => {
@@ -56,7 +56,7 @@ export class FileBasedService {
     );
   }
 
-  loadFilesList(ctx: StateContext<WorkspaceModel>, payload) {
+  /*loadFilesList(ctx: StateContext<WorkspaceModel>, payload) {
     const state = ctx.getState();
     const wsIdentifier = _.get(state, 'currentTab.wsIdentifier');
     return this.fileBaseApi.searchFilesList(payload).pipe(
@@ -72,7 +72,18 @@ export class FileBasedService {
         ))
       )
     );
-  }
+  }*/
+
+    loadFilesList(ctx: StateContext<WorkspaceModel>, payload) {
+        const state = ctx.getState();
+        const wsIdentifier = _.get(state, 'currentTab.wsIdentifier');
+        this.fileBaseApi.searchFilesList(payload).subscribe(data=>{
+            ctx.patchState(produce(ctx.getState(), draft => {
+                draft.content[wsIdentifier].fileBaseImport.files = data;
+            }));
+        })
+
+    }
 
   readFileContent(ctx: StateContext<WorkspaceModel>, payload) {
     const state = ctx.getState();
@@ -148,85 +159,121 @@ export class FileBasedService {
 
   addToImport(ctx: StateContext<WorkspaceModel>, payload) {
     const state = ctx.getState();
+    console.log('state',state);
     const wsIdentifier = _.get(state, 'currentTab.wsIdentifier');
     const files: any = _.filter(state.content[wsIdentifier].fileBaseImport.files, item => item.selected);
-    let newData = [];
+    let newData=state.content[wsIdentifier].fileBaseImport.selectedFiles;
+      //let importedPLTs=state.content[wsIdentifier].fileBaseImport.importedPLTs;
+      let importedPLTs=[];
+      console.log('selectedFiles',newData);
+      console.log('importedPLTS',importedPLTs);
+      let filePaths=[];
     files.forEach(item => {
-      newData = [...newData, {
-        File_Version: 'YLT_1.1',
-        LossTableHeaderFormat: 'Manual Import',
-        LossTableHeaderProducer: 'MAT-R',
-        LossTableType: 'YLT',
-        LossTableBasis: 'AM',
-        CreateDate: '2019-01-11 15:58:53',
-        Model: 'Elements',
-        ModelProvider: 'IF',
-        ModelSystem: 'Elements',
-        ModelSystemVersion: '12.0.0.0',
-        ModelSystemInstance: 'PRD',
-        ResultsDatabaseName: 'IF_RES_2019_THFL',
-        User: 'U006220',
-        Simulation_Set_Id: '7511',
-        Peril: 'FL',
-        Region: 'Thailand',
-        Model_Version: '12.0.0.0',
-        ModelModule: 'DLM',
-        Geo_Code: 'THA',
-        ModelName: 'Thailand - Flood',
-        SourceResultsReference: '52',
-        ResultsName: 'SAGI_XOL_2019 - SAGI_XOL_2019',
-        ResultsDescription: 'NA',
-        Run_Date: '2018-11-21',
-        RegionPeril: 'ZAEQ',
-        Currency: 'THB',
-        TargetCurrency: 'THB',
-        FinPerspective: 'GR',
-        FinPerspectiveDesc: 'Gross',
-        UnitMultiplier: 1,
-        Proportion: 100,
-        Years: '100000',
-        SimulationPeriodBasis: '1',
-        occurrenceBasis: 'PerEvent',
-        OEP2: '0',
-        OEP5: '202169773',
-        OEP10: '644137073',
-        OEP25: '2284819230',
-        OEP50: '2659970392',
-        OEP100: '2888477988',
-        OEP200: '3053388300',
-        OEP250: '3154820328',
-        OEP500: '3297144605',
-        OEP1000: '3517068402',
-        OEP1250: '3564348833',
-        OEP2500: '3854736696',
-        OEP5000: '3952938598',
-        OEP10000: '3970661158',
-        AEP2: '0',
-        AEP5: '212568642',
-        AEP10: '676625138',
-        AEP25: '2333180412',
-        AEP50: '2765833769',
-        AEP100: '3053280912',
-        AEP200: '3364788457',
-        AEP250: '3517137188',
-        AEP500: '3952938598',
-        AEP1000: '4833154038',
-        AEP1250: '5082054013',
-        AEP2500: '5560342418',
-        AEP5000: '5863617237',
-        AEP10000: '6282498696',
-        AAL: '246796891.07553',
-        STD: '650809745.215264',
-        COV: '2.63702570311589',
-        FileType: 'PLT',
-        FileName: item.label,
-        selected: false
-      }];
+      this.fileBaseApi.searchReadFiles(payload+"\\"+item.label).subscribe(data => {
+          //newData = [...newData, data];
+          let payloadTemp=payload.replace(/\\/gi,"/");
+          filePaths.push(payloadTemp+"/"+item.label);
+          newData = [...newData,{
+              File_Version: data.File_Version,
+              LossTableHeaderFormat: data.LossTableHeaderFormat,
+              LossTableHeaderProducer: data.LossTableHeaderProducer,
+              LossTableType: data.LossTableType,
+              LossTableBasis: data.LossTableBasis,
+              CreateDate: data.CreateDate.split(" ")[0],
+              File_Last_Update_Date: data.File_Last_Update_Date.split(" ")[0],
+              Model: data.Model,
+              ModelProvider: data.ModelProvider,
+              ModelSystem: data.ModelSystem,
+              ModelSystemVersion: data.ModelSystemVersion,
+              ModelSystemInstance: data.ModelSystemInstance,
+              ResultsDatabaseName: data.ResultsDatabaseName,
+              User: data.User,
+              Simulation_Set_Id: data.Simulation_Set_Id,
+              Peril: data.Peril,
+              Region: data.Region,
+              Model_Version: data.Model_Version,
+              ModelModule: data.ModelModule,
+              Geo_Code: data.Geo_Code,
+              ModelName: data.ModelName,
+              SourceResultsReference: data.SourceResultsReference,
+              ResultsName: data.ResultsName,
+              ResultsDescription: data.ResultsDescription,
+              Run_Date: data.Run_Date.split(" ")[0],
+              RegionPeril: data.RegionPeril,
+              Currency: data.Currency,
+              TargetCurrency: data.TargetCurrency,
+              FinPerspective: data.FinPerspective,
+              FinPerspectiveDesc:data.FinPerspectiveDesc,
+              UnitMultiplier: data.UnitMultiplier,
+              Proportion: data.Proportion,
+              Years: data.Years,
+              SimulationPeriodBasis: data.SimulationPeriodBasis,
+              occurrenceBasis: data.occurrenceBasis,
+              OEP2: data.OEP2,
+              OEP5: data.OEP5,
+              OEP10: data.OEP10,
+              OEP25: data.OEP25,
+              OEP50: data.OEP50,
+              OEP100: data.OEP100,
+              OEP200: data.OEP200,
+              OEP250: data.OEP250,
+              OEP500: data.OEP500,
+              OEP1000: data.OEP1000,
+              OEP1250: data.OEP1250,
+              OEP2500: data.OEP2500,
+              OEP5000: data.OEP5000,
+              OEP10000: data.OEP10000,
+              AEP2: data.AEP2,
+              AEP5: data.AEP5,
+              AEP10: data.AEP10,
+              AEP25: data.AEP25,
+              AEP50: data.AEP50,
+              AEP100: data.AEP100,
+              AEP200: data.AEP200,
+              AEP250: data.AEP250,
+              AEP500: data.AEP500,
+              AEP1000: data.AEP1000,
+              AEP1250: data.AEP1250,
+              AEP2500: data.AEP2500,
+              AEP5000: data.AEP5000,
+              AEP10000: data.AEP10000,
+              AAL: data.AAL,
+              STD: data.STD,
+              COV: data.COV,
+              FileType: data.FileType,
+              FileName: item.label,
+              File_Path: payload+"\\"+item.label,
+              selected: false
+      }
+          ];
+            if(files[files.length-1]==item) {
+                this.fileBaseApi.persisteFileBasedImportConfig(true, state.content[wsIdentifier].projects[0].projectId, filePaths).subscribe(data => {
+                    data.forEach(item=>{
+                        importedPLTs=[...importedPLTs,item];
+                    });
+                    //importedPLTs = [...importedPLTs, data];
+                    //importedPLTs.concat(data);
+                    console.log("DATA", importedPLTs);
+                    ctx.patchState(produce(ctx.getState(), draft => {
+                        draft.content[wsIdentifier].fileBaseImport.importedPLTs = importedPLTs;
+                        console.log('State Persiste',state);
+
+                    }));
+                });
+            }
+          ctx.patchState(produce(ctx.getState(), draft => {
+              draft.content[wsIdentifier].fileBaseImport.selectedFiles = newData;
+              console.log('State Read Files',state);
+          }));
+      });
     });
-    ctx.patchState(produce(ctx.getState(), draft => {
-      draft.content[wsIdentifier].fileBaseImport.selectedFiles = newData;
-    }));
-    /*return forkJoin(
+
+          /*ctx.patchState(produce(ctx.getState(), draft => {
+              draft.content[wsIdentifier].fileBaseImport.fleBasedImportConfig = data;//prb
+          }));*/
+
+
+                  /*return forkJoin(
       files.map((dt: any) => this.fileBaseApi.searchReadFiles(payload + '/' + dt.label))
     ).pipe(
       switchMap(out => {
@@ -265,5 +312,16 @@ export class FileBasedService {
       }
     ));
   }
+
+    launchFileBasedImport(ctx: StateContext<WorkspaceModel>){
+        const state = ctx.getState();
+        const wsIdentifier = _.get(state, 'currentTab.wsIdentifier');
+        let projectId=state.content[wsIdentifier].projects[0].projectId;
+        let fileBasedImportConfig=state.content[wsIdentifier].fileBaseImport.fleBasedImportConfig;
+        const plts: any = _.filter(state.content[wsIdentifier].fileBaseImport.selectedFiles, item => item.selected);
+        plts.forEach(item => {
+            //this.fileBaseApi.runFileBasedImport(fileBasedImportConfig.item.File_Path,'instanceId','nonrmspicId',projectId,'userId');
+        });
+    }
 
 }

@@ -21,8 +21,20 @@ export class FileBaseApi {
     }
 
     searchReadFiles(nameFiles): Observable<any> {
-     return this.http.get(`${this.URL}read-PLTdata`, {params: {nameFile: nameFiles}});
+         return this.http.get(`${this.URL}read-metadata`, {params: {path: nameFiles}});
         //return this.http.get(`${this.URL}read-PLTdata`, {params: {nameFile: nameFiles}, responseType: 'text'});
    }
+
+    /*persisteFileBasedImportConfig(projectId,filePaths,folderPath){
+        return this.http.get(`${this.URL}persisteFileBasedImportConfig`, {params: {projectId,filePaths,folderPath}});
+    }*/
+
+    persisteFileBasedImportConfig(importLocked,projectId,selectedFileSourcePath): Observable<any>{
+        return this.http.post(`${this.URL}persisteFileBasedImportConfig`, {importLocked,projectId,selectedFileSourcePath});
+    }
+
+    runFileBasedImport(fileImportSourceResultIds,instanceId,nonrmspicId,projectId,userId) {
+        return this.http.get(`${this.URL}launchFileBasedImport`, {params: {fileImportSourceResultIds,instanceId,nonrmspicId,projectId,userId}});
+    }
 
 }

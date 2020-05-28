@@ -32,3 +32,8 @@ export class AddFileForImportAction {
   static readonly type = '[File Based] Added File For Import';
   constructor(public payload: any) {}
 }
+
+export class LaunchFileBasedImportAction {
+    static readonly type = '[File Based] Launched File Based Import';
+    constructor() {}
+}

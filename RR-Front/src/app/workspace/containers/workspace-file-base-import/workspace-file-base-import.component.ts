@@ -28,6 +28,9 @@ export class WorkspaceFileBaseImportComponent extends BaseContainer implements O
     collapseImportedPLTs = false;
 
     managePopUp = false;
+    deletePopUp=false;
+    DataToDelete;
+    IndiceToDelete;
     columnsForConfig;
     targetConfig;
 
@@ -55,7 +58,6 @@ export class WorkspaceFileBaseImportComponent extends BaseContainer implements O
     path;
 
 
-    objectTemp;
     object;
 
     peril = [
@@ -83,17 +85,22 @@ export class WorkspaceFileBaseImportComponent extends BaseContainer implements O
     indexImportFiles = null;
     indexImportPlts = null;
 
+
     @ViewChild('iTable') table: Table;
     filterTable = [];
     sortData = [];
-    filterData = {};
+    filterData = [];
     index;
 
     @Select(WorkspaceState.getFileBasedData) fileBase$;
     fileBase: any;
 
+    fileBaseTemp;
+
     @Select(WorkspaceState.getFileBaseSelectedFiles) selectedData$;
     selectedData;
+
+    selectedDataTemp;
 
     constructor(private route: ActivatedRoute, _baseStore: Store, _baseRouter: Router, _baseCdr: ChangeDetectorRef) {
         super(_baseRouter, _baseCdr, _baseStore);
@@ -111,16 +118,11 @@ export class WorkspaceFileBaseImportComponent extends BaseContainer implements O
         this.dispatch(new fromWs.LoadFileBasedFoldersAction(this.path));
         this.fileBase$.subscribe(value => {
             this.fileBase = _.merge({}, value);
+            this.fileBaseTemp = _.merge({}, value);
             this.directoryTree = _.merge({}, this.fileBase.folders);
-            console.log(this.fileBase);
-            console.log('1',this.directoryTree);
-
             if(this.directoryTree.hasOwnProperty('data')) {
                 this.changeData(this.directoryTree.data);
             }
-
-            console.log('2',this.directoryTree);
-
 
 /*            for (let directoryTreeKey in this.directoryTree.data) {
               console.log("FFFF",directoryTreeKey);
@@ -130,8 +132,7 @@ export class WorkspaceFileBaseImportComponent extends BaseContainer implements O
               console.log("TTTT",this.directoryTree[this.indice]);
             this.directoryTree[this.indice]= this.changeData(this.directoryTree[this.indice]);
         }*/
-            //console.log(this.directoryTree);
-            //     this.detectChanges();
+            this.detectChanges();
         });
         this.selectedData$.subscribe(value => {
             this.selectedData = value;
@@ -177,6 +178,12 @@ export class WorkspaceFileBaseImportComponent extends BaseContainer implements O
         }
     }
 
+    toggleDelete(rowData,i) {
+        this.deletePopUp = !this.deletePopUp;
+        this.DataToDelete=rowData;
+        this.IndiceToDelete=i;
+    }
+
     patchState({wsIdentifier, data}: any): void {
         this.workspaceInfo = data;
         this.wsIdentifier = wsIdentifier;
@@ -204,11 +211,12 @@ export class WorkspaceFileBaseImportComponent extends BaseContainer implements O
 
     checkRow(event, index, scope) {
         if (scope === 'files') {
-            //this.dispatch(new fromWs.ToggleFilesAction({index, selection: event, scope: 'single'}));
-            this.fileBase.files[index].selected = true;
+            this.dispatch(new fromWs.ToggleFilesAction({index, selection: event, scope: 'single'}));
+            //this.fileBase.files[index].selected = true;
             this.checkIndeterminateFile();
         } else if (scope === 'plt') {
             this.dispatch(new fromWs.TogglePltsAction({index, selection: event, scope: 'single'}));
+            //this.fileBase.selectedFiles[index].selected=true;
             this.checkIndeterminatePlt();
         }
     }
@@ -314,6 +322,7 @@ export class WorkspaceFileBaseImportComponent extends BaseContainer implements O
     }
 
     deleteRow(row, index) {
+        this.toggleDelete(null,null);
         if (row.FileName === this.selectedPlt.FileName) {
             if (index === this.fileBase.selectedFiles.length - 1) {
                 this.selectedPlt = this.fileBase.selectedFiles[index - 1];
@@ -324,6 +333,8 @@ export class WorkspaceFileBaseImportComponent extends BaseContainer implements O
         const selectedPltData = _.filter(this.fileBase.selectedFiles, item => item.selected);
         this.dispatch(new fromWs.RemoveFileFromImportAction(row));
         this.checkIndeterminatePlt();
+
+
     }
 
     updateAllChecked(scope) {
@@ -356,7 +367,6 @@ export class WorkspaceFileBaseImportComponent extends BaseContainer implements O
 
     nodeSelect(event) {
         this.nodePath = '\\' + event.node.label;
-        console.log("label",event.node.label);
         this.nodeTemp = event.node;
         while (this.nodeTemp.parent) {
             this.nodePath = '\\' + this.nodeTemp.parent.label + this.nodePath;
@@ -366,20 +376,18 @@ export class WorkspaceFileBaseImportComponent extends BaseContainer implements O
         this.dispatch(new fromWs.LoadFileBasedFilesAction(this.nodePath));
         this.selectedData$.subscribe(value => {
             this.selectedData = value;
-            console.log('File',this.selectedData);
+            this.selectedDataTemp=value;
+            for(let key in this.selectedData){
+                this.selectedData[key].label=this.selectedData[key].label.split('\\')[this.selectedData[key].label.split('\\').length-1];
+            }
             this.detectChanges();
         });
         this.fileBase$.subscribe(value => {
             this.fileBase.files = this.selectedData;
-            console.log('File222',this.fileBase.files);
             this.detectChanges();
         });
         this.allCheckedImportedFiles = false;
         this.indeterminateImportedFiles = false;
-        /*console.log(this.fileBase.files);
-        for(this.index=0;this.index<this.fileBase.files.length;this.index++){
-          console.log(this.fileBase.files[this.index].selected);
-        }*/
     }
 
     nodeUnselect(event) {
@@ -388,7 +396,11 @@ export class WorkspaceFileBaseImportComponent extends BaseContainer implements O
 
     addForImport() {
         this.dispatch(new fromWs.AddFileForImportAction(this.nodePath));
-        this.selectedPlt = this.fileBase.selectedFiles[0];
+        //this.selectedPlt = this.fileBase.selectedFiles[0];
+    }
+
+    runImport(){
+        this.dispatch(new fromWs.LaunchFileBasedImportAction());
     }
 
     getColor(RP) {
@@ -474,25 +486,24 @@ export class WorkspaceFileBaseImportComponent extends BaseContainer implements O
       object.forEach(o => {
         if(o.hasOwnProperty('label')) {
           o.children = o.label.children;
-          //console.log('SPLIT', o.label.data.file.split('\\')[o.label.data.file.split('\\').length-1]);
-          //o.label = o.label.data.file.split('\\')[o.label.data.file.split('\\').length-1];
-          o.label = o.label.data.customName;
+          o.label = o.label.data.file.split('\\')[o.label.data.file.split('\\').length-1];
         } else {
-            //o.label = o.label.data.file.split('\\')[o.label.data.file.split('\\').length-1];
-            o.label = o.label.data.customName;
+            o.label = o.data.file.split('\\')[o.data.file.split('\\').length-1];
+            o.collapsedIcon='fa fa-folder';
+            o.expandedIcon='fa fa-folder-open';
+            o.data='folder';
         }
         this.changeData(o.children)
       });
 
-      /*this.object=JSON.parse(json);
-      console.log(this.object['label']['children']);
-            this.object['children'] = this.object['label']['children'];
-            this.object['data'] = this.object['label']['data'];
-            this.objectTemp = this.directoryTree.children;
-            /*while (this.objectTemp) {
-                this.changeData(this.objectTemp);
-            }*
-            return json =JSON.stringify(this.object);
-   */ }
+    }
+
+    onFilterFile(value,field){
+        this.selectedDataTemp = this.selectedData.filter(o => o[field].toUpperCase().search(value.toUpperCase()) != -1);
+    }
+
+    onFilterPLT(value,field){
+        this.fileBaseTemp.selectedFiles = this.fileBase.selectedFiles.filter(o => o[field].toUpperCase().search(value.toUpperCase()) != -1);
+    }
 
 }

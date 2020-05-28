@@ -1,5 +1,7 @@
 package com.scor.rr.rest.fileBasedImport;
 
+import com.scor.rr.domain.importfile.FileBasedImportConfig;
+import com.scor.rr.domain.importfile.FileImportSourceResult;
 import com.scor.rr.service.fileBasedImport.ImportFileService;
 import com.scor.rr.domain.importfile.FileBasedImportConfigRequest;
 import com.scor.rr.exceptions.RRException;
@@ -7,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -58,7 +62,7 @@ public class FileBasedImportRest {
     }
 
     @GetMapping("retrieveTextFiles")
-    public List<String> retrieveTextFiles(String path) {
+    public List<Map<String,String>> retrieveTextFiles(String path) {
         return importFileService.retrieveTextFiles(path);
     }
 
@@ -68,6 +72,11 @@ public class FileBasedImportRest {
         return ResponseEntity.ok("Updated Successfully");
     }
 
+    @PostMapping("persisteFileBasedImportConfig")
+    public List<FileImportSourceResult> persisteFileBasedImportConfig(@RequestBody FileBasedImportConfigRequest request)  {
+        return importFileService.persisteFileBasedImportConfig(request);
+    }
+
     @GetMapping("retrieveFileBasedConfig")
     public String retrieveFileBasedConfig(String projectId) {
         return importFileService.retrieveFileBasedConfig(projectId);
@@ -75,11 +84,14 @@ public class FileBasedImportRest {
 
     @GetMapping("launchFileBasedImport")
     public Long launchFileBasedImport(String instanceId,
-                                            String nonrmspicId,
+                                            Long nonrmspicId,
                                             Long fileBasedImportConfigId,
                                             String userId,
-                                            String projectId,
+                                            Long projectId,
                                             String fileImportSourceResultIds) {
         return importFileService.launchFileBasedImport(instanceId, nonrmspicId, fileBasedImportConfigId, userId, projectId, fileImportSourceResultIds);
     }
+
+
+
 }

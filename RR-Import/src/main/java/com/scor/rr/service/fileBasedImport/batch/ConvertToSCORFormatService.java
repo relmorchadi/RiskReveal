@@ -63,6 +63,7 @@ public class ConvertToSCORFormatService {
     @Autowired
     private TargetRapRepository targetRapRepository;
 
+    @Autowired
     private TransformationPackageNonRMS transformationPackage;
 
     @Autowired
@@ -102,14 +103,14 @@ public class ConvertToSCORFormatService {
         log.debug("fpUP is {}", fpUP == null ? null : fpUP.getCode());
         log.debug("nbBundles is {}", transformationPackage.getBundles() == null ? null : transformationPackage.getBundles().size());
 
-        PLTModelingBasis modelingBasis = PLTModelingBasis.AM;
-        if (contractId != null && uwYear != null) {
-            String[] tokens = StringUtils.split(uwYear.toString(), '-');
-            ContractEntity contract = contractRepository.findByTreatyIdAndUwYear(contractId, Integer.parseInt(tokens[0])).get();
-            if (contract != null && contract.getContractSourceTypeId() != null && 5L == contract.getContractSourceTypeId()) {
-                modelingBasis = PLTModelingBasis.PM;
-            }
-        }
+        PLTModelingBasis modelingBasis = getModelingBasis();
+        //if (contractId != null && uwYear != null) {
+        //    String[] tokens = StringUtils.split(uwYear.toString(), '-');
+        //    ContractEntity contract = contractRepository.findByTreatyIdAndUwYear(contractId, Integer.parseInt(tokens[0])).get();
+        //    if (contract != null && contract.getContractSourceTypeId() != null && 5L == contract.getContractSourceTypeId()) {
+        //       modelingBasis = PLTModelingBasis.PM;
+        //    }
+        //}
 
         log.debug("Modeling basis: {}", modelingBasis);
 
@@ -199,7 +200,17 @@ public class ConvertToSCORFormatService {
         return RepeatStatus.FINISHED;
     }
 
-    @Value("${ihub.treaty.out.path}") // todo change it not ihub
+    private PLTModelingBasis getModelingBasis() {
+        if (contractId != null && uwYear != null) {
+            Long sourceTypeId = contractRepository.findByTreatyIdAndUwYear(contractId, uwYear)
+                    .map(ContractEntity::getContractSourceTypeId)
+                    .orElse(0L);
+            return sourceTypeId == 5L ? PLTModelingBasis.PM : PLTModelingBasis.AM;
+        }
+        return PLTModelingBasis.AM;
+    }
+
+    @Value("${ihub.treaty.out.path}")
     private String filePath;
 
     public Path getIhubPath() {

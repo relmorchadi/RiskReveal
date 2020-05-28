@@ -18,8 +18,8 @@ public class FileImportSourceResult {
     @Column(name = "FileImportSourceResultId", nullable = false)
     private int fileImportSourceResultId;
 
-    @Column(name = "FileBasedImportConfig")
-    private int fileBasedImportConfig;
+    /*@Column(name = "FileBasedImportConfig")
+    private int fileBasedImportConfig;*/
 
     @Column(name = "ResultName")
     private String resultName;

@@ -466,6 +466,7 @@ export class WorkspaceState {
     return state.content[wsIdentifier].fileBaseImport.files;
   }
 
+
   /***********************************
    *
    * Scope And Completeness Selectors
@@ -1379,6 +1380,11 @@ export class WorkspaceState {
   @Action(fromWS.AddFileForImportAction)
   addForImport(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.AddFileForImportAction) {
     return this.fileBasedFacade.addToImport(ctx, payload);
+  }
+
+  @Action(fromWS.LaunchFileBasedImportAction)
+  runImport(ctx: StateContext<WorkspaceModel>) {
+    return this.fileBasedFacade.launchFileBasedImport(ctx);
   }
 
   /***********************************

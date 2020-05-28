@@ -50,6 +50,7 @@ public class CalculateEPCEPSForSourcePLTService {
     private Map<BigDecimal, Integer> epRPMap;
     private Map<Integer, Double> rpEPMap;
 
+    @Autowired
     private TransformationPackageNonRMS transformationPackage;
 
     private void extractEPRPMap() {

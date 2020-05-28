@@ -26,6 +26,6 @@ public class ImportBackend extends SpringBootServletInitializer implements Comma
 
     @Override
     public void run(String... args) throws Exception {
-        //batchExecution.submitPendingAndRunningTasksToTheQueueAtStartUp();
+        batchExecution.submitPendingAndRunningTasksToTheQueueAtStartUp();
     }
 }
