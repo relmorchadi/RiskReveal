@@ -24,6 +24,7 @@ import {GroupedCellRenderer} from "./grid/grouped-cell-renderer/grouped-cell-ren
 import {GridColManager} from "./grid/grid-col-manager/grid-col-manager.component";
 import {SearchMenuItemComponent} from "./search-menu-item/search-menu-item.component";
 import {PinComponent} from "./pin/pin.component";
+import {ErrorCellRenderer} from "./grid/error-cell-renderer/error-cell-renderer.component";
 
 export const COMPONENTS = [
   SearchMenuItemComponent,
@@ -52,7 +53,8 @@ export const COMPONENTS = [
   PinComponent,
   DateCellRenderer,
   GroupedCellRenderer,
-  GridColManager
+  GridColManager,
+  ErrorCellRenderer
 ];
 
 export * from './table/table.component';

@@ -17,44 +17,6 @@ import java.util.List;
 public interface RLAnalysisRepository extends JpaRepository<RLAnalysis, Long>, JpaSpecificationExecutor<RLAnalysis> {
 
 
-    // @TODO : Check Instance ID Param
-    @Modifying(flushAutomatically = true)
-    @Transactional(transactionManager = "rrTransactionManager")
-    @Query("update RLAnalysis ra " +
-            "set ra.defaultGrain = :#{#analysis.defaultGrain}, " +
-            " ra.exposureType = :#{#analysis.exposureType}, " +
-            " ra.exposureTypeCode = :#{#analysis.exposureTypeCode}, " +
-            " ra.edmNameSourceLink = :#{#analysis.edmNameSourceLink}, " +
-            " ra.exposureId = :#{#analysis.exposureId}, " +
-            " ra.rlExchangeRate = :#{#analysis.rmsExchangeRate}, " +
-            " ra.geoCode = :#{#analysis.geoCode}, " +
-            " ra.rpCode = :#{#analysis.rpCode}, " +
-            " ra.typeCode = :#{#analysis.typeCode}, " +
-            " ra.analysisMode = :#{#analysis.analysisMode}, " +
-            " ra.engineTypeCode = :#{#analysis.engineTypeCode}, " +
-            " ra.engineVersionMajor = :#{#analysis.engineVersionMajor}, " +
-            " ra.profileName = :#{#analysis.profileName}, " +
-            " ra.profileKey = :#{#analysis.profileKey}, " +
-            " ra.purePremium = :#{#analysis.purePremium}, " +
-            " ra.exposureTIV = :#{#analysis.exposureTiv}, " +
-            " ra.user1 = :#{#analysis.user1}, " +
-            " ra.user2 = :#{#analysis.user2}, " +
-            " ra.user3 = :#{#analysis.user3}, " +
-            " ra.user4 = :#{#analysis.user4}, " +
-            " ra.description = :#{#analysis.description} " +
-            " where ra.projectId= :projectId and " +
-            " ra.rdmId= :#{#analysis.rdmId} and " +
-            " ra.rdmName= :#{#analysis.rdmName} and " +
-            " ra.rlId= :#{#analysis.analysisId} and " +
-            " ra.analysisName= :#{#analysis.analysisName} ")
-    int updateAnalysisById(@Param("projectId") Long projectId,
-                            @Param("analysis") RdmAnalysis analysis);
-
-    @Modifying
-    @Transactional(transactionManager = "rrTransactionManager")
-    @Query(value = "Exec dbo.usp_DeleteRLModelAnalysisByRLModelDataSourceId @ModelDataSourceId =:rlModelDatasourceId", nativeQuery = true)
-    void deleteByRlModelDataSourceId(@Param("rlModelDatasourceId") Long rlModelDatasourceId);
-
     @Query("select rla from RLAnalysis rla " +
             " where rla.projectId= :projectId and " +
             " rla.rdmId= :#{#analysis.rdmId} and " +
@@ -69,20 +31,14 @@ public interface RLAnalysisRepository extends JpaRepository<RLAnalysis, Long>, J
 
     List<RLAnalysis> findByRlModelDataSourceId(Long rlModelDataSourceId);
 
-    RLAnalysis findByRlId(Long analysisId);
-
     @Query(value = "select rla from RLAnalysis rla where rla.analysisName= :name and rla.rlModelDataSourceId= :rdmId")
     List<RLAnalysis> findByRdmIdAndName(@Param("rdmId") Long rdmId, @Param("name") String name);
 
-    //Update
     List<RLAnalysis> findByRdmIdAndProjectId(Long rlModelDataSourceId, Long projectId);
 
     @Modifying
-    @Transactional(transactionManager = "rrTransactionManager")
-    //@Query(value = "Exec dbo.usp_DeleteRLModelAnalysisByRLAnalysisId @AnalysisId =:analysisId , @ProjectId =:projectId", nativeQuery = true)
+    @Transactional(transactionManager = "theTransactionManager")
     @Query("delete from RLAnalysis where rlId=:analysisId and projectId=:projectId")
     void deleteByRLAnalysisId(@Param("analysisId")Long AnalysisId,@Param("projectId")Long projectId);
-
-   //moi
 
 }

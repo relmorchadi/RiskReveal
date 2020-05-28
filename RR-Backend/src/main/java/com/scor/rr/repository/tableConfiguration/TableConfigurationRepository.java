@@ -7,4 +7,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface TableConfigurationRepository extends JpaRepository<TableConfiguration, Integer> {
     Boolean existsByTableContextEqualsAndTableNameEquals(String tableContext, String tableName);
+    TableConfiguration findByTableContextAndTableName(String tableContext, String tableName);
 }

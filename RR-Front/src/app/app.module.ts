@@ -19,7 +19,7 @@ import {DndModule} from 'ngx-drag-drop';
     HttpClientModule,
     BrowserAnimationsModule,
     NgbModule,
-    DndModule
+    DndModule,
   ],
   bootstrap: [EntryComponent],
 

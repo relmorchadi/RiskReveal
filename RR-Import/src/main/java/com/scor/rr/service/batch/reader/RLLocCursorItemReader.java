@@ -2,11 +2,10 @@ package com.scor.rr.service.batch.reader;
 
 import com.scor.rr.configuration.RmsInstanceCache;
 import com.scor.rr.domain.StepEntity;
-import com.scor.rr.domain.TaskEntity;
 import com.scor.rr.domain.dto.CARDivisionDto;
 import com.scor.rr.domain.enums.StepStatus;
 import com.scor.rr.mapper.RLLocItemRowMapper;
-import com.scor.rr.repository.TaskRepository;
+import com.scor.rr.repository.StepRepository;
 import com.scor.rr.service.abstraction.ConfigurationService;
 import com.scor.rr.service.abstraction.JobManager;
 import com.scor.rr.service.batch.processor.rows.RLLocRow;
@@ -49,7 +48,7 @@ public class RLLocCursorItemReader extends JdbcCursorItemReader<RLLocRow> {
     private JobManager jobManager;
 
     @Autowired
-    private TaskRepository taskRepository;
+    private StepRepository stepRepository;
 
     @Value("#{jobParameters['taskId']}")
     private String taskId;
@@ -73,6 +72,10 @@ public class RLLocCursorItemReader extends JdbcCursorItemReader<RLLocRow> {
 
     private List<String> parameters;
 
+    private List<CARDivisionDto> divisions;
+
+    private boolean isOpen = false;
+
     public RLLocCursorItemReader() {
         super();
         setName(ClassUtils.getShortName(JdbcCursorItemReader.class));
@@ -80,10 +83,7 @@ public class RLLocCursorItemReader extends JdbcCursorItemReader<RLLocRow> {
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        TaskEntity task = taskRepository.findById(Long.valueOf(taskId)).orElse(null);
-        if (task != null && task.getSteps().stream().noneMatch(s -> s.getStepName().equalsIgnoreCase("ExtractLOC"))) {
-            step = jobManager.createStep(Long.valueOf(taskId), "ExtractLOC", 16);
-        }
+
     }
 
     @PostConstruct
@@ -98,12 +98,16 @@ public class RLLocCursorItemReader extends JdbcCursorItemReader<RLLocRow> {
             parameters.add("PORTFOLIO");
         } catch (Exception e) {
             log.error("init error", e);
+            super.close();
             throw new RuntimeException(e);
         }
     }
 
     @Override
     protected void openCursor(Connection con) {
+
+        if (step == null)
+            step = jobManager.createStep(Long.valueOf(taskId), "ExtractLOC", 16);
 
         if (!transformationPackage.getModelPortfolios().isEmpty()) {
 
@@ -117,12 +121,12 @@ public class RLLocCursorItemReader extends JdbcCursorItemReader<RLLocRow> {
 
                 ListPreparedStatementSetter pss = new ListPreparedStatementSetter();
                 List<Object> queryParameters = new LinkedList<>();
-
+                divisions = configurationService.getDivisions(carId);
                 queryParameters.add(edm);
                 queryParameters.add(rdm);
                 queryParameters.add(transformationPackage.getModelPortfolios().get(0).getPortfolioName());
                 queryParameters.add(
-                        configurationService.getDivisions(carId).stream().filter(div -> div.getDivisionNumber().equals(division))
+                        divisions.stream().filter(div -> div.getDivisionNumber().equals(division))
                                 .map(CARDivisionDto::getCurrency)
                                 .findFirst().orElse("USD"));
 
@@ -130,9 +134,14 @@ public class RLLocCursorItemReader extends JdbcCursorItemReader<RLLocRow> {
                 setPreparedStatementSetter(pss);
 
                 super.openCursor(con);
+                isOpen = true;
             } catch (Exception ex) {
                 jobManager.onTaskError(Long.valueOf(taskId));
-                jobManager.logStep(step.getStepId(), StepStatus.FAILED);
+//                jobManager.logStep(step.getStepId(), StepStatus.FAILED);
+                step.setStatus(StepStatus.FAILED.getCode());
+                stepRepository.save(step);
+                if (isOpen)
+                    super.close();
                 ex.printStackTrace();
             }
         }

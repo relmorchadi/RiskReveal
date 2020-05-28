@@ -32,40 +32,41 @@ public class TableConfigurationService {
     public UserTablePreferencesView saveConfig(TableConfigurationRequest request) {
         UserRrEntity user = ( (UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser();
         UserTablePreferencesView userTablePreferencesView;
+        TableConfiguration tableConfiguration = tableConfigurationRepository.findByTableContextAndTableName(request.getTableContext(), request.getTableName());
 
-        if(!tableConfigurationRepository.existsByTableContextEqualsAndTableNameEquals(request.getTableContext(), request.getTableName())) {
-            TableConfigurationRequest config = new TableConfigurationRequest();
+        if(tableConfiguration == null) {
 
-            config.setConfig(request.getConfig());
-            config.setTableContext(request.getTableContext());
-            config.setTableName(request.getTableName());
+            tableConfiguration = new TableConfiguration();
+            tableConfiguration.setDefaultColumns(request.getConfig());
+            tableConfiguration.setTableContext(request.getTableContext());
+            tableConfiguration.setTableName(request.getTableName());
 
-            userTablePreferencesView = this.initConfig(config);
+            tableConfigurationRepository.saveAndFlush(tableConfiguration);
+        }
 
-        } else userTablePreferencesView = this.userTablePreferencesViewRepo.findByUserIdAndTableContextAndTableName(user.getUserId(), request.getTableContext(), request.getTableName());
-
-        if(userTablePreferencesView.getUserTableId() != null) {
-            Optional<UserTable> userTable =this.userTableRepo.findById(userTablePreferencesView.getUserTableId());
-
-            userTable.ifPresent( userTable1 -> {
-                userTable1.setUserColumns(request.getConfig());
-                userTableRepo.saveAndFlush(userTable1);
-            });
-
-        } else {
+        userTablePreferencesView = userTablePreferencesViewRepo.findByUserIdAndTableContextAndTableName(user.getUserId(), request.getTableContext(), request.getTableName());
+        if(userTablePreferencesView == null) {
             UserTable userTable = new UserTable();
 
-            userTable.setTableConfiguration(userTablePreferencesView.getTableConfigurationId());
+            userTable.setTableConfiguration(tableConfiguration.getTableConfigurationId());
             userTable.setUserId(user.getUserId());
             userTable.setUserColumns(request.getConfig());
             userTable.setVersionId(1);
 
             userTableRepo.save(userTable);
+        } else {
+            Optional<UserTable> userTable = this.userTableRepo.findById(userTablePreferencesView.getUserTableId());
+
+            userTable.ifPresent( userTable1 -> {
+                userTable1.setUserColumns(request.getConfig());
+                userTableRepo.save(userTable1);
+            });
         }
 
         return userTablePreferencesViewRepo.findByUserIdAndTableContextAndTableName(
                 user.getUserId(), request.getTableContext(), request.getTableName()
         );
+
     }
 
     public UserTablePreferencesView initConfig(TableConfigurationRequest request) {
@@ -90,6 +91,9 @@ public class TableConfigurationService {
 
     public UserTablePreferencesView getConfig(String tableName, String tableContext) {
         UserRrEntity user = ( (UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser();
+
+
+
         return userTablePreferencesViewRepo.findByUserIdAndTableContextAndTableName(
                 user.getUserId(), tableContext, tableName
         );

@@ -113,4 +113,9 @@ public class ProjectEntity {
     public void setFkCloneSourceProjectId(ProjectEntity projectEntity) {
         this.projectId = projectEntity.getProjectId();
     }
+
+    public ProjectEntity(String projectName, String projectDescription) {
+        this.projectName = projectName;
+        this.projectDescription = projectDescription;
+    }
 }

@@ -42,8 +42,13 @@ export class UserMenuItemComponent implements OnInit {
   }
 
   navigateToUserPreference() {
-    this.router.navigateByUrl(`/userPreference`);
     this.visible = false;
+    this.router.navigateByUrl(`/userPreference`);
+  }
+
+  navigateToBulkImport() {
+    this.visible = false;
+    this.router.navigateByUrl('/bulkImport');
   }
 
   changeSearch() {
