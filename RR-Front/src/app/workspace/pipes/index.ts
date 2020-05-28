@@ -1,7 +1,6 @@
 import {FilterByBadgePipe} from './filter-by-badge.pipe';
 import {FilterByUserTagPipe} from './filter-by-user-tag.pipe';
 import {FilterBySystemTagPipe} from './filter-by-system-tag.pipe';
-import {FilterByPathPipe} from './filter-by-path.pipe';
 import {ForNumberPipe} from './for-number.pipe';
 import {ParseIdPipe} from './parse-id.pipe';
 import {StatusFilterPipe} from './status-filter.pipe';
@@ -20,13 +19,18 @@ import {SortGroupedPltsPipe} from "./sort-grouped-plts.pipe";
 import {IsEventAdjustmentPipe} from "./is-event-adjustment.pipe";
 import {GetEventAdjustmentParamsPipe} from "./get-event-adjustment-params.pipe";
 import {FrozenColumnsFilterPipe} from "./frozen-columns-filter.pipe";
+import {CloneDataColumnManageFilterPipe} from "./clone-data-column-manage-filter.pipe";
+import {CalibrationSortAndFilterPipe} from "./calibration-sort-and-filter.pipe";
+import {GetVisibleColumnsPipes} from "./get-visible-columns.pipes";
 
 export const PIPES = [
+  GetVisibleColumnsPipes,
+  CalibrationSortAndFilterPipe,
+  CloneDataColumnManageFilterPipe,
   FilterByBadgePipe,
   FrozenColumnsFilterPipe,
   FilterByUserTagPipe,
   FilterBySystemTagPipe,
-  FilterByPathPipe,
   ForNumberPipe,
   ParseIdPipe,
   StatusFilterPipe,
@@ -48,7 +52,7 @@ export const PIPES = [
 ];
 
 export * from './filter-by-badge.pipe';
-export * from './filter-by-path.pipe';
+export * from '../../shared/pipes/filter-by-path.pipe';
 export * from './filter-by-system-tag.pipe';
 export * from './filter-by-user-tag.pipe';
 export * from './for-number.pipe';

@@ -1,0 +1,12 @@
+<div *ngIf="!isError">
+  {{params?.value}}
+</div>
+
+<div
+        *ngIf="isError"
+        class="tooltipMsg"
+        style="vertical-align: super;"
+        [nz-tooltip]="params?.value.errorDescription"
+>
+  {{params?.value.value}}
+</div>

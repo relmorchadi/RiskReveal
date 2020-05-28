@@ -21,6 +21,7 @@ import { TrimSecondaryFormatPipe } from './pipes/trim-secondary-format.pipe';
 import {NgxEchartsModule} from 'ngx-echarts';
 import { AngularResizeElementModule } from 'angular-resize-element';
 import {SERVICES} from "./services";
+import {WorkspaceModule} from "../workspace/workspace.module";
 import {AgGridModule} from "@ag-grid-community/angular";
 import {CustomBooleanFilter} from "./components/grid/custom-boolean-filter/custom-boolean-filter.component";
 import {CustomBooleanFloatingFilter} from "./components/grid/custom-boolean-floating-filter/custom-boolean-floating-filter.component";
@@ -31,26 +32,26 @@ import {NumberCellRenderer} from "./components/grid/number-cell-renderer/number-
 
 @NgModule({
   declarations: [...COMPONENTS, ...PIPES, ...DIRECTIVES, TrimFormatPipe, TrimSecondaryFormatPipe],
-  imports: [
-    CommonModule,
-    NgZorroAntdModule,
-    ReactiveFormsModule,
-    ContextMenuModule,
-    DialogModule,
-    TableModule,
-    FormsModule,
-    ColorChromeModule,
-    ColorSketchModule,
-    MultiSelectModule,
-    SidebarModule,
-    ProgressSpinnerModule,
-    DragDropModuleAngular,
-    AngularDraggableModule,
-    ColorGithubModule,
-    AngularResizedEventModule,
-    NgxEchartsModule,
-    AngularResizeElementModule
-  ],
+    imports: [
+        CommonModule,
+        NgZorroAntdModule,
+        ReactiveFormsModule,
+        ContextMenuModule,
+        DialogModule,
+        TableModule,
+        FormsModule,
+        ColorChromeModule,
+        ColorSketchModule,
+        MultiSelectModule,
+        SidebarModule,
+        ProgressSpinnerModule,
+        DragDropModuleAngular,
+        AngularDraggableModule,
+        ColorGithubModule,
+        AngularResizedEventModule,
+        NgxEchartsModule,
+        AngularResizeElementModule,
+    ],
   providers: [TableSortAndFilterPipe, SystemTagFilterPipe, DecimalPipe, ...SERVICES, ...PIPES],
   exports: [
     CommonModule,
@@ -71,7 +72,7 @@ import {NumberCellRenderer} from "./components/grid/number-cell-renderer/number-
     ProgressSpinnerModule,
     ...COMPONENTS,
     ...PIPES,
-    ...DIRECTIVES,
+    ...DIRECTIVES
   ]
 })
 export class SharedModule { }

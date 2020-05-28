@@ -1,20 +1,29 @@
-import { Component, OnInit } from '@angular/core';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit} from '@angular/core';
 import {Location} from "@angular/common";
 import * as _ from "lodash";
 import * as XLSX from 'xlsx';
 import {AllModules} from "@ag-grid-enterprise/all-modules";
+import {UploadXHRArgs} from "ng-zorro-antd";
+import {BulkImportApi} from "../../service/api/bulk-import.api";
+import {BaseContainer} from "../../../shared/base";
+import {Store} from "@ngxs/store";
+import {Router} from "@angular/router";
+import {GridApi, ColumnApi} from 'ag-grid-community';
+import {ErrorCellRenderer} from "../../../shared/components/grid/error-cell-renderer/error-cell-renderer.component";
+import {ErrorValue} from "../../types/erroValue.type";
 
 @Component({
   selector: 'app-import',
   templateUrl: './import.component.html',
-  styleUrls: ['./import.component.scss']
+  styleUrls: ['./import.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ImportContainer implements OnInit {
+export class ImportContainer extends BaseContainer implements OnInit {
 
   public modules = AllModules;
 
-  gridApi: any;
-  gridColumnApi: any;
+  gridApi: GridApi;
+  gridColumnApi: ColumnApi;
   gridParams: {
     rowModelType: 'serverSide' | 'infinite' | 'clientSide',
     rowData: any[],
@@ -26,52 +35,60 @@ export class ImportContainer implements OnInit {
     rowSelection: 'multiple' | 'single'
   };
 
-  constructor(public location: Location) {
+  file: File;
+  isFileRead: boolean;
+  isFileValidated: boolean;
+
+  headerErrors: TableErrorType[];
+
+  headerErrorsPanel= {
+    active: false,
+    disabled: true,
+    name: 'Header Errors',
+    icon: 'double-right',
+    customStyle: {
+      background: 'white',
+      'border-radius': '4px',
+      'margin-bottom': '24px',
+      border: '0px'
+    }
+  };
+
+  constructor(
+      _baseStore: Store, _baseRouter: Router, _baseCdr: ChangeDetectorRef,
+      public location: Location,
+      private api: BulkImportApi,
+  ) {
+    super(_baseRouter, _baseCdr, _baseStore);
     this.gridParams = {
       rowModelType: "clientSide",
       rowData: [],
-      columnDefs: [
-        { headerName: "Workspace Reference", field: "workspaceContextCode" },
-        { headerName: "Workspace Context", field: "workspaceContext" },
-        { headerName: "UwYear", field: "workspaceUwYear" },
-        { headerName: "Instance", field: "instance" },
-        { headerName: "Type", field: "type" },
-        { headerName: "Date Source Name", field: "dataSourceName" },
-        { headerName: "Object Source Id", field: "objectSourceId" },
-        { headerName: "Object Source Name", field: "objectSourceName" },
-        { headerName: "Object Source Desc", field: "objectSourceDesc" },
-        { headerName: "Region", field: "region" },
-        { headerName: "Peril", field: "peril" },
-        { headerName: "Currency", field: "currency" },
-        { headerName: "Target Currency", field: "targetCurrency" },
-        { headerName: "Financial Perspective", field: "financialPerspective" },
-        { headerName: "Region Peril", field: "regionPeril" },
-        { headerName: "Override Reason", field: "overrideReasonRegionPeril" },
-        { headerName: "PEQT Id", field: "peqtId" },
-        { headerName: "PEQT Name", field: "peqtName" },
-        { headerName: "Occurrence Basis", field: "occurrenceBasisOccurrenceBasis" },
-        { headerName: "Unit Multiplier", field: "unitMultiplier" },
-        { headerName: "Unit Multiplier Basis", field: "unitMultiplierBasis" },
-        { headerName: "Unit Multiplier Narrative", field: "unitMultiplierNarrative" },
-        { headerName: "Proportion Pct", field: "proportionPct" },
-        { headerName: "Proportion Pct Basis", field: "proportionPctBasis" },
-        { headerName: "Proportion Pct Narrative", field: "proportionPctNarrative" },
-        { headerName: "Section Division Id", field: "sectionDivisionId" },
-        { headerName: "AutoPublish", field: "autoPublish" },
-        { headerName: "AppendReplace", field: "appendReplace" },
-      ],
+      columnDefs: [],
       autoGroupColumnDef: null,
       defaultColDef: {
         resizable: true,
         sortable: true,
         enableRowGroup: false,
         floatingFilter: false,
-        filter: 'agTextColumnFilter'
+        filter: 'agTextColumnFilter',
+        cellRenderer: 'errorCellRenderer',
+        cellStyle: function(params) {
+          if( params.value instanceof ErrorValue) {
+            return {color: 'white', backgroundColor: '#dc3545'};
+          } else {
+            return null;
+          }
+        }
       },
-      frameworkComponents: null,
+      frameworkComponents: {
+        errorCellRenderer: ErrorCellRenderer
+      },
       rowSelection: "multiple",
       getChildCount: () => {}
-    }
+    };
+    this.isFileRead = false;
+    this.isFileValidated = false;
+    this.headerErrors = [];
   }
 
   ngOnInit() {
@@ -84,19 +101,28 @@ export class ImportContainer implements OnInit {
   onGridReady(params) {
     this.gridApi = params.api;
     this.gridColumnApi = params.columnApi;
+  }
 
+  onBeforeUpload = (file) => {
+    this.headerErrors = [];
+
+    this.file = file;
+    this.readFile(this.file);
+    this.startValidation(this.file);
+
+    return false;
+  };
+
+  onFileChange(evt) {
+    this.headerErrors = [];
+
+    this.file = (evt.target).files[0];
+    this.readFile(this.file);
+    this.startValidation(this.file);
 
   }
 
-  columnMapping = {
-    workspaceReference: "workspaceContextCode",
-    uWYear: "workspaceUwYear"
-  };
-
-  onFileChange(evt: any) {
-    /* wire up file reader */
-    const target: DataTransfer = <DataTransfer>(evt.target);
-    if (target.files.length !== 1) throw new Error('Cannot use multiple files');
+  readFile(file) {
     const reader: FileReader = new FileReader();
     reader.onload = (e: any) => {
       /* read workbook */
@@ -106,21 +132,65 @@ export class ImportContainer implements OnInit {
       /* grab first sheet */
       const wsname: string = wb.SheetNames[0];
       const ws: XLSX.WorkSheet = wb.Sheets[wsname];
-
-      /* save data */
-      this.gridApi.setRowData(_.map(<any>(XLSX.utils.sheet_to_json(ws, {})), (row) => {
+      const columns = [];
+      const data = _.map(<any>(XLSX.utils.sheet_to_json(ws, {})), (row, i) => {
         let newRow = {};
+        const initCols = _.toNumber(i) == 0;
 
-        _.forEach(row, (v, k) => {
-          let col = _.lowerFirst(k);
-          newRow[this.columnMapping[col] ? this.columnMapping[col] : col] = v;
+        _.forEach(row, (v, headerName) => {
+          let field = _.camelCase(headerName);
+          if(initCols) {
+            columns.push({
+              field,
+              headerName: headerName
+            })
+          }
+          newRow[field] = v;
         });
 
         return newRow;
-      }));
-
+      });
+      this.gridApi.setColumnDefs(columns);
+      this.gridApi.setRowData(data);
+      this.gridParams = {
+        ...this.gridParams,
+        rowData: data,
+        columnDefs: columns
+      };
+      this.isFileRead = true;
+      this.detectChanges();
     };
-    reader.readAsBinaryString(target.files[0]);
+    reader.readAsBinaryString(file);
+  }
+
+  startValidation(file) {
+    const formData = new FormData();
+    formData.append('payload', file);
+    this.api.uploadAndValidate(formData).subscribe( ({errors}) => {
+      console.log(errors)
+      let data = this.gridParams.rowData;
+      _.forEach(errors, (err: TableErrorType) => {
+        if(err.columnIndex < 0) this.headerErrors.push(err);
+        else {
+          const {
+            columnIndex,
+            rowIndex,
+             errorDescription
+          } = err;
+
+          const value = data[rowIndex - 1][this.gridParams.columnDefs[columnIndex].field];
+
+          data[rowIndex - 1][this.gridParams.columnDefs[columnIndex].field] = new ErrorValue(
+              errorDescription,
+              rowIndex,
+              value
+          )
+        }
+      });
+      this.gridApi.setRowData(data);
+      this.isFileValidated= true;
+      this.detectChanges();
+    });
   }
 
 }

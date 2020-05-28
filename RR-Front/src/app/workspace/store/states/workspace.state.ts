@@ -13,6 +13,7 @@ import {FileBasedService} from '../../services/file-based.service';
 import {ScopeCompletenessService} from '../../services/scop-completeness.service';
 import {ContractService} from "../../services/contract.service";
 import {CalibrationNewService} from "../../services/calibration-new.service";
+import {CloningStatus} from "../../model/CloningStatus";
 
 
 const initialState: WorkspaceModel = {
@@ -32,6 +33,7 @@ const initialState: WorkspaceModel = {
       edmrdmSelection: {}
     }
   },
+  cloningStatus: CloningStatus.noClone,
   routing: '',
   loading: false
 };
@@ -102,6 +104,17 @@ export class WorkspaceState {
   static getCurrentWorkspaces(state: WorkspaceModel) {
     const wsId = state.currentTab.wsIdentifier;
     return state.content[wsId];
+  }
+
+  @Selector()
+  static getCurrentWorkspaceDetail(state: WorkspaceModel) {
+    const wsId = state.currentTab.wsIdentifier;
+    return {
+      uwYear: state.content[wsId].uwYear,
+      workspaceName: state.content[wsId].workspaceName,
+      cedantName: state.content[wsId].cedantName,
+      wsId
+    };
   }
 
   @Selector()
@@ -191,6 +204,26 @@ export class WorkspaceState {
   static getCloneConfig(state: WorkspaceModel) {
     return state.content[state.currentTab.wsIdentifier].pltManager['cloneConfig'];
   }
+  @Selector()
+  static getCloneDataSelectedPlts(state: WorkspaceModel) {
+    return state.content[state.currentTab.wsIdentifier].cloneData.selectedPLTs;
+  }
+
+  @Selector()
+  static getCloneDataWsSource(state: WorkspaceModel) {
+    return state.content[state.currentTab.wsIdentifier].cloneData.workspaceSource;
+  }
+
+  @Selector()
+  static getCloneDataWsTarget(state: WorkspaceModel) {
+    return state.content[state.currentTab.wsIdentifier].cloneData.workspaceTarget;
+  }
+
+
+  @Selector()
+  static getCloningStatus(state: WorkspaceModel) {
+     return state.cloningStatus;
+  }
 
   @Selector()
   static getWorkspaceMainState(state: WorkspaceModel) {
@@ -207,6 +240,8 @@ export class WorkspaceState {
   }
 
   static getPltsForPlts(wsIdentifier: string) {
+
+
     return createSelector([WorkspaceState], (state: WorkspaceModel) => state.content[wsIdentifier].pltManager.data);
   }
 
@@ -440,12 +475,6 @@ export class WorkspaceState {
     return state.content[wsIdentifier].riskLink.financialPerspective;
   }
 
-  @Selector()
-  static getImportStatus(state: WorkspaceModel) {
-    const wsIdentifier = state.currentTab.wsIdentifier;
-    return state.content[wsIdentifier].riskLink.importPLTs;
-  }
-
   /***********************************
    *
    * Inuring Selectors
@@ -610,6 +639,11 @@ export class WorkspaceState {
     return this.wsService.deleteFacProject(ctx, payload);
   }
 
+  @Action(fromWS.LoadProjectByWorkspace)
+  loadProjectByWorkspace(ctx: StateContext<WorkspaceModel>, payload: fromWS.LoadProjectByWorkspace) {
+    return this.wsService.loadProjectsByWorkspace(ctx, payload);
+  }
+
   /***********************************
    *
    * Contract Actions
@@ -652,7 +686,36 @@ export class WorkspaceState {
     this.pltStateService.saveGlobalTableSelection(ctx, payload);
   }
 
-  @Action(fromPlt.setCloneConfig)
+  @Action(fromPlt.CommitClone)
+  commitClone(ctx: StateContext<WorkspaceModel>, {payload}: fromPlt.CommitClone) {
+    return this.pltStateService.commitClone(ctx, payload);
+  }
+
+  @Action(fromPlt.CommitCloneSuccess)
+  commitCloneSuccess(ctx: StateContext<WorkspaceModel>, {payload}: fromPlt.CommitCloneSuccess) {
+    return this.pltStateService.commitCloneSuccess(ctx, payload);
+  }
+
+  @Action(fromPlt.SetCloneDataWsTarget)
+  setCloneDataWsTarget(ctx: StateContext<WorkspaceModel>, {payload}: fromPlt.SetCloneDataWsTarget) {
+    return this.pltStateService.setCloneDataWsTarget(ctx, payload);
+  }
+
+  @Action(fromPlt.SetCloneDataWsSource)
+  setCloneDataWsSource(ctx: StateContext<WorkspaceModel>, {payload}: fromPlt.SetCloneDataWsSource) {
+    return this.pltStateService.setCloneDataWsSource(ctx, payload);
+  }
+
+  @Action(fromPlt.SetDefaultCloneWsTarget)
+  setDefaultCloneWsTarget(ctx: StateContext<WorkspaceModel>) {
+    return this.pltStateService.setDefaultCloneWsTarget(ctx);
+  }
+
+  @Action(fromPlt.SetCloneDataSelectedPlts)
+  setCloneDataSelectedPlts(ctx: StateContext<WorkspaceModel>, {payload}: fromPlt.SetCloneDataSelectedPlts) {
+    return this.pltStateService.setCloneDataSelectedPlts(ctx, payload);
+  }
+
   setCloneConfig(ctx: StateContext<WorkspaceModel>, {payload}: fromPlt.setCloneConfig) {
     return this.pltStateService.setCloneConfig(ctx, payload);
   }

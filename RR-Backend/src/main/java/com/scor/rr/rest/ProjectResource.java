@@ -11,6 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 
 @RestController
 @RequestMapping("api/workspace/projects")
@@ -40,6 +42,12 @@ public class ProjectResource {
     @GetMapping("stats")
     public ProjectStatistics getProjetStatistics(@RequestParam("projectId") Long projectId) {
         return this.projectService.getProjetStatistics(projectId);
+    }
+
+    @GetMapping()
+    public List<ProjectCardView> getProjectsByWorkspace(@RequestParam("workspaceContextCode") String workspaceContextCode,
+                                                       @RequestParam("workspaceUwYear") Integer workspaceUwYear) {
+        return this.projectService.getAllProjectByWorkspace(workspaceContextCode,workspaceUwYear);
     }
 
     @PostMapping("cat")

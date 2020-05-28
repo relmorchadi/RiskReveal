@@ -55,7 +55,7 @@ export class ExposuresTableService {
             frozenRow: tableConfig.frozenRow.regionPerils != {} ? [{...tableConfig.frozenRow, ...tableConfig.frozenRow.regionPerils}] : [],
             frozenColumns: tableConfig.data ? FAKEDATA.frozenColumns : []
         };
-        console.log('tableConfig ===========> ',res);
+        console.log('tableConfig ===========> ',res, tableConfig);
         return res;
     }
 

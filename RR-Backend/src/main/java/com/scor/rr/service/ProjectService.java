@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 
@@ -66,6 +67,12 @@ public class ProjectService {
 
     @Autowired
     private MarketChannelRepository marketChannelRepository;
+
+    public List<ProjectCardView> getAllProjectByWorkspace(String workspaceContextCode, Integer workspaceUwYear) {
+        return this.workspaceEntityRepository.findByWorkspaceContextCodeAndWorkspaceUwYear(workspaceContextCode,workspaceUwYear)
+                .map(ws -> this.projectCardViewRepository.findAllByWorkspaceId(ws.getWorkspaceId()))
+                .orElse(null);
+    }
 
     //FIXME: need to group into one function later
     public ProjectEntity addNewProjectFac(String workspaceContextCode, Integer uwy, String workspaceName, String clientName,String clientId, String lob, String contractId, ProjectEntity p) {

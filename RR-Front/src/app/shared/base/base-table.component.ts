@@ -77,6 +77,7 @@ export class BaseTable extends BaseContainer implements TableInterface , OnInit,
 
   ngOnInit() {
     super.ngOnInit();
+    console.log(this.params);
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -110,14 +111,13 @@ export class BaseTable extends BaseContainer implements TableInterface , OnInit,
   initTable(params, selectedProject, wsType) {
     if(this.params && !this.tableInitialized && wsType && selectedProject && selectedProject.previousValue != selectedProject.currentValue) {
       this.tableInitialized = true;
-      console.log(params, selectedProject, wsType);
       this._handler.initTable(this.params, wsType.currentValue == 'FAC' ? selectedProject.currentValue : null);
     }
   }
 
   selectedProjectFilter(selectedProject) {
     if(this.tableInitialized && selectedProject && selectedProject.previousValue && selectedProject.previousValue != selectedProject.currentValue) {
-      this._handler.filterByProjectId(selectedProject.currentValue.projectId);
+      this._handler.filterByProjectId(selectedProject.currentValue ? selectedProject.currentValue.projectId : null);
     }
   }
 
@@ -157,6 +157,7 @@ export class BaseTable extends BaseContainer implements TableInterface , OnInit,
 
   onCheckBox(id: number, index: number, $event: MouseEvent) {
     this._handler.onRowSelect(id, index, $event, true);
+    this.actionDispatcher.emit({ type: 'Toggle check box', payload: { id, selected: $event} })
   }
 
   onCheckAll() {

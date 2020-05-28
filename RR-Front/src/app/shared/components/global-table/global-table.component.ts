@@ -38,6 +38,7 @@ export class GlobalTableComponent extends BaseTable implements OnInit, AfterView
     this.loading$ = this._handler.loading$;
 
     this._handler.data$.subscribe(d => {
+      console.log(d);
       this.data= d;
       this.detectChanges();
     });
@@ -123,5 +124,8 @@ export class GlobalTableComponent extends BaseTable implements OnInit, AfterView
       default:
         console.log(action);
     }
+  }
+  cloneFrom() {
+    this.actionDispatcher.emit({type: 'Commit clone'})
   }
 }
