@@ -2,6 +2,7 @@ package com.scor.rr.service.bulkImport.abstraction;
 
 import com.scor.rr.domain.BulkImportFile;
 import com.scor.rr.domain.dto.ValidationDto;
+import org.springframework.data.domain.Page;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -14,5 +15,5 @@ public interface BulkImportService {
 
     void importFile(Long id);
 
-    List<BulkImportFile> getImportHistory(int page, int records, Long userId);
+    Page<BulkImportFile> getImportHistory(int page, int records);
 }

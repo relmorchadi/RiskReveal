@@ -76,8 +76,12 @@
     flex-flow: column;
     padding: 5px 7px;
 
-    button , .button-cnt{
+    .button-cnt{
       align-self: flex-end;
+
+      button {
+        margin: 0 16px;
+      }
     }
 
     .grid-cnt {
@@ -85,6 +89,12 @@
       margin: 16px 0;
       display: flex;
       flex-flow: column;
+
+      .upload-cnt, .history-cnt {
+        display: flex;
+        flex-flow: column;
+        height: 100%;
+      }
     }
 
   }
