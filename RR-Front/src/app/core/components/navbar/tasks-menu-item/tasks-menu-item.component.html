@@ -1,5 +1,5 @@
 <div (click)="togglePopup()" >
-  <nz-badge style="cursor: pointer" [nzCount]="5" nz-popover [(nzVisible)]="visible" [nzContent]="tasksPopoverContent"
+  <nz-badge style="cursor: pointer" [nzCount]="savedTasksLocal.length" nz-popover [(nzVisible)]="visible" [nzContent]="tasksPopoverContent"
             nzPlacement="bottomRight" nzTrigger="click">
     <nz-progress class="circular-progress-bar" [nzPercent]="60"
                  [nzFormat]="formatter"
@@ -10,142 +10,133 @@
 </div>
 
 <ng-template #tasksPopoverContent>
-  <div class="tabs-popover-content" style="width: 565px">
-    *This is Mocked Data
+  <div class="tabs-popover-content" style="width: 565px;">
     <nz-tabset class="a-tab-minitab">
       <nz-tab [nzTitle]="ActiveHeaderContent">
-        <div class="popup-tab-content popover-menu">
+        <div  style="display: grid" class="popup-tab-content popover-menu">
           <div class="tab-search-input">
             <i class="icon-search_24px"></i>
             <input (input)="searchJobs($event)" class="input-search"/>
           </div>
-          <ul>
-            <li *ngFor="let activeTask of savedTasksLocal" [ngStyle]="{'height': activeTask.append ? '' : '40px'}"
-                class="popover-menu-item">
-              <div class="data-first">
-                <div class="list-item-left">
-                  <i *ngIf="activeTask.pending" class="icon-clock"></i>
-                  <ng-container *ngIf="!activeTask.pending">
-                    <i *ngIf="activeTask.isPaused; else taskProgress" class="icon-pause_circle_outline_24px"></i>
-                    <ng-template #taskProgress>
-                      <nz-progress style="display: flex; align-items: center" class="circular-progress-bar"
-                                   [nzPercent]="activeTask.progress"
-                                   [nzFormat]="formatter"
-                                   [nzStrokeWidth]="8"
-                                   nzType="circle" [nzWidth]="24">
-                      </nz-progress>
-                    </ng-template>
-                  </ng-container>
-                  <ng-template #tooltipInfo>
+          <div  *ngIf="!loading; else spinner">
+            <ul *ngIf=" allTasks.length != 0 else noDataFound">
+              <li *ngFor="let activeTask of savedTasksLocal" [ngStyle]="{'height': activeTask.append ? '' : '40px'}"
+                  class="popover-menu-item">
+                <div class="data-first">
+                  <div class="list-item-left">
+                    <i *ngIf="activeTask.pending" class="icon-clock"></i>
+                    <ng-container *ngIf="activeTask.status == 'PENDING'">
+                      <i class="icon-clock pause-icon-status"></i>
+                    </ng-container>
+                    <ng-container *ngIf="activeTask.status == 'RUNNING'">
+                      <nz-progress [nzWidth]="35" [nzPercent]="activeTask.percent" nzType="circle"></nz-progress>
+                    </ng-container>
+                    <ng-container *ngIf="activeTask.status == 'PAUSED'">
+                      <i class="icon-pause_circle_outline_24px pause-icon-status"></i>
+                    </ng-container>
+                    <ng-template #tooltipInfo>
                     <span>
-                      <span *ngIf="activeTask.jobType === 'Import'">Import: {{activeTask.status.completed}}
+                      <span *ngIf="activeTask.jobTypeCode === 'Import'">Import: {{activeTask.status.completed}}
                         of {{activeTask.status.total}} Portfolios,
                         {{activeTask.status.completed}} of {{activeTask.status.total}} Analysis</span>
-                      <span *ngIf="activeTask.jobType === 'Calibration'">Calibration: {{activeTask.status.completed}}
+                      <span *ngIf="activeTask.jobTypeCode === 'Calibration'">Calibration: {{activeTask.status.completed}}
                         of {{activeTask.status.total}} PLTs</span>
-                      <span *ngIf="activeTask.jobType === 'Inuring'">Inuring: {{activeTask.status.completed}}
+                      <span *ngIf="activeTask.jobTypeCode === 'Inuring'">Inuring: {{activeTask.status.completed}}
                         of {{activeTask.status.total}} Contract</span>
                     </span>
-                  </ng-template>
-                  <!--<i class="icon-window-section"></i> -->
-                  <div [nzTitle]="tooltipInfo" nzPlacement="bottom" nz-tooltip
-                       (dblclick)="openWorkspace(activeTask.workSpaceId, activeTask.uwYear, activeTask.linkTo)"
-                       class="item-list-title-wrapper">
-                    <span class="item-list-title">{{activeTask?.cedantName}}</span>
-                    <span class="item-list-subtitle">{{activeTask?.uwYear}} - {{activeTask?.description}}</span>
+                    </ng-template>
+                    <!--<i class="icon-window-section"></i> -->
+                    <div class="item-list-title-wrapper">
+                      <span class="item-list-title job-title">{{activeTask?.workspaceName}}</span>
+                      <span class="item-list-subtitle">{{activeTask?.uwYear}} - {{activeTask?.clientName}}</span>
+                    </div>
+                  </div>
+                  <div class="list-item-right">
+                    <span class="list-item-info">{{activeTask?.jobTypeCode}} </span>
+                    <ng-container *ngIf="activeTask.status != 'PENDING'">
+                    <span *ngIf="activeTask.status != 'PAUSED'"
+                          class="task-duration mr-2">{{activeTask?.percent}}% Completed</span>
+                      <span *ngIf="activeTask.status == 'PAUSED'"
+                            class="task-duration mr-2">Paused</span>
+                    </ng-container>
+                    <span *ngIf="activeTask.status == 'PENDING'"
+                          class="task-duration mr-2">pending</span>
+                    <nz-dropdown [nzPlacement]="'bottomRight'" [nzTrigger]="'click'">
+                      <i nz-dropdown style="margin-top: 7px" class="icon-menu_24px"></i>
+                      <ul nz-menu>
+                        <li style="display:flex" nz-menu-item
+                            *ngIf="activeTask.status != 'PAUSED'"
+                            nz-popconfirm
+                            nzTitle="Are you sure you want to pause this Job?"
+                            (nzOnConfirm)="pauseJob(activeTask.jobId)"
+                            (nzOnCancel)="cancel()"
+                            nzPlacement="bottom"><i
+                                class="icon-pause_circle_outline_24px dropdown-icons"></i><span
+                                class="dropdown-title">Pause</span></li>
+
+                        <li style="display:flex" nz-menu-item
+                            *ngIf="activeTask.status == 'PAUSED'"
+                            nz-popconfirm
+                            nzTitle="Are you sure you want to Resume this Job?"
+                            (nzOnConfirm)="resumeJob(activeTask.jobId)"
+                            (nzOnCancel)="cancel()"
+                            nzPlacement="bottom"><i
+                                class="icon-play_circle_outline_24px dropdown-icons"></i><span
+                                class="dropdown-title">Resume</span></li>
+
+                        <li style="display:flex" nz-menu-item
+                            nz-popconfirm
+                            nzOkText="YES"
+                            nzCancelText="NO"
+                            nzTitle="Are you sure you want to Abort this Job?
+                                   You will Find it Later in the Job List"
+                            (nzOnConfirm)="deleteJob(activeTask.jobId)"
+                            (nzOnCancel)="cancel()"
+                            nzPlacement="bottom"><i
+                                class="pi pi-times dropdown-icons"></i><span
+                                class="dropdown-title">Cancel</span></li>
+
+                      </ul>
+                    </nz-dropdown>
+                    <i *ngIf="!activeTask.append" (click)="toggleActiveTask(activeTask)"
+                       class="icon-keyboard_arrow_down_24px"></i>
+                    <i *ngIf="activeTask.append" (click)="toggleActiveTask(activeTask)"
+                       class="icon-keyboard_arrow_up_24px"></i>
                   </div>
                 </div>
-                <div class="list-item-right">
-                  <span (dblclick)="openWorkspace(activeTask.workSpaceId, activeTask.uwYear, activeTask.linkTo)"
-                        class="list-item-info">{{activeTask?.jobType}} - {{activeTask?.workSpaceId}}</span>
-                  <ng-container *ngIf="!activeTask.pending">
-                    <span *ngIf="!activeTask.isPaused"
-                          (dblclick)="openWorkspace(activeTask.workSpaceId, activeTask.uwYear, activeTask.linkTo)"
-                          class="task-duration mr-2">{{activeTask?.duration}}</span>
-                    <span *ngIf="activeTask.isPaused"
-                          (dblclick)="openWorkspace(activeTask.workSpaceId, activeTask.uwYear, activeTask.linkTo)"
-                          class="task-duration mr-2">Paused</span>
-                  </ng-container>
-                  <span *ngIf="activeTask.pending"
-                        (dblclick)="openWorkspace(activeTask.workSpaceId, activeTask.uwYear, activeTask.linkTo)"
-                        class="task-duration mr-2">4/12 pending</span>
-                  <nz-dropdown [nzPlacement]="'bottomRight'" [nzTrigger]="'click'">
-                    <i nz-dropdown style="margin-top: 7px" class="icon-menu_24px"></i>
-                    <ul nz-menu>
-                      <!--<li style="display:flex" nz-menu-item><i class="icon-close_24px dropdown-icons"></i><span
-                        class="dropdown-title">Cancel</span></li>-->
-                      <li style="display:flex" nz-menu-item
-                          *ngIf="!activeTask.isPaused"
-                          nz-popconfirm
-                          nzTitle="Are you sure you want to pause this Job?"
-                          (nzOnConfirm)="pauseJob(activeTask.id)"
-                          (nzOnCancel)="cancel()"
-                          nzPlacement="bottom"><i
-                        class="icon-pause_circle_outline_24px dropdown-icons"></i><span
-                        class="dropdown-title">Pause</span></li>
-
-                      <li style="display:flex" nz-menu-item
-                          *ngIf="activeTask.isPaused"
-                          nz-popconfirm
-                          nzTitle="Are you sure you want to Resume this Job?"
-                          (nzOnConfirm)="resumeJob(activeTask.id)"
-                          (nzOnCancel)="cancel()"
-                          nzPlacement="bottom"><i
-                        class="icon-play_circle_outline_24px dropdown-icons"></i><span
-                        class="dropdown-title">Resume</span></li>
-
-                      <li style="display:flex" nz-menu-item
-                          nz-popconfirm
-                          nzOkText="ABORT"
-                          nzTitle="Are you sure you want to Abort this Job?
-                                   You will Find it Later in the Job List"
-                          (nzOnConfirm)="deleteJob(activeTask.id)"
-                          (nzOnCancel)="cancel()"
-                          nzPlacement="bottom"><i
-                        class="icon-trash-alt dropdown-icons"></i><span
-                        class="dropdown-title">Delete</span></li>
-
-                    </ul>
-                  </nz-dropdown>
-                  <i *ngIf="!activeTask.append" (click)="toggleActiveTask(activeTask)"
-                     class="icon-keyboard_arrow_down_24px"></i>
-                  <i *ngIf="activeTask.append" (click)="toggleActiveTask(activeTask)"
-                     class="icon-keyboard_arrow_up_24px"></i>
-                </div>
-              </div>
-              <div *ngIf="activeTask.append" class="data-append">
-                <ul class="data-append-list">
-                  <li class="data-append-item" *ngFor="let item of activeTask.content">
-                    <div class="list-item-left">
-                      <nz-progress style="display: flex; align-items: center; margin-right: 5px;"
-                                   class="circular-progress-bar"
-                                   [nzPercent]="item.progress"
-                                   [nzFormat]="formatter"
-                                   [nzStrokeWidth]="8"
-                                   nzType="circle" [nzWidth]="15">
-                      </nz-progress>
-                      <div class="list-item-title-wrapper">
-                        <span class="item-list-title">{{item.contentId}}</span>
-                        <span class="item-list-subtitle">{{item.projectId}} | {{item.createdBy}}</span>
+                <div *ngIf="activeTask.append" class="data-append">
+                  <ul class="data-append-list">
+                    <li class="data-append-item" *ngFor="let item of activeTask.tasks">
+                      <div class="list-item-left">
+                        <nz-progress style="display: flex; align-items: center; margin-right: 5px;"
+                                     class="circular-progress-bar"
+                                     [nzPercent]="item.percent"
+                                     [nzFormat]="formatter"
+                                     [nzStrokeWidth]="8"
+                                     nzType="circle" [nzWidth]="15">
+                        </nz-progress>
+                        <div class="list-item-title-wrapper">
+                          <span class="item-list-title">{{item.name}}</span>
+                          <span class="item-list-subtitle">{{item.jobExecutionId}} | {{item.taskType}} </span>
+                        </div>
                       </div>
-                    </div>
-                    <div class="list-item-info" style="display: flex; align-items: center; flex:1">
-                      <span class="task-duration">{{item.duration}}</span>
-                      <i *ngIf="item.progress === 100" class="icon-file-check-alt"></i>
-                      <i *ngIf="item.progress < 100" nz-icon [nzType]="'loading'"></i>
-                    </div>
-                  </li>
-                </ul>
-              </div>
-            </li>
-          </ul>
+                      <div class="list-item-info" style="display: flex; align-items: center; flex:1">
+                        <span class="task-duration">{{item.percent}}% Completed</span>
+                        <i *ngIf="item.percent < 100" nz-icon [nzType]="'loading'"></i>
+                      </div>
+                    </li>
+                  </ul>
+                </div>
+              </li>
+            </ul>
+          </div>
+
           <div class="mt-2 task-footer">
             <div style="display: flex;">
               <!--              <label>Date :</label>-->
               <nz-select [(ngModel)]="datePointer" [nzAllowClear]="false" class="a-dropdown-label date-label"
                          style="width: 120px; margin-right: 10px;" (ngModelChange)="filterByDate($event)" nzAllowClear
                          nzPlaceHolder="Choose">
-                <nz-option [nzValue]="'all'" nzLabel="All"></nz-option>
                 <nz-option [nzValue]="'today'" nzLabel="Today"></nz-option>
                 <nz-option [nzValue]="'yesterday'" nzLabel="Yesterday"></nz-option>
                 <nz-option [nzValue]="'lastWeek'" nzLabel="Last Week"></nz-option>
@@ -155,6 +146,7 @@
               <nz-select [(ngModel)]="typePointer" [nzAllowClear]="false" class="a-dropdown-label type-label"
                          style="width: 120px;" (ngModelChange)="filterByType($event)" nzAllowClear
                          nzPlaceHolder="Choose">
+
                 <nz-option [nzValue]="'all'" nzLabel="All"></nz-option>
                 <nz-option [nzValue]="'Import'" nzLabel="Import"></nz-option>
                 <nz-option [nzValue]="'Inuring'" nzLabel="Inuring"></nz-option>
@@ -170,128 +162,79 @@
       </nz-tab>
       <nz-tab [nzTitle]="CompletedHeaderContent">
 
-        <div class="popup-tab-content popover-menu">
+        <div  style="display: grid" class="popup-tab-content popover-menu">
           <div class="tab-search-input">
             <i class="icon-search_24px"></i>
             <input (input)="searchJobs($event)" class="input-search"/>
           </div>
-          <ul>
-            <li *ngFor="let activeTask of savedTasksLocal" [ngStyle]="{'height': activeTask.append ? '' : '40px'}"
-                class="popover-menu-item">
-              <div class="data-first">
-                <div class="list-item-left">
-                  <i class="icon-check_circle_outline_24px"></i>
-                  <ng-template #tooltipInfo>
-                    <span>
-                      <span *ngIf="activeTask.jobType === 'Import'">Import: {{activeTask.status.completed}}
-                        of {{activeTask.status.total}} Portfolios,
-                        {{activeTask.status.completed}} of {{activeTask.status.total}} Analysis</span>
-                      <span *ngIf="activeTask.jobType === 'Calibration'">Calibration: {{activeTask.status.completed}}
-                        of {{activeTask.status.total}} PLTs</span>
-                      <span *ngIf="activeTask.jobType === 'Inuring'">Inuring: {{activeTask.status.completed}}
-                        of {{activeTask.status.total}} Contract</span>
-                    </span>
-                  </ng-template>
-                  <!--<i class="icon-window-section"></i> -->
-                  <div [nzTitle]="tooltipInfo" nzPlacement="bottom" nz-tooltip
-                       (dblclick)="openWorkspace(activeTask.workSpaceId, activeTask.uwYear, activeTask.linkTo)"
-                       class="item-list-title-wrapper">
-                    <span class="item-list-title">{{activeTask?.cedantName}}</span>
-                    <span class="item-list-subtitle">{{activeTask?.uwYear}} - {{activeTask?.description}}</span>
+          <div *ngIf="!loading; else spinner" >
+            <ul *ngIf=" completedTasks.length != 0 else noDataFound">
+              <li *ngFor="let activeTask of completedTasks" [ngStyle]="{'height': activeTask.append ? '' : '40px'}"
+                  class="popover-menu-item">
+                <div class="data-first">
+                  <div class="list-item-left">
+                    <i *ngIf="activeTask.pending" class="icon-clock"></i>
+                    <ng-container *ngIf="activeTask.status == 'FAILED'">
+                      <i style="color: red;font-size: 25px;margin-top: 5px;" class="icon-close_24px pause-icon-status"></i>
+                    </ng-container>
+                    <ng-container *ngIf="activeTask.status == 'SUCCEEDED'">
+                      <i style="color: #1ad21f" class="icon-check_circle_outline_24px pause-icon-status"></i>
+                    </ng-container>
+                    <!--<i class="icon-window-section"></i> -->
+                    <div class="item-list-title-wrapper">
+                      <span class="item-list-title job-title">{{activeTask?.workspaceName}}</span>
+                      <span class="item-list-subtitle">{{activeTask?.uwYear}} - {{activeTask?.clientName}}</span>
+                    </div>
+                  </div>
+                  <div class="list-item-right">
+                    <span class="list-item-info">{{activeTask?.jobTypeCode}} </span>
+                    <ng-container *ngIf="activeTask.status != 'PENDING'">
+                    <span *ngIf="activeTask.status != 'PAUSED'"
+                          class="task-duration mr-2">{{activeTask?.percent}}% Completed</span>
+                      <span *ngIf="activeTask.status == 'PAUSED'"
+                            class="task-duration mr-2">Paused</span>
+                    </ng-container>
+                    <span *ngIf="activeTask.status == 'PENDING'"
+                          class="task-duration mr-2">pending</span>
+                    <i *ngIf="!activeTask.append" (click)="toggleActiveTask(activeTask)"
+                       class="icon-keyboard_arrow_down_24px"></i>
+                    <i *ngIf="activeTask.append" (click)="toggleActiveTask(activeTask)"
+                       class="icon-keyboard_arrow_up_24px"></i>
                   </div>
                 </div>
-                <div class="list-item-right">
-                  <span (dblclick)="openWorkspace(activeTask.workSpaceId, activeTask.uwYear, activeTask.linkTo)"
-                        class="list-item-info">{{activeTask?.jobType}} - {{activeTask?.workSpaceId}}</span>
-<!--                  <ng-container *ngIf="!activeTask.pending">-->
-<!--                    <span *ngIf="!activeTask.isPaused"-->
-<!--                          (dblclick)="openWorkspace(activeTask.workSpaceId, activeTask.uwYear, activeTask.linkTo)"-->
-<!--                          class="task-duration mr-2">{{activeTask?.duration}}</span>-->
-<!--                    <span *ngIf="activeTask.isPaused"-->
-<!--                          (dblclick)="openWorkspace(activeTask.workSpaceId, activeTask.uwYear, activeTask.linkTo)"-->
-<!--                          class="task-duration mr-2">Paused</span>-->
-<!--                  </ng-container>-->
-<!--                  <span *ngIf="activeTask.pending"-->
-<!--                        (dblclick)="openWorkspace(activeTask.workSpaceId, activeTask.uwYear, activeTask.linkTo)"-->
-<!--                        class="task-duration mr-2">4/12 pending</span>-->
-                  <nz-dropdown [nzPlacement]="'bottomRight'" [nzTrigger]="'click'">
-                    <i nz-dropdown style="margin-top: 7px" class="icon-menu_24px"></i>
-                    <ul nz-menu>
-                      <!--<li style="display:flex" nz-menu-item><i class="icon-close_24px dropdown-icons"></i><span
-                        class="dropdown-title">Cancel</span></li>-->
-                      <li style="display:flex" nz-menu-item
-                          *ngIf="!activeTask.isPaused"
-                          nz-popconfirm
-                          nzTitle="Are you sure you want to pause this Job?"
-                          (nzOnConfirm)="pauseJob(activeTask.id)"
-                          (nzOnCancel)="cancel()"
-                          nzPlacement="bottom"><i
-                        class="icon-pause_circle_outline_24px dropdown-icons"></i><span
-                        class="dropdown-title">Pause</span></li>
-
-                      <li style="display:flex" nz-menu-item
-                          *ngIf="activeTask.isPaused"
-                          nz-popconfirm
-                          nzTitle="Are you sure you want to Resume this Job?"
-                          (nzOnConfirm)="resumeJob(activeTask.id)"
-                          (nzOnCancel)="cancel()"
-                          nzPlacement="bottom"><i
-                        class="icon-play_circle_outline_24px dropdown-icons"></i><span
-                        class="dropdown-title">Resume</span></li>
-
-                      <li style="display:flex" nz-menu-item
-                          nz-popconfirm
-                          nzOkText="ABORT"
-                          nzTitle="Are you sure you want to Abort this Job?
-                                   You will Find it Later in the Job List"
-                          (nzOnConfirm)="deleteJob(activeTask.id)"
-                          (nzOnCancel)="cancel()"
-                          nzPlacement="bottom"><i
-                        class="icon-trash-alt dropdown-icons"></i><span
-                        class="dropdown-title">Delete</span></li>
-
-                    </ul>
-                  </nz-dropdown>
-                  <i *ngIf="!activeTask.append" (click)="toggleActiveTask(activeTask)"
-                     class="icon-keyboard_arrow_down_24px"></i>
-                  <i *ngIf="activeTask.append" (click)="toggleActiveTask(activeTask)"
-                     class="icon-keyboard_arrow_up_24px"></i>
-                </div>
-              </div>
-              <div *ngIf="activeTask.append" class="data-append">
-                <ul class="data-append-list">
-                  <li class="data-append-item" *ngFor="let item of activeTask.content">
-                    <div class="list-item-left">
-                      <nz-progress style="display: flex; align-items: center; margin-right: 5px;"
-                                   class="circular-progress-bar"
-                                   [nzPercent]="item.progress"
-                                   [nzFormat]="formatter"
-                                   [nzStrokeWidth]="8"
-                                   nzType="circle" [nzWidth]="15">
-                      </nz-progress>
-                      <div class="list-item-title-wrapper">
-                        <span class="item-list-title">{{item.contentId}}</span>
-                        <span class="item-list-subtitle">{{item.projectId}} | {{item.createdBy}}</span>
+                <div *ngIf="activeTask.append" class="data-append">
+                  <ul class="data-append-list">
+                    <li class="data-append-item" *ngFor="let item of activeTask.tasks">
+                      <div class="list-item-left">
+                        <nz-progress style="display: flex; align-items: center; margin-right: 5px;"
+                                     class="circular-progress-bar"
+                                     [nzPercent]="item.percent"
+                                     [nzFormat]="formatter"
+                                     [nzStrokeWidth]="8"
+                                     nzType="circle" [nzWidth]="15">
+                        </nz-progress>
+                        <div class="list-item-title-wrapper">
+                          <span class="item-list-title">{{item.name}}</span>
+                          <span class="item-list-subtitle">{{item.jobExecutionId}} | {{item.taskType}} </span>
+                        </div>
                       </div>
-                    </div>
-                    <div class="list-item-info" style="display: flex; align-items: center; flex:1">
-                      <span class="task-duration">
-<!--                        {{item.duration}}-->
-                      </span>
-                      <i class="icon-file-check-alt"></i>
-<!--                      <i *ngIf="item.progress < 100" nz-icon [nzType]="'loading'"></i>-->
-                    </div>
-                  </li>
-                </ul>
-              </div>
-            </li>
-          </ul>
+                      <div class="list-item-info" style="display: flex; align-items: center; flex:1">
+                        <span class="task-duration">{{item.percent}}% Completed</span>
+                        <i *ngIf="item.percent < 100" nz-icon [nzType]="'loading'"></i>
+                      </div>
+                    </li>
+                  </ul>
+                </div>
+              </li>
+            </ul>
+          </div>
+
           <div class="mt-2 task-footer">
-            <div>
+            <div style="display: flex;">
+              <!--              <label>Date :</label>-->
               <nz-select [(ngModel)]="datePointer" [nzAllowClear]="false" class="a-dropdown-label date-label"
                          style="width: 120px; margin-right: 10px;" (ngModelChange)="filterByDate($event)" nzAllowClear
                          nzPlaceHolder="Choose">
-                <nz-option [nzValue]="'all'" nzLabel="All"></nz-option>
                 <nz-option [nzValue]="'today'" nzLabel="Today"></nz-option>
                 <nz-option [nzValue]="'yesterday'" nzLabel="Yesterday"></nz-option>
                 <nz-option [nzValue]="'lastWeek'" nzLabel="Last Week"></nz-option>
@@ -316,16 +259,29 @@
       </nz-tab>
     </nz-tabset>
   </div>
-  `
 
   <ng-template #ActiveHeaderContent>
-    <span style="width: 5px">Active &nbsp; <span class="badge badge-light tab-badge">12</span></span>
+    <span style="width: 5px">Active &nbsp; <span class="badge badge-light tab-badge">{{savedTasksLocal.length}}</span></span>
   </ng-template>
 
   <ng-template #CompletedHeaderContent>
-    <span style="width: 90px">Completed &nbsp; <span class="badge badge-light tab-badge">6</span></span>
+    <span style="width: 90px">Completed &nbsp; <span class="badge badge-light tab-badge">{{completedTasks.length}}</span></span>
   </ng-template>
 
+</ng-template>
+<ng-template #spinner>
+  <div  style="margin: auto">
+    <p-progressSpinner  [style]="{width: '50px', height: '50px'}"
+                        strokeWidth="5" fill="#EEEEEE" animationDuration=".3s">
+    </p-progressSpinner>
+  </div>
+</ng-template>
+<ng-template #noDataFound>
+  <div style="width: 100%;height: 100%;display: flex">
+    <div style="margin: auto">
+      No Active Jobs Found
+    </div>
+  </div>
 </ng-template>
 
 

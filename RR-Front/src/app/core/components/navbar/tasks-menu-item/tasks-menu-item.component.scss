@@ -249,3 +249,10 @@ i.icon-pause_circle_outline_24px {
     outline: 0;
   }
 }
+.job-title {
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  width: 220px;
+  font-size: 11px !important;
+}
