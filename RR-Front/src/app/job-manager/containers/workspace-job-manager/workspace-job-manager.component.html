@@ -1,4 +1,4 @@
-<div class="app-wrapper">
+<div class="app-wrapper" style="display: flex">
   <div nz-row class="row top-separator">
     <div nz-col nzSpan=24>
       <span>
@@ -6,14 +6,14 @@
       </span>
     </div>
   </div>
-  <div class="app-header">
+  <div class="app-header" *ngIf="savedTask.length > 0; else spinner">
     <p-contextMenu #cm [model]="changeContext()"></p-contextMenu>
     <div class="app-title-manager">
       <span style="flex: 1">JOB Manager - {{savedTask.length}} results</span>
-      <label class="label-wrapper">User :</label>
-      <nz-select [nzDisabled]="true" (ngModelChange)="filterByUser($event)" class="jobs-for a-dropdown-label" style="width: 140px;" nzShowSearch [(ngModel)]="Users">
-        <nz-option [nzLabel]="Users" [nzValue]="Users"></nz-option>
-      </nz-select>
+<!--      <label class="label-wrapper">User :</label>-->
+<!--      <nz-select [nzDisabled]="true" (ngModelChange)="filterByUser($event)" class="jobs-for a-dropdown-label" style="width: 140px;" nzShowSearch [(ngModel)]="Users">-->
+<!--        <nz-option [nzLabel]="Users" [nzValue]="Users"></nz-option>-->
+<!--      </nz-select>-->
         <button class="mx-4 pine-btn  d-flex justify-content-center align-items-center"
               nz-button nzType="primary" nzSize="default" nzShape="circle">
         <i style="color: #9592E6;" nz-icon theme="outline">
@@ -43,6 +43,25 @@
               <i class="fa fa-search" style="margin: 6px 4px 4px 6px"></i>
               <input pInputText type="text" (input)="dt.filterGlobal($event.target.value, 'contains')">
             </div>
+              <div *ngIf="col?.header == 'State'" class="status-border">
+                  <nz-dropdown [nzTrigger]="'click'" [nzOverlayStyle]="{ 'max-height': '136px','overflow': 'auto'}">
+                      <div class="dropdown-wrap" [style.width]="'100px'" [style.height]="'25px'" nz-dropdown>
+                          <div class="dropdown-wrap-title">
+                              <span class="dropdown-item-selected">
+                            {{selectedStatusFilter  }}
+                        </span>
+                          </div>
+                          <div class="dropdown-icon">
+                              <i nz-icon type="down"></i>
+                          </div>
+                      </div>
+                      <ul nz-menu>
+                          <li *ngFor="let status of jobStatusItems" nz-menu-item (click)="changeStatusFilter(status)">
+                              {{status}}
+                          </li>
+                      </ul>
+                  </nz-dropdown>
+              </div>
           </th>
         </tr>
       </ng-template>
@@ -119,55 +138,48 @@
                 <nz-dropdown [nzPlacement]="'bottomRight'" [nzTrigger]="'click'">
                   <i nz-dropdown style="margin-top: 7px" class="icon-menu_24px"></i>
                   <ul nz-menu class="dropdown-menu-selector">
-                    <li style="display:flex; align-items: center;" nz-menu-item
-                        *ngIf="rowData.status !== 'PAUSED'"
-                        nz-popconfirm
-                        nzTitle="Are you sure you want to pause this Job?"
-                        nzOkText="PAUSE"
-                        nzCancelText="CANCEL"
-                        (nzOnConfirm)="pauseJob(rowData.jobId)"
-                        (nzOnCancel)="cancel()"
-                        nzPlacement="bottom"><i
-                      class="pi pi-times"></i><span
-                      class="dropdown-title">Pause</span></li>
+                      <li style="display:flex; align-items: center;" nz-menu-item
+                          *ngIf="rowData.status !== 'PAUSED' && rowData.status !== 'SUCCEEDED'&& rowData.status !== 'FAILED'"
+                          nz-popconfirm
+                          nzTitle="Are you sure you want to pause this Job?"
+                          nzOkText="PAUSE"
+                          nzCancelText="CANCEL"
+                          (nzOnConfirm)="pauseJob(rowData.jobId)"
+                          (nzOnCancel)="cancel()"
+                          nzPlacement="bottom"><i
+                              class="icon-pause_circle_outline_24px dropdown-icons"></i><span
+                              class="dropdown-title">Pause</span></li>
 
-                    <li style="display:flex; align-items: center;" nz-menu-item
-                        *ngIf="rowData.status == 'PAUSED'"
-                        nz-popconfirm
-                        nzTitle="Are you sure you want to resume this Job?"
-                        nzOkText="RESUME"
-                        nzCancelText="CANCEL"
-                        (nzOnConfirm)="resumeJob(rowData.jobId)"
-                        (nzOnCancel)="cancel()"
-                        nzPlacement="bottom"><i
-                      class="pi pi-check"></i><span
-                      class="dropdown-title">Resume</span></li>
+                      <li style="display:flex; align-items: center;" nz-menu-item
+                          *ngIf="rowData.status == 'PAUSED'"
+                          nz-popconfirm
+                          nzTitle="Are you sure you want to resume this Job?"
+                          nzOkText="RESUME"
+                          nzCancelText="CANCEL"
+                          (nzOnConfirm)="resumeJob(rowData.jobId)"
+                          (nzOnCancel)="cancel()"
+                          nzPlacement="bottom"><i
+                              class="icon-play_circle_outline_24px dropdown-icons"></i><span
+                              class="dropdown-title">Resume</span></li>
 
-                    <li style="display:flex; align-items: center;" nz-menu-item
-                        nz-popconfirm
-                        nzOkText="ABORT"
-                        nzCancelText="CANCEL"
-                        nzTitle="Are you sure you want to Abort this Job?"
-                        (nzOnConfirm)="deleteJob(rowData.jobId)"
-                        (nzOnCancel)="cancel()"
-                        nzPlacement="bottom"><i
-                      class="pi pi-trash"></i><span
-                      class="dropdown-title">Delete</span></li>
+                      <li style="display:flex; align-items: center;" nz-menu-item
+                          *ngIf=" rowData.status !== 'SUCCEEDED'&& rowData.status !== 'FAILED'"
+                          nz-popconfirm
+                          nzOkText="YES"
+                          nzCancelText="NO"
+                          nzTitle="Are you sure you want to cancel this Job?"
+                          (nzOnConfirm)="deleteJob(rowData.jobId)"
+                          (nzOnCancel)="cancel()"
+                          nzPlacement="bottom"><i
+                              class="pi pi-times"></i><span
+                              class="dropdown-title">Cancel</span></li>
 
-                    <li style="display:flex; align-items: center;" nz-menu-item (click)="rowData.append = true">
-                      <i class="pi pi-eye"></i><span class="dropdown-title">View Detail</span>
-                    </li>
-
-                    <li style="display:flex; align-items: center;" nz-menu-item (click)="rowData.selected = true">
-                      <i class="pi pi-check"></i><span class="dropdown-title">Select Item</span>
-                    </li>
-
-                    <li style="display:flex; align-items: center;" nz-menu-item (click)="openWorkspace(rowData.workSpaceId, rowData.uwYear, rowData.linkTo)">
+                    <li style="display:flex; align-items: center;" nz-menu-item (click)="openSource('in',rowData)">
                       <i class="pi pi-eject"></i><span class="dropdown-title">Pop In</span>
                     </li>
 
-                    <li style="display:flex; align-items: center;" nz-menu-item>
-                      <i class="pi pi-eject"></i><span class="dropdown-title">pop Out</span>
+                    <li style="display:flex; align-items: center;" nz-menu-item  (click)="openSource('out',rowData)">
+                      <i class="pi pi-eject"></i><span class="dropdown-title">Pop Out</span>
                     </li>
 
                   </ul>
@@ -200,9 +212,10 @@
                     </div>
                   </div>
                   <div class="list-item-info">
-                    <span class="task-duration">1 min remaining</span>
-                    <i *ngIf="item.percent === 100" class="icon-file-check-alt"></i>
-                    <i *ngIf="item.percent < 100" nz-icon [nzType]="'loading'"></i>
+                    <span class="task-duration">{{item.percent}} % Completed</span>
+                    <a class="view-task-details" (click)="openDetailsPanel(item)">View Details</a>
+<!--                    <i *ngIf="item.percent === 100" class="icon-file-check-alt"></i>-->
+<!--                    <i *ngIf="item.percent < 100" nz-icon [nzType]="'loading'"></i>-->
                   </div>
                 </li>
               </ul>
@@ -220,3 +233,10 @@
     </p-table>
   </div>
 </div>
+<ng-template #spinner>
+    <div style="margin: auto">
+        <p-progressSpinner  [style]="{width: '50px', height: '50px'}"
+                            strokeWidth="5" fill="#EEEEEE" animationDuration=".3s">
+        </p-progressSpinner>
+    </div>
+</ng-template>

@@ -26,13 +26,13 @@ export class JobManagerService {
         return this._http.get(`${this.api}user-jobs`);
     }
     pauseJob(jobId){
-        return this._http.get(`${this.api}pause-job?jobId=`+jobId);
+        return this._http.get(`${this.api}pause-job?jobId=`+jobId,{responseType: 'text'});
     }
     deleteJob(jobId){
-        return this._http.get(`${this.api}delete-job?jobId=`+jobId);
+        return this._http.get(`${this.api}cancel-job-or-task?id=`+jobId+'&type=job',{responseType: 'text'});
     }
     resumeJob(jobId) {
-        return this._http.get(`${this.api}resume-job?jobId=`+jobId);
+        return this._http.get(`${this.api}resume-job?jobId=`+jobId, {responseType: 'text'});
     }
 
 
