@@ -1,5 +1,6 @@
 package com.scor.rr.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -31,6 +32,7 @@ public class BulkImportFile {
 
 
     @OneToMany(mappedBy = "file")
+    @JsonIgnore
     private List<ValidationError> errors;
 
     public BulkImportFile(String filePath, String fileName, Boolean hasPassedValidation) {

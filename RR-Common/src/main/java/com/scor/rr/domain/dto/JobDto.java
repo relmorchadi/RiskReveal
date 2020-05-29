@@ -1,5 +1,6 @@
 package com.scor.rr.domain.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.scor.rr.domain.enums.JobStatus;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -16,10 +17,13 @@ public class JobDto {
 
     private Long jobId;
     private String submittedByUser;
+    @JsonFormat(shape = JsonFormat.Shape.NUMBER)
     private Date submittedDate;
     private String priority;
     private String status;
+    @JsonFormat(shape = JsonFormat.Shape.NUMBER)
     private Date startedDate;
+    @JsonFormat(shape = JsonFormat.Shape.NUMBER)
     private Date finishedDate;
     private String jobTypeCode;
 

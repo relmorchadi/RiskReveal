@@ -2,31 +2,35 @@ package com.scor.rr.service.bulkImport;
 
 import com.scor.rr.configuration.security.UserPrincipal;
 import com.scor.rr.domain.*;
-import com.scor.rr.domain.dto.ValidationDto;
+import com.scor.rr.domain.dto.*;
+import com.scor.rr.domain.riskLink.RLAnalysis;
 import com.scor.rr.domain.riskLink.RLModelDataSource;
+import com.scor.rr.domain.riskLink.RLPortfolio;
 import com.scor.rr.repository.*;
 import com.scor.rr.service.RmsService;
+import com.scor.rr.service.batch.BatchExecution;
 import com.scor.rr.service.bulkImport.abstraction.BulkImportService;
 import com.scor.rr.util.ExcelService;
 import com.scor.rr.util.excel.FileHandler;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.keyvalue.MultiKey;
 import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.http.*;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.lang.reflect.Field;
+import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
@@ -42,6 +46,9 @@ public class BulkImportServiceImpl implements BulkImportService {
 
     @Autowired
     private RmsService rmsService;
+
+    @Autowired
+    private BatchExecution batchExecution;
 
     @Autowired
     private BulkImportFileRepository bulkImportFileRepository;
@@ -84,16 +91,13 @@ public class BulkImportServiceImpl implements BulkImportService {
 
         try {
 
-            Path path = Paths.get(file.getFilePath() + "\\" + file.getFileName());
+            Path path = Paths.get(file.getFilePath() + File.separator + file.getFileName());
             FileHandler fileHandler = excelService.supplyFileHandler(FilenameUtils.getExtension(file.getFileName()));
             Workbook workbook = fileHandler.getWorkbook(path.toString());
 
             List<String> columns = excelService.getHeader(workbook, 0);
-//            Map<String, String> headersForFE = new LinkedHashMap<>();
 
             ValidationDto validationDto = new ValidationDto();
-//            columns.forEach(e -> headersForFE.put(!e.equalsIgnoreCase("") ? e : (columns.indexOf(e) + 1) + " column", e));
-//            validationDto.setHeader(headersForFE);
 
             List<ValidationError> headerErrors = this.firstLevelOfValidation(columns, file);
 
@@ -131,12 +135,13 @@ public class BulkImportServiceImpl implements BulkImportService {
 
             if (validationDto.getErrors() != null && !validationDto.getErrors().isEmpty()) {
                 file.setHasPassedValidation(false);
-                bulkImportFileRepository.save(file);
+                file = bulkImportFileRepository.save(file);
             }
+            validationDto.setFile(file);
             return validationDto;
         } catch (Exception ex) {
             ex.printStackTrace();
-            return null;
+            return new ValidationDto();
         }
     }
 
@@ -151,45 +156,53 @@ public class BulkImportServiceImpl implements BulkImportService {
                 List<String> columns = excelService.getHeader(workbook, 0);
                 Iterator<Row> rows = excelService.getRowDataIterator(workbook, 0);
 
-                Map<String, Long> workspaceCodeToProjectId = new HashMap<>();
+                Map<MultiKey, Long> workspaceCodeToProjectId = new HashMap<>();
                 RestTemplate restTemplate = new RestTemplate();
+                Map<Long, ImportParamsAndConfig> imports = new HashMap<>();
 
                 while (rows.hasNext()) {
                     Row row = rows.next();
 
-                    String workspaceContextCode = row.getCell(columns.indexOf("WorkspaceReference")).getStringCellValue();
-                    Integer uwYear = (int) row.getCell(columns.indexOf("UWYear")).getNumericCellValue();
+                    String workspaceContextCode = row.getCell(columns.indexOf("WorkspaceReference"), Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue();
+                    Integer uwYear = (int) row.getCell(columns.indexOf("UWYear"), Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getNumericCellValue();
                     Long projectId = null;
 
-                    if (!workspaceCodeToProjectId.containsKey(workspaceContextCode)) {
+                    MultiKey key = new MultiKey(workspaceContextCode, uwYear);
+
+                    if (!workspaceCodeToProjectId.containsKey(key)) {
+                        UserRrEntity user = null;
+                        if (SecurityContextHolder.getContext().getAuthentication() != null) {
+                            user = ((UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser();
+                        }
                         HttpHeaders requestHeaders = new HttpHeaders();
                         requestHeaders.add("Accept", MediaType.APPLICATION_JSON_VALUE);
+                        if (user != null)
+                            requestHeaders.set("Authorization", "Bearer " + user.getJwtToken());
 
-                        HttpEntity<String> request = new HttpEntity<>(requestHeaders);
+                        HttpEntity<ProjectEntity> request = new HttpEntity<>(new ProjectEntity("Bulk-Import " + (new Date()).toString(),
+                                "Project used to do bulk import for the file named " + e.getFileName()), requestHeaders);
+
                         UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl(projectCalculationURL)
                                 .queryParam("wsId", workspaceContextCode)
-                                .queryParam("uwy", uwYear)
-                                .queryParam("projectEntity", new ProjectEntity("Bulk-Import " + (new Date()).toString(),
-                                        "Project used to do bulk import for the file named " + e.getFileName()));
+                                .queryParam("uwy", uwYear);
+                        restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
 
                         ResponseEntity<Object> creationResponse = restTemplate
                                 .exchange(uriBuilder.toUriString(), HttpMethod.POST, request, Object.class);
+
+//                        Object creationRes = restTemplate
+//                                .postForEntity(uriBuilder.toUriString(), request, Object.class);
 
                         if (creationResponse.getStatusCode().equals(HttpStatus.OK)) {
                             log.info("Project's creation has ended successfully");
 
                             try {
-                                Object o = creationResponse.getBody();
+                                Map<String, Object> o = (LinkedHashMap<String, Object>) creationResponse.getBody();
                                 if (o != null) {
-                                    Class<?> c = o.getClass();
-
-                                    Field f = c.getDeclaredField("projectId");
-                                    f.setAccessible(true);
-
-                                    projectId = (Long) f.get(o);
-                                    workspaceCodeToProjectId.put(workspaceContextCode, projectId);
+                                    projectId = (long) (Integer) o.get("projectId");
+                                    workspaceCodeToProjectId.put(key, projectId);
                                 } else {
-                                    log.info("The creation response is empty");
+                                    log.info("The project creation response is empty");
                                     break;
                                 }
                             } catch (Exception ex) {
@@ -202,18 +215,92 @@ public class BulkImportServiceImpl implements BulkImportService {
                             break;
                         }
                     } else
-                        projectId = workspaceCodeToProjectId.get(workspaceContextCode);
+                        projectId = workspaceCodeToProjectId.get(key);
 
-                    String instanceName = row.getCell(columns.indexOf("Instance")).getStringCellValue();
-                    String type = row.getCell(columns.indexOf("Type")).getStringCellValue();
-                    String dataSourceName = row.getCell(columns.indexOf("DataSourceName")).getStringCellValue();
+                    String instanceName = row.getCell(columns.indexOf("Instance"), Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue();
+                    String type = row.getCell(columns.indexOf("Type"), Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue();
+                    String dataSourceName = row.getCell(columns.indexOf("DataSourceName"), Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue();
                     ModellingSystemInstanceEntity instance = modellingSystemInstanceRepository.findByName(instanceName);
                     String instanceId = instance != null ? instance.getModellingSystemInstanceId() : "";
+                    String fp = row.getCell(columns.indexOf("FinancialPerspective"), Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue();
+                    Long objectSourceId = (long) row.getCell(columns.indexOf("ObjectSourceId"), Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getNumericCellValue();
+                    String objectSourceName = row.getCell(columns.indexOf("ObjectSourceName"), Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue();
+                    String objectSourceType = row.getCell(columns.indexOf("ObjectSourceType"), Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue();
+                    String currency = row.getCell(columns.indexOf("TargetCurrency"), Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue();
 
-                    Page<DataSource> rmsDataSource = rmsService.listAvailableDataSources(instanceName, dataSourceName, 0, 1);
+                    Page<DataSource> rmsDataSource = rmsService.listAvailableDataSources(instanceId, dataSourceName, 0, 1);
+
                     if (rmsDataSource != null) {
-                        RLModelDataSource dataSource = new RLModelDataSource(rmsDataSource.getContent().get(0), projectId, instanceId, instanceName);
-                        dataSource = rlModelDataSourceRepository.save(dataSource);
+                        RLModelDataSource dataSource = rlModelDataSourceRepository.findByProjectIdAndTypeAndInstanceIdAndRlId(projectId, type, instanceId, rmsDataSource.getContent().get(0).getRmsId());
+                        if (dataSource == null) {
+                            dataSource = new RLModelDataSource(rmsDataSource.getContent().get(0), projectId, instanceId, instanceName);
+                            dataSource = rlModelDataSourceRepository.save(dataSource);
+                        }
+
+                        String targetRap = row.getCell(columns.indexOf("PEQT_ID"), Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue();
+                        String regionPeril = row.getCell(columns.indexOf("RegionPeril"), Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue();
+                        String occurrenceBasisOverRide = row.getCell(columns.indexOf("OccurrenceBasisOverRide"), Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue();
+                        String occurrenceOverrideReason = row.getCell(columns.indexOf("OccurrenceBasisOverrideReason"), Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue();
+                        Float unitMultiplier = (float) row.getCell(columns.indexOf("UnitMultiplier"), Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getNumericCellValue();
+                        Float proportion = (float) row.getCell(columns.indexOf("ProportionPct"), Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getNumericCellValue();
+                        Integer division = (int) row.getCell(columns.indexOf("SectionDivisionId"), Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getNumericCellValue();
+
+                        if (type.equalsIgnoreCase("EDM")) {
+                            PortfolioHeader portfolioHeader = new PortfolioHeader(objectSourceId, objectSourceName, objectSourceType, currency, dataSource.getRlId(), dataSource.getName());
+                            RLPortfolio portfolio = rmsService.scanPortfolioForBulkImport(portfolioHeader, projectId, instanceId, dataSource);
+
+                            PortfolioSelectionDto portfolioSelectionDto = new PortfolioSelectionDto();
+
+                            portfolioSelectionDto.setProjectId(projectId);
+                            portfolioSelectionDto.setDivisions(Collections.singletonList(division));
+                            portfolioSelectionDto.setProportion((double) proportion);
+                            portfolioSelectionDto.setUnitMultiplier((double) unitMultiplier);
+                            portfolioSelectionDto.setTargetCurrency(currency);
+                            portfolioSelectionDto.setRlPortfolioId(portfolio.getRlPortfolioId());
+
+                            if (imports.get(projectId) != null) {
+                                imports.get(projectId).addPortfolioConfig(portfolioSelectionDto);
+                            } else {
+                                ImportParamsAndConfig importConfig = new ImportParamsAndConfig(instanceId, String.valueOf(projectId), null, new ArrayList<>()
+                                        , new ArrayList<>(Arrays.asList(portfolioSelectionDto)));
+                                imports.put(projectId, importConfig);
+                            }
+
+                        } else if (type.equalsIgnoreCase("RDM")) {
+                            AnalysisHeader analysisHeader = new AnalysisHeader(objectSourceId, objectSourceName, dataSource.getRlId(), dataSourceName);
+                            RLAnalysis analysis = rmsService.scanAnalysisForBulkImport(analysisHeader, projectId, fp, instanceId, dataSource.getRlModelDataSourceId());
+                            ImportSelectionDto rlImportSelectionDto = new ImportSelectionDto();
+
+                            rlImportSelectionDto.setProjectId(projectId);
+                            rlImportSelectionDto.setFinancialPerspectives(Collections.singletonList(fp));
+                            rlImportSelectionDto.setDivisions(Collections.singletonList(division));
+                            rlImportSelectionDto.setOccurrenceBasis(occurrenceBasisOverRide);
+                            rlImportSelectionDto.setOccurrenceBasisOverrideReason(occurrenceOverrideReason);
+                            rlImportSelectionDto.setProportion(proportion);
+                            rlImportSelectionDto.setUnitMultiplier(unitMultiplier);
+                            rlImportSelectionDto.setTargetRegionPeril(regionPeril);
+                            rlImportSelectionDto.setTargetRAPCodes(Collections.singletonList(targetRap));
+                            rlImportSelectionDto.setRlAnalysisId(analysis.getRlAnalysisId());
+                            rlImportSelectionDto.setTargetCurrency(currency);
+
+                            if (imports.get(projectId) != null) {
+                                imports.get(projectId).addAnalysisConfig(rlImportSelectionDto);
+                            } else {
+                                ImportParamsAndConfig importConfig = new ImportParamsAndConfig(instanceId, String.valueOf(projectId), null,
+                                        new ArrayList<>(Arrays.asList(rlImportSelectionDto)), new ArrayList<>());
+                                imports.put(projectId, importConfig);
+                            }
+
+                            imports.forEach((k, value) -> {
+                                List<Long> analysisIds = rmsService.saveAnalysisImportSelection(value.getAnalysisConfig());
+                                List<Long> portfolioIds = rmsService.savePortfolioImportSelection(value.getPortfolioConfig());
+                                ImportLossDataParams params = new ImportLossDataParams(value, analysisIds, portfolioIds);
+                                batchExecution.queueImportLossData(params.getInstanceId(), Long.valueOf(params.getProjectId()), Long.valueOf(params.getUserId()));
+                            });
+                        } else {
+                            log.error("The datasource type isn't one of the following (EDM,RDM)");
+                            break;
+                        }
                     } else {
                         log.error("No datasource has been found for {}", dataSourceName);
                         break;
