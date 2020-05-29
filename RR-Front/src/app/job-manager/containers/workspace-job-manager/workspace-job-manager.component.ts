@@ -37,7 +37,8 @@ export class WorkspaceJobManagerComponent extends BaseContainer
     {
       label: 'Pause',
       icon: 'pi pi-times',
-      command: () => { this.pauseJob(this.contextSelectedItem.id); }
+      command: () => { this.pauseJob(this.contextSelectedItem.id)
+      }
     },
     {
       label: 'Resume',
@@ -48,11 +49,6 @@ export class WorkspaceJobManagerComponent extends BaseContainer
       label: 'Delete',
       icon: 'pi pi-trash',
       command: () => { this.deleteJob(this.contextSelectedItem.id); }
-    },
-    {
-      label: 'View Detail',
-      icon: 'pi pi-eye',
-      command: () => { this.contextSelectedItem.append = true; }
     },
     {
       label: 'Select item',
@@ -72,9 +68,10 @@ export class WorkspaceJobManagerComponent extends BaseContainer
       }
     },
   ];
+  jobStatusItems = ['ALL','RUNNING','PENDING','PAUSED','SUCCEEDED','FAILED']
 
   savedTask: any =[];
-
+  allTasks=[];
   tableColumn = [
     {
       field: 'checkbox',
@@ -197,6 +194,7 @@ export class WorkspaceJobManagerComponent extends BaseContainer
       filterParam: ''
     }
   ];
+  selectedStatusFilter = 'ALL';
 
 
   @Select(HeaderState.getJobs) jobs$;
@@ -217,13 +215,7 @@ export class WorkspaceJobManagerComponent extends BaseContainer
         append:false,
         selected:false,
       }));
-      this.savedTask = [
-          ...this.savedTask.filter(row => row.status =='RUNNING'),
-        ...this.savedTask.filter(row => row.status == 'PAUSED'),
-        ...this.savedTask.filter(row => row.status == 'PENDING'),
-        ...this.savedTask.filter(row => row.status == 'SUCCEEDED'),
-        ...this.savedTask.filter(row => row.status == 'FAILED')
-      ]
+      this.allTasks = this.savedTask;
       this.detectChanges();
     });
 
@@ -244,15 +236,31 @@ export class WorkspaceJobManagerComponent extends BaseContainer
   }
 
   resumeJob(id) {
-    this.jobManagerService.resumeJob(id);
+    this.jobManagerService.resumeJob(id).subscribe( (result:any) => {
+      if (result) {
+        console.log(result);
+        // this.savedTask.find( row => row.jobId == id).status = 'PAUSED';
+        // this.detectChanges();
+      }
+    });
   }
 
   deleteJob(id) {
-    this.jobManagerService.deleteJob(id);
+    this.jobManagerService.deleteJob(id).subscribe( (result:any) => {
+      if (result) {
+        this.savedTask = this.savedTask.filter( row => row.jobId != id);
+        this.detectChanges();
+      }
+    });;
   }
 
-  pauseJob(id): void {
-    this.jobManagerService.pauseJob(id);
+  pauseJob(id) {
+     this.jobManagerService.pauseJob(id).subscribe( (result:any) => {
+       if (result) {
+         this.savedTask.find( row => row.jobId == id).status = 'PAUSED';
+         this.detectChanges();
+       }
+     });
   }
 
   filterByUser(event) {
@@ -325,5 +333,29 @@ export class WorkspaceJobManagerComponent extends BaseContainer
 
   @HostListener('wheel', ['$event']) onElementScroll(event) {
     this.contextMenu.hide();
+  }
+
+  changeStatusFilter(status: string) {
+    if(status == 'ALL') {
+      this.savedTask = this.allTasks;
+    }else {
+      this.savedTask =  this.allTasks.filter(row => row.status == status);
+    }
+    this.selectedStatusFilter =  status;
+    this.detectChanges();
+  }
+
+  openSource(type: string,rowData) {
+    if (type == 'in') {
+      this.router.navigate(['workspace/'+rowData.clientName+'/'+rowData.uwYear+'/RiskLink']);
+
+    }else {
+      window.open('workspace/'+rowData.clientName+'/'+rowData.uwYear+'/RiskLink')
+
+    }
+  }
+
+  openDetailsPanel(item: any) {
+    
   }
 }

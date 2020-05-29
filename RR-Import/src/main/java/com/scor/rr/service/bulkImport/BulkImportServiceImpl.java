@@ -23,7 +23,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.*;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
@@ -140,7 +139,7 @@ public class BulkImportServiceImpl implements BulkImportService {
     public void importFile(Long id) {
         bulkImportFileRepository.findById(id).ifPresent(e -> {
             try {
-                Path path = Paths.get(e.getFilePath() + "\\" + e.getFileName());
+                Path path = Paths.get(e.getFilePath() + File.separator + e.getFileName());
                 FileHandler fileHandler = excelService.supplyFileHandler(FilenameUtils.getExtension(e.getFileName()));
                 Workbook workbook = fileHandler.getWorkbook(path.toString());
 
