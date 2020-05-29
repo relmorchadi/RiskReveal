@@ -11,6 +11,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
+
 @RestController
 @RequestMapping("api/exposure-manager")
 @Slf4j
@@ -61,7 +63,8 @@ public class ExposureManagerResource {
     @GetMapping("region-peril-description")
     public ResponseEntity<?> getRegionPerilDescription(@RequestParam String regionPeril) {
         try {
-            return new ResponseEntity<>(regionPerilService.getRegionPerilDescription(regionPeril), HttpStatus.OK);
+            return new ResponseEntity<>(Collections.singletonMap("RegionPerilDescription",
+                    regionPerilService.getRegionPerilDescription(regionPeril)), HttpStatus.OK);
         } catch (Exception ex) {
             ex.printStackTrace();
             return new ResponseEntity<>("Operation failed", HttpStatus.INTERNAL_SERVER_ERROR);

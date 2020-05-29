@@ -1,7 +1,7 @@
 .app-wrapper {
   background-color: #f5f5f5;
-  border: 10px solid #76be7c;
-  border-top: 30px solid #76be7c;
+  border: 10px solid #008694;
+  border-top: 30px solid #008694;
   width: 100%;
   height: calc(100vh - 77px);
   overflow: auto;
@@ -76,8 +76,12 @@
     flex-flow: column;
     padding: 5px 7px;
 
-    button , .button-cnt{
+    .button-cnt{
       align-self: flex-end;
+
+      button {
+        margin: 0 16px;
+      }
     }
 
     .grid-cnt {
@@ -85,6 +89,12 @@
       margin: 16px 0;
       display: flex;
       flex-flow: column;
+
+      .upload-cnt, .history-cnt {
+        display: flex;
+        flex-flow: column;
+        height: 100%;
+      }
     }
 
   }
