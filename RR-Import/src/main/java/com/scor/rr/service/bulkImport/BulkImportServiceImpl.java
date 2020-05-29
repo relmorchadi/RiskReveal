@@ -22,6 +22,9 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.*;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -108,33 +111,21 @@ public class BulkImportServiceImpl implements BulkImportService {
 
             Iterator<Row> rows = excelService.getRowDataIterator(workbook, 0);
             int index = 1;
+            int rowsWithErrors = 0;
             while (rows.hasNext()) {
                 Row row = rows.next();
                 List<ValidationError> dataErrors = this.secondLevelOfValidation(columns, row, index, file);
                 if (!dataErrors.isEmpty()) {
                     dataErrors = validationErrorRepository.saveAll(dataErrors);
-//                    Map<String, Object> data = new HashMap<>();
-//                    Iterator<Cell> cellDataIterator = row.cellIterator();
-//
-//                    while (cellDataIterator.hasNext()) {
-//                        Cell cell = cellDataIterator.next();
-//                        if (cell.getCellType() == CellType.NUMERIC) {
-//                            data.put(!columns.get(cell.getColumnIndex()).equalsIgnoreCase("") ? columns.get(cell.getColumnIndex()) :
-//                                            (cell.getColumnIndex() + 1) + " column"
-//                                    , (int) cell.getNumericCellValue());
-//                        } else {
-//                            data.put(!columns.get(cell.getColumnIndex()).equalsIgnoreCase("") ? columns.get(cell.getColumnIndex()) :
-//                                    (cell.getColumnIndex() + 1) + " column", cell.getStringCellValue());
-////                        }
-//                    }
-//                    validationDto.addData(data);
                     validationDto.addErrors(dataErrors);
+                    rowsWithErrors++;
                 }
                 index++;
             }
 
-            if (validationDto.getErrors() != null && !validationDto.getErrors().isEmpty()) {
-                file.setHasPassedValidation(false);
+            if (validationDto.getErrors() == null || validationDto.getErrors().isEmpty()) {
+                file.setHasPassedValidation(true);
+                file.setRowErrorsCount(rowsWithErrors);
                 file = bulkImportFileRepository.save(file);
             }
             validationDto.setFile(file);
@@ -311,6 +302,12 @@ public class BulkImportServiceImpl implements BulkImportService {
                 ex.printStackTrace();
             }
         });
+    }
+
+    @Override
+    public List<BulkImportFile> getImportHistory(int page, int records, Long userId) {
+        return bulkImportFileRepository
+                .findByUserId(userId, PageRequest.of(page - 1, records, Sort.by("bulkImportFileId").descending()));
     }
 
     private List<ValidationError> firstLevelOfValidation(List<String> headers, BulkImportFile file) {
