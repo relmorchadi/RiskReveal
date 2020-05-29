@@ -154,6 +154,9 @@ public class CloningScorPltHeaderService {
             AdjustmentThread newAdjustmentThread = new AdjustmentThread();
             newAdjustmentThread.setInitialPLT(newPurePlt);
             newAdjustmentThread.setFinalPLT(newPLT);
+            newAdjustmentThread.setLocked(false);
+            newAdjustmentThread.setThreadIndex(1);
+            newAdjustmentThread.setThreadStatus("valid");
             this.adjustmentThreadRepository.save(newAdjustmentThread);
             // clone model analysis
             Optional<ModelAnalysisEntity> modelAnalysisEntity = this.modelAnalysisEntityRepository.findById(sourcePlt.getModelAnalysisId());

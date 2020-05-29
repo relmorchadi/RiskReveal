@@ -302,8 +302,9 @@ export class PltBrowserComponent extends BaseContainer implements OnInit, OnDest
         const filterModel = this.gridApi.getFilterModel();
         this.gridApi.setFilterModel(selectedProject ? { ...filterModel, projectId: { type: 'equals', filter: selectedProject.projectId } } : _.omit(filterModel, 'projectId'));
         this.gridApi.onFilterChanged();
-        this.updateLeftMenuInputs('wsHeaderSelected', !!selectedProject);
+        this.updateLeftMenuInputs('wsHeaderSelected', !!!selectedProject);
         this.updateLeftMenuInputs('selectedProject', selectedProject);
+        console.log("[Left Menu]",this.leftMenuInputs)
       }
       this.detectChanges();
     });
@@ -557,9 +558,10 @@ export class PltBrowserComponent extends BaseContainer implements OnInit, OnDest
       this.gridInitialized= false;
       const selectedProject = this.leftMenuInputs.projects && this.leftMenuInputs.projects.length ? _.find(this.leftMenuInputs.projects, project => project.selected) : null;
       const filterModel = selectedProject ? { ...config.filter, projectId: { filterType: 'number', type: 'equals', filter: selectedProject.projectId } } : config.filter;
-      this.updateLeftMenuInputs('wsHeaderSelected', selectedProject);
+      this.updateLeftMenuInputs('wsHeaderSelected', !!!selectedProject);
       this.updateLeftMenuInputs('selectedProject', selectedProject);
       this.gridApi.setFilterModel(filterModel);
+      console.log("[Left Menu]",this.leftMenuInputs)
       this.gridInitialized= false;
     });
 
