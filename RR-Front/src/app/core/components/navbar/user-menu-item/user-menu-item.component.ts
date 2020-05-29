@@ -36,7 +36,7 @@ export class UserMenuItemComponent implements OnInit {
     this.user$.pipe().subscribe(value => {
       this.user = value;
       let initials = value.match(/\b\w/g) || [];
-      initials = ((initials.shift() || '') + ' ' + (initials.pop() || '')).toUpperCase();
+      initials = ((initials.shift() || '') + (initials.pop() || '')).toUpperCase();
       this.userInitials = initials;
     });
   }

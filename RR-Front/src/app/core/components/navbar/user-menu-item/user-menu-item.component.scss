@@ -16,3 +16,24 @@
   font-weight: bold;
   margin: 8px 0 21px;
 }
+
+.header-User {
+  display: inline-flex;
+  align-items: center;
+}
+
+.initial-D {
+  font-family: Rubik;
+  justify-content: center;
+  display: flex;
+  height: 35px;
+  width: 37px;
+  font-size: 19px;
+  font-weight: 500;
+  align-items: center;
+  color: #FFFFFF;
+  background-color: #CCCCCC;
+  margin: 0 10px;
+  border-radius: 20px;
+  user-select: none;
+}

@@ -1,8 +1,8 @@
-<div (click)="togglePopup()" class="pl-1 pr-1" style="cursor: pointer; padding-right: 1rem !important;" [(nzVisible)]="visible" nz-popover
+<div (click)="togglePopup()" class="header-User" [(nzVisible)]="visible" nz-popover
      [nzContent]="userPopoverContent" nzPlacement="bottomRight" nzTrigger="click">
-  <nz-avatar [nzText]="userInitials" nzSize="large"></nz-avatar>
+  <span class="initial-D">{{userInitials}}</span>
   {{user}} &nbsp;&nbsp;
-  <i nz-icon type="down" theme="outline" style="float: right; margin-top: 12px;"></i>
+  <i nz-icon type="down" theme="outline" style="margin-right: 7px"></i>
 </div>
 
 <ng-template #userPopoverContent>

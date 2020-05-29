@@ -50,7 +50,7 @@ export class ExposuresTableService {
 
     constructTableConfig(tableConfig) {
         const res =  {
-            data: tableConfig.data != null ? _.map(tableConfig.data, row => ({...row, ...row.regionPerils})):null,
+            data: tableConfig.data != null ? _.map(tableConfig.data, row => ({...row, ...row.regionPerils})) : null,
             columns: _.map(tableConfig.columns, column => ({field: column, header: column})),
             frozenRow: tableConfig.frozenRow.regionPerils != {} ? [{...tableConfig.frozenRow, ...tableConfig.frozenRow.regionPerils}] : [],
             frozenColumns: tableConfig.data ? FAKEDATA.frozenColumns : []
