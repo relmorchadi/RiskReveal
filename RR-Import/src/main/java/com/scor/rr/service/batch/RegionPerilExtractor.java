@@ -111,7 +111,7 @@ public class RegionPerilExtractor implements RegionPerilExtractorInterface {
     @Value("#{jobParameters['taskId']}")
     private String taskId;
 
-    @Value("#{stepExecution.jobExecution.jobId}")
+    @Value("#{stepExecution.jobExecutionId}")
     private Long jobId;
 
     public void beforeJob() {
