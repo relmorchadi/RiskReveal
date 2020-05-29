@@ -17,4 +17,8 @@ export class BulkImportApi {
     uploadAndValidate(params: any): Observable<any> {
         return this.http.post(`${this.URL}upload-and-validate`, params);
     }
+
+    runImport(params: any): Observable<any> {
+      return this.http.post(`${this.URL}import`, {},{ params, responseType: 'text' });
+    }
 }

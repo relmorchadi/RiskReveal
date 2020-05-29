@@ -83,6 +83,7 @@
             <button
                     [ngClass]="!headerErrors.length && isFileRead && isFileValidated ? 'a-buttons-contained' : 'a-buttons-contained-disabled'"
                     [disabled]="headerErrors.length || !isFileRead || !isFileValidated"
+                    (click)="runImport()"
             >
               Run
             </button>
