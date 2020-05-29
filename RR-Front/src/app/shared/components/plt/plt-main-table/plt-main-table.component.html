@@ -18,7 +18,7 @@
   (onColResize)="onColResize($event)"
   #dt
   [styleClass]="!((tableInputs.showDeleted ? tableInputs.listOfDeletedPltsData : tableInputs.listOfPltsData) | tableSortAndFilter : [tableInputs.sortData, tableInputs.filterData] | systemTagFilter: [tableInputs.filters.systemTag] | falselyFilter: tableInputs.status )?.length ? 'activate-header-scroll' : ''"
->
+  >
   <ng-template pTemplate="colgroup" let-columns>
     <colgroup>
       <col *ngFor="let col of columns" [style]="{'width': col.width }">

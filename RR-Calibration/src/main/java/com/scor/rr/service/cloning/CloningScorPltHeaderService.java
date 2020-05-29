@@ -152,7 +152,7 @@ public class CloningScorPltHeaderService {
 
             PltHeaderEntity newPurePlt = this.cloneScorPltHeader(sourcePurePltId);
             AdjustmentThread newAdjustmentThread = new AdjustmentThread();
-            newAdjustmentThread.setInitialPLT(newPurePlt);
+              newAdjustmentThread.setInitialPLT(newPurePlt);
             newAdjustmentThread.setFinalPLT(newPLT);
             newAdjustmentThread.setLocked(false);
             newAdjustmentThread.setThreadIndex(1);
