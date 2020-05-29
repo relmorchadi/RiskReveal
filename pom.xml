@@ -24,7 +24,7 @@
         <module>RR-Import</module>
         <module>RR-Proxy</module>
 	    <module>RR-Calibration</module>
-        <module>RR-Inuring</module>
+        <!--<module>RR-Inuring</module>-->
     </modules>
 
     <properties>
