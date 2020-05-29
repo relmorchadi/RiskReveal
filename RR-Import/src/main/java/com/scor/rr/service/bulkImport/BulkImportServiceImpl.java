@@ -30,6 +30,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
@@ -90,7 +91,7 @@ public class BulkImportServiceImpl implements BulkImportService {
 
         try {
 
-            Path path = Paths.get(file.getFilePath() + "\\" + file.getFileName());
+            Path path = Paths.get(file.getFilePath() + File.separator + file.getFileName());
             FileHandler fileHandler = excelService.supplyFileHandler(FilenameUtils.getExtension(file.getFileName()));
             Workbook workbook = fileHandler.getWorkbook(path.toString());
 
@@ -140,7 +141,7 @@ public class BulkImportServiceImpl implements BulkImportService {
             return validationDto;
         } catch (Exception ex) {
             ex.printStackTrace();
-            return null;
+            return new ValidationDto();
         }
     }
 
