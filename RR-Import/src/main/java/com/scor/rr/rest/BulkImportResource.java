@@ -43,9 +43,9 @@ public class BulkImportResource {
 
     @PostMapping(value = "/history")
     @ApiOperation(value = "bulk import history")
-    public ResponseEntity<?> getImportHistory(@RequestParam(value = "userId") Long userId, int page, int records) {
+    public ResponseEntity<?> getImportHistory(@RequestParam int page,@RequestParam int records) {
         try {
-            return new ResponseEntity<>(bulkImportService.getImportHistory(page, records, userId), HttpStatus.OK);
+            return new ResponseEntity<>(bulkImportService.getImportHistory(page, records), HttpStatus.OK);
         } catch (Exception ex) {
             return new ResponseEntity<>("Operation failed", HttpStatus.INTERNAL_SERVER_ERROR);
         }

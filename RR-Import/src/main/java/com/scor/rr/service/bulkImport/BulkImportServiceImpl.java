@@ -305,9 +305,10 @@ public class BulkImportServiceImpl implements BulkImportService {
     }
 
     @Override
-    public List<BulkImportFile> getImportHistory(int page, int records, Long userId) {
+    public Page<BulkImportFile> getImportHistory(int page, int records) {
+        UserRrEntity user = ((UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser();
         return bulkImportFileRepository
-                .findByUserId(userId, PageRequest.of(page - 1, records, Sort.by("bulkImportFileId").descending()));
+                .findByUserId(user.getUserId(), PageRequest.of(page - 1, records, Sort.by("bulkImportFileId").descending()));
     }
 
     private List<ValidationError> firstLevelOfValidation(List<String> headers, BulkImportFile file) {

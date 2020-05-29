@@ -21,4 +21,8 @@ export class BulkImportApi {
     runImport(params: any): Observable<any> {
       return this.http.post(`${this.URL}import`, {},{ params, responseType: 'text' });
     }
+
+    history(params: any) {
+      return this.http.post(`${this.URL}history`, {}, { params });
+    }
 }

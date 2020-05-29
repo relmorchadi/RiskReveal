@@ -7,7 +7,7 @@ import {BulkImportApi} from "../../service/api/bulk-import.api";
 import {BaseContainer} from "../../../shared/base";
 import {Store} from "@ngxs/store";
 import {Router} from "@angular/router";
-import {GridApi, ColumnApi} from 'ag-grid-community';
+import {GridApi, ColumnApi, ColDef} from 'ag-grid-community';
 import {ErrorCellRenderer} from "../../../shared/components/grid/error-cell-renderer/error-cell-renderer.component";
 import {ErrorValue} from "../../types/erroValue.type";
 import {NotificationService} from "../../../shared/services/notification.service";
@@ -62,6 +62,15 @@ export class ImportContainer extends BaseContainer implements OnInit {
     }
   };
 
+  isHistoryActive: boolean;
+
+  historyGridApi: GridApi;
+  historyGridColumnApi: ColumnApi;
+  gridHParams: {
+    columnDefs: ColDef[],
+    defaultColDef: any;
+  };
+
   constructor(
       _baseStore: Store, _baseRouter: Router, _baseCdr: ChangeDetectorRef,
       public location: Location,
@@ -94,6 +103,18 @@ export class ImportContainer extends BaseContainer implements OnInit {
       },
       rowSelection: "multiple",
       getChildCount: () => {}
+    };
+    this.gridHParams = {
+      columnDefs: [{ field: 'bulkImportFileId' }, { field: 'filePath' }, { field: 'fileName' }, { field: 'hasPassedValidation' }, {field: 'rowErrorsCount'}, { field: 'userId'}],
+      defaultColDef: {
+        minWidth: 100,
+        resizable: true,
+        sortable: false,
+        columnGroupShow: 'open',
+        enableRowGroup: false,
+        floatingFilter: false,
+        filter: false,
+      }
     };
     this.isFileRead = false;
     this.isFileValidated = false;
@@ -224,5 +245,40 @@ export class ImportContainer extends BaseContainer implements OnInit {
               1000
           )
     }
+  }
+
+  toggleHistory() {
+    this.isHistoryActive = !this.isHistoryActive;
+  }
+
+  onHistoryGridReady(params) {
+    this.historyGridApi = params.api;
+    this.historyGridColumnApi = params.columnApi;
+    let datasource = {
+      getRows: (params) => {
+        console.log('[Datasource] - rows requested by grid: ', params.request);
+        const {
+          startRow,
+          endRow
+        } = params.request;
+        this.api.history({
+          records: endRow - startRow,
+          page: Math.floor(endRow / ( endRow - startRow ))
+        }).subscribe( ( {content,totalElements}: any) => {
+          let response = {
+            rows: content,
+            lastRow: totalElements,
+            success: true
+          };
+          if (response.success) {
+            params.successCallback(response.rows, response.lastRow);
+            this.historyGridApi.sizeColumnsToFit()
+          } else {
+            params.failCallback();
+          }
+        });
+      },
+    };
+    params.api.setServerSideDatasource(datasource);
   }
 }
