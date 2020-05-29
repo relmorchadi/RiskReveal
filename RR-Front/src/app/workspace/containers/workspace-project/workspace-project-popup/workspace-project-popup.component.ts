@@ -66,7 +66,7 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
   keywordFormGroup: FormGroup;
   columnsTreaty = [
      {field: 'checkbox', header: '', width: '20px', visible: true, display: true, sorted: true, filtered: false, type: 'checkbox', class: 'icon-check_24px',},
-     {field: 'countryName', header: 'Country', width: '90px', type: 'text', visible: true, display: true, sorted: true, filtered: true, queryParam: ''},
+     {field: 'countryName', header: 'Country', width: '90px', type: 'text', visible: true, display: true, sorted: true, filtered: true, queryParam: 'COUNTRY_NAME'},
      {field: 'cedantName', header: 'Cedent Name', width: '90px', type: 'text', visible: true, display: true, sorted: true, filtered: true, queryParam: 'CLIENT_NAME'},
      {field: 'cedantCode', header: 'Cedant Code', width: '90px', type: 'text', visible: true, display: true, sorted: true, filtered: true, queryParam: 'CLIENT_CODE'},
      {field: 'uwYear', header: 'Uw Year', width: '90px', type: 'text', visible: true, display: true, sorted: true, filtered: true, queryParam: 'UW_YEAR'},
@@ -84,7 +84,7 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
      {field: 'uwAnalysis', header: 'Uw Analysis', width: '90px', type: 'text', visible: true, display: true, sorted: true, filtered: true, queryParam: 'uwAnalysis'},
      {field: 'carequestId', header: 'CAR ID', width: '70px', type: 'text', visible: true, display: true, sorted: true, filtered: true, queryParam: 'CAR_ID'},
      {field: 'carStatus', header: 'CAR Status', width: '90px', type: 'text', visible: true, display: true, sorted: true, filtered: true, queryParam: 'carStatus'},
-     {field: 'assignedTo', header: 'Assigned User', width: '90px', type: 'text', visible: true, display: true, sorted: true, filtered: true, queryParam: 'USR'},
+     {field: 'userName', header: 'Assigned User', width: '90px', type: 'text', visible: true, display: true, sorted: true, filtered: true, queryParam: 'USR_NAME'},
    ];
   paginationOption = {currentPage: 0, page: 0, size: 40, total: '-'};
   contracts = [];
@@ -440,10 +440,15 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
       sort: this.getSortColumns(this.Inputs.sortData),
       fromSavedSearch: false,
       size,
-      type: this.marketChannel
+      type: this.marketChannel == 'FAC' ? 'FAC'  : 'TREATY'
     };
+
+
+    params.filter = params.filter.map(f => ({...f, key: f.field, field: f.key}));
+
     this.searchService.expertModeSearch(params)
       .subscribe((data: any) => {
+
         this.contracts = data.content.map(item => ({...item, selected: false}));
 
         this.loading = false;
@@ -457,6 +462,7 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
       }, error => {
         console.log('err s\'est produit !!');
         this.loading = false;
+        this.detectChanges();
       });
   }
 
@@ -608,7 +614,7 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
     this.selectedWorkspace = event;
 
 
-    this.updateTableAndTagsInputs('wsId', event.workspaceContextCode);
+    this.updateTableAndTagsInputs('wsId', this.marketChannel === 'FAC'? event.workspaceContextCode : event.workSpaceId);
     this.updateTableAndTagsInputs('uwYear', event.uwYear);
   }
 
@@ -651,7 +657,7 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
 
         this.getPlts().subscribe((data) => {
 
-          console.log(data);
+
 
           let ar = data;
           if(ar)
@@ -659,7 +665,7 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
             ar.plts.forEach(d => d.visible = true);
             ar.plts = ar.plts.filter(p => p.pltType == "THREAD")
                 .filter(plt => this.leftMenuInputs.projects.some(project => plt.projectId == project.projectId));
-            console.log(ar);
+
             data = ar;
           }
           this.updateLeftMenuInputs('systemTagsCount', this.systemTagService.countSystemTags(data? data.tag: null));
@@ -820,7 +826,7 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
   }
 
   toggleSelectPlts(plts: any) {
-    console.log(plts)
+
     this.dispatch(new fromWorkspaceStore.ToggleSelectPlts({
       wsIdentifier: this.getInputs('wsId') + '-' + this.getInputs('uwYear'),
       plts,

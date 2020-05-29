@@ -49,9 +49,7 @@ export class SearchInputDirective {
 
   @HostListener('keydown', ['$event'])
   onKeydown(keyboardEvent:KeyboardEvent) {
-    console.log("test")
     let { key }= keyboardEvent;
-    console.log("[Key]: ", key);
     let dispatcher= this.keyToEmitterMapper[key];
     dispatcher ? dispatcher.emit(keyboardEvent) : null;
     this.lastEvent=key;

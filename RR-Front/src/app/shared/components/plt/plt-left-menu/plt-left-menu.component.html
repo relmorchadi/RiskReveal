@@ -4,7 +4,7 @@
       <span style="width: 90px; padding: 0px 12px 0px 12px; font-size: 15px; font-weight: bold;">Path</span>
     </ng-template>
     <div class="upPartLeftMenu">
-        <span class="wsHeader" [ngStyle]="{'background-color': !leftMenuInputs.selectedProject ?  '#FDFBDF' : 'white'}"
+        <span class="wsHeader" [ngStyle]="{'background-color': leftMenuInputs.wsHeaderSelected ?  '#FDFBDF' : 'white'}"
               (click)="selectWorkspace()">
           <i class="icon-window-section"></i>
           <span class="body-info">{{leftMenuInputs?.wsId}} - {{leftMenuInputs?.uwYear}}</span>
@@ -16,16 +16,16 @@
               style="text-overflow: ellipsis;white-space: nowrap;overflow: hidden;"
               [ngClass]="{'active-path': project.selected}">
             <i class="icon-assignment_24px"></i>
-            <span class="tooltipMsg"
+            <span classm="tooltipMsg"
                   [nz-tooltip]="(project.projectId | reFormatPID) + ' ' +  project.name + ' ' + (toDate(project.creationDate) | date: 'y')">{{(project.projectId | reFormatPID) + ' ' + project.name + ' ' + (toDate(project.creationDate) | date: 'y')}}</span>
           </li>
         </ng-container>
         -->
         <li *ngFor="let project of leftMenuInputs.projects" (click)="selectProject(project)"
             class="clickable-item"
-            [ngClass]="{'active-path': project.projectId === leftMenuInputs.selectedProject?.projectId}">
+            [ngClass]="{'active-path': !leftMenuInputs.wsHeaderSelected && project.projectId === leftMenuInputs.selectedProject?.projectId}">
           <i [ngClass]="{ 'icon-assignment_24px': !project.carRequestId  , 'icon-copy': project.carRequestId }" ></i>
-          <span class="body-list" [nz-tooltip]="project.carRequestId ? project.carRequestId + ' ' + project.carRequestStatus : (project.projectName + ' ' + (project.projectId | reFormatPID) + ' ' + (toDate(project.creationDate) | date: 'y'))">
+          <span class="body-list">
             {{( project.carRequestId ? project.carRequestId + ' ' + project.carRequestStatus :
                   (project.projectName + ' ' + project.projectId | reFormatPID) + ' ' + (toDate(project.creationDate) | date: 'y'))}}
           </span>

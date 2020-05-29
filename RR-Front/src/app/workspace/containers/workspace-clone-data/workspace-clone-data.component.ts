@@ -38,6 +38,8 @@ export class WorkspaceCloneDataComponent extends BaseContainer implements OnInit
   @Select(WorkspaceState.getCloneDataWsTarget) getCloneDataWsTarget$;
   @Select(WorkspaceState.getCurrentTab) currentTab$;
   @Select(WorkspaceState.getCloningStatus) cloningStatus$;
+  @Select(WorkspaceState.getWorkspaceMarketChannel) marketChannel$;
+  marketChannel: string;
 
   cloningStatus = '';
 
@@ -215,8 +217,9 @@ export class WorkspaceCloneDataComponent extends BaseContainer implements OnInit
 
   ngOnInit() {
 
+    this.marketChannel$.subscribe(m => this.marketChannel = m);
     this.cloningStatus$.subscribe(status => {
-      console.log(status);
+
       this.cloningStatus = status
       this.detectChanges();
     });
@@ -283,7 +286,7 @@ export class WorkspaceCloneDataComponent extends BaseContainer implements OnInit
 
 
     this.getCloneDataWsSource$.subscribe(ws => {
-      console.log(ws);
+
       if (ws == null) {
         this.patchProjectForm('from', {
           detail: '',
@@ -311,7 +314,9 @@ export class WorkspaceCloneDataComponent extends BaseContainer implements OnInit
       }
     });
 
+    this.dispatch(new fromWS.SetDefaultCloneWsTarget());
     this.getCloneDataWsTarget$.subscribe(ws => {
+      console.log(ws);
       if (ws == null) {
         this.dispatch(new fromWS.SetDefaultCloneWsTarget());
       }
@@ -323,6 +328,7 @@ export class WorkspaceCloneDataComponent extends BaseContainer implements OnInit
           uwYear: ''
         } : ws
       });
+      this.detectChanges();
     });
 
     //this.dispatch(new fromWS.S());
@@ -336,7 +342,7 @@ export class WorkspaceCloneDataComponent extends BaseContainer implements OnInit
       this.uwy = year;
       let navigationWsId = _.get(navigationPayload, 'payload.wsId', null);
       let navigationUwYear = _.get(navigationPayload, 'payload.uwYear', null);
-      console.log(navigationPayload);
+
 
       if (_.get(navigationPayload, 'from', null) == 'pltBrowser' && navigationWsId && navigationWsId == wsId && navigationUwYear && navigationUwYear == year) {
         if (_.get(navigationPayload, 'type', null) == 'cloneFrom') {
@@ -453,19 +459,22 @@ export class WorkspaceCloneDataComponent extends BaseContainer implements OnInit
 
   setSelectedWs(currentSourceOfItems: string, $event: any) {
 
+
     if (currentSourceOfItems == 'from') {
       this.patchProjectForm('from', {
         plts: [],
         wsId: $event.workspaceContextCode,
         uwYear: $event.uwYear,
-        detail: $event.client + ' | ' + $event.workspaceName + ' | ' + $event.uwYear + ' | ' + $event.workspaceContextCode
+        detail: (this.marketChannel == 'FAC'? $event.workspaceContextCode : $event.cedantName) + ' | ' + $event.workspaceName + ' | ' + $event.uwYear + ' | '
+            + (this.marketChannel == 'FAC'? $event.workspaceContextCode : $event.workSpaceId)
       })
     }
     if (currentSourceOfItems == 'to') {
       this.patchProjectForm('to', {
         wsId: $event.workSpaceId,
         uwYear: $event.uwYear,
-        detail: $event.client + ' | ' + $event.workspaceName + ' | ' + $event.uwYear + ' | ' + $event.workspaceContextCode
+        detail: (this.marketChannel == 'FAC'? $event.workspaceContextCode : $event.cedantName) + ' | ' + $event.workspaceName + ' | ' + $event.uwYear + ' | '
+            + (this.marketChannel == 'FAC'? $event.workspaceContextCode : $event.workSpaceId)
       })
     }
 

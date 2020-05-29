@@ -154,6 +154,9 @@ public class CloningScorPltHeaderService {
             AdjustmentThread newAdjustmentThread = new AdjustmentThread();
             newAdjustmentThread.setInitialPLT(newPurePlt);
             newAdjustmentThread.setFinalPLT(newPLT);
+            newAdjustmentThread.setLocked(false);
+            newAdjustmentThread.setThreadIndex(1);
+            newAdjustmentThread.setThreadStatus("valid");
             this.adjustmentThreadRepository.save(newAdjustmentThread);
             // clone model analysis
             Optional<ModelAnalysisEntity> modelAnalysisEntity = this.modelAnalysisEntityRepository.findById(sourcePlt.getModelAnalysisId());
@@ -173,9 +176,13 @@ public class CloningScorPltHeaderService {
             // copy plt files
             try {
                 File dstFile = this.copyPltFile(sourcePlt, newPLT ,
-                        "C:\\dev\\projects\\test\\Facultative\\Contracts\\"  + request.getTargetWorkspaceContextCode()
-                                + "\\" + request.getTargetWorkspaceUwYear() + "\\"  +
+                        "/scor/data/ihub/v4/Facultative/Contracts/"+ request.getTargetWorkspaceContextCode()
+                                + "/" + request.getTargetWorkspaceUwYear() + "/"  +
                                 this.projectRepository.findById(newPLT.getProjectId()).get().getProjectName()
+
+//                        "C:\\dev\\projects\\test\\Facultative\\Contracts\\"  + request.getTargetWorkspaceContextCode()
+  //                              + "\\" + request.getTargetWorkspaceUwYear() + "\\"  +
+    //                            this.projectRepository.findById(newPLT.getProjectId()).get().getProjectName()
                 );
                 newPLT.setLossDataFilePath(dstFile.getParent());
                 newPLT.setLossDataFileName(dstFile.getName());
