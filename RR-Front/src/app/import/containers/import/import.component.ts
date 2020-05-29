@@ -3,7 +3,6 @@ import {Location} from "@angular/common";
 import * as _ from "lodash";
 import * as XLSX from 'xlsx';
 import {AllModules} from "@ag-grid-enterprise/all-modules";
-import {UploadXHRArgs} from "ng-zorro-antd";
 import {BulkImportApi} from "../../service/api/bulk-import.api";
 import {BaseContainer} from "../../../shared/base";
 import {Store} from "@ngxs/store";
@@ -11,6 +10,7 @@ import {Router} from "@angular/router";
 import {GridApi, ColumnApi} from 'ag-grid-community';
 import {ErrorCellRenderer} from "../../../shared/components/grid/error-cell-renderer/error-cell-renderer.component";
 import {ErrorValue} from "../../types/erroValue.type";
+import {NotificationService} from "../../../shared/services/notification.service";
 
 @Component({
   selector: 'app-import',
@@ -35,7 +35,15 @@ export class ImportContainer extends BaseContainer implements OnInit {
     rowSelection: 'multiple' | 'single'
   };
 
-  file: File;
+  excelFile: File;
+  file: {
+    bulkImportFileId: number;
+    fileName: string;
+    filePath: string;
+    hasPassedValidation: boolean;
+    rowErrorsCount: number;
+    userId: number
+  };
   isFileRead: boolean;
   isFileValidated: boolean;
 
@@ -58,6 +66,7 @@ export class ImportContainer extends BaseContainer implements OnInit {
       _baseStore: Store, _baseRouter: Router, _baseCdr: ChangeDetectorRef,
       public location: Location,
       private api: BulkImportApi,
+      private notification: NotificationService
   ) {
     super(_baseRouter, _baseCdr, _baseStore);
     this.gridParams = {
@@ -106,9 +115,9 @@ export class ImportContainer extends BaseContainer implements OnInit {
   onBeforeUpload = (file) => {
     this.headerErrors = [];
 
-    this.file = file;
-    this.readFile(this.file);
-    this.startValidation(this.file);
+    this.excelFile = file;
+    this.readFile(this.excelFile);
+    this.startValidation(this.excelFile);
 
     return false;
   };
@@ -116,9 +125,9 @@ export class ImportContainer extends BaseContainer implements OnInit {
   onFileChange(evt) {
     this.headerErrors = [];
 
-    this.file = (evt.target).files[0];
-    this.readFile(this.file);
-    this.startValidation(this.file);
+    this.excelFile = (evt.target).files[0];
+    this.readFile(this.excelFile);
+    this.startValidation(this.excelFile);
 
   }
 
@@ -166,8 +175,8 @@ export class ImportContainer extends BaseContainer implements OnInit {
   startValidation(file) {
     const formData = new FormData();
     formData.append('payload', file);
-    this.api.uploadAndValidate(formData).subscribe( ({errors}) => {
-      console.log(errors)
+    this.api.uploadAndValidate(formData).subscribe( ({errors, file}) => {
+      this.file = file;
       let data = this.gridParams.rowData;
       _.forEach(errors, (err: TableErrorType) => {
         if(err.columnIndex < 0) this.headerErrors.push(err);
@@ -193,4 +202,27 @@ export class ImportContainer extends BaseContainer implements OnInit {
     });
   }
 
+  runImport() {
+    if(!this.headerErrors.length && this.isFileRead && this.isFileValidated) {
+      this.api.runImport({
+        id: this.file.bulkImportFileId
+      }).subscribe(() => {
+        this.notification.createNotification(
+            'Import',
+            'Successfully added a JOB queue',
+            'success',
+            'bottomRight',
+            1000
+        )
+      })
+    } else {
+      this.notification.createNotification(
+          'File',
+          'Please validate file errors then re-upload file',
+              'warning',
+              'bottomRight',
+              1000
+          )
+    }
+  }
 }
