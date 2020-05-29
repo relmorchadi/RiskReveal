@@ -21,10 +21,31 @@
   color: #0700CF;
 }
 
+.ag-header.ag-pivot-off {
+  height: 65px !important;
+  min-height: 65px !important;
+}
+
 .ag-header-row-column {
-  background-color: white;
+  background-color: #FFFFFF;
+  height: 28px !important;
 }
 
 .ag-header-row-floating-filter {
-  background-color: #F5F5F5;
+  background-color: #FFFFFF;
+  height: 33px !important;
+  top: 28px !important;
+
+  .ag-header-cell {
+    border-top: none !important;
+  }
+}
+
+.ag-theme-alpine .ag-header-cell-resize::after {
+  height: 100%;
+  top: 5px;
+}
+
+.ag-theme-alpine .ag-icon {
+  font-size: 20px;
 }
