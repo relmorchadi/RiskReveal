@@ -206,6 +206,8 @@ public class LoadLossDataFileService {
                 ModelAnalysisEntity modelAnalysisEntity = new ModelAnalysisEntity();
                 modelAnalysisEntity.setProjectId(projectId);
 
+                //rlAnalysisToTargetRAPRepository.findByRlAnalysisId()
+
                 // todo set target rap
 //                TargetRapEntity targetRap = targetRAPRepository.findByTargetRapCode(sourceResult.getTargetRAPCode());
 //                if (targetRap != null && targetRap.getTargetRAPId() != null) {

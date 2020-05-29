@@ -243,14 +243,53 @@ public class ImportFileService {
         RefFileBasedImportEntity reference = refFileBasedImportRepository.findByModellingVendorAndModellingSystemAndPerilAndEventSetId(
                 modellingVendor.getId(),
                 modellingSystem.getId(),
-                combinatedKey.get(RefFileBasedImportEntity.PERIL_COLUMN)).get(0);
-                //null);
-                //Integer.parseInt(combinatedKey.get(RefFileBasedImportEntity.EVENT_SET_ID_COLUMN)));
+                combinatedKey.get(RefFileBasedImportEntity.PERIL_COLUMN),
+                Integer.parseInt(combinatedKey.get(RefFileBasedImportEntity.EVENT_SET_ID_COLUMN)));
 
+        String regionPerilCode= getRegionPeril(metadata.get("Geo_Code"), metadata.get("Peril"));
         metadata.put("ModellingVersionYear", String.valueOf(reference.getModelVersionYear()));
-
+        metadata.put("TargetRapCode", getTargetRap(reference, regionPerilCode));
         return metadata;
     }
+
+    @Autowired
+    SourceRapMappingRepository sourceRapMappingRepository;
+
+    @Autowired
+    TargetRapRepository targetRapRepository;
+    @Autowired
+    PETRepository petRepository;
+    @Autowired
+    RegionPerilMappingRepository regionPerilMappingRepository;
+
+    private String getRegionPeril(String geoCode, String perilCode){
+        Long rpId= regionPerilMappingRepository.findByCountryCodeAndPerilCode(geoCode, perilCode)
+                .orElseThrow(() -> new RuntimeException("Cannot find Region Peril with GeoCode and Peril : " + geoCode+ "/" + perilCode))
+                .getRegionPerilID();
+        return regionperilRepository.findById(rpId)
+                .orElseThrow(() -> new RuntimeException("Cannot find Region Peril with ID : " + rpId))
+                .getRegionPerilCode();
+
+    }
+
+    private String getTargetRap(RefFileBasedImportEntity reference, String rpCode){
+        // Should be ModellingSystem _ RPCode _ Mv{Year}
+        // String profileKey = reference.getModellingVendor() + "-" + reference.getModellingSystem() + "-" + reference.getModelVersionYear();
+        String profileKey = reference.getModellingSystem() + "_" + rpCode + "_Mv" + reference.getModelVersionYear();
+        List<TargetRapEntity> targetRapEntities = targetRapRepository.findByProfileKey(profileKey);
+        for (TargetRapEntity targetRap : targetRapEntities) {
+            Optional<PetEntity> petOpt = petRepository.findById(targetRap.getPetId());
+            if (petOpt.isPresent() && reference.getPeril().equals(petOpt.get().getPeril()) &&
+                    String.valueOf(reference.getEventSetId()).equals(petOpt.get().getSimulationPeriodBasisCode()) ) {
+                //sourceFileImport.setTargetRapCode(targetRap.getTargetRapCode());
+                //break;
+                return targetRap.getSourceRAPCode();
+                //TODO: if more than one match
+            }
+        }
+        return null;
+    }
+
 
     public List<FileImportSourceResult> persisteFileBasedImportConfig(FileBasedImportConfigRequest request) {
         List<FileImportSourceResult> fileImportSourceResults=new ArrayList<>();
