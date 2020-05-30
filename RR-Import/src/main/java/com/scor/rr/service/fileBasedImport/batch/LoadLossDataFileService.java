@@ -109,11 +109,18 @@ public class LoadLossDataFileService {
 //    @Value("#{jobParameters['rlPortfolioSelectionIds']}")
 //    private String rlPortfolioSelectionIds;
 
-    @Value("#{jobParameters['instanceId']}")
-    private String instanceId;
+    //@Value("#{jobParameters['instanceId']}")
+    //private String instanceId;
 
-    @Value("#{jobParameters['marketChannel']}")
-    private String marketChannel;
+    //@Value("#{jobParameters['marketChannel']}")
+    //private String marketChannel;
+
+    private Path ihubPath;
+
+    @Value("${ihub.treaty.out.path}")
+    private void setIhubPath(String path) {
+        this.ihubPath = Paths.get(path);
+    }
 
     // TODO
     public RepeatStatus loadLossDataFile() throws Exception {
@@ -284,7 +291,7 @@ public class LoadLossDataFileService {
 //                    continue;
 //                }
 
-                File sourceFile = new File(importFileService.getRootFilePath() + sourceResult.getFilePath(), sourceResult.getFileName());
+                File sourceFile = new File(sourceResult.getFilePath());
                 if (sourceFile == null || !sourceFile.exists()) {
 //                    log.error("File not found: {}", importFileService.getRootFilePath() + sourceFile.getFilePath() + sourceFile.getFileName());
 //                    projectImportAssetLogA.getErrorMessages().add("File not found: " + importFileService.getRootFilePath() + sourceFile.getFilePath() + sourceFile.getFileName());
@@ -404,13 +411,13 @@ public class LoadLossDataFileService {
     private Long clientId;
 
     @Value("#{jobParameters['contractId']}")
-    private Long contractId;
+    private String contractId;
 
     @Value("#{jobParameters['uwYear']}")
-    private Integer uwYear;
+    private String uwYear;
 
     public String getPrefixDirectory() {
-        return PathUtils.getPrefixDirectory(clientName, clientId, contractId.toString(), uwYear, projectId);
+        return PathUtils.getPrefixDirectory(clientName, clientId, contractId, Integer.valueOf(uwYear), projectId);
     }
 
     private static void copyFileUsingChannel(File source, File dest) throws IOException {
@@ -442,7 +449,7 @@ public class LoadLossDataFileService {
     }
 
     public File makeFullFile(String prefixDirectory, String filename) {
-        final Path fullPath = getIhubPath().resolve(prefixDirectory);
+        final Path fullPath = this.ihubPath.resolve(prefixDirectory);
         try {
             Files.createDirectories(fullPath);
         } catch (IOException e) {
@@ -457,9 +464,9 @@ public class LoadLossDataFileService {
 
     private String filePath;
 
-    public Path getIhubPath() {
-        return Paths.get(filePath);
-    }
+    //public Path getIhubPath() {
+    //    return Paths.get(filePath);
+    //}
 
     private void createLossTableForOriginalFile(ModelAnalysisEntity rrAnalysis, File fileIhub, ImportFileLossDataHeader importFileLossDataHeader) {
         // LossDataHeader

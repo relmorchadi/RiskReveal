@@ -33,8 +33,8 @@ export class FileBaseApi {
         return this.http.post(`${this.URL}persisteFileBasedImportConfig`, {importLocked,projectId,selectedFileSourcePath}, {params: {folderPath}});
     }
 
-    runFileBasedImport(instanceId,nonrmspicId,userId,projectId,fileImportSourceResultIds) {
-        return this.http.get(`${this.URL}launchFileBasedImport`, {params: {instanceId:instanceId,nonrmspicId:nonrmspicId,userId:userId,projectId:projectId,fileImportSourceResultIds:fileImportSourceResultIds}});
+    runFileBasedImport(instanceId,nonrmspicId,fileBasedImportConfigId,userId,projectId,fileImportSourceResultIds) {
+        return this.http.get(`${this.URL}launchFileBasedImport`, {params: {instanceId,nonrmspicId,fileBasedImportConfigId,userId,projectId,fileImportSourceResultIds}});
     }
 
 }

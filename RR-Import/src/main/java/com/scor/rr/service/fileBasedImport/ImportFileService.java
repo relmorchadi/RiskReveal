@@ -1,14 +1,12 @@
 package com.scor.rr.service.fileBasedImport;
 
-import com.scor.rr.domain.ModellingSystemEntity;
-import com.scor.rr.domain.ModellingVendorEntity;
+import com.scor.rr.domain.*;
 import com.scor.rr.domain.dto.ImportFilePLTData;
 import com.scor.rr.domain.importfile.*;
 import com.scor.rr.domain.model.PathNode;
 import com.scor.rr.domain.model.TreeNode;
 import com.scor.rr.exceptions.RRException;
 import com.scor.rr.repository.*;
-import freemarker.template.utility.StringUtil;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.collections.keyvalue.MultiKey;
 import org.apache.commons.io.FilenameUtils;
@@ -25,22 +23,19 @@ import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.annotation.CreatedDate;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.lang.reflect.Array;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 @Service
 public class ImportFileService {
 
@@ -61,8 +56,36 @@ public class ImportFileService {
 
     @Autowired
     FileImportSourceResultRepository fileImportSourceResultRepository;
+
+    @Autowired
+    ProjectRepository projectRepository;
+
+    @Autowired
+    WorkspaceEntityRepository workspaceRepository;
+
+    @Autowired
+    SectionRepository sectionRepository;
+
     @Autowired
     private JobLauncher jobLauncher;
+
+    @Autowired
+    ModellingVendorRepository modellingVendorRepository;
+
+    @Autowired
+    ModellingSystemRepository modellingSystemRepository;
+
+    @Autowired
+    private ClientRepository clientRepository;
+
+    @Autowired
+    private ContractRepository contractRepository;
+
+    @Autowired
+    private ModellingSystemInstanceRepository modellingSystemInstanceRepository;
+
+    @Autowired
+    private ProjectImportRunRepository projectImportRunRepository;
 
     @Value("${nonrms.plt.root.path}")
     private String rootFilePath;
@@ -71,96 +94,85 @@ public class ImportFileService {
     @Value("${nonrms.peqt.path}")
     private String peqtFilePath;
 
-    private Map<String, Object> extractNamingNonRMSProperties(String projectId, String nonrmspicId, String instanceId) {
-//        Project project = projectRepository.findOne(projectId);
-//        if (project == null) {
-//            log.error("Non RMS : No project found for projectId={}", projectId);
-//            return null;
-//        }
-//        Workspace myWorkspace = workspaceRepository.findByProjectId(projectId);
-//        if (myWorkspace == null) {
-//            log.error("Non RMS : Error. No workspace found");
-//            return null;
-//        }
-//
-//        String workspaceCode = myWorkspace.getWorkspaceContextCode();
-//        String contractId = myWorkspace.getContractId();
-//        if ((contractId == null) || contractId.isEmpty()) {
-//            log.error("Non RMS : Error. contractId is null or empty");
-//            return null;
-//        }
-//
-//        NonRmsProjectImportConfig nonrmspic = nonRmsProjectImportConfigRepository.findOne(nonrmspicId);
-//        ModellingSystemInstance modellingSystemInstance = null;
-//        if (instanceId != null) {
-//            modellingSystemInstanceRepository.findOne(instanceId);
-//        }
-//        Section section = sectionRepository.findOne(contractId);
-//        if (section == null) {
-//            log.error("Non RMS : Error. No section found");
-//            return null;
-//        }
-//        Contract contract = contractRepository.findOne(section.getContract().getId());
-//        if (contract == null) {
-//            log.error("Non RMS : Error. No contract found");
-//            return null;
-//        }
-//        Client client = clientRepository.findOne(contract.getClient().getId());
-//        if (client == null) {
-//            log.error("Non RMS : Error. No client found");
-//            return null;
-//        }
-//
-//        String reinsuranceType = "T"; // fixed for TT
-//        String division = "01"; // fixed for TT
-//        String sourceVendor = "Non RMS";
-//        String periodBasis = "FT"; // fixed for TT
-//        String prefix = myWorkspace.getWorkspaceContextFlag().getValue();
-//        String uwYear = myWorkspace.getWorkspaceUwYear() + "-01";
-//        String modelSystemVersion = modellingSystemInstance != null ? modellingSystemInstance.getModellingSystemVersion().getId() : null;
-//
-//        Long imSeq = null;
-//        if (nonrmspic == null) {
-//            log.error("Non RMS : No NonRmsProjectImportConfig for nonrmspicId = {}", nonrmspicId);
-//            return null;
-//        }
-//
-//        ProjectImportRun lastProjectImportRun = null;
-//        if (nonrmspic.getLastProjectImportRunId() != null) {
-//            lastProjectImportRun = projectImportRunRepository.findOne(nonrmspic.getLastProjectImportRunId());
-//        }
-//
-//        // distinguish Non RMS et RMS
-//        List<ProjectImportRun> projectImportRuns = projectImportRunRepository.findByProjectId(projectId);
-//        if (projectImportRuns == null) {
-//            imSeq = 1L;
-//        } else {
-//            imSeq = projectImportRuns.size() + 1L;
-//        }
-//
-//        log.info("Non RMS BatchRest: rmspicId {}, lastProjectImportRunId {}, runId {}", nonrmspic.getId(), lastProjectImportRun == null ? null : lastProjectImportRun.getId(), lastProjectImportRun == null ? null : lastProjectImportRun.getRunId());
-//
-//        String clientName = client.getClientShortName();
-//        String clientId = client.getId();
-//
-//        log.info("Non RMS : reinsuranceType {}, prefix {}, clientName {}, clientId {}, contractId {}, division {}, uwYear {}, sourceVendor {}, modelSystemVersion {}, periodBasis {}, importSequence {}",
-//                reinsuranceType, prefix, clientName, clientId, contractId, division, uwYear, sourceVendor, modelSystemVersion, periodBasis, imSeq);
+    private Map<String, Object> extractNamingNonRMSProperties(Long projectId, Long nonrmspicId, String instanceId) {
+        ProjectEntity project = projectRepository.findById(projectId).get();
+        if (project == null) {
+            log.error("Non RMS : No project found for projectId={}", projectId);
+            return null;
+        }
+        WorkspaceEntity myWorkspace = workspaceRepository.findById(project.getWorkspaceId()).get();
+        if (myWorkspace == null) {
+            log.error("Non RMS : Error. No workspace found");
+            return null;
+        }
+
+        String workspaceCode = myWorkspace.getWorkspaceContextCode();
+        String contractId = myWorkspace.getContractId();
+        if ((contractId == null) || contractId.isEmpty()) {
+            log.error("Non RMS : Error. contractId is null or empty");
+            return null;
+        }
+
+        FileBasedImportConfig nonrmspic = fileBasedImportConfigRepository.findById(nonrmspicId).get();
+        ModellingSystemInstanceEntity modellingSystemInstance = null;
+        //SectionEntity section = sectionRepository.findById(contractId).get();
+        //if (section == null) {
+        //   log.error("Non RMS : Error. No section found");
+        //   return null;
+        //}
+
+
+        String reinsuranceType = "T"; // fixed for TT
+        String division = "01"; // fixed for TT
+        String sourceVendor = "Non RMS";
+        String periodBasis = "FT"; // fixed for TT
+        String prefix = myWorkspace.getWorkspaceContextCode();
+        //String uwYear = myWorkspace.getWorkspaceUwYear() + "-01";
+        String uwYear = String.valueOf(myWorkspace.getWorkspaceUwYear());
+        String modelSystemVersion = modellingSystemInstance != null ? modellingSystemInstance.getModellingSystemVersion().getId() : null;
+
+        Long imSeq = null;
+        if (nonrmspic == null) {
+            log.error("Non RMS : No NonRmsProjectImportConfig for nonrmspicId = {}", nonrmspicId);
+            return null;
+        }
+
+        ProjectImportRunEntity lastProjectImportRun = null;
+        if (nonrmspic.getLastProjectImportRunId() != null) {
+            lastProjectImportRun = projectImportRunRepository.findById(nonrmspic.getLastProjectImportRunId()).get();
+        }
+
+        // distinguish Non RMS et RMS
+        List<ProjectImportRunEntity> projectImportRuns = projectImportRunRepository.findByProjectId(projectId);
+        if (projectImportRuns == null) {
+            imSeq = 1L;
+        } else {
+            imSeq = projectImportRuns.size() + 1L;
+        }
+
+        log.info("Non RMS BatchRest: rmspicId {}, lastProjectImportRunId {}, runId {}", nonrmspic.getFileBasedImportConfigId(), lastProjectImportRun == null ? null : lastProjectImportRun.getProjectImportRunId(), lastProjectImportRun == null ? null : lastProjectImportRun.getRunId());
+
+        String clientName = myWorkspace.getClientName();
+        String clientId = myWorkspace.getClientId();
+
+        log.info("Non RMS : reinsuranceType {}, prefix {}, clientName {}, clientId {}, contractId {}, division {}, uwYear {}, sourceVendor {}, modelSystemVersion {}, periodBasis {}, importSequence {}",
+                reinsuranceType, prefix, clientName, clientId, contractId, division, uwYear, sourceVendor, modelSystemVersion, periodBasis, imSeq);
 
         Map<String, Object> map = new HashMap<>();
-//        map.put("reinsuranceType", reinsuranceType);
-//        map.put("prefix", prefix);
-//        map.put("clientName", clientName);
-//        map.put("clientId", clientId);
-//        map.put("contractId", workspaceCode); // use code instead of contract Id
-//        map.put("division", division);
-//        map.put("uwYear", uwYear);
-//        map.put("sourceVendor", sourceVendor);
-//        map.put("modelSystemVersion", modelSystemVersion);
-//        map.put("periodBasis", periodBasis);
-//        map.put("importSequence", imSeq);
-//        map.put("projectId", projectId);
-//        map.put("nonrmspicId", nonrmspicId);
-//        map.put("instanceId", instanceId);
+        map.put("reinsuranceType", reinsuranceType);
+        map.put("prefix", prefix);
+        map.put("clientName", clientName);
+        map.put("clientId", clientId);
+        map.put("contractId", workspaceCode); // use code instead of contract Id
+        map.put("division", division);
+        map.put("uwYear", uwYear);
+        map.put("sourceVendor", sourceVendor);
+        map.put("modelSystemVersion", modelSystemVersion);
+        map.put("periodBasis", periodBasis);
+        map.put("importSequence", imSeq);
+        map.put("projectId", projectId);
+        map.put("nonrmspicId", nonrmspicId);
+        map.put("instanceId", instanceId);
         return map;
     }
 
@@ -169,10 +181,11 @@ public class ImportFileService {
     private Job fileBasedImport;
 
     public Long launchFileBasedImport(String instanceId,
-                                            String nonrmspicId,
-                                            String userId,
-                                            String projectId,
-                                            String fileImportSourceResultIds) {
+                                      Long nonrmspicId,
+                                      Long fileBasedImportConfigId,
+                                      String userId,
+                                      Long projectId,
+                                      String fileImportSourceResultIds) {
         log.info("Starting launchFileBasedImport at backend");
         try {
             Map<String, Object> properties = extractNamingNonRMSProperties(projectId, nonrmspicId, instanceId);
@@ -194,9 +207,10 @@ public class ImportFileService {
                     .addString("modelSystemVersion", (String) properties.get("modelSystemVersion"))
                     .addString("periodBasis", (String) properties.get("periodBasis"))
                     .addLong("importSequence", (Long) properties.get("importSequence"))
-                    .addString("nonrmspicId", nonrmspicId)
+                    .addLong("nonrmspicId", nonrmspicId)
+                    .addLong("fileBasedImportConfigId", fileBasedImportConfigId)
                     .addString("userId", userId)
-                    .addString("projectId", projectId)
+                    .addLong("projectId", projectId)
                     .addString("fileImportSourceResultIds", fileImportSourceResultIds);
             log.info("Starting Non RMS import batch: nonrmspicId {}, userId {}, projectId {}, fileIds {}", nonrmspicId, userId, projectId, fileImportSourceResultIds);
             JobExecution execution = null;
@@ -210,34 +224,68 @@ public class ImportFileService {
 
     private static final String PATH_IHUB = "RRADJUSTMENT/src/main/resources/copyfile/";
 
+    @Autowired
+    RefFileBasedImportRepository refFileBasedImportRepository;
+
     public Map<String, String> readMetadata(String path) {
-        File file = new File(path);
-        ImportFileLossDataHeader importFileLossDataHeader = parseLossDataTableHeader(file);
-        return importFileLossDataHeader.getMetadata();
+        return readMetadata(path, metadataHeaderSectionRepository.findAll());
     }
 
-    public List<FileImportSourceResult> persisteFileBasedImportConfig(FileBasedImportConfigRequest request, String folderPath) {
+    private Map<String, String> readMetadata(String path, List<MetadataHeaderSectionEntity> metadataHeaderSectionEntities) {
+        File file = new File(path);
+        SourceFileImport sourceFileImport = buildSourceFileImport(file);
+        Map<String, String> combinatedKey= getCombinedKeys(metadataHeaderSectionEntities, sourceFileImport.getImportFileHeader());
+        ModellingVendorEntity modellingVendor = modellingVendorRepository.findByName(combinatedKey.get(RefFileBasedImportEntity.MODEL_PROVIDER_COLUMN));
+        ModellingSystemEntity modellingSystem = modellingSystemRepository.findByVendorIdAndName(modellingVendor.getId(), combinatedKey.get(RefFileBasedImportEntity.MODEL_SYSTEM_COLUMN));
+        ImportFileLossDataHeader importFileLossDataHeader = parseLossDataTableHeader(file, metadataHeaderSectionEntities);
+        Map<String, String> metadata= new HashMap<>(importFileLossDataHeader.getMetadata());
+
+        RefFileBasedImportEntity reference = refFileBasedImportRepository.findByModellingVendorAndModellingSystemAndPerilAndEventSetId(
+                modellingVendor.getId(),
+                modellingSystem.getId(),
+                combinatedKey.get(RefFileBasedImportEntity.PERIL_COLUMN)).get(0);
+        //null);
+        //Integer.parseInt(combinatedKey.get(RefFileBasedImportEntity.EVENT_SET_ID_COLUMN)));
+
+        metadata.put("ModellingVersionYear", String.valueOf(reference.getModelVersionYear()));
+
+        return metadata;
+    }
+
+    public List<FileImportSourceResult> persisteFileBasedImportConfig(FileBasedImportConfigRequest request,String folderPath) {
         List<FileImportSourceResult> fileImportSourceResults=new ArrayList<>();
         FileBasedImportConfig fileBasedImportConfig=new FileBasedImportConfig();
         fileBasedImportConfig.setProjectId(Long.parseLong(request.getProjectId()));
         fileBasedImportConfig.setSelectedFolderSourcePath(folderPath);
         fileBasedImportConfigRepository.save(fileBasedImportConfig);
+        List<MetadataHeaderSectionEntity> metadataHeaderSectionEntities= metadataHeaderSectionRepository.findAll();
+
         for(String filePath : request.getSelectedFileSourcePath()) {
-            Map<String, String> maps = new HashMap<>();
-            String fileName=filePath.split("/")[filePath.split("/").length-1];
-            maps = readMetadata(filePath);
+            Map<String, String> maps = readMetadata(filePath, metadataHeaderSectionEntities);
             FileImportSourceResult fileImportSourceResult = new FileImportSourceResult();
             fileImportSourceResult.setResultName(maps.get("ResultsName"));
             fileImportSourceResult.setFinancialPerspective(maps.get("FinPerspectiveDesc"));
             fileImportSourceResult.setModelVersion(maps.get("Model_Version"));
+            fileImportSourceResult.setModelVersion(maps.get("ModellingVersionYear"));
             fileImportSourceResult.setFilePath(filePath);
             fileImportSourceResult.setProjectId(Integer.parseInt(request.getProjectId()));
-            fileImportSourceResult.setFileName(fileName);
+            fileImportSourceResult.setFileName(filePath.split("/")[filePath.split("/").length-1]);
             fileImportSourceResult.setFileBasedImportConfigId(fileBasedImportConfig.getFileBasedImportConfigId().intValue());
             fileImportSourceResultRepository.save(fileImportSourceResult);
             fileImportSourceResults.add(fileImportSourceResult);
         }
         return fileImportSourceResults;
+    }
+
+    private Map<String, String> getCombinedKeys(List<MetadataHeaderSectionEntity> definitions, ImportFileLossDataHeader header){
+        Map<String, String> combinatedKey = new HashMap<>();
+        definitions.forEach(d -> {
+            if(d.getDataType() != null && d.getDataType().contains("reference:")){
+                String column = d.getDataType().replace("reference:", "");
+                combinatedKey.put(column, header.getMetadata().get(d.getId()));
+            }
+        });
+        return combinatedKey;
     }
 
     public Map<String, String> readPLTdata(String path) {
@@ -304,7 +352,7 @@ public class ImportFileService {
     }
 
     public SourceFileImport buildSourceFileImport(File file) {
-        ImportFileLossDataHeader importFileLossDataHeader = parseLossDataTableHeader(file); // ham nay chua ham validate(importFileLossDataHeader, mandatoryMetadataList, defaultMetadataList) nho hon
+        ImportFileLossDataHeader importFileLossDataHeader = parseLossDataTableHeader(file, metadataHeaderSectionRepository.findAll()); // ham nay chua ham validate(importFileLossDataHeader, mandatoryMetadataList, defaultMetadataList) nho hon
         SourceFileImport sourceFileImport = new SourceFileImport();
         sourceFileImport.setProjectId(null);
         sourceFileImport.setFilePath(file.getParent().replace(getRootFilePath(), ""));
@@ -484,8 +532,13 @@ public class ImportFileService {
         return rootDirectoryPath;
     }
 
+
+    public ImportFileLossDataHeader parseLossDataTableHeader(File file) {
+        return parseLossDataTableHeader(file, metadataHeaderSectionRepository.findAll());
+    }
+
     // scan file de lay du lieu + validate 1 phan thong tin co ban, validate cac thong tin khac cua header sau (numeric, ...)
-    public ImportFileLossDataHeader parseLossDataTableHeader(File file) { 
+    private ImportFileLossDataHeader parseLossDataTableHeader(File file, List<MetadataHeaderSectionEntity> metadataDefinitions) {
         if (file == null)
             return null;
         log.debug("Parsing file {}", file.getName());
@@ -494,13 +547,12 @@ public class ImportFileService {
         Map<String, MetadataHeaderSectionEntity> metadataDefinitionMap = new HashMap<>();
         List<MetadataHeaderSectionEntity> mandatoryMetadataList = new ArrayList<>();
         List<MetadataHeaderSectionEntity> defaultMetadataList = new ArrayList<>();
-        List<MetadataHeaderSectionEntity> metadataDefinitions = metadataHeaderSectionRepository.findAll();
 
         if (metadataDefinitions != null && !metadataDefinitions.isEmpty()) {
             for (MetadataHeaderSectionEntity metadataDefinition : metadataDefinitions) {
                 // TODO
 //                metadataDefinitionMap.put(metadataDefinition.getId().toUpperCase(), metadataDefinition);
-                metadataDefinitionMap.put(metadataDefinition.getMetadataAttribute().toUpperCase(), metadataDefinition);
+                metadataDefinitionMap.put(metadataDefinition.getId().toUpperCase(), metadataDefinition);
                 if (MetadataHeaderSectionEntity.MANDATORY_Y.equals(metadataDefinition.getMandatory())) {
                     mandatoryMetadataList.add(metadataDefinition);
                 } else if (MetadataHeaderSectionEntity.MANDATORY_D.equals(metadataDefinition.getMandatory())) {
@@ -550,7 +602,7 @@ public class ImportFileService {
                         return importFileLossDataHeader;
                     }
                 }
-                
+
                 if (i == 3) {
                     if (!name.equals("LossTableHeaderFormat")) {
                         importFileLossDataHeader.getScanErrors().add("LossTableHeaderFormat must be present in the third of the file");
@@ -564,13 +616,13 @@ public class ImportFileService {
                         return importFileLossDataHeader;
                     }
                 }*/
-                
+
                 MetadataHeaderSectionEntity metadataDefinition = metadataDefinitionMap.get(name.toUpperCase()); // name la metadataDefinition.getMetadataAttribute()
                 if (metadataDefinition == null) {
                     log.warn("Metadata {} not recognised", name);
                     importFileLossDataHeader.getMetadata().put(name, value);
                 } else {
-                    importFileLossDataHeader.getMetadata().put(String.valueOf(metadataDefinition.getMetadataAttribute()), value);
+                    importFileLossDataHeader.getMetadata().put(String.valueOf(metadataDefinition.getId()), value);
                 }
             }
 
@@ -587,8 +639,8 @@ public class ImportFileService {
     }
 
     public ImportFileLossDataHeader validate(ImportFileLossDataHeader importFileLossDataHeader,
-                                              List<MetadataHeaderSectionEntity> mandatoryMetadataList,
-                                              List<MetadataHeaderSectionEntity> defaultMetadataList) {
+                                             List<MetadataHeaderSectionEntity> mandatoryMetadataList,
+                                             List<MetadataHeaderSectionEntity> defaultMetadataList) {
         List<String> missings = new ArrayList<>();
         for (MetadataHeaderSectionEntity mandatoryMetadata : mandatoryMetadataList) {
             if (importFileLossDataHeader.getMetadata().get(mandatoryMetadata.getMetadataAttribute()) == null) {
@@ -1058,7 +1110,7 @@ public class ImportFileService {
                 for (int i = 0; i < fList.length; i++) {
                     if ("txt".equalsIgnoreCase(FilenameUtils.getExtension(fList[i].getName()))) {
                         Map<String, String> map=new HashMap<>();
-                        Map<String,String> mapTemp=readMetadata(fList[i].getPath());
+                        Map<String,String> mapTemp=readMetadata(fList[i].getPath(), metadataHeaderSectionRepository.findAll());
                         map.put("label",fList[i].getPath());
                         map.put("createdAt",mapTemp.get("CreateDate").split(" ")[0]);
                         // new SimpleDateFormat("yyyy-MM-dd").format(lastUpdated)
@@ -1149,7 +1201,6 @@ public class ImportFileService {
 
             //TODO
             fileImportSourceResult.setFileBasedImportConfigId(fileBasedImportConfigDB.getFileBasedImportConfigId().intValue());
-            fileImportSourceResult.setFileBasedImportConfigId(fileBasedImportConfigDB.getFileBasedImportConfigId().intValue());
             fileImportSourceResult.setResultName(metadata.get("ResultsName"));
             fileImportSourceResult.setTargetRAPCode(sourceFileImport.getTargetRapCode());
             fileImportSourceResult.setProjectId(fileBasedImportConfigDB.getProjectId().intValue());
@@ -1173,3 +1224,4 @@ public class ImportFileService {
         return fileImportSourceResult;
     }
 }
+

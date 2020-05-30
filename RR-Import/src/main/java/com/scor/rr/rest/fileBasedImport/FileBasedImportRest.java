@@ -84,11 +84,12 @@ public class FileBasedImportRest {
 
     @GetMapping("launchFileBasedImport")
     public Long launchFileBasedImport(String instanceId,
-                                            String nonrmspicId,
+                                            Long nonrmspicId,
+                                            Long fileBasedImportConfigId,
                                             String userId,
-                                            String projectId,
+                                            Long projectId,
                                             String fileImportSourceResultIds) {
-        return importFileService.launchFileBasedImport(instanceId, nonrmspicId, userId, projectId, fileImportSourceResultIds);
+        return importFileService.launchFileBasedImport(instanceId, nonrmspicId, fileBasedImportConfigId, userId, projectId, fileImportSourceResultIds);
     }
 
 

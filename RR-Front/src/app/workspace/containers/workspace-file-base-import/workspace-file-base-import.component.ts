@@ -14,6 +14,7 @@ import {WorkspaceState} from '../../store/states';
 import {template} from "@angular/core/src/render3";
 import {Table} from "primeng/table";
 import {Message} from "../../../shared/message";
+import {TreeNode} from "primeng/api";
 
 
 @Component({
@@ -23,6 +24,8 @@ import {Message} from "../../../shared/message";
 })
 export class WorkspaceFileBaseImportComponent extends BaseContainer implements OnInit, StateSubscriber {
 
+    isInitialized=false;
+    status=0;
     collapseImportedFiles = false;
     collapseSearchFiles = false;
     collapseImportedPLTs = false;
@@ -48,7 +51,7 @@ export class WorkspaceFileBaseImportComponent extends BaseContainer implements O
     };
 
     pltColumns: any;
-    directoryTree: any;
+    directoryTree: any = null;
     selectedFile: any;
     textFilesData: any;
     importedFiles: any;
@@ -123,32 +126,42 @@ export class WorkspaceFileBaseImportComponent extends BaseContainer implements O
             };
         });
 
-        this.path = 'C:\\ManualBasedImportFile'
+        this.path = 'C:\\ManualBasedImportFile';
+
 
             this.dispatch(new fromWs.LoadFileBasedFoldersAction(this.path));
+
             this.fileBase$.subscribe(value => {
+                if (!this.isInitialized) {
                     this.fileBase = _.merge({}, value);
                     this.fileBaseTemp = _.merge({}, value);
                     this.directoryTree = _.merge({}, this.fileBase.folders);
-
-                    if (this.directoryTree.hasOwnProperty('data')) {
-                        this.changeData(this.directoryTree.data);
-                    }
+                        if (this.directoryTree.hasOwnProperty('data')) {
+                            this.changeData(this.directoryTree.data);
+                            console.log('directoryTree init',this.directoryTree);
+                            this.isInitialized= true;
+                        }
                     /*for (let directoryTreeKey in this.directoryTree.data) {
                         this.changeData(this.directoryTree[directoryTreeKey]);
                     }*/
                     this.detectChanges();
+               }
             });
 
-        /*this.selectedData$.subscribe(value => {
-            console.log('selectedData',value);
-            this.selectedData = value;
-            this.selectedDataTemp = value;
-            this.detectChanges();
-        });*/
+            /*this.nodePath='';
+            let tab=this.fileBase.importedPLTs[this.fileBase.importedPLTs.length-1].filePath.split('/');
+            console.log('tab',tab);
+            for(let i=0;i<tab.length-1;i++){
+                this.nodePath=this.nodePath+'\\'+tab[i];
+            }*/
+
+            this.selectedData$.subscribe(value => {
+                this.selectedData = value;
+                this.selectedDataTemp = value;
+                this.detectChanges();
+            });
 
         this.selectedFiles$.subscribe(value => {
-            console.log('selectedFiles',value);
             this.fileBase.selectedFiles = value;
             this.fileBaseTemp.selectedFiles = value;
             this.detectChanges();
@@ -228,13 +241,14 @@ export class WorkspaceFileBaseImportComponent extends BaseContainer implements O
 
     checkRow(event, index, scope) {
         if (scope === 'files') {
-            this.dispatch(new fromWs.ToggleFilesAction({index, selection: event, scope: 'single'}));
-            //this.fileBase.files[index].selected = true;
+            //this.dispatch(new fromWs.ToggleFilesAction({index, selection: event, scope: 'single'}));
+            this.selectedDataTemp[index].selected = true;
             this.checkIndeterminateFile();
         } else if (scope === 'plt') {
             this.dispatch(new fromWs.TogglePltsAction({index, selection: event, scope: 'single'}));
             //this.fileBase.selectedFiles[index].selected=true;
             this.checkIndeterminatePlt();
+            this.status=0;
         }
     }
 
@@ -279,7 +293,7 @@ export class WorkspaceFileBaseImportComponent extends BaseContainer implements O
     selectToImport(value, index) {
         if ((window as any).event.ctrlKey) {
             //this.dispatch(new fromWs.ToggleFilesAction({index, selection: true, scope: 'single'}));
-            this.fileBase.files[index].selected = true;
+            this.selectedDataTemp[index].selected = true;
             this.indexImportFiles = index;
         } else if ((window as any).event.shiftKey) {
             event.preventDefault();
@@ -287,15 +301,15 @@ export class WorkspaceFileBaseImportComponent extends BaseContainer implements O
                 this._selectSection(Math.min(index, this.indexImportFiles), Math.max(index, this.indexImportFiles), 'files');
             } else {
                 //this.dispatch(new fromWs.ToggleFilesAction({index, selection: true, scope: 'single'}));
-                this.fileBase.files[index].selected = true;
+                this.selectedDataTemp[index].selected = true;
             }
         } else {
             //this.dispatch(new fromWs.ToggleFilesAction({selection: false, scope: 'all'}));
             //this.dispatch(new fromWs.ToggleFilesAction({index, selection: true, scope: 'single'}));
-            for (let key in this.fileBase.files) {
-                this.fileBase.files[key].selected = false;
+            for (let key in this.selectedDataTemp) {
+                this.selectedDataTemp[key].selected = false;
             }
-            this.fileBase.files[index].selected = true;
+            this.selectedDataTemp[index].selected = true;
             this.indexImportFiles = index;
         }
         this.checkIndeterminateFile();
@@ -359,14 +373,14 @@ export class WorkspaceFileBaseImportComponent extends BaseContainer implements O
             const selected = _.filter(this.fileBase.files, item => item.selected).length;
             if (selected === 0) {
                 //this.dispatch(new fromWs.ToggleFilesAction({selection: true, scope: 'all'}));
-                for (let key in this.fileBase.files) {
-                    this.fileBase.files[key].selected = true;
+                for (let key in this.selectedDataTemp) {
+                    this.selectedDataTemp[key].selected = true;
                 }
             } else {
                 this.allCheckedImportedFiles = true;
                 //this.dispatch(new fromWs.ToggleFilesAction({selection: false, scope: 'all'}));
-                for (let key in this.fileBase.files) {
-                    this.fileBase.files[key].selected = false;
+                for (let key in this.selectedDataTemp) {
+                    this.selectedDataTemp[key].selected = false;
                 }
             }
             this.checkIndeterminateFile();
@@ -383,9 +397,9 @@ export class WorkspaceFileBaseImportComponent extends BaseContainer implements O
     }
 
     nodeSelect(event) {
-        console.log('LFiles',this.loadingFiles )
-        this.loadingFiles = true;
-        console.log('LFiles',this.loadingFiles )
+        console.log('LFiles',this.loadingFiles );
+        console.log('LFiles',this.loadingFiles );
+        //event.node.selected=true;
         this.nodePath = '\\' + event.node.label;
         this.nodeTemp = event.node;
         while (this.nodeTemp.parent) {
@@ -394,6 +408,7 @@ export class WorkspaceFileBaseImportComponent extends BaseContainer implements O
         }
         this.nodePath = 'C:\\ManualBasedImportFile' + this.nodePath;
         this.dispatch(new fromWs.LoadFileBasedFilesAction(this.nodePath));
+        console.log('directoryTree Apres',this.directoryTree);
         this.selectedData$.subscribe(value => {
             this.selectedData = value;
             this.selectedDataTemp=value;
@@ -409,7 +424,8 @@ export class WorkspaceFileBaseImportComponent extends BaseContainer implements O
         this.allCheckedImportedFiles = false;
         this.indeterminateImportedFiles = false;
         this.loadingFiles=false;
-        console.log('LFiles',this.loadingFiles )
+        console.log('LFiles',this.loadingFiles );
+        console.log('directory tree apres selection',this.directoryTree);
     }
 
     nodeUnselect(event) {
@@ -423,11 +439,22 @@ export class WorkspaceFileBaseImportComponent extends BaseContainer implements O
         this.dispatch(new fromWs.AddFileForImportAction(this.nodePath));
         this.loadingPlts=false;
         console.log('LPLT',this.loadingPlts);
+        this.status=0;
         //this.selectedPlt = this.fileBase.selectedFiles[0];
     }
 
     runImport(){
+        this.fileBaseTemp.selectedFiles.forEach(item=>{
+            if(item.selected){
+                this.status=0;
+            }
+        });
         this.dispatch(new fromWs.LaunchFileBasedImportAction());
+        this.fileBaseTemp.selectedFiles.forEach(item=>{
+            if(item.selected){
+                this.status=100;
+            }
+        });
     }
 
     getColor(RP) {
@@ -513,17 +540,42 @@ export class WorkspaceFileBaseImportComponent extends BaseContainer implements O
       object.forEach(o => {
         if(o.hasOwnProperty('label')) {
           o.children = o.label.children;
+          o.leaf=o.label.leaf;
+          o.partialSelected=o.label.partialSelected;
+          o.root=o.label.root;
+          o.selected=o.label.selected;
           o.label = o.label.data.file.split('\\')[o.label.data.file.split('\\').length-1];
         } else {
             o.label = o.data.file.split('\\')[o.data.file.split('\\').length-1];
-            o.collapsedIcon='fa fa-folder';
-            o.expandedIcon='fa fa-folder-open';
-            o.data='folder';
+                o.collapsedIcon = 'fa fa-folder';
+                o.expandedIcon = 'fa fa-folder-open';
+                o.data = 'folder';
         }
         this.changeData(o.children)
       });
 
     }
+
+    /*changeData(object: any) {
+
+        object.forEach(o => {
+            if(o.hasOwnProperty('label')) {
+                o.children = o.label.children;
+                o.leaf = o.label.leaf;
+                o.partialSelected = o.label.partialSelected;
+                o.root = o.label.root;
+                o.selected = o.label.selected;
+                o.label = o.label.data.file.split('\\')[o.label.data.file.split('\\').length-1];
+            } else {
+                o.label = o.data.file.split('\\')[o.data.file.split('\\').length-1];
+                o.collapsedIcon = 'fa fa-folder';
+                o.expandedIcon = 'fa fa-folder-open';
+                o.data = 'folder';
+            }
+            this.changeData(o.children)
+        });
+
+    }*/
 
     onFilterFile(value,field){
         this.selectedDataTemp = this.selectedData.filter(o => o[field].toUpperCase().search(value.toUpperCase()) != -1);

@@ -152,10 +152,10 @@
                       <nz-empty></nz-empty>
                     </div>-->
           <div class="menu-left-footer" *ngIf="!collapseSearchFiles">
-            <button *ngIf="fileBase?.files?.length > 0" (click)="addForImport()" class="a-buttons-contained-micro">
+            <button *ngIf="selectedDataTemp?.length > 0" (click)="addForImport()" class="a-buttons-contained-micro">
               ADD TO PROJECT
             </button>
-            <button *ngIf="fileBase?.files?.length === 0" class="a-buttons-contained-disabled-micro">ADD TO PROJECT
+            <button *ngIf="selectedDataTemp?.length === 0" class="a-buttons-contained-disabled-micro">ADD TO PROJECT
             </button>
           </div>
         </div>
@@ -252,10 +252,15 @@
                              nz-checkbox></label>
                     </div>
                     <div *ngIf="col.type === 'scan'"><i class="icon-loop_24px"></i></div>
-                    <div *ngIf="col.type === 'progress'">
+
+                    <div *ngIf="col.type === 'progress' && rowData.selected && status>0">
+                      <nz-progress [ngClass]="{'hidden-text': status < 100 }" [nzPercent]="status" [nzWidth]="20" nzType="circle"></nz-progress>
+                    </div>
+
+                    <!--<div *ngIf="col.type === 'progress'">
                       <nz-progress [ngClass]="{'hidden-text': rowData.status < 100 }" [nzPercent]="rowData.status"
                                    [nzWidth]="20" nzType="circle"></nz-progress>
-                    </div>
+                    </div>-->
                     <div *ngIf="col.type === 'number'"
                          [ngClass]="{'highlight-temp': rowData.highlight}"
                          class="text-data">{{rowData[col.field]}}</div>
@@ -297,7 +302,7 @@
       </div>
 
       <div style="padding: 10px 10px 0; display: flex; justify-content: flex-end;width: 100%;">
-        <button *ngIf="fileBase?.files?.length > 0" (click)="runImport()" class="a-buttons-contained-micro">
+        <button *ngIf="fileBaseTemp?.selectedFiles?.length > 0" (click)="runImport()" class="a-buttons-contained-micro">
           IMPORT
         </button>
       </div>
@@ -482,7 +487,7 @@
         [responsive]="true"
 >
 
-  <p>ARE YOU SURE YOU WANT TO ABORT THIS PLT ?</p>
+  <p>Are you sure you wish to delete the selected PLT ?</p>
   <p-footer>
     <div class="footer">
       <button (click)="toggleDelete(null,null) " class="a-button-text-cancel">Cancel</button>

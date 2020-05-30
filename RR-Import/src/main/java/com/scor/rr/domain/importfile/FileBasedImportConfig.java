@@ -18,11 +18,6 @@ public class FileBasedImportConfig {
     @Column(name = "FileBasedImportConfigId")
     private Long fileBasedImportConfigId;
 
-    /*@Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    @Column(name = "FileBasedImportConfig")
-    private Long fileBasedImportConfig;*/
-
     @Column(name = "ProjectImportRunId")
     private Long projectImportRunId;
 
