@@ -19,4 +19,18 @@ public interface RefFileBasedImportRepository extends JpaRepository<RefFileBased
            @Param("eventSetId") Integer eventSetId  //commented
     );
 
+
+    @Query(value = "SELECT c.targetRapCode\n" +
+            "FROM dbo.RefFileBasedImport a\n" +
+            "    LEFT JOIN dbo.RefPET b\n" +
+            "        ON b.rmsSimulationSetId = a.eventSetId\n" +
+            "    LEFT JOIN dbo.RefTargetRap c\n" +
+            "        ON c.petId = b.petId\n" +
+            "WHERE a.id=:referenceId", nativeQuery = true)
+    List<String> findTargetRapsCodesByRefFileBasedId(
+            @Param("referenceId") String referenceId
+    );
+
+
+
 }

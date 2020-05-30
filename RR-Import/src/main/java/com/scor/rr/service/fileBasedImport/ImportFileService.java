@@ -35,6 +35,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 @Service
 public class ImportFileService {
@@ -233,6 +234,12 @@ public class ImportFileService {
 
     private Map<String, String> readMetadata(String path, List<MetadataHeaderSectionEntity> metadataHeaderSectionEntities) {
         File file = new File(path);
+        ImportFileLossDataHeader importFileLossDataHeader = parseLossDataTableHeader(file, metadataHeaderSectionEntities);
+        return importFileLossDataHeader.getMetadata();
+    }
+
+    private Map<String, String> getMetadataWithRpExtraction(String path, List<MetadataHeaderSectionEntity> metadataHeaderSectionEntities){
+        File file = new File(path);
         SourceFileImport sourceFileImport = buildSourceFileImport(file);
         Map<String, String> combinatedKey= getCombinedKeys(metadataHeaderSectionEntities, sourceFileImport.getImportFileHeader());
         ModellingVendorEntity modellingVendor = modellingVendorRepository.findByName(combinatedKey.get(RefFileBasedImportEntity.MODEL_PROVIDER_COLUMN));
@@ -249,6 +256,7 @@ public class ImportFileService {
         String regionPerilCode= getRegionPeril(metadata.get("Geo_Code"), metadata.get("Peril"));
         metadata.put("ModellingVersionYear", String.valueOf(reference.getModelVersionYear()));
         metadata.put("TargetRapCode", getTargetRap(reference, regionPerilCode));
+        metadata.put("RegionPerilCode", regionPerilCode);
         return metadata;
     }
 
@@ -275,6 +283,7 @@ public class ImportFileService {
     private String getTargetRap(RefFileBasedImportEntity reference, String rpCode){
         // Should be ModellingSystem _ RPCode _ Mv{Year}
         // String profileKey = reference.getModellingVendor() + "-" + reference.getModellingSystem() + "-" + reference.getModelVersionYear();
+        /**
         String profileKey = reference.getModellingSystem() + "_" + rpCode + "_Mv" + reference.getModelVersionYear();
         List<TargetRapEntity> targetRapEntities = targetRapRepository.findByProfileKey(profileKey);
         for (TargetRapEntity targetRap : targetRapEntities) {
@@ -287,7 +296,12 @@ public class ImportFileService {
                 //TODO: if more than one match
             }
         }
-        return null;
+        return null;*/
+        List<String> targetRaps=refFileBasedImportRepository.findTargetRapsCodesByRefFileBasedId(reference.getId());
+        if(targetRaps == null || targetRaps.isEmpty())
+            return null;
+        else
+            return targetRaps.stream().collect(Collectors.joining(","));
     }
 
 
@@ -302,7 +316,7 @@ public class ImportFileService {
 
         for(String filePath : request.getSelectedFileSourcePath()) {
             System.out.println("filePath" + filePath);
-            Map<String, String> maps = readMetadata(filePath, metadataHeaderSectionEntities);
+            Map<String, String> maps = getMetadataWithRpExtraction(filePath, metadataHeaderSectionEntities);
             FileImportSourceResult fileImportSourceResult = new FileImportSourceResult();
             fileImportSourceResult.setResultName(maps.get("ResultsName"));
             fileImportSourceResult.setFinancialPerspective(maps.get("FinPerspectiveDesc"));
@@ -310,6 +324,8 @@ public class ImportFileService {
             fileImportSourceResult.setModelVersion(maps.get("ModellingVersionYear"));
             fileImportSourceResult.setFilePath(filePath);
             fileImportSourceResult.setProjectId(Integer.parseInt(request.getProjectId()));
+            fileImportSourceResult.setTargetRAPCode(maps.get("TargetRapCode"));
+            fileImportSourceResult.setSelectedRegionPerilCode(maps.get("RegionPerilCode"));
             //fileImportSourceResult.setFileName(fileName);
             fileImportSourceResult.setFileBasedImportConfigId(fileBasedImportConfig.getFileBasedImportConfigId().intValue());
             fileImportSourceResultRepository.save(fileImportSourceResult);
