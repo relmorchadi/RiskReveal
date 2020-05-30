@@ -118,8 +118,8 @@ public class ImportFileService {
         ModellingSystemInstanceEntity modellingSystemInstance = null;
         //SectionEntity section = sectionRepository.findById(contractId).get();
         //if (section == null) {
-         //   log.error("Non RMS : Error. No section found");
-         //   return null;
+        //   log.error("Non RMS : Error. No section found");
+        //   return null;
         //}
 
 
@@ -182,11 +182,11 @@ public class ImportFileService {
     private Job fileBasedImport;
 
     public Long launchFileBasedImport(String instanceId,
-                                            Long nonrmspicId,
-                                            Long fileBasedImportConfigId,
-                                            String userId,
-                                            Long projectId,
-                                            String fileImportSourceResultIds) {
+                                      Long nonrmspicId,
+                                      Long fileBasedImportConfigId,
+                                      String userId,
+                                      Long projectId,
+                                      String fileImportSourceResultIds) {
         log.info("Starting launchFileBasedImport at backend");
         try {
             Map<String, Object> properties = extractNamingNonRMSProperties(projectId, nonrmspicId, instanceId);
@@ -305,13 +305,12 @@ public class ImportFileService {
     }
 
 
-    public List<FileImportSourceResult> persisteFileBasedImportConfig(FileBasedImportConfigRequest request) {
+    public List<FileImportSourceResult> persisteFileBasedImportConfig(FileBasedImportConfigRequest request,String folderPath) {
         List<FileImportSourceResult> fileImportSourceResults=new ArrayList<>();
         FileBasedImportConfig fileBasedImportConfig=new FileBasedImportConfig();
         fileBasedImportConfig.setProjectId(Long.parseLong(request.getProjectId()));
-        //fileBasedImportConfig.setSelectedFolderSourcePath(folderPath);
+        fileBasedImportConfig.setSelectedFolderSourcePath(folderPath);
         fileBasedImportConfigRepository.save(fileBasedImportConfig);
-        System.out.println("taille"+request.getSelectedFileSourcePath().size());
         List<MetadataHeaderSectionEntity> metadataHeaderSectionEntities= metadataHeaderSectionRepository.findAll();
 
         for(String filePath : request.getSelectedFileSourcePath()) {
@@ -326,7 +325,7 @@ public class ImportFileService {
             fileImportSourceResult.setProjectId(Integer.parseInt(request.getProjectId()));
             fileImportSourceResult.setTargetRAPCode(maps.get("TargetRapCode"));
             fileImportSourceResult.setSelectedRegionPerilCode(maps.get("RegionPerilCode"));
-            //fileImportSourceResult.setFileName(fileName);
+            fileImportSourceResult.setFileName(filePath.split("/")[filePath.split("/").length-1]);
             fileImportSourceResult.setFileBasedImportConfigId(fileBasedImportConfig.getFileBasedImportConfigId().intValue());
             fileImportSourceResultRepository.save(fileImportSourceResult);
             fileImportSourceResults.add(fileImportSourceResult);
@@ -659,7 +658,7 @@ public class ImportFileService {
                         return importFileLossDataHeader;
                     }
                 }
-                
+
                 if (i == 3) {
                     if (!name.equals("LossTableHeaderFormat")) {
                         importFileLossDataHeader.getScanErrors().add("LossTableHeaderFormat must be present in the third of the file");
@@ -673,7 +672,7 @@ public class ImportFileService {
                         return importFileLossDataHeader;
                     }
                 }*/
-                
+
                 MetadataHeaderSectionEntity metadataDefinition = metadataDefinitionMap.get(name.toUpperCase()); // name la metadataDefinition.getMetadataAttribute()
                 if (metadataDefinition == null) {
                     log.warn("Metadata {} not recognised", name);
@@ -696,8 +695,8 @@ public class ImportFileService {
     }
 
     public ImportFileLossDataHeader validate(ImportFileLossDataHeader importFileLossDataHeader,
-                                              List<MetadataHeaderSectionEntity> mandatoryMetadataList,
-                                              List<MetadataHeaderSectionEntity> defaultMetadataList) {
+                                             List<MetadataHeaderSectionEntity> mandatoryMetadataList,
+                                             List<MetadataHeaderSectionEntity> defaultMetadataList) {
         List<String> missings = new ArrayList<>();
         for (MetadataHeaderSectionEntity mandatoryMetadata : mandatoryMetadataList) {
             if (importFileLossDataHeader.getMetadata().get(mandatoryMetadata.getMetadataAttribute()) == null) {
@@ -1281,3 +1280,4 @@ public class ImportFileService {
         return fileImportSourceResult;
     }
 }
+

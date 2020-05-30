@@ -29,12 +29,12 @@ export class FileBaseApi {
         return this.http.get(`${this.URL}persisteFileBasedImportConfig`, {params: {projectId,filePaths,folderPath}});
     }*/
 
-    persisteFileBasedImportConfig(importLocked,projectId,selectedFileSourcePath): Observable<any>{
-        return this.http.post(`${this.URL}persisteFileBasedImportConfig`, {importLocked,projectId,selectedFileSourcePath});
+    persisteFileBasedImportConfig(importLocked,projectId,selectedFileSourcePath,folderPath): Observable<any>{
+        return this.http.post(`${this.URL}persisteFileBasedImportConfig`, {importLocked,projectId,selectedFileSourcePath}, {params: {folderPath}});
     }
 
-    runFileBasedImport(fileImportSourceResultIds,instanceId,nonrmspicId,projectId,userId) {
-        return this.http.get(`${this.URL}launchFileBasedImport`, {params: {fileImportSourceResultIds,instanceId,nonrmspicId,projectId,userId}});
+    runFileBasedImport(instanceId,nonrmspicId,fileBasedImportConfigId,userId,projectId,fileImportSourceResultIds) {
+        return this.http.get(`${this.URL}launchFileBasedImport`, {params: {instanceId,nonrmspicId,fileBasedImportConfigId,userId,projectId,fileImportSourceResultIds}});
     }
 
 }
