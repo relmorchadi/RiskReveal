@@ -297,7 +297,8 @@ public class ImportFileService {
             }
         }
         return null;*/
-        List<String> targetRaps=refFileBasedImportRepository.findTargetRapsCodesByRefFileBasedId(reference.getId());
+        List<String> targetRaps=refFileBasedImportRepository.findTargetRapsCodesByRefFileBasedId(reference.getId())
+                .stream().filter(Objects::nonNull).collect(Collectors.toList());
         if(targetRaps == null || targetRaps.isEmpty())
             return null;
         else
