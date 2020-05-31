@@ -1325,6 +1325,11 @@ export class WorkspaceState {
     return this.riskLinkFacade.saveDefaultDataSources(ctx, payload);
   }
 
+  @Action(fromWS.ClearDefaultDataSourcesAction)
+  clearDefaultDataSources(ctx: StateContext<WorkspaceModel>){
+    return this.riskLinkFacade.clearDefaultDataSources(ctx);
+  }
+
   @Action(fromWS.LoadDefaultDataSourcesAction)
   loadDefaultDataSources(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.LoadDefaultDataSourcesAction){
     return this.riskLinkFacade.loadDefaultDataSources(ctx, payload);

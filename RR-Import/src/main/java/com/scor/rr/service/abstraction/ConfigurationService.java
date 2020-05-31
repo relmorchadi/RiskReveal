@@ -32,6 +32,8 @@ public interface ConfigurationService {
 
     List<RLDataSourcesDto> getDefaultDataSources();
 
+    void clearDefaultDataSources();
+
     ProjectImportRunEntity checkIfProjectHasBeenImportedBefore(Long projectId);
 
     boolean checkIfProjectHasConfigurations(Long projectId);

@@ -223,8 +223,6 @@ public class ImportFileService {
         }
     }
 
-    private static final String PATH_IHUB = "RRADJUSTMENT/src/main/resources/copyfile/";
-
     @Autowired
     RefFileBasedImportRepository refFileBasedImportRepository;
 

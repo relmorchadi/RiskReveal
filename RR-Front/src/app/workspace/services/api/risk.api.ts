@@ -176,6 +176,12 @@ export class RiskApi {
         })
     }
 
+    clearDefaultDataSources() {
+        return this.http.delete(`${this.IMPORT_URL}import/config/clear-default-data-sources`);
+    }
+
+
+
     getAutoAttach(divisionsIds, edmIds, rdmIds, wsId) {
         return this.http.get(`${this.IMPORT_URL}import/config/AutoAttach`, {
             params: {

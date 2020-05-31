@@ -330,6 +330,10 @@ export class SaveDefaultDataSourcesAction {
   static readonly type= '[Risk Link] Save default data sources action';
   constructor(public payload: any) {}
 }
+export class ClearDefaultDataSourcesAction {
+  static readonly type= '[Risk Link] Clear default data sources action';
+  constructor() {}
+}
 
 export class SaveDefaultDataSourcesSuccessAction {
   static readonly type= '[Risk Link] Save default data sources success action';
