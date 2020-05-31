@@ -387,16 +387,13 @@ export class WorkspaceFileBaseImportComponent extends BaseContainer implements O
     }
 
     nodeSelect(event) {
-        console.log('LFiles', this.loadingFiles);
-        console.log('LFiles', this.loadingFiles);
-        //event.node.selected=true;
+        console.log('Node select', event);
         this.nodePath = '/' + event.node.label;
         this.nodeTemp = event.node;
         while (this.nodeTemp.parent) {
             this.nodePath = '/' + this.nodeTemp.parent.label + this.nodePath;
             this.nodeTemp = this.nodeTemp.parent;
         }
-        //this.nodePath = 'C:\\ManualBasedImportFile' + this.nodePath;
         this.dispatch(new fromWs.LoadFileBasedFilesAction(this.nodePath));
         console.log('directoryTree Apres', this.directoryTree);
         this.selectedData$.subscribe(value => {
@@ -404,6 +401,7 @@ export class WorkspaceFileBaseImportComponent extends BaseContainer implements O
             this.selectedDataTemp = value;
             for (let key in this.selectedData) {
                 const {label}=this.selectedData[key];
+                console.log('Here is label', label);
                 if(label.match('\\\\'))
                     this.selectedData[key].label = _.last(label.split('\\\\'));
                 else if(label.match('/'))
@@ -534,9 +532,18 @@ export class WorkspaceFileBaseImportComponent extends BaseContainer implements O
                 o.partialSelected = o.label.partialSelected;
                 o.root = o.label.root;
                 o.selected = o.label.selected;
-                o.label = o.label.data.file.split('\\')[o.label.data.file.split('\\').length - 1];
+                if(o.label.data.file.match('\\\\'))
+                    o.label = _.last(o.label.data.file.split('\\'));
+                else if(o.label.data.file.match('/')){
+                    o.label = _.last(o.label.data.file.split('/'));
+                }
             } else {
-                o.label = o.data.file.split('\\')[o.data.file.split('\\').length - 1];
+                //o.label = o.data.file.split('\\')[o.data.file.split('\\').length - 1];
+                if(o.data.file.match('\\\\'))
+                    o.label = _.last(o.data.file.split('\\'));
+                else if(o.data.file.match('/')){
+                    o.label = _.last(o.data.file.split('/'));
+                }
                 o.collapsedIcon = 'fa fa-folder';
                 o.expandedIcon = 'fa fa-folder-open';
                 o.data = 'folder';

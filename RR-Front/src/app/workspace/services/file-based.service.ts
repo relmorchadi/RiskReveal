@@ -206,7 +206,7 @@ export class FileBasedService {
         }
         let filePaths = [];
         files.forEach(item => {
-            this.fileBaseApi.searchReadFiles(payload + "\\" + item.label).subscribe(data => {
+            this.fileBaseApi.searchReadFiles(payload + "/" + item.label).subscribe(data => {
                 //newData = [...newData, data];
                 let payloadTemp = payload.replace(/\\/gi, "/");
                 filePaths.push(payloadTemp + "/" + item.label);

@@ -227,7 +227,7 @@ public class ImportFileService {
     RefFileBasedImportRepository refFileBasedImportRepository;
 
     public Map<String, String> readMetadata(String path) {
-        return readMetadata(this.rootFilePath+path, metadataHeaderSectionRepository.findAll());
+        return readMetadata(getFullPath(path), metadataHeaderSectionRepository.findAll());
     }
 
     private Map<String, String> readMetadata(String path, List<MetadataHeaderSectionEntity> metadataHeaderSectionEntities) {
@@ -306,19 +306,19 @@ public class ImportFileService {
         List<FileImportSourceResult> fileImportSourceResults=new ArrayList<>();
         FileBasedImportConfig fileBasedImportConfig=new FileBasedImportConfig();
         fileBasedImportConfig.setProjectId(Long.parseLong(request.getProjectId()));
-        fileBasedImportConfig.setSelectedFolderSourcePath(this.rootFilePath+folderPath);
+        fileBasedImportConfig.setSelectedFolderSourcePath(getFullPath(folderPath));
         fileBasedImportConfigRepository.save(fileBasedImportConfig);
         List<MetadataHeaderSectionEntity> metadataHeaderSectionEntities= metadataHeaderSectionRepository.findAll();
 
         for(String filePath : request.getSelectedFileSourcePath()) {
             System.out.println("filePath" + filePath);
-            Map<String, String> maps = getMetadataWithRpExtraction(this.rootFilePath+filePath, metadataHeaderSectionEntities);
+            Map<String, String> maps = getMetadataWithRpExtraction(getFullPath(filePath), metadataHeaderSectionEntities);
             FileImportSourceResult fileImportSourceResult = new FileImportSourceResult();
             fileImportSourceResult.setResultName(maps.get("ResultsName"));
             fileImportSourceResult.setFinancialPerspective(maps.get("FinPerspectiveDesc"));
             //fileImportSourceResult.setModelVersion(maps.get("Model_Version"));
             fileImportSourceResult.setModelVersion(maps.get("ModellingVersionYear"));
-            fileImportSourceResult.setFilePath(this.rootFilePath+filePath);
+            fileImportSourceResult.setFilePath(getFullPath(filePath));
             fileImportSourceResult.setProjectId(Integer.parseInt(request.getProjectId()));
             fileImportSourceResult.setTargetRAPCode(maps.get("TargetRapCode"));
             fileImportSourceResult.setSelectedRegionPerilCode(maps.get("RegionPerilCode"));
@@ -1144,7 +1144,7 @@ public class ImportFileService {
 
     public List<Map<String, String>> retrieveTextFiles(String path){
         List<Map<String,String>> maps=new ArrayList<>();
-        File repo = new File(this.rootFilePath+path);
+        File repo = new File(getFullPath(path));
         if (repo.isDirectory()) {
             File fList[] = repo.listFiles();
             if (fList != null) {
@@ -1263,6 +1263,12 @@ public class ImportFileService {
 
         }
         return fileImportSourceResult;
+    }
+
+    private String getFullPath(String path){
+        if(path.contains(rootFilePath))
+            return path;
+        return rootFilePath.concat(path);
     }
 }
 
