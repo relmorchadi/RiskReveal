@@ -227,7 +227,7 @@ public class ImportFileService {
     RefFileBasedImportRepository refFileBasedImportRepository;
 
     public Map<String, String> readMetadata(String path) {
-        return readMetadata(path, metadataHeaderSectionRepository.findAll());
+        return readMetadata(this.rootFilePath+path, metadataHeaderSectionRepository.findAll());
     }
 
     private Map<String, String> readMetadata(String path, List<MetadataHeaderSectionEntity> metadataHeaderSectionEntities) {
@@ -306,19 +306,19 @@ public class ImportFileService {
         List<FileImportSourceResult> fileImportSourceResults=new ArrayList<>();
         FileBasedImportConfig fileBasedImportConfig=new FileBasedImportConfig();
         fileBasedImportConfig.setProjectId(Long.parseLong(request.getProjectId()));
-        fileBasedImportConfig.setSelectedFolderSourcePath(folderPath);
+        fileBasedImportConfig.setSelectedFolderSourcePath(this.rootFilePath+folderPath);
         fileBasedImportConfigRepository.save(fileBasedImportConfig);
         List<MetadataHeaderSectionEntity> metadataHeaderSectionEntities= metadataHeaderSectionRepository.findAll();
 
         for(String filePath : request.getSelectedFileSourcePath()) {
             System.out.println("filePath" + filePath);
-            Map<String, String> maps = getMetadataWithRpExtraction(filePath, metadataHeaderSectionEntities);
+            Map<String, String> maps = getMetadataWithRpExtraction(this.rootFilePath+filePath, metadataHeaderSectionEntities);
             FileImportSourceResult fileImportSourceResult = new FileImportSourceResult();
             fileImportSourceResult.setResultName(maps.get("ResultsName"));
             fileImportSourceResult.setFinancialPerspective(maps.get("FinPerspectiveDesc"));
             //fileImportSourceResult.setModelVersion(maps.get("Model_Version"));
             fileImportSourceResult.setModelVersion(maps.get("ModellingVersionYear"));
-            fileImportSourceResult.setFilePath(filePath);
+            fileImportSourceResult.setFilePath(this.rootFilePath+filePath);
             fileImportSourceResult.setProjectId(Integer.parseInt(request.getProjectId()));
             fileImportSourceResult.setTargetRAPCode(maps.get("TargetRapCode"));
             fileImportSourceResult.setSelectedRegionPerilCode(maps.get("RegionPerilCode"));
@@ -413,7 +413,7 @@ public class ImportFileService {
         ImportFileLossDataHeader importFileLossDataHeader = parseLossDataTableHeader(file, metadataHeaderSectionRepository.findAll()); // ham nay chua ham validate(importFileLossDataHeader, mandatoryMetadataList, defaultMetadataList) nho hon
         SourceFileImport sourceFileImport = new SourceFileImport();
         sourceFileImport.setProjectId(null);
-        sourceFileImport.setFilePath(file.getParent().replace(getRootFilePath(), ""));
+        sourceFileImport.setFilePath(file.getParent().replace(this.rootFilePath, ""));
         sourceFileImport.setFileName(file.getName());
         sourceFileImport.setImportFileHeader(importFileLossDataHeader);
         return sourceFileImport;
@@ -574,14 +574,6 @@ public class ImportFileService {
         return ((st > 0) || (len < line.length())) ? line.substring(st, len) : line;
     }
 
-    private String rootDirectoryPath = "/scor/data/ihub/nonRMS/";
-
-    public String getRootFilePath() {
-        return rootFilePath;
-    }
-
-
-
     public ImportFileLossDataHeader parseLossDataTableHeader(File file) {
         return parseLossDataTableHeader(file, metadataHeaderSectionRepository.findAll());
     }
@@ -611,7 +603,7 @@ public class ImportFileService {
         }
         BufferedReader br = null;
         importFileLossDataHeader.getMetadata().put("File_Name", file.getName());
-        importFileLossDataHeader.getMetadata().put("File_Path", file.getParent().replace(getRootFilePath(), ""));
+        importFileLossDataHeader.getMetadata().put("File_Path", file.getParent().replace(this.rootFilePath, ""));
         Date lastUpdated = new Date(file.lastModified());
         //importFileLossDataHeader.getMetadata().put("File_Last_Update_Date", new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(lastUpdated));
         importFileLossDataHeader.getMetadata().put("File_Last_Update_Date", new SimpleDateFormat("yyyy-MM-dd").format(lastUpdated));
@@ -1087,9 +1079,9 @@ public class ImportFileService {
     }
 
     public String directoryListing() {
-        PathNode rootData = new PathNode(new File(getRootFilePath()), null);
+        PathNode rootData = new PathNode(new File(this.rootFilePath), null);
         com.scor.rr.domain.model.TreeNode<PathNode> root = new com.scor.rr.domain.model.TreeNode<>(rootData, null);
-        getPathList(root, new File(getRootFilePath()));
+        getPathList(root, new File(this.rootFilePath));
         ObjectMapper objectMapper = new ObjectMapper();
         JsonNode rootJsonNode = objectMapper.valueToTree(root);
         return printJsonString(rootJsonNode);
@@ -1152,7 +1144,7 @@ public class ImportFileService {
 
     public List<Map<String, String>> retrieveTextFiles(String path){
         List<Map<String,String>> maps=new ArrayList<>();
-        File repo = new File(path);
+        File repo = new File(this.rootFilePath+path);
         if (repo.isDirectory()) {
             File fList[] = repo.listFiles();
             if (fList != null) {
@@ -1160,7 +1152,7 @@ public class ImportFileService {
                     if ("txt".equalsIgnoreCase(FilenameUtils.getExtension(fList[i].getName()))) {
                         Map<String, String> map=new HashMap<>();
                         Map<String,String> mapTemp=readMetadata(fList[i].getPath(), metadataHeaderSectionRepository.findAll());
-                        map.put("label",fList[i].getPath());
+                        map.put("label",mapTemp.get("File_Name"));
                         map.put("createdAt",mapTemp.get("CreateDate").split(" ")[0]);
                         // new SimpleDateFormat("yyyy-MM-dd").format(lastUpdated)
                         map.put("updatedAt",mapTemp.get("File_Last_Update_Date"));
