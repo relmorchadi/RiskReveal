@@ -8,7 +8,7 @@ import javax.persistence.*;
 import java.math.BigDecimal;
 
 @Entity
-@Table(name = "FileImportSourceResult", schema = "dbo", catalog = "RiskReveal")
+@Table(name = "FileImportSourceResult", schema = "dbo")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -18,8 +18,8 @@ public class FileImportSourceResult {
     @Column(name = "FileImportSourceResultId", nullable = false)
     private int fileImportSourceResultId;
 
-    @Column(name = "FileBasedImportConfig")
-    private int fileBasedImportConfig;
+    /*@Column(name = "FileBasedImportConfig")
+    private int fileBasedImportConfig;*/
 
     @Column(name = "ResultName")
     private String resultName;
@@ -89,4 +89,14 @@ public class FileImportSourceResult {
 
     @Column(name = "FilePath")
     private String filePath;
+
+    @Column(name = "Peril")
+    private String peril;
+
+    @Column(name = "Region")
+    private String region;
+
+    @Column(name = "GeoCode")
+    private String geoCode;
+
 }

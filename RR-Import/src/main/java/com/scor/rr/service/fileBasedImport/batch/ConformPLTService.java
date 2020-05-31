@@ -65,6 +65,7 @@ public class ConformPLTService {
 
     private Gson gson = new Gson();
 
+    @Autowired
     private TransformationPackageNonRMS transformationPackage;
     @Value("${ihub.treaty.out.path}") // todo change it not ihub
     private String filePath;
@@ -192,10 +193,11 @@ public class ConformPLTService {
 //        conformedPLT.setPltStatus(PLTStatus.Pending);
 //        conformedPLT.setInuringPackageDefinition(null);
         conformedPLT.setPltSimulationPeriods(originalPLT.getPltSimulationPeriods());
-        conformedPLT.setPltType(PLTType.Pure.toString());
+        conformedPLT.setPltType(PLTType.Pure.getCode());
+        conformedPLT.setEntity(1);
         conformedPLT.setProjectId(originalPLT.getProjectId());
         conformedPLT.setModelAnalysisId(bundle.getRrAnalysis().getRrAnalysisId());
-        conformedPLT.setCurrencyCode(bundle.getRrAnalysis().getTargetCurrency());
+        conformedPLT.setCurrencyCode(originalPLT.getCurrencyCode());
         conformedPLT.setTargetRAPId(originalPLT.getTargetRAPId());
         conformedPLT.setRegionPerilId(originalPLT.getRegionPerilId());
         if (SecurityContextHolder.getContext() != null && SecurityContextHolder.getContext().getAuthentication() != null) {
@@ -225,7 +227,7 @@ public class ConformPLTService {
         conformedPLT.setSourceLossModelingBasis(originalPLT.getSourceLossModelingBasis());
         conformedPLT.setUdName(bundle.getRrAnalysis().getRegionPeril() + "_" + bundle.getRrAnalysis().getFinancialPerspective() + "_LMF1.T0");
         conformedPLT.setDefaultPltName(bundle.getRrAnalysis().getRegionPeril() + "_" + bundle.getRrAnalysis().getFinancialPerspective() + "_LMF1");
-        pltHeaderRepository.save(conformedPLT);
+        pltHeaderRepository.saveAndFlush(conformedPLT);
 
         // TODO b) apply proportion and unit multiplier
         // TODO c) calculate EPC, EPS for conformed PLT
@@ -235,15 +237,15 @@ public class ConformPLTService {
         log.info("Conforming EP curves and sum stats for conformedPLT {}, proportion {}, multiplier {}", conformedPLT.getPltHeaderId(), proportion, multiplier);
 
         // only one - one : orig - conf SummaryStatisticHeaderEntity
-        LossDataHeaderEntity lossDataHeaderEntity = lossDataHeaderEntityRepository.findByModelAnalysisId(bundle.getRrAnalysis().getRrAnalysisId());
+        LossDataHeaderEntity lossDataHeaderEntity = lossDataHeaderEntityRepository.findByModelAnalysisIdList(bundle.getRrAnalysis().getRrAnalysisId()).get(0);
         // To check if it's valid
-        SummaryStatisticHeaderEntity origSummaryStatisticHeaderEntity = summaryStatisticHeaderRepository.findByLossDataIdAndLossDataType(lossDataHeaderEntity.getLossDataHeaderId(), "PLT").get(0);
+        SummaryStatisticHeaderEntity origSummaryStatisticHeaderEntity = summaryStatisticHeaderRepository.findById(pltBundle.getSummaryStatisticHeaderId()).get();
         SummaryStatisticHeaderEntity confSummaryStatisticHeaderEntity = new SummaryStatisticHeaderEntity();
         confSummaryStatisticHeaderEntity.setCov(origSummaryStatisticHeaderEntity.getCov());
         confSummaryStatisticHeaderEntity.setPurePremium(origSummaryStatisticHeaderEntity.getPurePremium() * proportion * multiplier * exchangeRate);
         confSummaryStatisticHeaderEntity.setStandardDeviation(origSummaryStatisticHeaderEntity.getStandardDeviation() * proportion * multiplier * exchangeRate);
         // todo calculate OEP, AEP 10 50 100 250 500 1000
-        summaryStatisticHeaderRepository.save(confSummaryStatisticHeaderEntity);
+        summaryStatisticHeaderRepository.saveAndFlush(confSummaryStatisticHeaderEntity);
 
         // List<AnalysisEpCurves> list : years of 1 metric --> write to file EPC
         Map<StatisticMetric, List<AnalysisEpCurves>> metricToEPCurve = new HashMap<>();
@@ -278,7 +280,7 @@ public class ConformPLTService {
             StatisticMetric metric = epCurveHeaderEntity.getStatisticMetric();
             confRrStatisticDetail.setCurveType(metric.toString());
             // todo fill 630 RP2, ..., RP 100000
-            summaryStatisticsDetailRepository.save(confRrStatisticDetail);
+            summaryStatisticsDetailRepository.saveAndFlush(confRrStatisticDetail);
 
             // put into a map to write to file
             metricToEPCurve.put(metric, confEPCurves);
@@ -342,7 +344,7 @@ public class ConformPLTService {
         File file = makeFullFile(getPrefixDirectory(), filename);
 //        conformedPLT.setPltLossDataFile(new BinFile(file));
         conformedPLT.setLossDataFileName(file.getName());
-        conformedPLT.setLossDataFilePath(file.getPath());
+        conformedPLT.setLossDataFilePath(file.getParent());
 
         long pic = System.currentTimeMillis();
         List<PLTLossData> pltLossDataList = bundle.getPltLossDataList();

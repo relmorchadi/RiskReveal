@@ -1007,7 +1007,7 @@
         <th *ngIf="col?.fields === 'pltId'" pResizableColumn>
           <span style="justify-content: space-between;">
             {{col?.header}}
-            <ng-container *ngIf="col?.sorted" [ngSwitch]="sortData[col?.fields]">
+            <ng-container *ngIf="!col?.sorted" [ngSwitch]="sortData[col?.fields]">
               <i (click)="sortChange(col?.fields,sortData[col.fields])" *ngSwitchCase="'asc'"
                  class="icon-keyboard_arrow_up_24px" style="font-size: 1.4em;"></i>
               <i (click)="sortChange(col?.fields,sortData[col.fields])" *ngSwitchCase="'desc'"

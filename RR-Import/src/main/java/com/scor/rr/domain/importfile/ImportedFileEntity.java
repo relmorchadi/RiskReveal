@@ -4,7 +4,7 @@ import javax.persistence.*;
 import java.util.Objects;
 
 @Entity
-@Table(name = "ImportedFile", schema = "dbo", catalog = "RiskReveal")
+@Table(name = "ImportedFile", schema = "dbo")
 public class ImportedFileEntity {
     private int importedFileId;
     private String fileName;

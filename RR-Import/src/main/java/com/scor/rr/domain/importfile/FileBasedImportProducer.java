@@ -4,7 +4,7 @@ import javax.persistence.*;
 import java.util.Objects;
 
 @Entity
-@Table(name = "FileBasedImportProducer", schema = "dbo", catalog = "RiskReveal")
+@Table(name = "FileBasedImportProducer", schema = "dbo")
 public class FileBasedImportProducer {
     private int id;
     private String lossTableHeaderProducer;

@@ -165,7 +165,6 @@ public class ConfigurationServiceImpl implements ConfigurationService {
     }
 
     @Override
-    @Transactional(transactionManager = "theTransactionManager")
     public void saveDefaultDataSources(DataSourcesDto dataSourcesDto) {
         Long userId = SecurityContextHolder.getContext().getAuthentication() != null ?
                 ((UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser().getUserId() :
@@ -184,14 +183,13 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 
     @Override
     public List<RLDataSourcesDto> getDefaultDataSources() {
-        Long userId= null;
-        if (SecurityContextHolder.getContext().getAuthentication() != null)
-            userId = ((UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser().getUserId();
-        else {
-            throw new RuntimeException("No security context found");
-        }
-        return rlSavedDataSourceRepository.findByUserId(userId).stream()
+        return rlSavedDataSourceRepository.findByUserId(getUserId()).stream()
                 .map(RLDataSourcesDto::new).collect(toList());
+    }
+
+    @Override
+    public void clearDefaultDataSources(){
+        rlSavedDataSourceRepository.deleteByUserId(getUserId());
     }
 
     @Override
@@ -401,5 +399,13 @@ public class ConfigurationServiceImpl implements ConfigurationService {
     @Override
     public void deleteSavedSataSourceById(Long savedDataSourceId) {
         rlSavedDataSourceRepository.deleteById(savedDataSourceId);
+    }
+
+    private Long getUserId(){
+        if (SecurityContextHolder.getContext().getAuthentication() != null)
+            return  ((UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser().getUserId();
+        else {
+            throw new RuntimeException("No security context found");
+        }
     }
 }

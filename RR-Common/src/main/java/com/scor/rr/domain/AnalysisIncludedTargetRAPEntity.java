@@ -1,6 +1,8 @@
 package com.scor.rr.domain;
 
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -8,6 +10,7 @@ import javax.persistence.*;
 @Entity
 @Table(name = "AnalysisIncludedTargetRAP")
 @Data
+@AllArgsConstructor
 public class AnalysisIncludedTargetRAPEntity {
 
     @Id

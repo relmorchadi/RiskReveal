@@ -19,6 +19,7 @@ import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import sun.misc.Cleaner;
 import sun.nio.ch.DirectBuffer;
 
@@ -63,6 +64,7 @@ public class ConvertToSCORFormatService {
     @Autowired
     private TargetRapRepository targetRapRepository;
 
+    @Autowired
     private TransformationPackageNonRMS transformationPackage;
 
     @Autowired
@@ -102,14 +104,14 @@ public class ConvertToSCORFormatService {
         log.debug("fpUP is {}", fpUP == null ? null : fpUP.getCode());
         log.debug("nbBundles is {}", transformationPackage.getBundles() == null ? null : transformationPackage.getBundles().size());
 
-        PLTModelingBasis modelingBasis = PLTModelingBasis.AM;
-        if (contractId != null && uwYear != null) {
-            String[] tokens = StringUtils.split(uwYear.toString(), '-');
-            ContractEntity contract = contractRepository.findByTreatyIdAndUwYear(contractId, Integer.parseInt(tokens[0])).get();
-            if (contract != null && contract.getContractSourceTypeId() != null && 5L == contract.getContractSourceTypeId()) {
-                modelingBasis = PLTModelingBasis.PM;
-            }
-        }
+        PLTModelingBasis modelingBasis = getModelingBasis();
+        //if (contractId != null && uwYear != null) {
+        //    String[] tokens = StringUtils.split(uwYear.toString(), '-');
+        //    ContractEntity contract = contractRepository.findByTreatyIdAndUwYear(contractId, Integer.parseInt(tokens[0])).get();
+        //    if (contract != null && contract.getContractSourceTypeId() != null && 5L == contract.getContractSourceTypeId()) {
+        //       modelingBasis = PLTModelingBasis.PM;
+        //    }
+        //}
 
         log.debug("Modeling basis: {}", modelingBasis);
 
@@ -145,7 +147,7 @@ public class ConvertToSCORFormatService {
                 log.info("Finish tracking at the end of STEP 2 : CONVERT_LOSS_DATA_TO_SCOR_FORMAT for analysis {}, status {}", bundle.getRrAnalysis().getRrAnalysisId(), "Error", "stop this tracking");
                 if (bundle.getRrAnalysis() != null) {
                     bundle.getRrAnalysis().setImportStatus("ERROR");
-                    rrAnalysisRepository.save(bundle.getRrAnalysis());
+                    rrAnalysisRepository.saveAndFlush(bundle.getRrAnalysis());
                 }
                 continue;
             }
@@ -199,7 +201,17 @@ public class ConvertToSCORFormatService {
         return RepeatStatus.FINISHED;
     }
 
-    @Value("${ihub.treaty.out.path}") // todo change it not ihub
+    private PLTModelingBasis getModelingBasis() {
+        if (contractId != null && uwYear != null) {
+            Long sourceTypeId = contractRepository.findByTreatyIdAndUwYear(contractId, uwYear)
+                    .map(ContractEntity::getContractSourceTypeId)
+                    .orElse(0L);
+            return sourceTypeId == 5L ? PLTModelingBasis.PM : PLTModelingBasis.AM;
+        }
+        return PLTModelingBasis.AM;
+    }
+
+    @Value("${ihub.treaty.out.path}")
     private String filePath;
 
     public Path getIhubPath() {
@@ -420,9 +432,11 @@ public class ConvertToSCORFormatService {
             i++;
 
             PltHeaderEntity scorPLTHeader = new PltHeaderEntity();
-
+            scorPLTHeader.setEntity(1);
             scorPLTHeader.setLossDataFileName(null);
             scorPLTHeader.setLossDataFilePath(null);
+
+            scorPLTHeader.setPltSimulationPeriods(PLTSimulationPeriod.SIM100K.getCode());
 //            scorPLTHeader.setPltStatisticList(null);
 
 //            scorPLTHeader.setPltGrouping(PLTGrouping.UnGrouped);
@@ -431,7 +445,7 @@ public class ConvertToSCORFormatService {
 //            scorPLTHeader.setPltStatus(PLTStatus.Pending);
 //            scorPLTHeader.setInuringPackageDefinition(null);
             // TODO how ???
-            scorPLTHeader.setPltType(PLTType.Pure.toString());
+            scorPLTHeader.setPltType(PLTType.Pure.getCode());
 
 //            ProjectEntity project = projectRepository.findById(getProjectId());
             scorPLTHeader.setProjectId(projectId);
@@ -439,7 +453,10 @@ public class ConvertToSCORFormatService {
             scorPLTHeader.setModelAnalysisId(bundle.getRrAnalysis().getRrAnalysisId());
 
             CurrencyEntity currency = currencyRepository.findByCode(bundle.getRrAnalysis().getSourceCurrency());
-            scorPLTHeader.setCurrencyCode(currency.getCode());
+            if(currency != null)
+                scorPLTHeader.setCurrencyCode(currency.getCode());
+            else
+                scorPLTHeader.setCurrencyCode("USD");
             scorPLTHeader.setTargetRAPId(targetRap.getTargetRAPId());
 
             RegionPerilEntity regionPeril = regionPerilRepository.findByRegionPerilCode(bundle.getRrAnalysis().getRegionPeril());

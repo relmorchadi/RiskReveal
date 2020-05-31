@@ -32,7 +32,7 @@
     "@ngxs/form-plugin": "3.4.1-dev.master-ab0a0cc",
     "@ngxs/logger-plugin": "3.4.1-dev.master-543c32f",
     "@ngxs/router-plugin": "3.4.1-dev.master-ab0a0cc",
-    "@ngxs/storage-plugin": "^3.4.1-dev.master-ab0a0cc",
+    "@ngxs/storage-plugin": "3.4.1-dev.master-ab0a0cc",
     "@ngxs/store": "3.4.1-dev.master-543c32f",
     "ag-grid-angular": "^23.1.0",
     "ag-grid-community": "^23.1.1",
@@ -47,6 +47,7 @@
     "floatthead": "^2.1.3",
     "font-awesome": "4.7.0",
     "gulp-sass": "^4.0.2",
+    "hammerjs": "^2.0.8",
     "idb": "^3.0.2",
     "imagesloaded": "^4.1.4",
     "immer": "^2.1.5",
@@ -100,6 +101,6 @@
     "protractor": "^5.4.0",
     "ts-node": "7.0.0",
     "tslint": "5.11.0",
-    "typescript": "^3.2.2"
+    "typescript": "3.2.2"
   }
 }

@@ -17,6 +17,8 @@ public class PLTBundleNonRMS {
 
     private ScorPLTLossDataHeader lossDataHeader100k;
 
+    private Long summaryStatisticHeaderId;
+
     public PltHeaderEntity getHeader() {
         return header;
     }
@@ -62,5 +64,13 @@ public class PLTBundleNonRMS {
 
     public void setErrorMessage(String errorMessage) {
         this.errorMessage = errorMessage;
+    }
+
+    public Long getSummaryStatisticHeaderId() {
+        return summaryStatisticHeaderId;
+    }
+
+    public void setSummaryStatisticHeaderId(Long summaryStatisticHeaderId) {
+        this.summaryStatisticHeaderId = summaryStatisticHeaderId;
     }
 }
