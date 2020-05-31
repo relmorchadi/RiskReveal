@@ -12,6 +12,7 @@ import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.math.MathContext;
@@ -66,7 +67,6 @@ public class CalculateEPCEPSForSourcePLTService {
             rpEPMap.put(drp.getReturnPeriod(), drp.getExceedanceProbability());
         }
     }
-
 
     public RepeatStatus calculateEPCEPSForSourcePLT() throws Exception {
         log.debug("Start CALCULATE_EPC_EPS_FOR_SOURCE_PLT");
@@ -136,12 +136,13 @@ public class CalculateEPCEPSForSourcePLTService {
                 summaryStatisticHeaderEntity.setFinancialPerspective("FP");
                 summaryStatisticHeaderEntity.setCurrency(rrLossTable.getCurrency());
                 // todo fill other data
-                summaryStatisticHeaderRepository.save(summaryStatisticHeaderEntity);
-                pltHeaderRepository.updateSummaryStatisticHeaderId(pltHeader.getPltHeaderId(), summaryStatisticHeaderEntity.getSummaryStatisticHeaderId());
-
-                log.debug("runCalculationForLosses for ptlHearer id {} - {} simulation periods", pltHeader.getPltHeaderId(), pltHeader.getPltSimulationPeriods());
+                summaryStatisticHeaderEntity= summaryStatisticHeaderRepository.saveAndFlush(summaryStatisticHeaderEntity);
+                pltHeader.setSummaryStatisticHeaderId(summaryStatisticHeaderEntity.getSummaryStatisticHeaderId());
+                pltHeader= pltHeaderRepository.saveAndFlush(pltHeader);
+               // pltHeaderRepository.updateSummaryStatisticHeaderId(pltHeader.getPltHeaderId(), summaryStatisticHeaderEntity.getSummaryStatisticHeaderId());
+                log.info("runCalculationForLosses for ptlHearer id {} - {} simulation periods", pltHeader.getPltHeaderId(), pltHeader.getPltSimulationPeriods());
                 runCalculationForLosses(pltHeader.getPltSimulationPeriods(), bundle.getPltLossDataList(), epRPMap, rpEPMap, summaryStatisticHeaderEntity, metricToEPCurve);
-
+                pltBundleNonRMS.setSummaryStatisticHeaderId(summaryStatisticHeaderEntity.getSummaryStatisticHeaderId());
                 List<SummaryStatisticHeaderEntity> rrStatisticHeaderList = new ArrayList<>();
 //                List<String> rrStatisticHeaderIdsList = new ArrayList<>();
 
@@ -159,14 +160,14 @@ public class CalculateEPCEPSForSourcePLTService {
 //                    rrStatisticHeader.setFinancialPerspective(rrLossTable.getFinancialPerspective());
 //                    rrStatisticHeaderList.add(rrStatisticHeader);
 //                    rrStatisticHeaderIdsList.add(rrStatisticHeader.getId());
-                    summaryStatisticsDetailRepository.save(summaryStatisticsDetail);
+                    summaryStatisticsDetailRepository.saveAndFlush(summaryStatisticsDetail);
 
                     EPCurveHeaderEntity epCurveHeaderEntity = new EPCurveHeaderEntity(); // PLT
                     epCurveHeaderEntity.setLossDataId(rrLossTable.getLossDataHeaderId());
                     epCurveHeaderEntity.setFinancialPerspective("FP");
                     epCurveHeaderEntity.setLossDataType("PLT");
                     epCurveHeaderEntity.setStatisticMetric(entry.getKey());
-                    epCurveHeaderEntityRepository.save(epCurveHeaderEntity);
+                    epCurveHeaderEntityRepository.saveAndFlush(epCurveHeaderEntity);
                 }
 
 //                pltHeader.setPltStatisticList(rrStatisticHeaderList);
@@ -183,6 +184,7 @@ public class CalculateEPCEPSForSourcePLTService {
 //                summaryStatisticHeaderRepository.saveAll(rrStatisticHeaderList);
 
 //                pltHeader.setRrLossTableId(rrLossTable.getLossDataHeaderId());
+                pltBundleNonRMS.setHeader(pltHeader);
             }
 
             // finis step 3 CALCULATE_EPC_EPS_FOR_SOURCE_PLT for one analysis in loop for of many analysis

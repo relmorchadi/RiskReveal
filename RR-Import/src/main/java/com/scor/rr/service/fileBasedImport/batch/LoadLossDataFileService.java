@@ -204,16 +204,8 @@ public class LoadLossDataFileService {
                 FileImportSourceResult sourceResult = sourceResultOptional.get();
 
                 ModelAnalysisEntity modelAnalysisEntity = new ModelAnalysisEntity();
+                modelAnalysisEntity.setEntity(1);
                 modelAnalysisEntity.setProjectId(projectId);
-
-                //rlAnalysisToTargetRAPRepository.findByRlAnalysisId()
-
-                // todo set target rap
-//                TargetRapEntity targetRap = targetRAPRepository.findByTargetRapCode(sourceResult.getTargetRAPCode());
-//                if (targetRap != null && targetRap.getTargetRAPId() != null) {
-//                    modelAnalysisEntity.getIncludedTargetRapIds().add(targetRap.getTargetRapId().toString());
-//                }
-
                 modelAnalysisEntity.setCreationDate(startDate);
                 modelAnalysisEntity.setImportStatus(TrackingStatus.INPROGRESS.toString());
                 sourceResult.setImportStatus(TrackingStatus.INPROGRESS.toString());
@@ -224,7 +216,10 @@ public class LoadLossDataFileService {
                 modelAnalysisEntity.setSourceCurrency(sourceResult.getSourceCurrency());
                 modelAnalysisEntity.setTargetCurrencyBasis(sourceResult.getTargetCurrencyBasis());
                 modelAnalysisEntity.setTargetCurrency(sourceResult.getTargetCurrency());
-//                double exchangeRate = 1.0d;
+                modelAnalysisEntity.setPeril(sourceResult.getPeril());
+                modelAnalysisEntity.setRegion(sourceResult.getRegion());
+                modelAnalysisEntity.setGeoCode(sourceResult.getGeoCode());
+                double exchangeRate = 1.0d;
 //                if (sourceResult != null) {
 //                    exchangeRate = sourceResult.getExchangeRate().doubleValue();
 //                } else {
@@ -240,7 +235,7 @@ public class LoadLossDataFileService {
 //                    log.debug("source ELT currency {} conformed ELT currency {} exchange rate {}",sourceResult.getCurrency(), sourceResult.getTargetCurrency(), exchangeRate) ;
 //                }
 
-//                modelAnalysisEntity.setExchangeRate(exchangeRate);
+                modelAnalysisEntity.setExchangeRate(exchangeRate);
                 modelAnalysisEntity.setProportion(sourceResult.getProportion() != null ? sourceResult.getProportion().doubleValue() : 100.0);
                 modelAnalysisEntity.setUnitMultiplier(sourceResult.getUnitMultiplier() != null ? sourceResult.getUnitMultiplier().doubleValue() : 1.0);
                 modelAnalysisEntity.setResultName(sourceResult.getResultName());
@@ -249,6 +244,15 @@ public class LoadLossDataFileService {
                 modelAnalysisEntity.setGrain(sourceResult.getGrain());
 
                 rrAnalysisRepository.save(modelAnalysisEntity);
+
+                targetRAPRepository.findByTargetRAPCode(sourceResult.getTargetRAPCode())
+                        .ifPresent(tr -> analysisIncludedTargetRAPRepository.save(
+                                    new AnalysisIncludedTargetRAPEntity(
+                                            null,
+                                            1,
+                                            modelAnalysisEntity.getRrAnalysisId(),
+                                            tr.getTargetRAPId()
+                                    )));
 
                 // TODO tracking file need ???
 //                ProjectImportLog projectImportLogA = new ProjectImportLog();

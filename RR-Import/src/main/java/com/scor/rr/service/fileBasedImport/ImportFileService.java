@@ -90,7 +90,6 @@ public class ImportFileService {
 
     @Value("${nonrms.plt.root.path}")
     private String rootFilePath;
-    //private String rootFilePath="C:\\ManualBasedImportFile";
 
     @Value("${nonrms.peqt.path}")
     private String peqtFilePath;
@@ -212,7 +211,8 @@ public class ImportFileService {
                     .addLong("fileBasedImportConfigId", fileBasedImportConfigId)
                     .addString("userId", userId)
                     .addLong("projectId", projectId)
-                    .addString("fileImportSourceResultIds", fileImportSourceResultIds);
+                    .addString("fileImportSourceResultIds", fileImportSourceResultIds)
+                    .addString("fileExtension", ".bin");
             log.info("Starting Non RMS import batch: nonrmspicId {}, userId {}, projectId {}, fileIds {}", nonrmspicId, userId, projectId, fileImportSourceResultIds);
             JobExecution execution = null;
             execution = jobLauncher.run(fileBasedImport, builder.toJobParameters());
@@ -297,12 +297,10 @@ public class ImportFileService {
             }
         }
         return null;*/
-        List<String> targetRaps=refFileBasedImportRepository.findTargetRapsCodesByRefFileBasedId(reference.getId())
-                .stream().filter(Objects::nonNull).collect(Collectors.toList());
-        if(targetRaps == null || targetRaps.isEmpty())
-            return null;
-        else
-            return targetRaps.stream().collect(Collectors.joining(","));
+        return refFileBasedImportRepository.findTargetRapsCodesByRefFileBasedId(reference.getId())
+                .stream().filter(Objects::nonNull)
+                .findFirst()
+                .orElse(null);
     }
 
 
@@ -328,6 +326,11 @@ public class ImportFileService {
             fileImportSourceResult.setSelectedRegionPerilCode(maps.get("RegionPerilCode"));
             fileImportSourceResult.setFileName(filePath.split("/")[filePath.split("/").length-1]);
             fileImportSourceResult.setFileBasedImportConfigId(fileBasedImportConfig.getFileBasedImportConfigId().intValue());
+            fileImportSourceResult.setGeoCode(maps.get("Geo_Code"));
+            fileImportSourceResult.setPeril(maps.get("Peril"));
+            fileImportSourceResult.setRegion(maps.get("Region"));
+            fileImportSourceResult.setSourceCurrency(maps.get("Currency"));
+            fileImportSourceResult.setTargetCurrency(maps.get("Currency"));
             fileImportSourceResultRepository.save(fileImportSourceResult);
             fileImportSourceResults.add(fileImportSourceResult);
         }
@@ -573,21 +576,12 @@ public class ImportFileService {
         return ((st > 0) || (len < line.length())) ? line.substring(st, len) : line;
     }
 
-//    @Value("${nonrms.plt.root.path}")
-//    private String rootFilePath = "C:\\\\scor\\\\data\\\\ihub\\\\nonRMS\\\\plt\\\\";
-
     private String rootDirectoryPath = "/scor/data/ihub/nonRMS/";
-
-//    @Value("${nonrms.peqt.path}")
-//    private String peqtFilePath = "/scor/data/ihub/nonRMS/peqt/";
 
     public String getRootFilePath() {
         return rootFilePath;
     }
 
-    public String getRootDirectoryPath() {
-        return rootDirectoryPath;
-    }
 
 
     public ImportFileLossDataHeader parseLossDataTableHeader(File file) {

@@ -19,6 +19,7 @@ import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import sun.misc.Cleaner;
 import sun.nio.ch.DirectBuffer;
 
@@ -146,7 +147,7 @@ public class ConvertToSCORFormatService {
                 log.info("Finish tracking at the end of STEP 2 : CONVERT_LOSS_DATA_TO_SCOR_FORMAT for analysis {}, status {}", bundle.getRrAnalysis().getRrAnalysisId(), "Error", "stop this tracking");
                 if (bundle.getRrAnalysis() != null) {
                     bundle.getRrAnalysis().setImportStatus("ERROR");
-                    rrAnalysisRepository.save(bundle.getRrAnalysis());
+                    rrAnalysisRepository.saveAndFlush(bundle.getRrAnalysis());
                 }
                 continue;
             }
@@ -431,9 +432,11 @@ public class ConvertToSCORFormatService {
             i++;
 
             PltHeaderEntity scorPLTHeader = new PltHeaderEntity();
-
+            scorPLTHeader.setEntity(1);
             scorPLTHeader.setLossDataFileName(null);
             scorPLTHeader.setLossDataFilePath(null);
+
+            scorPLTHeader.setPltSimulationPeriods(PLTSimulationPeriod.SIM100K.getCode());
 //            scorPLTHeader.setPltStatisticList(null);
 
 //            scorPLTHeader.setPltGrouping(PLTGrouping.UnGrouped);
@@ -442,7 +445,7 @@ public class ConvertToSCORFormatService {
 //            scorPLTHeader.setPltStatus(PLTStatus.Pending);
 //            scorPLTHeader.setInuringPackageDefinition(null);
             // TODO how ???
-            scorPLTHeader.setPltType(PLTType.Pure.toString());
+            scorPLTHeader.setPltType(PLTType.Pure.getCode());
 
 //            ProjectEntity project = projectRepository.findById(getProjectId());
             scorPLTHeader.setProjectId(projectId);
@@ -450,7 +453,10 @@ public class ConvertToSCORFormatService {
             scorPLTHeader.setModelAnalysisId(bundle.getRrAnalysis().getRrAnalysisId());
 
             CurrencyEntity currency = currencyRepository.findByCode(bundle.getRrAnalysis().getSourceCurrency());
-            scorPLTHeader.setCurrencyCode(currency.getCode());
+            if(currency != null)
+                scorPLTHeader.setCurrencyCode(currency.getCode());
+            else
+                scorPLTHeader.setCurrencyCode("USD");
             scorPLTHeader.setTargetRAPId(targetRap.getTargetRAPId());
 
             RegionPerilEntity regionPeril = regionPerilRepository.findByRegionPerilCode(bundle.getRrAnalysis().getRegionPeril());

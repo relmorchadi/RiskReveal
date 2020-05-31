@@ -89,4 +89,14 @@ public class FileImportSourceResult {
 
     @Column(name = "FilePath")
     private String filePath;
+
+    @Column(name = "Peril")
+    private String peril;
+
+    @Column(name = "Region")
+    private String region;
+
+    @Column(name = "GeoCode")
+    private String geoCode;
+
 }
