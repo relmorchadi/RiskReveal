@@ -10,6 +10,8 @@ import {createConnectFile} from "selenium-webdriver/safari";
 })
 export class CalibrationColumnManagerComponent implements OnInit {
 
+  @Input('fixedVisibleColumns') fixedVisibleColumns = true;
+
   @Input('visibleList') visibleList;
   _visibleList;
 
@@ -29,7 +31,10 @@ export class CalibrationColumnManagerComponent implements OnInit {
   onManageColumns() {
     this.actionDispatcher.emit({
       type: "Manage Frozen Columns",
-      payload: this._visibleList
+      payload: {
+        'visible': this._visibleList,
+        'available': this._availableList
+      }
     })
   }
 
@@ -83,7 +88,7 @@ export class CalibrationColumnManagerComponent implements OnInit {
   }
 
   moveItem(container, i, j) {
-    if(container.id == "visible") {
+    if(container.id == "visible" && this.fixedVisibleColumns) {
       const head = _.slice(container.data, 0,2);
 
       const middle = _.slice(container.data, 2, container.data.length );

@@ -71,6 +71,7 @@ export class WorkspaceProjectComponent extends BaseContainer implements OnInit, 
   }
 
   patchState({wsIdentifier, data}: any): void {
+
     this.workspace = data;
     this.wsIdentifier = wsIdentifier;
   }
@@ -160,11 +161,11 @@ export class WorkspaceProjectComponent extends BaseContainer implements OnInit, 
     this.searchWorkspace = false;
     this.newProject = true;
     this.selectedProject = project;
-    console.log(project);
+
   }
 
   cancelCreateExistingProjectPopup(param) {
-    console.log('Cancel', param);
+
     this.searchWorkspace = false;
   }
 

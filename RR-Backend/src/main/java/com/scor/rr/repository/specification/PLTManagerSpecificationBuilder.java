@@ -150,10 +150,10 @@ public class PLTManagerSpecificationBuilder {
 
         TypedQuery<Object> typedQuery = em.createQuery(cq);
 
-        if(paginated) {
-            typedQuery.setFirstResult(request.getStartRow());
-            typedQuery.setMaxResults(request.getEndRow() - request.getStartRow());
-        }
+//        if(paginated) {
+//            typedQuery.setFirstResult(request.getStartRow());
+//            typedQuery.setMaxResults(request.getEndRow() - request.getStartRow());
+//        }
 
         List<Object> res = typedQuery
                 .getResultStream()

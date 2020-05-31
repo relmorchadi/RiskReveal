@@ -188,6 +188,64 @@ public class ModelAnalysisEntity {
     @Column(name = "Metadata")
     private String metaData;
 
+    public ModelAnalysisEntity(ModelAnalysisEntity other) {
+        this.entity = other.getEntity();
+        this.importedDate = other.getImportedDate();
+        this.creationDate = other.getCreationDate();
+        this.runDate = other.getRunDate();
+        this.importStatus = other.getImportStatus();
+        this.projectImportRunId = other.getProjectImportRunId();
+        this.sourceModellingSystemInstance = other.getSourceModellingSystemInstance();
+        this.sourceModellingVendor = other.getSourceModellingVendor();
+        this.sourceModellingSystem = other.getSourceModellingSystem();
+        this.sourceModellingSystemVersion = other.getSourceModellingSystemVersion();
+        this.dataSourceId = other.getDataSourceId();
+        this.dataSourceName = other.getDataSourceName();
+        this.fileName = other.getFileName();
+        this.analysisId = other.getAnalysisId();
+        this.analysisName = other.getAnalysisName();
+        this.grain = other.getGrain();
+        this.financialPerspective = other.getFinancialPerspective();
+        this.treatyLabel = other.getTreatyLabel();
+        this.treatyTag = other.getTreatyTag();
+        this.peril = other.getPeril();
+        this.subPeril = other.getSubPeril();
+        this.geoCode = other.getGeoCode();
+        this.region = other.getRegion();
+        this.regionPeril = other.getRegionPeril();
+        this.sourceCurrency = other.getSourceCurrency();
+        this.targetCurrency = other.getTargetCurrency();
+        this.targetCurrencyBasis = other.getTargetCurrencyBasis();
+        this.exchangeRate = other.getExchangeRate();
+        this.division = other.getDivision();
+        this.defaultOccurrenceBasis = other.getDefaultOccurrenceBasis();
+        this.userOccurrenceBasis = other.getUserOccurrenceBasis();
+        this.proportion = other.getProportion();
+        this.proxyScalingBasis = other.getProxyScalingBasis();
+        this.proxyScalingNarrative = other.getProxyScalingNarrative();
+        this.unitMultiplier = other.getUnitMultiplier();
+        this.multiplierBasis = other.multiplierBasis;
+        this.multiplierNarrative = other.getMultiplierNarrative();
+        this.profileKey = other.profileKey;
+        this.profileName = other.getProfileName();
+        this.description = other.getDescription();
+        this.analysisLevel = other.getAnalysisLevel();
+        this.lossAmplification = other.getLossAmplification();
+        this.model = other.getModel();
+        this.tags = other.getTags();
+        this.userNotes = other.getUserNotes();
+        this.overrideReasonText = other.getOverrideReasonText();
+        this.resultName = other.getResultName();
+        this.sourceLossModellingBasis = other.getSourceLossModellingBasis();
+        this.sourceLossTableType = other.getSourceLossTableType();
+        this.eventSet = other.eventSet;
+        this.modelModule = other.getModelModule();
+        this.sourceResultsReference = other.getSourceResultsReference();
+        this.occurrenceBasisOverrideReason = other.getOccurrenceBasisOverrideReason();
+        this.occurrenceBasisOverrideBy = other.getOccurrenceBasisOverrideBy();
+        this.metaData = other.getMetaData();
+    }
+
 //    public RRAnalysis(RlSourceResult sourceResult){
 //    }
 }

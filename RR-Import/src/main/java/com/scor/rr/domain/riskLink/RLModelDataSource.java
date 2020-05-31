@@ -60,5 +60,4 @@ public class RLModelDataSource {
         this.versionId = String.valueOf(dataSource.getVersionId());
         this.dateCreated = new Date();
     }
-
 }

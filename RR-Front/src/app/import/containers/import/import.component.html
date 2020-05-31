@@ -1,0 +1,126 @@
+<div class="app-wrapper">
+  <div class="top-separator">
+    <div style="width: 100%">
+      <span>
+        Bulk Import &nbsp; <i class="icon-close_24px" (click)="navigateBack()"></i>
+      </span>
+    </div>
+  </div>
+  <div class="app-header">
+    <div class="app-title-manager">
+      <h4>Bulk Import</h4>
+    </div>
+  </div>
+  <div class="app-body">
+    <nz-tabset>
+      <nz-tab nzTitle="RMS Import">
+        <div class="cnt">
+          <div class="button-cnt">
+            <input #file style="display: none" type="file" (change)="onFileChange($event)">
+            <button
+                    (click)="toggleHistory()"
+                    class="a-buttons-outlined"
+                    [ngStyle]="{
+                      color: isHistoryActive ? 'white' : '#332ed7',
+                      borderColor: isHistoryActive ? 'white' : '#332ed7',
+                      backgroundColor: isHistoryActive ? '#332ed7' : 'white'
+                    }">
+              <i class="icon-history-alt" style="vertical-align: middle; font-size: 18px"></i>
+            </button>
+            <button (click)="file.click()" class="a-buttons-outlined" style="color: #332ed7 ;border-color: #332ed7">
+              Import Sheet
+            </button>
+          </div>
+          <div class="grid-cnt">
+            <div *ngIf="!isHistoryActive" class="upload-cnt">
+              <nz-collapse
+                      *ngIf="headerErrors.length"
+                      [nzBordered]="false"
+              >
+                <nz-collapse-panel
+                        #p
+                        [nzHeader]="customHeader"
+                        [nzActive]="headerErrorsPanel.active"
+                        [ngStyle]="headerErrorsPanel.customStyle"
+                        [nzExpandedIcon]="customIcon"
+                >
+                  <ng-template #customHeader>
+                    <p class="regular1">{{headerErrorsPanel.name}}</p>
+                  </ng-template>
+                  <ng-template #customIcon let-active>
+                    <i class="panel-arrow icon-keyboard_arrow_up_24px" *ngIf="!p.nzActive"></i>
+                    <i class="panel-arrow icon-keyboard_arrow_down_24px" *ngIf="p.nzActive"></i>
+                  </ng-template>
+                  <nz-list
+                          [nzDataSource]="headerErrors"
+                          [nzBordered]="false"
+                          nzSize="small"
+                          [nzRenderItem]="item"
+                  >
+                    <ng-template #item let-item><nz-list-item [nzContent]="item?.columnName + ': ' +item?.errorDescription"></nz-list-item></ng-template>
+                  </nz-list>
+                </nz-collapse-panel>
+              </nz-collapse>
+              <ag-grid-angular
+                      #agGrid
+                      [ngStyle]="{ display: isFileRead ? 'block' :'none'}"
+                      style="width: 100%; height: 100%;flex: 1 1 auto;"
+                      id="myGrid"
+                      class="ag-theme-alpine"
+                      [columnDefs]="gridParams?.columnDefs"
+                      [defaultColDef]="gridParams?.defaultColDef"
+                      [rowData]="gridParams?.rowData"
+                      [modules]="modules"
+                      [frameworkComponents]="gridParams?.frameworkComponents"
+                      (gridReady)="onGridReady($event)"
+              ></ag-grid-angular>
+              <nz-upload
+                      *ngIf="!isFileRead"
+                      nzType="drag"
+                      [nzMultiple]="false"
+                      [nzLimit]="1"
+                      [nzBeforeUpload]="onBeforeUpload"
+                      style="width: 100%; height: 100%;flex: 1 1 auto;"
+              >
+                <p class="ant-upload-drag-icon">
+                  <i nz-icon nzType="inbox"></i>
+                </p>
+                <p class="ant-upload-text">Click or drag file to this area to upload</p>
+                <p class="ant-upload-hint">
+                  Support for a single file upload.
+                </p>
+              </nz-upload>
+            </div>
+            <div *ngIf="isHistoryActive" class="history-cnt">
+              <ag-grid-angular
+                      #agGrid
+                      style="width: 100%; height: 100%;flex: 1 1 auto;"
+                      class="ag-theme-alpine"
+                      [rowModelType]="'serverSide'"
+                      [columnDefs]="gridHParams?.columnDefs"
+                      [defaultColDef]="gridHParams?.defaultColDef"
+                      [modules]="modules"
+                      (gridReady)="onHistoryGridReady($event)"
+              ></ag-grid-angular>
+            </div>
+          </div>
+          <div class="button-cnt">
+
+            <button
+                    [ngClass]="!headerErrors.length && isFileRead && isFileValidated ? 'a-buttons-contained' : 'a-buttons-contained-disabled'"
+                    [disabled]="headerErrors.length || !isFileRead || !isFileValidated"
+                    (click)="runImport()"
+            >
+              Run
+            </button>
+          </div>
+        </div>
+      </nz-tab>
+      <nz-tab nzTitle="File Base Import">
+
+      </nz-tab>
+    </nz-tabset>
+  </div>
+  <div>
+  </div>
+</div>

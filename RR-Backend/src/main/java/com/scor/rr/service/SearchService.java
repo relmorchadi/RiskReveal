@@ -379,7 +379,8 @@ public class SearchService {
     private List<FacContractSearchResult> mapFacContract(List<Object[]> resultList) {
         return resultList.stream().map(
                 (r) ->
-                new FacContractSearchResult((String) r[0], (Integer) r[1], (String) r[2], (String) r[3], (String) r[4], (String) r[5], (String) r[6], (BigInteger) r[7])
+                new FacContractSearchResult((String) r[0], (Integer) r[1], (String) r[2], (String) r[3], (String) r[4], (String) r[5], (String) r[6]
+                        , (BigInteger) r[7], (String) r[8])
         ).collect(Collectors.toList());
     }
 
@@ -437,7 +438,10 @@ public class SearchService {
     private void saveRecentExpertModeSearch(ExpertModeFilterRequest request) {
         UserRrEntity user = ((UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser();
         String keyword;
-        keyword = Optional.of(request.getKeyword()).orElse("").replace("%", "").trim();
+
+
+        keyword = (request.getKeyword() == null ? "" : request.getKeyword()).replace("%", "").trim();
+
 
         if(!keyword.equals("") || request.getFilter().size() > 0) {
             List<RecentSearch> recentSearches = recentSearchRepository.findByUserIdAndTypeOrderBySearchDateDesc(user.getUserId(), request.getType().getSearchType());

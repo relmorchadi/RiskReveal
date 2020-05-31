@@ -24,4 +24,8 @@ export class ProjectApi {
     return this.http.delete(`${this.api}/delete`, {params: {id}})
   }
 
+  getProjectsByWorkspace(workspaceContextCode, workspaceUwYear) {
+    return this.http.get(`${this.api}`, {params: {workspaceContextCode, workspaceUwYear}});
+  }
+
 }

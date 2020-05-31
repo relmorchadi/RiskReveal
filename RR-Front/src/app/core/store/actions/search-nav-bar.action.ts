@@ -128,5 +128,10 @@ export class LoadRecentSearch {
   constructor(public payload?: any) {}
 }
 
+export class SwitchSearchType {
+  static readonly type = '[Search Nav Bar] Switch search type';
+  constructor(public payload: string) {}
+}
+
 
 

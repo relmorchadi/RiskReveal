@@ -94,6 +94,11 @@ public class ProjectEntity {
     @Column(name = "LastUpdatedOn")
     private Date lastUpdatedOn;
 
+    public ProjectEntity(String projectName, String projectDescription) {
+        this.projectName = projectName;
+        this.projectDescription = projectDescription;
+    }
+
     public void initProject(Long workspaceId) {
         this.projectId = null;
         this.workspaceId = workspaceId;
@@ -102,8 +107,9 @@ public class ProjectEntity {
         this.isLinked = false;
         this.isPostInured = false;
         this.isPublished = false;
-        this.isMGA= false;
-        this.deleted= false;
+        this.isMGA = false;
+        this.deleted = false;
+        this.entity = 1;
     }
 
     public void setWorkspaceByFkWorkspaceId(WorkspaceEntity workspaceEntity) {

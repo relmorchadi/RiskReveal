@@ -1,3 +1,12 @@
+<calib-col-manager
+        *ngIf="isManageColumnsVisible"
+        [fixedVisibleColumns]="false"
+        [visibleList]="((browesing && selectionStep == 'plt') ? Inputs.pltColumns.visible :
+        ( marketChannel == 'FAC' ? columnsFac : columnsTreaty ) | getVisibleColumns : true  ) | cloneDataColumnManageFilter"
+        [availableList]="((browesing && selectionStep == 'plt') ? Inputs.pltColumns.available :
+        ( marketChannel == 'FAC' ? columnsFac : columnsTreaty) | getVisibleColumns : false ) "
+        (actionDispatcher)="handleManageColumnsActions($event)">
+</calib-col-manager>
 <p-dialog [(visible)]="isVisible"
           [closable]="false"
           [styleClass]="'m-dialog-modal-lg project-clone-pop-up' + (browesing ? ' borderless' : '')"
@@ -5,7 +14,6 @@
           [modal]="true"
           [responsive]="true"
           [baseZIndex]="1"
-          [autoZIndex]="false"
           [maximizable]="true"
           (onHide)="onHide()"
           (onShow)="onShow()">
@@ -28,27 +36,8 @@
           Select Workspace
         </h4>
 
-        <div [formGroup]="keywordFormGroup">
+        <search-menu-item [state]="searchState$ | async" searchType="cloneDataWsSearch"></search-menu-item>
 
-          <nz-input-group style="z-index: 1001"
-                          class="global-search-input-grp"
-                          [ngClass]="{'global-search-input-grp-active': 1===1}"
-                          [nzSuffix]="suffixIconSearch">
-            <input searchInput [ngClass]="{'search-page-active-border': 1===1}"
-                   (onEnter)="onEnter()"
-                   #searchInput
-                   formControlName="keyword"  (click)="search()"
-                   class="search-input" type="text" nz-input [placeholder]="'Search for ' + marketChannel">
-          </nz-input-group>
-
-          <ng-template #suffixIconSearch>
-            <i nz-icon *ngIf=" searchInput?.value?.length>=1" class="item-close clickable-item" (click)="clearSearchValue()" nzType="close"
-               nzTheme="outline"></i>
-            <i [ngClass]="{'search-page-active-shape': 1===1}" (click)="onEnter()" style="cursor: pointer"
-               class="icon-search_24px"></i>
-          </ng-template>
-
-        </div>
       </ng-container>
       <i (click)="isVisible=false" style="cursor: pointer" class="icon-close_24px"></i>
     </div>
@@ -56,8 +45,11 @@
 
   <ng-container *ngIf="!browesing">
     <div style="height:600px;">
-
-      <app-table [tableColumn]="marketChannel == 'FAC' ? columnsFac : columnsTreaty" [sortable]="false" [totalRecords]="paginationOption?.total" #dt
+      <div style="width: 100%; text-align: right">
+        <i (click)="openColumnManager()" style="cursor: pointer;" class="icon-settings_24px" nz-tooltip="Manage Columns"></i>
+        </div>
+      <app-table [tableColumn]="marketChannel == 'FAC' ? columnsFac : columnsTreaty"
+                 [sortable]="false" [totalRecords]="paginationOption?.total" #dt
                  [listOfData]="contracts" [virtualScroll]="false" (selectOne)="openWorkspaceInSlider($event)"
                  [tableWidth]="'1000px'" (loadMore)="loadMore($event)"
                  (filterData)="filterData($event.searchValue, $event.searchAddress)"
@@ -65,7 +57,8 @@
                  (onRowSelect)="onRowSelect($event)"
                  (onRowUnselect)="onRowUnselect($event)"
                  [selectionMode]="'single'"
-                 [sortData]="{}"
+                 [sortData]="Inputs.sortData"
+                 (sortDataChange)="onSortChange($event)"
                  [loading]="loading">
       </app-table>
 
@@ -78,7 +71,7 @@
   </ng-container>
 
   <ng-container *ngIf="browesing && selectionStep == 'plt'">
-    <div class="content">
+    <div class="content" >
       <div class="left">
         <app-plt-left-menu
           [leftMenuInputs]="leftMenuInputs"
@@ -94,9 +87,14 @@
             PLTs
           </span>
         </div>
+        <div style="width: 100%; text-align: right">
+          <i (click)="openColumnManager()" style="cursor: pointer;" class="icon-settings_24px" nz-tooltip="Manage Columns"></i>
+
+        </div>
         <div class="PLTs-content">
           <app-plt-main-table
             [tableInputs]="Inputs | pickKeys : tableInputs"
+            [selectedProject]="Inputs.selectedProject"
             (actionDispatcher)="tableActionDispatcher($event)"
           ></app-plt-main-table>
         </div>

@@ -1,6 +1,7 @@
 package com.scor.rr.rest;
 
 import com.scor.rr.domain.dto.ExposureManagerParamsDto;
+import com.scor.rr.service.RegionPerilService;
 import com.scor.rr.service.abstraction.ExposureManagerService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +11,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
+
 @RestController
 @RequestMapping("api/exposure-manager")
 @Slf4j
@@ -17,6 +20,9 @@ public class ExposureManagerResource {
 
     @Autowired
     private ExposureManagerService exposureManagerService;
+
+    @Autowired
+    private RegionPerilService regionPerilService;
 
     @GetMapping("references")
     public ResponseEntity<?> getReferencesForProject(@RequestParam Long projectId) {
@@ -54,5 +60,14 @@ public class ExposureManagerResource {
         }
     }
 
-
+    @GetMapping("region-peril-description")
+    public ResponseEntity<?> getRegionPerilDescription(@RequestParam String regionPeril) {
+        try {
+            return new ResponseEntity<>(Collections.singletonMap("RegionPerilDescription",
+                    regionPerilService.getRegionPerilDescription(regionPeril)), HttpStatus.OK);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return new ResponseEntity<>("Operation failed", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 }

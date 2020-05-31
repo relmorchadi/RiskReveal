@@ -1,5 +1,6 @@
-<div  *ngIf="inputs['visible'] || inputs['mode'] == 'pop-up'" clickOutside (clickOutsideHandler)="closeDrawer($event)"  [step]="1" class="plt-details-container">
+<div  *ngIf="inputs['visible'] || inputs['mode'] == 'pop-up'" clickOutside (clickOutsideHandler)="closeDrawer($event)" [exclude]="'.cdk-overlay-container,.pine-btn,.ag-menu-option-part'" [init]="true" class="plt-details-container">
   <div class="navigation-icons-drawer">
+    <app-pin [asIcon]="true" [pinned]="!isPinned" (onPin)="pinMenu()"></app-pin>
     <i [ngClass]="{'icon-arrow_forward_ios_24px': inputs['visible'], 'icon-arrow_back_ios_24px': inputs['mode'] == 'pop-up' && !inputs['visible']}"  (click)="closeDrawer()"></i>
   </div>
 

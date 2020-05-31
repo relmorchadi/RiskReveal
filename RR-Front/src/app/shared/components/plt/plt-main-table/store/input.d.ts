@@ -2,7 +2,7 @@ export interface Input {
   dataKey: string;
   contextMenuItems: any;
   filterInput: any;
-  pltColumns: any[];
+  pltColumns: any;
   listOfDeletedPltsCache: any[];
   listOfDeletedPltsData: any[];
   listOfPltsCache: any[];
@@ -16,6 +16,7 @@ export interface Input {
   openedPlt: string;
   showDeleted: boolean;
   filterData: any;
+
   filters: any;
   sortData: any;
   status: any;

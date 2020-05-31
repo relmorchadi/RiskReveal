@@ -21,6 +21,7 @@ import {Store} from "@ngxs/store";
 })
 export class SummaryEpMetricsComponent implements OnInit {
 
+  currencyFilter: string = '';
   @Output() actionDispatcher: EventEmitter<Message> = new EventEmitter<Message>();
 
   @Input() constants: {
@@ -114,6 +115,7 @@ export class SummaryEpMetricsComponent implements OnInit {
   }
 
   currencyChange(currency) {
+    event.stopPropagation();
     this.actionDispatcher.emit({
       type: "Currency Change",
       payload: currency
@@ -143,6 +145,15 @@ export class SummaryEpMetricsComponent implements OnInit {
 
   handleChartActions(action: Message) {
     this.actionDispatcher.emit(action);
+  }
+
+  onFilterCurrencies(e) {
+    console.log(e);
+    this.currencyFilter = e;
+  }
+
+  preventPropagation(){
+    event.stopPropagation();
   }
 
 }
