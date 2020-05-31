@@ -368,7 +368,7 @@ return of(
                return;
            }
         });
-        const sourceResultsIds: any = _.map(fileBasedImportConfig, item => item.fileBasedImportConfigId).join(';');
+        const sourceResultsIds: any = _.map(fileBasedImportConfig, item => item.fileImportSourceResultId).join(';');
         const {fileBasedImportConfigId} = _.first(fileBasedImportConfig);
         this.fileBaseApi.runFileBasedImport('',fileBasedImportConfigId , fileBasedImportConfigId, 'U011191', projectId, sourceResultsIds)
             .pipe(catchError(err =>{

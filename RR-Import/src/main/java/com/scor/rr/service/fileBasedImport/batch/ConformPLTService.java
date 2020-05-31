@@ -193,10 +193,11 @@ public class ConformPLTService {
 //        conformedPLT.setPltStatus(PLTStatus.Pending);
 //        conformedPLT.setInuringPackageDefinition(null);
         conformedPLT.setPltSimulationPeriods(originalPLT.getPltSimulationPeriods());
-        conformedPLT.setPltType(PLTType.Pure.toString());
+        conformedPLT.setPltType(PLTType.Pure.getCode());
+        conformedPLT.setEntity(1);
         conformedPLT.setProjectId(originalPLT.getProjectId());
         conformedPLT.setModelAnalysisId(bundle.getRrAnalysis().getRrAnalysisId());
-        conformedPLT.setCurrencyCode(bundle.getRrAnalysis().getTargetCurrency());
+        conformedPLT.setCurrencyCode(originalPLT.getCurrencyCode());
         conformedPLT.setTargetRAPId(originalPLT.getTargetRAPId());
         conformedPLT.setRegionPerilId(originalPLT.getRegionPerilId());
         if (SecurityContextHolder.getContext() != null && SecurityContextHolder.getContext().getAuthentication() != null) {
