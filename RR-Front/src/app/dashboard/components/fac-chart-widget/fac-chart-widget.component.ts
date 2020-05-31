@@ -183,6 +183,7 @@ export class FacChartWidgetComponent implements OnInit {
       this.filteredData = data.content;
       this.analystList = [..._.uniq(data.content.map(item => item.assignedAnalyst))];
       this.assignedAnalyst = [..._.map(_.uniq(data.content.map(item => item.assignedAnalyst)), (item: string) => _.isEmpty(_.trim(item)) ? ({label: 'Unassigned', value: item}) : ({label: item, value: item}))];
+      this.assignedAnalyst = _.orderBy(this.assignedAnalyst, ['label']);
       this.detectChanges();
       this.myChart = instance;
       this.setValues();

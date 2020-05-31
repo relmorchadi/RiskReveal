@@ -22,7 +22,7 @@ import {FAKEDATA} from "../../../containers/workspace-exposures/fakeExposuresDat
     selector: 'exposures-main-table',
     templateUrl: './exposures-main-table.component.html',
     styleUrls: ['./exposures-main-table.component.scss'],
-    changeDetection: ChangeDetectionStrategy.OnPush
+    // changeDetection: ChangeDetectionStrategy.OnPush
 })
 
 export class ExposuresMainTableComponent implements OnInit, AfterViewInit, OnDestroy {

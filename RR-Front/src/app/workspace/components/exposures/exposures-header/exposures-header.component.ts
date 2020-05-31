@@ -76,7 +76,7 @@ export class ExposuresHeaderComponent implements OnInit, OnDestroy {
 
     filterPortfoliosByDivision() {
         return  _.filter(this.headerConfig.portfolios, item => {
-            const portfolios = _.keys(_.get(this.headerConfig.portfoliosAndCurrenciesByDivision, `${this.selectedHeaderConfig.division.divisionNumber}`));
+            const portfolios = _.keys(_.get(this.headerConfig.portfoliosAndCurrenciesByDivision, `${ _.get(this.selectedHeaderConfig, 'division.divisionNumber', 1)}`));
             return _.includes(portfolios, item)
         })
     }
