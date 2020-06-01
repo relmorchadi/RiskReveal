@@ -12,6 +12,7 @@ import com.scor.rr.service.adjustement.AdjustmentNodeService;
 import com.scor.rr.service.adjustement.AdjustmentThreadService;
 import com.scor.rr.utils.RRDateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -66,6 +67,9 @@ public class CloningScorPltHeaderService {
 
     @Autowired
     ProjectRepository projectRepository;
+
+    @Value("${ihub.contract.path}")
+    String ihubContractPath;
 
     private SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HHmmss");
 
@@ -140,6 +144,7 @@ public class CloningScorPltHeaderService {
         }
     }
 
+
     public List<PltHeaderEntity> cloneDataPlts(ClonePltsRequest request)
             throws com.scor.rr.exceptions.RRException{
 
@@ -207,17 +212,12 @@ public class CloningScorPltHeaderService {
                 throw new com.scor.rr.exceptions.RRException(ExceptionCodename.SUMMARY_STATISTICS_HEADER_NOT_FOUND,1);
             }
 
-            //@TODO Refactor to be externalised into properties
             // copy plt files
             try {
                 File dstFile = this.copyPltFile(sourcePlt, newPLT ,
-                        "/scor/data/ihub/v4/Facultative/Contracts/"+ request.getTargetWorkspaceContextCode()
+                        this.ihubContractPath+ request.getTargetWorkspaceContextCode()
                                 + "/" + request.getTargetWorkspaceUwYear() + "/"  +
                                 this.projectRepository.findById(newPLT.getProjectId()).get().getProjectName()
-
-                        //"C:\\dev\\projects\\test\\Facultative\\Contracts\\"  + request.getTargetWorkspaceContextCode()
-                        //        + "\\" + request.getTargetWorkspaceUwYear() + "\\"  +
-                        //        this.projectRepository.findById(newPLT.getProjectId()).get().getProjectName()
                 );
                 newPLT.setLossDataFilePath(dstFile.getParent());
                 newPLT.setLossDataFileName(dstFile.getName());
