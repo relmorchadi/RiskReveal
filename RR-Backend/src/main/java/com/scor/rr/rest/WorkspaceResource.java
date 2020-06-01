@@ -68,6 +68,9 @@ public class WorkspaceResource {
     @PostMapping("tabs/")
     ResponseEntity<List<UserWorkspaceTabs>> getTabs(@RequestBody UserWorkspaceTabsRequest request) { return this.workspaceService.getTabs(request);}
 
+    @PostMapping("tabs/all")
+    ResponseEntity<List<UserWorkspaceTabs>> getTabsNew(@RequestBody UserWorkspaceTabsRequest request) { return this.workspaceService.getTabsNew(request);}
+
     @GetMapping("tabs/count")
     ResponseEntity<Integer> getTabsCount() { return this.workspaceService.getTabsCount();}
 
