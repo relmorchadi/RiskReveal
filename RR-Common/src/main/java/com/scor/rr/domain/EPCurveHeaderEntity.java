@@ -38,4 +38,15 @@ public class EPCurveHeaderEntity {
     @Column(name = "EPCFileName")
     private String ePCFileName;
 
+    public EPCurveHeaderEntity(EPCurveHeaderEntity other) {
+        this.entity = other.entity;
+        this.lossDataType = other.lossDataType;
+        this.lossDataId = other.lossDataId;
+        this.financialPerspective = other.financialPerspective;
+        this.statisticMetric = other.statisticMetric;
+        this.ePCurves = other.ePCurves;
+        this.ePCFilePath = other.ePCFilePath;
+        this.ePCFileName = other.ePCFileName;
+
+    }
 }
