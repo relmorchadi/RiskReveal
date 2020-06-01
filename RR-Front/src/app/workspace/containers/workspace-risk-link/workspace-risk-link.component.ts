@@ -376,7 +376,7 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
     }
 
     clearDefaultSelection() {
-        this.dispatch(new fromWs.SaveDefaultDataSourcesAction({empty: true}));
+        this.dispatch(new fromWs.ClearDefaultDataSourcesAction());
     }
 
     patchState({wsIdentifier, data}: any): void {

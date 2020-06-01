@@ -6,10 +6,10 @@ export const environment = {
   production: false,
   API_URI: 'http://localhost:8080/api/',
   IMPORT_URI:'http://localhost:8081/api/',
+  //IMPORT_URI:'http://dcvdevalmf1:9080/risk-reveal-import/api/',
   CALIBRATION_URI: 'http://localhost:8082/api/',
   PROXY_URI: 'http://localhost:8085/api/',
   hmr: false,
-
 };
 
 /*

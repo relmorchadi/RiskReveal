@@ -296,7 +296,7 @@
                                     <ul>
                                         <ng-container *ngFor="let ds of defaultDataSources">
                                             <li class="poover-menu-item">
-                                                <span class="logo" *ngIf="ds.type=='EDM'; else rdmLogo"
+                                                <span class="logo" *ngIf="ds.dataSourceType=='EDM'; else rdmLogo"
                                                     style="background: #0700CF;">E</span>
                                                 <ng-template #rdmLogo>
                                                   <span class="logo" style="background: #03DAC4">R</span>

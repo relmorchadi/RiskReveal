@@ -133,6 +133,10 @@ export class PltBrowserComponent extends BaseContainer implements OnInit, OnDest
           let displayedColumns = params.columnApi.getAllDisplayedColumns();
           return displayedColumns[0] === params.column;
         },
+        icons: {
+          sortAscending: '<i class="icon-keyboard_arrow_up_24px"/>',
+          sortDescending: '<i class="icon-keyboard_arrow_down_24px"/>',
+        },
         headerCheckboxSelectionFilteredOnly: true
       },
       autoGroupColumnDef: {

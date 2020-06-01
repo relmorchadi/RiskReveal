@@ -31,6 +31,7 @@ public class AdjustDefaultService {
     @Autowired
     TargetRapRepository targetRapRepository;
 
+    @Autowired
     private TransformationPackageNonRMS transformationPackage;
 
     @Value(value = "${thread.creation.service}")
@@ -62,7 +63,8 @@ public class AdjustDefaultService {
             if (bundle.getPltBundles() != null) {
                 RestTemplate restTemplate = new RestTemplate();
                 for (PLTBundleNonRMS pltBundle : bundle.getPltBundles()) {
-                    if (!pltBundle.getPltError()) {
+                    //if (!pltBundle.getPltError()) { @TODO Review
+                    if (true) {
 
                         HttpEntity<AdjustmentThreadCreationRequest> createThreadRequest =
                                 new HttpEntity<>(new AdjustmentThreadCreationRequest(pltBundle.getHeader().getPltHeaderId(), "", true));

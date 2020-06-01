@@ -3,7 +3,7 @@ package com.scor.rr.domain.importfile;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "PEQTFileType", schema = "dbo", catalog = "RiskReveal")
+@Table(name = "PEQTFileType", schema = "dbo")
 public class PEQTFileType {
 
     private String id;

@@ -160,6 +160,17 @@ public class ConfigurationResource {
         }
     }
 
+    @DeleteMapping(value = "clear-default-data-sources")
+    public ResponseEntity<?> clearDefaultDataSources() {
+        try {
+            configurationService.clearDefaultDataSources();
+            return new ResponseEntity<>("Operation successful", HttpStatus.OK);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return new ResponseEntity<>("An error has occurred", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
     @GetMapping(value = "get-default-data-sources")
     public ResponseEntity<?> getDefaultDataSources() {
         try {

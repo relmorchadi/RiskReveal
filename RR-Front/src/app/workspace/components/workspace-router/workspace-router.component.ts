@@ -2,7 +2,7 @@ import {Component, ComponentFactoryResolver, Input, OnChanges, OnInit, SimpleCha
 import {
   WorkspaceCalibrationComponent, WorkspaceCloneDataComponent,
   WorkspaceContractComponent, WorkspaceExposuresComponent,
-  WorkspacePltBrowserComponent,
+  WorkspacePltBrowserComponent,WorkspaceFileBaseImportComponent,
   WorkspaceProjectComponent,
   WorkspaceRiskLinkComponent, WorkspaceScopeCompletenceComponent,
 } from "../../containers";
@@ -44,8 +44,10 @@ export class WorkspaceRouterComponent implements OnInit, OnChanges {
     Contract: {component: WorkspaceContractComponent, selector: (state) => state},
     //Activity: {component: WorkspaceActivityComponent, selector: (state) => state},
     PltBrowser: {component: WorkspacePltBrowserComponent, selector: (state) => state.pltManager},
+    PltManager: {component: PltBrowserComponent, selector: (state) => state.pltManager},
     RiskLink: {component: WorkspaceRiskLinkComponent, selector: (state) => state},
-    PltManager: {component: PltBrowserComponent, selector: (state) => state},
+    FileBasedImport: {component: WorkspaceFileBaseImportComponent, selector: (state) => state},
+    //CloneData: {component: WorkspaceCloneDataComponent, selector: (state) => state},
     //FileBasedImport: {component: WorkspaceFileBaseImportComponent, selector: (state) => state},
     CloneData: {component: WorkspaceCloneDataComponent, selector: (state) => state},
     Exposures: {component: WorkspaceExposuresComponent, selector: (state) => state},

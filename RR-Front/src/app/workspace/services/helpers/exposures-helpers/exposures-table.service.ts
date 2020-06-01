@@ -69,8 +69,8 @@ export class ExposuresTableService {
             view = 'TIV'
         }
         return {
-            currency:headerConfig.currency,
-            division:headerConfig.division.divisionNumber,
+            currency: headerConfig.currency,
+            division: _.get(headerConfig, 'division.divisionNumber', 1),
             financialPerspective:headerConfig.financialPerspective,
             page:1,
             pageSize:20,

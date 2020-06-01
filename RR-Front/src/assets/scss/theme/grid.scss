@@ -22,9 +22,22 @@
 }
 
 .ag-header-row-column {
-  background-color: white;
+  background-color: #FFFFFF;
 }
 
 .ag-header-row-floating-filter {
-  background-color: #F5F5F5;
+  background-color: #FFFFFF;
+
+  .ag-header-cell {
+    border-top: none !important;
+  }
+}
+
+.ag-theme-alpine .ag-header-cell-resize::after {
+  height: 100%;
+  top: 5px;
+}
+
+.ag-theme-alpine .ag-icon {
+  font-size: 20px;
 }

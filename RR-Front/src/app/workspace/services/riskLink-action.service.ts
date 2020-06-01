@@ -1656,4 +1656,40 @@ export class RiskLinkStateService {
             );
     }
 
+    clearDefaultDataSources(ctx: StateContext<WorkspaceModel>){
+        return this.riskApi.clearDefaultDataSources()
+            .pipe(catchError(err => {
+                if (err.status != 200)
+                    ctx.dispatch(new fromWs.SaveDefaultDataSourcesErrorAction(err));
+                return of(err);
+            })).pipe(mergeMap((response: any) => {
+                ctx.patchState(produce(ctx.getState(), draft => {
+                    const {wsIdentifier} = draft.currentTab;
+                    draft.content[wsIdentifier].riskLink.selection.analysis = {
+                        data: [],
+                        page: 0,
+                        size: 40,
+                        total: null,
+                        last: null,
+                        filter: new RLAnalysisFilter(),
+                        loading: false
+                    };
+                    draft.content[wsIdentifier].riskLink.selection.portfolios = {
+                        data: [],
+                        page: 0,
+                        size: 20,
+                        total: null,
+                        last: null,
+                        filter: new RlPortfolioFilter(),
+                        loading: false
+                    };
+                    draft.content[wsIdentifier].riskLink.selection.edms = {};
+                    draft.content[wsIdentifier].riskLink.selection.rdms = {};
+                    draft.content[wsIdentifier].riskLink.display.displayListRDMEDM = false;
+                }));
+                ctx.dispatch(new fromWs.ClearDefaultDataSourcesSuccessAction(response));
+                return of();
+            }));
+    }
+
 }

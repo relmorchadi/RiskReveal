@@ -153,16 +153,19 @@ public abstract class JobManagerAbstraction implements JobManager {
     }
 
     @Override
+    @Transactional(transactionManager = "theTransactionManager")
     public void logJob(Long jobId, JobStatus status) {
         jobEntityRepository.updateStatus(jobId, status);
     }
 
     @Override
+    @Transactional(transactionManager = "theTransactionManager")
     public void logTask(Long taskId, JobStatus status) {
         taskEntityRepository.updateStatus(taskId, status);
     }
 
     @Override
+    @Transactional(transactionManager = "theTransactionManager")
     public void logStep(Long stepId, StepStatus status) {
         stepEntityRepository.updateStatus(stepId, status.getCode(), new Date());
     }

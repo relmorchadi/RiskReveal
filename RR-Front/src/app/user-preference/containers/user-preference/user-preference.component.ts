@@ -171,6 +171,7 @@ export class UserPreferenceComponent extends BaseContainer implements OnInit {
         .subscribe(
         (dataSources: any) => {
           this.defaultDataSources= dataSources;
+          this.detectChanges();
         }
     );
   }
@@ -261,7 +262,7 @@ export class UserPreferenceComponent extends BaseContainer implements OnInit {
           this.notification.createNotification('Information',
               'Default Data Source successfully deleted',
               'info', 'bottomRight', 4000);
-          this.defaultDataSources= _.filter(this.defaultDataSources, (item:any) => item.rlSavedDataSourceId != ds.rlSavedDataSourceId)
+          this.loadDefaultDataSources();
         })
   }
 

@@ -16,7 +16,22 @@
       <nz-tab nzTitle="RMS Import">
         <div class="cnt">
           <div class="button-cnt">
-            <input #file style="display: none" type="file" (change)="onFileChange($event)">
+            <i
+                    nz-tooltip
+                    [nzTitle]="info"
+                    style="font-size: 18px;cursor: pointer;"
+                    nz-icon
+                    nzType="info-circle"
+                    nzTheme="fill">
+            </i>
+            <ng-template #info>
+              Here you may find a template
+              <i
+                      class="icon-attach_file_24px"
+                      style="cursor: pointer;font-size:18px;font-weight: bold;"
+                      (click)="downloadTemplate()"
+              ></i>
+            </ng-template>
             <button
                     (click)="toggleHistory()"
                     class="a-buttons-outlined"
@@ -27,6 +42,7 @@
                     }">
               <i class="icon-history-alt" style="vertical-align: middle; font-size: 18px"></i>
             </button>
+            <input #file style="display: none" type="file" (change)="onFileChange($event)">
             <button (click)="file.click()" class="a-buttons-outlined" style="color: #332ed7 ;border-color: #332ed7">
               Import Sheet
             </button>
@@ -117,7 +133,14 @@
         </div>
       </nz-tab>
       <nz-tab nzTitle="File Base Import">
-
+        <div class="cnt">
+          <div class="grid-cnt" style="justify-content: center;">
+            <nz-empty
+                    [nzNotFoundContent]="'Coming soon'"
+            >
+            </nz-empty>
+          </div>
+        </div>
       </nz-tab>
     </nz-tabset>
   </div>

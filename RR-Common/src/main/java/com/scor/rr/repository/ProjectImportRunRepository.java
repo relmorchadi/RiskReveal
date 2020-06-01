@@ -7,7 +7,7 @@ import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
-public interface ProjectImportRunRepository extends JpaRepository<ProjectImportRunEntity, Integer> {
+public interface ProjectImportRunRepository extends JpaRepository<ProjectImportRunEntity, Long> {
 
     List<ProjectImportRunEntity> findByProjectId(Long projectId);
 
