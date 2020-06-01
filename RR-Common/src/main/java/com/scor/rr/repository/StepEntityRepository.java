@@ -9,6 +9,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
+import java.util.List;
 
 public interface StepEntityRepository extends JpaRepository<StepEntity, Long> {
 
@@ -16,4 +17,6 @@ public interface StepEntityRepository extends JpaRepository<StepEntity, Long> {
     @Modifying
     @Transactional(transactionManager = "theTransactionManager")
     void updateStatus(@Param("stepId") Long stepId, @Param("status") String status, @Param("finishDate") Date finishDate);
+
+//    List<StepEntity> findByTask
 }

@@ -7,10 +7,7 @@ import com.scor.rr.domain.enums.JobPriority;
 import com.scor.rr.domain.enums.JobStatus;
 import com.scor.rr.domain.enums.StepStatus;
 import com.scor.rr.domain.model.RRJob;
-import com.scor.rr.repository.JobEntityRepository;
-import com.scor.rr.repository.JobExecutionRepository;
-import com.scor.rr.repository.TaskRepository;
-import com.scor.rr.repository.UserRrRepository;
+import com.scor.rr.repository.*;
 import com.scor.rr.service.batch.abstraction.JobManagerAbstraction;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.Job;
@@ -22,6 +19,8 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Date;
@@ -54,7 +53,13 @@ public class JobManagerImpl extends JobManagerAbstraction {
     private JobEntityRepository jobRepository;
 
     @Autowired
+    private StepEntityRepository stepRepository;
+
+    @Autowired
     private UserRrRepository userRrRepository;
+
+    @PersistenceContext
+    private EntityManager entityManager;
 
     @Override
     public void submitJob(Long jobId) {
@@ -66,7 +71,7 @@ public class JobManagerImpl extends JobManagerAbstraction {
     }
 
     @Override
-    public void cancelJob(Long jobId) {
+    public JobEntity cancelJob(Long jobId) {
         try {
             JobEntity job = jobRepository.findById(jobId).orElse(null);
             if (job != null) {
@@ -74,31 +79,37 @@ public class JobManagerImpl extends JobManagerAbstraction {
                     this.cancelTask(task.getTaskId());
                 }
                 job.setStatus(JobStatus.CANCELLED.getCode());
-                jobRepository.saveAndFlush(job);
-            }
+                return jobRepository.saveAndFlush(job);
+            } else return null;
         } catch (Exception ex) {
             ex.printStackTrace();
+            return null;
         }
     }
 
     @Override
-    public void pauseJob(Long jobId) {
+    public JobEntity pauseJob(Long jobId) {
         try {
             JobEntity job = jobRepository.findById(jobId).orElse(null);
             if (job != null) {
                 for (TaskEntity task : job.getTasks()) {
-                    this.pauseTask(task.getTaskId());
+                    if (task.getStatus().equalsIgnoreCase(JobStatus.RUNNING.getCode()))
+                        this.cancelTask(task.getTaskId());
+                    else if (task.getStatus().equalsIgnoreCase(JobStatus.PENDING.getCode()))
+                        this.pauseTask(task.getTaskId());
                 }
                 job.setStatus(JobStatus.PAUSED.getCode());
-                jobRepository.saveAndFlush(job);
-            }
+                return jobRepository.saveAndFlush(job);
+            } else
+                return null;
         } catch (Exception ex) {
             ex.printStackTrace();
+            return null;
         }
     }
 
     @Override
-    public void resumeJob(Long jobId) {
+    public JobEntity resumeJob(Long jobId) {
         try {
             JobEntity job = jobRepository.findById(jobId).orElse(null);
             if (job != null) {
@@ -107,10 +118,11 @@ public class JobManagerImpl extends JobManagerAbstraction {
                     taskRepository.saveAndFlush(task);
                 }
                 job.setStatus(JobStatus.PENDING.getCode());
-                jobRepository.saveAndFlush(job);
-            }
+                return jobRepository.saveAndFlush(job);
+            } else return null;
         } catch (Exception ex) {
             ex.printStackTrace();
+            return null;
         }
     }
 
@@ -133,8 +145,7 @@ public class JobManagerImpl extends JobManagerAbstraction {
                 jobOperator.stop(task.getJobExecutionId());
                 cancelTaskSteps(task);
                 // If the task is still in queue
-            } else
-            if (task != null && task.getJobExecutionId() == null) {
+            } else if (task != null && task.getJobExecutionId() == null) {
                 RRJob runnable = (RRJob) executor.getQueue().stream().filter(e -> ((RRJob) e).getTask().getTaskId().equals(task.getTaskId())).findFirst().orElse(null);
                 if (runnable != null)
                     executor.getQueue().remove(runnable);
@@ -267,15 +278,21 @@ public class JobManagerImpl extends JobManagerAbstraction {
     }
 
     @Override
-    //@Transactional(transactionManager = "theTransactionManager")
     public void onTaskError(Long taskId) {
         TaskEntity task = taskRepository.findById(taskId).orElse(null);
 
         if (task != null) {
-            task.getJob().setStatus(JobStatus.FAILED.getCode());
+            entityManager.refresh(task.getJob());
+            if (!(task.getJob().getStatus().equalsIgnoreCase(JobStatus.PAUSED.getCode())
+                    && task.getJob().getStatus().equalsIgnoreCase(JobStatus.CANCELLED.getCode())))
+                task.getJob().setStatus(JobStatus.FAILED.getCode());
             task.setStatus(JobStatus.FAILED.getCode());
             jobRepository.saveAndFlush(task.getJob());
             taskRepository.saveAndFlush(task);
         }
     }
+
+//    public List<StepEntity> getStepsForATask(Long taskId) {
+//        List<StepEntity> steps = stepRepository.find;
+//    }
 }

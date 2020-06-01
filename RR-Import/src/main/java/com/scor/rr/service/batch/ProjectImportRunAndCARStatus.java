@@ -23,6 +23,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.util.Date;
 
 @StepScope
@@ -31,23 +33,21 @@ import java.util.Date;
 public class ProjectImportRunAndCARStatus {
 
 
+    RestTemplate restTemplate = new RestTemplate();
     @Autowired
     private ProjectImportRunRepository projectImportRunRepository;
-
     @Autowired
     private ProjectConfigurationForeWriterRepository projectConfigurationForeWriterRepository;
-
     @Autowired
     private TaskEntityRepository taskEntityRepository;
-
     @Autowired
     private JobEntityRepository jobEntityRepository;
-
-    RestTemplate restTemplate=new RestTemplate();
-
     @Autowired
     @Qualifier("jobManagerImpl")
     private JobManager jobManager;
+
+    @PersistenceContext
+    private EntityManager entityManager;
 
     @Value("#{jobParameters['taskId']}")
     private String taskId;
@@ -111,9 +111,12 @@ public class ProjectImportRunAndCARStatus {
                 JobEntity job = jobEntityRepository.findById(task.getJob().getJobId()).orElse(null);
                 if (job != null && job.getTasks().indexOf(task) == job.getTasks().size() - 1) {
                     if (job.getTasks().stream()
-                            .anyMatch(t -> t.getStatus().equalsIgnoreCase(JobStatus.FAILED.getCode())))
-                        job.setStatus(JobStatus.FAILED.getCode());
-                    else
+                            .anyMatch(t -> t.getStatus().equalsIgnoreCase(JobStatus.FAILED.getCode()))) {
+                        entityManager.refresh(job);
+                        if (!(job.getStatus().equalsIgnoreCase(JobStatus.PAUSED.getCode())
+                                && job.getStatus().equalsIgnoreCase(JobStatus.CANCELLED.getCode())))
+                            job.setStatus(JobStatus.FAILED.getCode());
+                    } else
                         job.setStatus(JobStatus.SUCCEEDED.getCode());
                     job.setFinishedDate(new Date());
                     jobEntityRepository.saveAndFlush(job);
@@ -129,7 +132,7 @@ public class ProjectImportRunAndCARStatus {
         }
     }
 
-    private void generateScopeAndCompletenessData(String carId){
+    private void generateScopeAndCompletenessData(String carId) {
         HttpHeaders requestHeaders = new HttpHeaders();
         requestHeaders.add("Accept", MediaType.APPLICATION_JSON_VALUE);
         requestHeaders.add("Authorization", "Bearer ".concat(((UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser().getJwtToken()));
@@ -147,7 +150,7 @@ public class ProjectImportRunAndCARStatus {
                 log.info("Scope and Completeness data generation has ended successfully for the CAR with Id {}", carId);
             else
                 log.info("Scope and Completeness data generation has failed for the CAR with Id {} for reason : {}", carId, response.toString());
-        }catch (Exception exp){
+        } catch (Exception exp) {
             exp.printStackTrace();
         }
     }
