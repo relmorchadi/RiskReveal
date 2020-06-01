@@ -48,7 +48,7 @@ export class LeftMenuComponent extends BaseContainer implements OnInit, OnDestro
   collapse(isOutside = false) {
     event.stopPropagation();
     event.preventDefault();
-    this.toggleCollapseEmitter.emit(isOutside || !this.isCollapsed);
+//    this.toggleCollapseEmitter.emit(isOutside || !this.isCollapsed);
   }
 
   routerNavigate(route) {
