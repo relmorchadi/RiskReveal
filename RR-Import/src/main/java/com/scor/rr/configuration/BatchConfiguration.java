@@ -22,6 +22,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.task.SimpleAsyncTaskExecutor;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
+import org.springframework.security.task.DelegatingSecurityContextAsyncTaskExecutor;
 
 import javax.sql.DataSource;
 import java.util.Comparator;
@@ -101,15 +103,17 @@ public class BatchConfiguration {
     @Bean
     public TaskExecutor threadPoolTaskExecutor() {
 
-        SimpleAsyncTaskExecutor executor = new SimpleAsyncTaskExecutor();
-        executor.setConcurrencyLimit(1);
+        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+        executor.setCorePoolSize(5);
+        executor.setMaxPoolSize(5);
         executor.setThreadNamePrefix("jm_thread");
-        return executor;
+        executor.initialize(); // this is important, otherwise an error is thrown
+        return new DelegatingSecurityContextAsyncTaskExecutor(executor);
     }
 
     @Bean(name = "RRThreadPoolWithQueue")
     public ThreadPoolExecutor RRThreadPoolWithQueue() {
-        return new ThreadPoolExecutor(1, 1, 1, TimeUnit.SECONDS, new PriorityBlockingQueue<Runnable>(500, new Comparator<Runnable>() {
+        return new ThreadPoolExecutor(5, 5, 1, TimeUnit.SECONDS, new PriorityBlockingQueue<Runnable>(500, new Comparator<Runnable>() {
             @Override
             public int compare(Runnable o1, Runnable o2) {
                 return ((RRJob) o1).compareTo((RRJob) o2);
