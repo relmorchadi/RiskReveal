@@ -49,6 +49,7 @@ export class GlobalTableComponent extends BaseTable implements OnInit, AfterView
     });
 
     this._handler.visibleColumns$.subscribe(c => {
+      console.log(c);
       this.isModalVisible = false;
       this.columns= [
         ...c

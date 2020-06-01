@@ -119,7 +119,6 @@
             </div>
             <div class="form-group">
               <input formControlName="projectDescription" class="a-textfield-standard" type="text" placeholder="Project description" style="margin: 0 16px;">
-              <div *ngIf="_projectDescription.invalid && _projectDescription.dirty" class="input-err"><span *ngIf="_projectDescription.errors?.required">Description is required</span></div>
             </div>
           </div>
           <form [formGroup]="projectsForm" *ngIf="_projectStep.value == 1" class="input-group" style="position: relative;display: flex;flex-wrap: wrap;
@@ -156,9 +155,9 @@
               [ngClass]="{'a-buttons-contained' : cloningStatus != 'ON_CLONE',
                           'a-button-text':  cloningStatus == 'ON_CLONE'}"
               style="margin-left: 10px;">
-          {{cloningStatus == 'ON_CLONE' ? 'Cloning...' : 'clone'}}
+          {{cloningStatus == 'ON_CLONE' ? 'Cloning...' : 'Clone'}}
       </button>
-      <button (click)="cloneAndOpen()" class="a-buttons-contained" style="margin-left: 10px;">clone AND open</button>
+      <button (click)="cloneAndOpen()" class="a-buttons-contained" style="margin-left: 10px;">Clone and Open</button>
       </div>
       </div>
 

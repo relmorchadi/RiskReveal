@@ -80,7 +80,7 @@
         </app-plt-left-menu>
       </div>
       <div
-        [ngStyle]="{ 'width': rightMenuInputs['visible'] ? 'calc(100% - 220px - 500px - 16px - 3px)' : 'calc(100% - 220px - 58px - 16px)'}"
+        [ngStyle]="{ 'width': '100%'}"
         class="center">
         <div class="title-as-tab">
           <span>
@@ -91,7 +91,7 @@
           <i (click)="openColumnManager()" style="cursor: pointer;" class="icon-settings_24px" nz-tooltip="Manage Columns"></i>
 
         </div>
-        <div class="PLTs-content">
+        <div class="PLTs-content" >
           <app-plt-main-table
             [tableInputs]="Inputs | pickKeys : tableInputs"
             [selectedProject]="Inputs.selectedProject"

@@ -152,7 +152,7 @@ public class CloningScorPltHeaderService {
 
             PltHeaderEntity newPurePlt = this.cloneScorPltHeader(sourcePurePltId);
             AdjustmentThread newAdjustmentThread = new AdjustmentThread();
-            newAdjustmentThread.setInitialPLT(newPurePlt);
+              newAdjustmentThread.setInitialPLT(newPurePlt);
             newAdjustmentThread.setFinalPLT(newPLT);
             newAdjustmentThread.setLocked(false);
             newAdjustmentThread.setThreadIndex(1);
@@ -176,13 +176,13 @@ public class CloningScorPltHeaderService {
             // copy plt files
             try {
                 File dstFile = this.copyPltFile(sourcePlt, newPLT ,
-                        "/scor/data/ihub/v4/Facultative/Contracts/"+ request.getTargetWorkspaceContextCode()
-                                + "/" + request.getTargetWorkspaceUwYear() + "/"  +
-                                this.projectRepository.findById(newPLT.getProjectId()).get().getProjectName()
+      //                  "/scor/data/ihub/v4/Facultative/Contracts/"+ request.getTargetWorkspaceContextCode()
+        //                        + "/" + request.getTargetWorkspaceUwYear() + "/"  +
+          //                      this.projectRepository.findById(newPLT.getProjectId()).get().getProjectName()
 
-//                        "C:\\dev\\projects\\test\\Facultative\\Contracts\\"  + request.getTargetWorkspaceContextCode()
-  //                              + "\\" + request.getTargetWorkspaceUwYear() + "\\"  +
-    //                            this.projectRepository.findById(newPLT.getProjectId()).get().getProjectName()
+                        "C:\\dev\\projects\\test\\Facultative\\Contracts\\"  + request.getTargetWorkspaceContextCode()
+                                + "\\" + request.getTargetWorkspaceUwYear() + "\\"  +
+                                this.projectRepository.findById(newPLT.getProjectId()).get().getProjectName()
                 );
                 newPLT.setLossDataFilePath(dstFile.getParent());
                 newPLT.setLossDataFileName(dstFile.getName());

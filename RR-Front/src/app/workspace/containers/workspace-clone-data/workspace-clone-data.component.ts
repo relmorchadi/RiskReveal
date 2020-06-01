@@ -673,9 +673,10 @@ export class WorkspaceCloneDataComponent extends BaseContainer implements OnInit
 
   }
 
-  clone() {
-
+  clone(open = false) {
+    console.log(open);
     let body = {
+      open,
       pltIds: this.getFormValueByKey('from').plts.map(p => p.pltId),
       cloningType: '',
       newProjectName: '',
@@ -725,8 +726,8 @@ export class WorkspaceCloneDataComponent extends BaseContainer implements OnInit
 
   cloneAndOpen() {
 
-    this.clone();
+    this.clone(true);
 
-    if (this.projectsForm.valid) this.navigate([`workspace/${this.getFormValueByKey('to').wsId}/${this.getFormValueByKey('to').uwYear}/PltBrowser`]);
+//    if (this.projectsForm.valid) this.navigate([`workspace/${this.getFormValueByKey('to').wsId}/${this.getFormValueByKey('to').uwYear}/PltBrowser`]);
   }
 }
