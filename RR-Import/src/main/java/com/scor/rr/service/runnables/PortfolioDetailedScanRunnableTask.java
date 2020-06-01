@@ -17,7 +17,7 @@ import java.util.concurrent.CountDownLatch;
 @Component
 @Scope("prototype")
 @Data
-@Transactional(transactionManager = "rrTransactionManager")
+@Transactional(transactionManager = "rmsTransactionManager")
 public class PortfolioDetailedScanRunnableTask implements Callable<List<RLPortfolio>> {
 
     @Autowired
@@ -32,7 +32,7 @@ public class PortfolioDetailedScanRunnableTask implements Callable<List<RLPortfo
     private List<PortfolioHeader> headers;
 
     @Override
-    @Transactional(transactionManager = "rrTransactionManager", propagation = Propagation.REQUIRES_NEW)
+    @Transactional(transactionManager = "rmsTransactionManager", propagation = Propagation.REQUIRES_NEW)
     public List<RLPortfolio> call() throws Exception {
         try {
             return rmsService.scanPortfolioDetail(instanceId, headers, projectId);

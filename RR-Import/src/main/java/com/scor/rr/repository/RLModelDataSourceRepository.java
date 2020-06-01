@@ -24,17 +24,17 @@ public interface RLModelDataSourceRepository extends JpaRepository<RLModelDataSo
 
     @Modifying
     @Query("update RLModelDataSource rlmd set rlmd.count=:count where rlmd.rlModelDataSourceId=:rlModelDataSourceId")
-    @Transactional(transactionManager = "rrTransactionManager")
+    @Transactional(transactionManager = "theTransactionManager")
     void updateCount(@Param("rlModelDataSourceId") Long rlModelDataSourceId, @Param("count") Integer count);
     
     @Modifying
     @Query("delete from RLModelDataSource where rlModelDataSourceId=:RlModelDataSourceId")
-    @Transactional(transactionManager = "rrTransactionManager")
+    @Transactional(transactionManager = "theTransactionManager")
     void deleteRLModelDataSourceById(@Param("RlModelDataSourceId") Long rlDataSourceId);
 
     @Modifying
     @Query("delete from RLModelDataSource where projectId=:projectId")
-    @Transactional(transactionManager = "rrTransactionManager")
+    @Transactional(transactionManager = "theTransactionManager")
     void deleteRLModelDataSourceByProjectId(@Param("projectId") Long projectId);
 
 }
