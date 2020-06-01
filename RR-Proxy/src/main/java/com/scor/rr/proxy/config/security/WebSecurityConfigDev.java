@@ -46,7 +46,7 @@ public class WebSecurityConfigDev extends WebSecurityConfigurerAdapter {
             protected void doFilterInternal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, FilterChain filterChain) throws ServletException, IOException {
                 WebSecurityConfigDev.this.logger.info("invoke filter auth");
 
-                UsernamePasswordAuthenticationToken userPassToken = new UsernamePasswordAuthenticationToken("U011191", null, Collections.emptyList());
+                UsernamePasswordAuthenticationToken userPassToken = new UsernamePasswordAuthenticationToken("U008925", null, Collections.emptyList());
 
 
                 userRepository.findByUserCode(userPassToken.getName()).ifPresent((e) -> {
