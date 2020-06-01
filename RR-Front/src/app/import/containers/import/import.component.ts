@@ -281,4 +281,14 @@ export class ImportContainer extends BaseContainer implements OnInit {
     };
     params.api.setServerSideDatasource(datasource);
   }
+
+  downloadTemplate() {
+    let link = document.createElement('a');
+    link.setAttribute('type', 'hidden');
+    link.href = 'assets/SampleBulkImport.xlsx';
+    link.download = 'SampleBulkImport.xlsx';
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+  }
 }
