@@ -59,7 +59,7 @@
 
       <div class="box-item" style="width: 780px;padding: 0 25px;margin: 0;">
         <div style="margin: 0 0 0 0; padding: 0 0 0 0; display: flex;justify-content: flex-end;">
-          <i style="cursor:pointer;font-size:27px;color: var(&#45;&#45;primary-1);transform: rotate(90deg);margin-right: 14px"
+          <i style="cursor:pointer;font-size:27px;transform: rotate(90deg);margin-right: 14px"
              class="icon-compare_arrows_24px" (click)="swapCloneItems()"></i>
         </div>
       </div>
@@ -111,7 +111,6 @@
     padding: 13px;
     bottom: 3px;
     z-index: 0;
-    border: 3px solid var(&#45;&#45;primary-1);
 ">
             <div class="form-group">
               <input formControlName="projectName" class="a-textfield-standard" type="text" placeholder="Project name" style="margin: 0 16px;">
@@ -127,7 +126,6 @@
     padding: 13px;
     bottom: 3px;
     z-index: 0;
-    border: 3px solid var(&#45;&#45;primary-1);
 ">
             <div class="form-group">
               <nz-select
@@ -150,9 +148,7 @@
       </div>
       <div class="box-item" style="width: 780px;">
       <div style="margin-top: 20px; display: flex;justify-content: flex-end;">
-      <button (click)="reset()" class="a-buttons-outlined">
-        {{ activeSubTitle === 0 ? 'Reset' : 'submit'}}
-      </button>
+      <button (click)="reset()" [ngClass]="{'a-button-text': activeSubTitle === 0, 'a-buttons-outlined': activeSubTitle != 0}">{{ activeSubTitle === 0 ? 'Reset' : 'Submit'}}</button>
       <button (click)="clone()"
               [ngClass]="{'a-buttons-contained' : cloningStatus != 'ON_CLONE',
                           'a-buttons-outlined':  cloningStatus == 'ON_CLONE'}"
@@ -164,6 +160,7 @@
       </div>
 
     </div>
+  </div>
 </div>
 
   <app-workspace-project-popup

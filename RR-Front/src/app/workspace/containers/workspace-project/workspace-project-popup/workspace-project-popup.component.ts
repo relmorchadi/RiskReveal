@@ -650,6 +650,10 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
           let ar = data;
           if(ar)
           if(ar.plts) {
+            let newData = _.map(_.omit(data, ['plts', 'totalCount']), (item, index) => ({pltId: index, ...item}));
+            newData = _.map(_.filter(newData, item => item.selected), plt => plt.pltId);
+            ar.plts = _.map(ar.plts, plt => {
+              return {...plt, selected: _.includes(newData, `${plt.pltId}`)}});
             ar.plts.forEach(d => d.visible = true);
             ar.plts = ar.plts.filter(p => p.pltType == "THREAD")
                 .filter(plt => this.leftMenuInputs.projects.some(project => plt.projectId == project.projectId));
@@ -748,7 +752,7 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
       this.onSelectWorkspace.emit(this.selectedWorkspace);
       this.onSelectItems.emit(this.getInputs('selectedListOfPlts'));
       this.onVisibleChange.emit(false);
-    }else {
+    } else {
       this.searchWorkspace = false;
       this.newProject = true;
       this.onSelectProjectNext.emit(_.merge(
