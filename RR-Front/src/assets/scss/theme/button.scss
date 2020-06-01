@@ -43,7 +43,7 @@
   text-align: center;
   background-position: center;
   transition: background 0.8s;
-  text-transform: uppercase;
+  //text-transform: uppercase;
 
   &:focus {
     outline: 0;
@@ -115,7 +115,7 @@
   cursor: pointer;
   background-position: center;
   transition: background 1s;
-  text-transform: uppercase;
+  //text-transform: uppercase;
   border-radius: 20px;
 
   &:hover {
