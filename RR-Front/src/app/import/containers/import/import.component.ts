@@ -256,7 +256,6 @@ export class ImportContainer extends BaseContainer implements OnInit {
     this.historyGridColumnApi = params.columnApi;
     let datasource = {
       getRows: (params) => {
-        console.log('[Datasource] - rows requested by grid: ', params.request);
         const {
           startRow,
           endRow
@@ -290,5 +289,14 @@ export class ImportContainer extends BaseContainer implements OnInit {
     document.body.appendChild(link);
     link.click();
     link.remove();
+  }
+
+  clearFile() {
+    this.file = null;
+    this.excelFile = null;
+    this.isFileRead = false;
+    this.isFileValidated = false;
+    this.headerErrors = [];
+    this.gridApi.setRowData([]);
   }
 }

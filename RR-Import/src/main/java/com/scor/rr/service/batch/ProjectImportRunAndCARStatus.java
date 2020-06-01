@@ -58,6 +58,9 @@ public class ProjectImportRunAndCARStatus {
     @Value("#{jobParameters['marketChannel']}")
     private String marketChannel;
 
+    @Value("#{jobParameters['userId']}")
+    private String userId;
+
     @Value("#{stepExecution.jobExecution.jobId}")
     private Long jobId;
 

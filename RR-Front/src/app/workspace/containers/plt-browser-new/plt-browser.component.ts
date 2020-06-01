@@ -565,7 +565,6 @@ export class PltBrowserComponent extends BaseContainer implements OnInit, OnDest
       this.updateLeftMenuInputs('wsHeaderSelected', !!!selectedProject);
       this.updateLeftMenuInputs('selectedProject', selectedProject);
       this.gridApi.setFilterModel(filterModel);
-      console.log("[Left Menu]",this.leftMenuInputs)
       this.gridInitialized= false;
     });
 
