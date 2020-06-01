@@ -503,37 +503,31 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
       pltColumns: {
         visible: [
           {
-            sortDir: 1, fields: '', header: '', sorted: false, filtred: false, resizable: false, width: '40', icon: null, type: 'checkbox', active: true
+            sortDir: 1, fields: '', header: '', sorted: false, filtred: false, resizable: false, width: '10%', icon: null, type: 'checkbox', active: true
           },
           {
-            sortDir: 1, fields: 'pltId', header: 'PLT ID', sorted: true, filtred: true, resizable: true, icon: null, width: '28%', type: 'id', active: true
+            sortDir: 1, fields: 'pltId', header: 'PLT ID', sorted: true, filtred: true, resizable: true, icon: null, width: '10%', type: 'id', active: true
           },
           {
-            sortDir: 1, fields: 'pltName', header: 'PLT Name', sorted: true, filtred: true, resizable: true, width: '100%', icon: null, type: 'field', active: true
+            sortDir: 1, fields: 'pltName', header: 'PLT Name', sorted: true, filtred: true, resizable: true, width: '10%', icon: null, type: 'field', active: true
           },
           {
-            sortDir: 1, fields: 'peril', header: 'Peril', sorted: true, filtred: true, resizable: false, width: '22%', icon: null, type: 'field', textAlign: 'center', active: true
+            sortDir: 1, fields: 'perilGroupCode', header: 'Peril Group Code', sorted: true, filtred: true, resizable: false, width: '10%', icon: null, type: 'field', textAlign: 'center', active: true
           },
           {
-            sortDir: 1, fields: 'regionPerilCode', header: 'Region Peril Code', sorted: true, filtred: true, resizable: true, width: '35%', icon: null, type: 'field', active: true
+            sortDir: 1, fields: 'regionPerilCode', header: 'Region Peril Code', sorted: true, filtred: true, resizable: true, width: '10%', icon: null, type: 'field', active: true
           },
           {
-            sortDir: 1, fields: 'regionPerilName', header: 'Region Peril Name', sorted: true, filtred: true, resizable: true, width: '60%', icon: null, type: 'field', active: true
+            sortDir: 1, fields: 'regionPerilDesc', header: 'Region Peril Description', sorted: true, filtred: true, resizable: true, width: '20%', icon: null, type: 'field', active: true
           },
           {
-            sortDir: 1, fields: 'grain', header: 'Grain', sorted: true, filtred: true, resizable: true, width: '70%', icon: null, type: 'field', active: true
+            sortDir: 1, fields: 'grain', header: 'Grain', sorted: true, filtred: true, resizable: true, width: '10%', icon: null, type: 'field', active: true
           },
           {
-            sortDir: 1, fields: 'deletedBy', forDelete: true, header: 'Deleted By', sorted: true, filtred: true, resizable: true, icon: null, type: 'field', active: false
+            sortDir: 1, fields: 'vendorSystem', header: 'Vendor System', sorted: true, filtred: true, resizable: true, width: '10%', icon: null, type: 'field', active: true
           },
           {
-            sortDir: 1, fields: 'deletedAt', forDelete: true, header: 'Deleted On', sorted: true, filtred: true, resizable: true, icon: null, type: 'date', active: false
-          },
-          {
-            sortDir: 1, fields: 'vendorSystem', header: 'Vendor System', sorted: true, filtred: true, resizable: true, width: '25%', icon: null, type: 'field', active: true
-          },
-          {
-            sortDir: 1, fields: 'rap', header: 'RAP', sorted: true, filtred: true, resizable: true, width: '25%', icon: null, type: 'field', active: true
+            sortDir: 1, fields: 'targetRAPDesc', header: 'Target RAP Description', sorted: true, filtred: true, resizable: true, width: '10%', icon: null, type: 'field', active: true
           }
         ],
         available: []

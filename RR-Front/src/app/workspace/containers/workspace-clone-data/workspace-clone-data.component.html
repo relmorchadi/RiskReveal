@@ -150,10 +150,12 @@
       </div>
       <div class="box-item" style="width: 780px;">
       <div style="margin-top: 20px; display: flex;justify-content: flex-end;">
-      <button (click)="reset()" [ngClass]="{'a-button-text': activeSubTitle === 0, 'a-buttons-outlined': activeSubTitle != 0}">{{ activeSubTitle === 0 ? 'reset' : 'submit'}}</button>
+      <button (click)="reset()" class="a-buttons-outlined">
+        {{ activeSubTitle === 0 ? 'Reset' : 'submit'}}
+      </button>
       <button (click)="clone()"
               [ngClass]="{'a-buttons-contained' : cloningStatus != 'ON_CLONE',
-                          'a-button-text':  cloningStatus == 'ON_CLONE'}"
+                          'a-buttons-outlined':  cloningStatus == 'ON_CLONE'}"
               style="margin-left: 10px;">
           {{cloningStatus == 'ON_CLONE' ? 'Cloning...' : 'Clone'}}
       </button>
