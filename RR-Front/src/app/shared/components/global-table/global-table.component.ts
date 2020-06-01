@@ -19,6 +19,9 @@ export class GlobalTableComponent extends BaseTable implements OnInit, AfterView
   contextMenu = [
     {
       label: 'View Detail', command: () => {console.log(this.selectedItem); this.actionDispatcher.emit({ type: 'View Detail', payload: this.selectedItem });}
+    },
+    {
+      label: 'Clone to', command: () => {console.log(this.selectedItem); this.actionDispatcher.emit({ type: 'Clone to', payload: this.selectedItem });}
     }
     ];
 

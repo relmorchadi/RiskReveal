@@ -182,31 +182,29 @@ public class CloningScorPltHeaderService {
                 throw new com.scor.rr.exceptions.RRException(ExceptionCodename.MODEL_ANALYSIS_NOT_FOUND, 1);
             }
             // clone LossDataHeader
-            LossDataHeaderEntity lossDataHeaderEntity = this.lossDataHeaderEntityRepository.findByModelAnalysisId(modelAnalysisEntity.get().getRrAnalysisId());
-            LossDataHeaderEntity newLossData = null;
-            if (lossDataHeaderEntity != null) {
+            List<LossDataHeaderEntity> lossDataHeaderEntities = this.lossDataHeaderEntityRepository.findByModelAnalysisId(modelAnalysisEntity.get().getRrAnalysisId());
+            LossDataHeaderEntity newLossData = new LossDataHeaderEntity();
+            for (LossDataHeaderEntity lossDataHeaderEntity : lossDataHeaderEntities) {
                 newLossData = new LossDataHeaderEntity(lossDataHeaderEntity);
                 newLossData.setModelAnalysisId(newPLT.getModelAnalysisId());
                 newLossData.setCloningSourceId(lossDataHeaderEntity.getLossDataHeaderId());
                 newLossData = this.lossDataHeaderEntityRepository.save(newLossData);
-            } else {
-                throw new com.scor.rr.exceptions.RRException(ExceptionCodename.LOSS_DATA_HEADER_NOT_FOUND, 1);
+                // clone ep curve
+                List<EPCurveHeaderEntity> epCurveHeaderEntities = this.epCurveHeaderEntityRepository.findByLossDataId(lossDataHeaderEntity.getLossDataHeaderId());
+                for(EPCurveHeaderEntity epCurveHeaderEntity : epCurveHeaderEntities) {
+                    EPCurveHeaderEntity newEpCurve = new EPCurveHeaderEntity(epCurveHeaderEntity);
+                    newEpCurve.setLossDataId(newLossData.getLossDataHeaderId());
+                    this.epCurveHeaderEntityRepository.save(newEpCurve);
+                }
             }
             // clone Summary Statistics Header
-            Optional<SummaryStatisticHeaderEntity> summaryStatisticHeaderEntity = this.summaryStatisticHeaderRepository.findById(pltId);
+            Optional<SummaryStatisticHeaderEntity> summaryStatisticHeaderEntity = this.summaryStatisticHeaderRepository.findById(sourcePlt.getSummaryStatisticHeaderId());
             if (summaryStatisticHeaderEntity.isPresent()) {
                 SummaryStatisticHeaderEntity other = new SummaryStatisticHeaderEntity(summaryStatisticHeaderEntity.get(), true);
                 other = this.summaryStatisticHeaderRepository.save(other);
                 newPLT.setSummaryStatisticHeaderId(other.getSummaryStatisticHeaderId());
             } else {
                 throw new com.scor.rr.exceptions.RRException(ExceptionCodename.SUMMARY_STATISTICS_HEADER_NOT_FOUND,1);
-            }
-            // clone ep curve
-            List<EPCurveHeaderEntity> epCurveHeaderEntities = this.epCurveHeaderEntityRepository.findByLossDataId(lossDataHeaderEntity.getLossDataHeaderId());
-            for(EPCurveHeaderEntity epCurveHeaderEntity : epCurveHeaderEntities) {
-                EPCurveHeaderEntity newEpCurve = new EPCurveHeaderEntity(epCurveHeaderEntity);
-                newEpCurve.setLossDataId(newLossData.getLossDataHeaderId());
-                this.epCurveHeaderEntityRepository.save(newEpCurve);
             }
 
             // copy plt files
