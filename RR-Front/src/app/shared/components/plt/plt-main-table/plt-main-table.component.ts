@@ -15,15 +15,19 @@ import {Message} from '../../../message';
 import {TableSortAndFilterPipe} from "../../../pipes/table-sort-and-filter.pipe";
 import {SystemTagFilterPipe} from "../../../pipes/system-tag-filter.pipe";
 import {$e} from "codelyzer/angular/styles/chars";
+import * as fromWorkspaceStore from "../../../../workspace/store";
+import {BaseContainer} from "../../../base";
+import {Store} from "@ngxs/store";
+import {Router} from "@angular/router";
 
 @Component({
   selector: 'app-plt-main-table',
   templateUrl: './plt-main-table.component.html',
   styleUrls: ['./plt-main-table.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+  // changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [TableSortAndFilterPipe, SystemTagFilterPipe]
 })
-export class PltMainTableComponent implements OnInit {
+export class PltMainTableComponent extends BaseContainer implements OnInit {
 
   perilColors = {
     'EQ': 'red',
@@ -42,6 +46,8 @@ export class PltMainTableComponent implements OnInit {
   selectedDropDownTs: any;
   initContainer: any[];
 
+  payloadSelectedPLts: any = {};
+
   @Output() setTagModalVisibility = new EventEmitter();
 
   @Output() actionDispatcher: EventEmitter<Message> = new EventEmitter<Message>();
@@ -52,10 +58,11 @@ export class PltMainTableComponent implements OnInit {
   private lastClick: string;
   private userTagsLength: number;
 
-  constructor(private _baseCdr: ChangeDetectorRef, private filterPipe: TableSortAndFilterPipe, private systemTagFilter: SystemTagFilterPipe) {
+  constructor(private filterPipe: TableSortAndFilterPipe, private systemTagFilter: SystemTagFilterPipe,
+              _baseStore: Store, _baseRouter: Router, _baseCdr: ChangeDetectorRef) {
+    super(_baseRouter, _baseCdr, _baseStore);
     this.activeCheckboxSort = false;
     this.userTagsLength = 3;
-
   }
 
   ngOnInit() {
@@ -67,12 +74,20 @@ export class PltMainTableComponent implements OnInit {
     return this.systemTagFilter.transform(this.filterPipe.transform(this.tableInputs.showDeleted ? this.tableInputs.listOfDeletedPltsData : this.tableInputs.listOfPltsData,[this.tableInputs.sortData, this.tableInputs.filterData]),[this.tableInputs.filters.systemTag])
   }
 
-  checkAll($event) {
+  checkAll(event) {
+    let newPayload = {};
+    this.tableInputs.listOfPltsData = _.map(
+        this.tableInputs.listOfPltsData, ws =>  {
+          newPayload = _.merge(newPayload, {[ws.pltId]: {type: event}});
+          return {...ws, selected: event}
+        }
+    );
+    this.payloadSelectedPLts = newPayload;
 
-    this.actionDispatcher.emit({
+/*    this.actionDispatcher.emit({
       type: tableStore.onCheckAll,
       payload: this.tableInputs.showDeleted
-    });
+    });*/
   }
 
   checkAllScope(event) {
@@ -288,74 +303,81 @@ export class PltMainTableComponent implements OnInit {
     })
   }
 
-  selectSinglePLT(pltId: number, projectId: number, $event: boolean) {
-
-    this.actionDispatcher.emit({
-      type: tableStore.toggleSelectedPlts,
-      payload: {
-        [pltId]: {
-          type: $event,
-          projectId
-        }
+  selectSinglePLT(rowData, event: boolean) {
+    console.log('data', event);
+    const {pltId, projectId} = rowData;
+    const payload = {[pltId]: {
+        type: event,
+        projectId
       }
-    })
+    };
+    this.payloadSelectedPLts = _.merge(this.payloadSelectedPLts, payload);
+    this.tableInputs.listOfPltsData = _.map(this.tableInputs.listOfPltsData, plt => { return plt.pltId === pltId ? {...plt, selected: event} : {...plt}});
+    this.sendData();
   }
 
-  handlePLTClick(pltId, i: number, projectId: number, $event: MouseEvent) {
-
-
+  handlePLTClick(rowData, i: number, $event: MouseEvent) {
+    const {pltId, projectId} = rowData;
     const isSelected = _.findIndex(!this.tableInputs.showDeleted ? this.tableInputs.selectedListOfPlts : this.tableInputs.selectedListOfDeletedPlts, el => el == pltId) >= 0;
     if ($event.ctrlKey || $event.shiftKey) {
       this.lastClick = 'withKey';
-      this.handlePLTClickWithKey(pltId, i, projectId, !isSelected, $event);
+      this.handlePLTClickWithKey(rowData, i, !isSelected, $event);
     } else {
+      let newPayload = {};
+      this.tableInputs.listOfPltsData = _.map(this.tableInputs.listOfPltsData,
+          ws => {
+        newPayload = _.merge(newPayload, {[ws.pltId]: {type: ws.pltId === pltId}});
+        return {...ws, selected: ws.pltId === pltId}}
+      );
       this.lastSelectedId = i;
-      this.actionDispatcher.emit({
-        type: tableStore.toggleSelectedPlts,
-        payload: _.zipObject(
-          _.map(!this.tableInputs.showDeleted ? this.tableInputs.listOfPltsData : this.tableInputs.listOfDeletedPltsData, plt => plt.pltId),
-          _.map(!this.tableInputs.showDeleted ? this.tableInputs.listOfPltsData : this.tableInputs.listOfDeletedPltsData, plt => ({type: plt.pltId == pltId && (this.lastClick == 'withKey' || !isSelected)}))
-        )
-      })
+      this.payloadSelectedPLts = newPayload;
       this.lastClick = null;
+      this.sendData();
     }
   }
 
-  private handlePLTClickWithKey(pltId: number, i: number, projectId: number, isSelected: boolean, $event: MouseEvent) {
+  private handlePLTClickWithKey(rowData, i: number, isSelected: boolean, $event: MouseEvent) {
     if ($event.ctrlKey) {
-      this.selectSinglePLT(pltId, projectId, isSelected);
+      this.selectSinglePLT(rowData, isSelected);
       this.lastSelectedId = i;
-      return;
-    }
-
-    if ($event.shiftKey) {
+    } else if ($event.shiftKey) {
       if (!this.lastSelectedId) this.lastSelectedId = 0;
       if (this.lastSelectedId || this.lastSelectedId == 0) {
+        let newPayload = {};
         const max = _.max([i, this.lastSelectedId]);
         const min = _.min([i, this.lastSelectedId]);
-        this.actionDispatcher.emit({
-          type: tableStore.toggleSelectedPlts,
-          payload: _.zipObject(
-              _.map(!this.tableInputs.showDeleted ? this.tableInputs.listOfPltsData : this.tableInputs.listOfDeletedPltsData, plt => plt.pltId),
-              _.map(!this.tableInputs.showDeleted ? this.tableInputs.listOfPltsData : this.tableInputs.listOfDeletedPltsData, (plt, i) => ({type: i <= max && i >= min})),
-          )
-        })
+        this.tableInputs.listOfPltsData = _.map(this.tableInputs.listOfPltsData,
+            (ws, index) => {
+              newPayload = _.merge(newPayload, {[ws.pltId]: {type: index <= max && index >= min}});
+              return {...ws, selected: index <= max && index >= min}
+            }
+        );
+        this.payloadSelectedPLts = newPayload;
+        this.sendData();
       } else {
         this.lastSelectedId = i;
       }
-      return;
     }
   }
 
   rowTrackBy = (index, item) => {
     return item[this.tableInputs.dataKey || this.tableInputs.pltColumns.visible[0].field];
-  }
+  };
 
   filterByFalsely(bool: string) {
     this.actionDispatcher.emit({
       type: tableStore.filterByFalesely,
       payload: bool
     })
+  }
+
+  sendData() {
+     setTimeout(() => {
+      this.actionDispatcher.emit({
+        type: tableStore.toggleSelectedPlts,
+        payload: this.payloadSelectedPLts
+      })
+    }, 100)
   }
 
   onColResize(event: any) {
@@ -370,18 +392,9 @@ export class PltMainTableComponent implements OnInit {
     }
   }
 
-  protected detectChanges() {
-    if (!this._baseCdr['destroyed'])
-      this._baseCdr.detectChanges();
-  }
-
   getElHeight() {
     const els = document.getElementsByClassName('ui-table-scrollable-header');
     return els.length ?  document.getElementsByClassName('ui-table-scrollable-header')[0].clientHeight + 'px' : 0;
-  }
-
-  log($event: FocusEvent) {
-
   }
 
   ok($ev) {

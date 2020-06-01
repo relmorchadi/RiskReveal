@@ -119,6 +119,38 @@ public class SummaryStatisticHeaderEntity {
         this.ePSFileName = ePSFileName;
     }
 
+    public SummaryStatisticHeaderEntity(SummaryStatisticHeaderEntity other, boolean clone) {
+
+        this.lossDataType = other.lossDataType;
+        this.lossDataId = other.lossDataId;
+        this.entity = other.entity;
+        this.financialPerspective = other.financialPerspective;
+        this.purePremium = other.purePremium;
+        this.currency = other.currency;
+        this.standardDeviation = other.standardDeviation;
+        this.cov = other.cov;
+        this.skewness = other.skewness;
+        this.kurtosis = other.kurtosis;
+        this.ePSFilePath = other.ePSFilePath;
+        this.ePSFileName = other.ePSFileName;
+        this.oep2 = other.oep2;
+        this.oep5 = other.oep5;
+        this.oep10 = other.oep10;
+        this.oep50 = other.oep50;
+        this.oep100 = other.oep100;
+        this.oep250 = other.oep250;
+        this.oep500 = other.oep500;
+        this.oep1000 = other.oep1000;
+        this.aep2 = other.aep2;
+        this.aep5 = other.aep5;
+        this.aep10 = other.aep10;
+        this.aep50 = other.aep50;
+        this.aep100 = other.aep100;
+        this.aep250 = other.aep250;
+        this.aep500 = other.aep500;
+        this.aep1000 = other.aep1000;
+
+    }
     public SummaryStatisticHeaderEntity(SummaryStatisticHeaderEntity summaryStatisticHeaderEntity) {
         this.entity = summaryStatisticHeaderEntity.getEntity();
         this.financialPerspective = summaryStatisticHeaderEntity.getFinancialPerspective();
