@@ -909,7 +909,6 @@ export class RiskLinkStateService {
                     (refData: any) => {
                         return of(ctx.patchState(
                             produce(ctx.getState(), draft => {
-
                                 const wsIdentifier = _.get(draft, 'currentTab.wsIdentifier');
                                 let riskLinkContext: RiskLink = draft.content[wsIdentifier].riskLink;
                                 riskLinkContext.setRefData(refData, config.rmsInstance, config.financialPerspectiveELT, config.targetCurrency);
