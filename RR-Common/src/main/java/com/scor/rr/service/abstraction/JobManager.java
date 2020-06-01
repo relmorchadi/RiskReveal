@@ -18,11 +18,11 @@ public interface JobManager {
 
     void submitJob(Long jobId);
 
-    void cancelJob(Long jobId);
+    JobEntity cancelJob(Long jobId);
 
-    void pauseJob(Long jobId);
+    JobEntity pauseJob(Long jobId);
 
-    void resumeJob(Long jobId);
+    JobEntity resumeJob(Long jobId);
 
     void submitTask(Long taskId);
 

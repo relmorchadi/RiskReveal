@@ -104,8 +104,8 @@ public class BatchConfiguration {
     public TaskExecutor threadPoolTaskExecutor() {
 
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-        executor.setCorePoolSize(5);
-        executor.setMaxPoolSize(5);
+        executor.setCorePoolSize(2);
+        executor.setMaxPoolSize(2);
         executor.setThreadNamePrefix("jm_thread");
         executor.initialize(); // this is important, otherwise an error is thrown
         return new DelegatingSecurityContextAsyncTaskExecutor(executor);
@@ -113,7 +113,7 @@ public class BatchConfiguration {
 
     @Bean(name = "RRThreadPoolWithQueue")
     public ThreadPoolExecutor RRThreadPoolWithQueue() {
-        return new ThreadPoolExecutor(5, 5, 1, TimeUnit.SECONDS, new PriorityBlockingQueue<Runnable>(500, new Comparator<Runnable>() {
+        return new ThreadPoolExecutor(2, 2, 1, TimeUnit.SECONDS, new PriorityBlockingQueue<Runnable>(500, new Comparator<Runnable>() {
             @Override
             public int compare(Runnable o1, Runnable o2) {
                 return ((RRJob) o1).compareTo((RRJob) o2);

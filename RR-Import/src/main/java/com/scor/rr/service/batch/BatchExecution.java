@@ -164,11 +164,12 @@ public class BatchExecution {
     }
 
     //@Transactional(transactionManager = "theTransactionManager")
-    public void resumeJobAfterPausing(Long jobId) {
-        jobEntityRepository.findById(jobId).ifPresent(j -> {
-            this.createParamsAndSubmitToQueueAfterSpecificAction(j, "restart", JobPriority.MEDIUM);
-            jobManager.resumeJob(jobId);
-        });
+    public JobEntity resumeJobAfterPausing(Long jobId) {
+        if (jobEntityRepository.findById(jobId).isPresent()) {
+            this.createParamsAndSubmitToQueueAfterSpecificAction(jobEntityRepository.findById(jobId).get(), "restart", JobPriority.MEDIUM);
+            return jobManager.resumeJob(jobId);
+        }
+        return null;
     }
 
     private void createParamsAndSubmitToQueueAfterSpecificAction(JobEntity job, String action, JobPriority priority) {

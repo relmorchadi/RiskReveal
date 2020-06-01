@@ -63,11 +63,13 @@ public class ImportResource {
     @GetMapping("/cancel-job-or-task")
     public ResponseEntity<?> cancel(@RequestParam Long id, @RequestParam String type) {
         try {
-            if (type.equalsIgnoreCase("task"))
+            if (type.equalsIgnoreCase("task")) {
                 jobManager.cancelTask(id);
-            else if (type.equalsIgnoreCase("job"))
-                jobManager.cancelJob(id);
-            return new ResponseEntity<>("Operation done", HttpStatus.OK);
+                return new ResponseEntity<>("Operation done", HttpStatus.OK);
+            } else if (type.equalsIgnoreCase("job"))
+                return new ResponseEntity<>(jobManager.cancelJob(id), HttpStatus.OK);
+            else
+                return new ResponseEntity<>("Not a supported type", HttpStatus.NOT_FOUND);
         } catch (Exception ex) {
             return new ResponseEntity<>("Operation Failed", HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -76,8 +78,7 @@ public class ImportResource {
     @GetMapping("/resume-job")
     public ResponseEntity<?> resume(@RequestParam Long jobId) {
         try {
-            batchExecution.resumeJobAfterPausing(jobId);
-            return new ResponseEntity<>("Operation done", HttpStatus.OK);
+            return new ResponseEntity<>(batchExecution.resumeJobAfterPausing(jobId), HttpStatus.OK);
         } catch (Exception ex) {
             return new ResponseEntity<>("Operation Failed", HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -99,6 +100,16 @@ public class ImportResource {
 
     @GetMapping("/pause-job")
     public ResponseEntity<?> pauseJob(@RequestParam Long jobId) {
+        try {
+            return new ResponseEntity<>(jobManager.pauseJob(jobId), HttpStatus.OK);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return new ResponseEntity<>("Operation failed", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping("/view-task-details")
+    public ResponseEntity<?> taskDetails(@RequestParam Long jobId) {
         try {
             jobManager.pauseJob(jobId);
             return new ResponseEntity<>("Operation done", HttpStatus.OK);
