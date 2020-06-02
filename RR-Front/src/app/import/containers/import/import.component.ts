@@ -105,7 +105,7 @@ export class ImportContainer extends BaseContainer implements OnInit {
       getChildCount: () => {}
     };
     this.gridHParams = {
-      columnDefs: [{ field: 'bulkImportFileId' }, { field: 'filePath' }, { field: 'fileName' }, { field: 'hasPassedValidation' }, {field: 'rowErrorsCount'}, { field: 'userId'}],
+      columnDefs: [{ field: 'bulkImportFileId' }, { field: 'filePath' }, { field: 'fileName' }, { field: 'hasPassedValidation' }, {field: 'rowErrorsCount'}, { field: 'userName'}],
       defaultColDef: {
         minWidth: 100,
         resizable: true,
@@ -233,7 +233,7 @@ export class ImportContainer extends BaseContainer implements OnInit {
             'Successfully added a JOB queue',
             'success',
             'bottomRight',
-            1000
+            3500
         )
       })
     } else {
@@ -242,7 +242,7 @@ export class ImportContainer extends BaseContainer implements OnInit {
           'Please validate file errors then re-upload file',
               'warning',
               'bottomRight',
-              1000
+              3500
           )
     }
   }

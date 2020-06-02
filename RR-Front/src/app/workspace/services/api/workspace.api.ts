@@ -21,7 +21,7 @@ export class WsApi {
   }
 
   getOpenedTabs(payload) {
-    return this._http.post(`${this.api}tabs/`, payload);
+    return this._http.post(`${this.api}tabs/all`, payload);
   }
 
   getTabsCount() {

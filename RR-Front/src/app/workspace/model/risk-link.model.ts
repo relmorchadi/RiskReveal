@@ -118,7 +118,7 @@ export class RiskLink {
             },
             financialPerspectiveELT: {
                 data: refData.financialPerspectives,
-                selected: defaultFp ? _.first(_.filter(refData.financialPerspectives, fp => fp.code == defaultFp )) : refData.financialPerspectives[0]
+                selected: defaultFp ? ( _.first(_.filter(refData.financialPerspectives, fp => fp.code == defaultFp )) || refData.financialPerspectives[0] ) : refData.financialPerspectives[0]
             },
             targetCurrency: {
                 data: refData.currencies,

@@ -3,7 +3,6 @@ import {
   AfterViewInit,
   Directive,
   ElementRef,
-  HostListener,
   Input,
   OnChanges,
   OnDestroy,
@@ -59,14 +58,12 @@ export class SyncScrollDirective implements AfterViewInit, AfterViewChecked, OnD
   }
 
   ngOnDestroy(): void {
-    console.log("destr")
     _.forEach(this.listener, node => {
       node.removeEventListener('scroll', () => {});
     });
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    console.log(changes);
     this.sync();
   }
 
