@@ -32,7 +32,7 @@ export class JobManagerService {
         return this._http.get(`${this.api}cancel-job-or-task?id=`+jobId+'&type=job',{responseType: 'text'});
     }
     resumeJob(jobId) {
-        return this._http.get(`${this.api}resume-job?jobId=`+jobId, {responseType: 'text'});
+        return this._http.get(`${this.api}resume-job?jobId=`+jobId, {responseType: 'json'});
     }
 
 

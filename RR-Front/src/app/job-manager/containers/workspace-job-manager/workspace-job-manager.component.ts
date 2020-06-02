@@ -170,7 +170,7 @@ export class WorkspaceJobManagerComponent extends BaseContainer
       display: true,
       sorted: false,
       filtered: true,
-      type: 'date',
+      type: 'time',
       filterParam: 'elapsedTime'
     },
     {
@@ -214,6 +214,7 @@ export class WorkspaceJobManagerComponent extends BaseContainer
         ...row,
         append:false,
         selected:false,
+          elapsedTime: row.finishedDate ? this.calculateElapsedTime(row.finishedDate,row.startedDate) : '-'
       }));
       this.allTasks = this.savedTask;
       this.detectChanges();
@@ -229,6 +230,16 @@ export class WorkspaceJobManagerComponent extends BaseContainer
     // });
   }
 
+  calculateElapsedTime(finishedDate,startedDate) {
+
+    let difference :any = new Date(0);
+    let diffInSeconds = Math.abs((finishedDate - startedDate)/1000)
+    difference.setSeconds( Math.floor( diffInSeconds % 60));
+    difference.setMinutes(Math.floor(diffInSeconds/60));
+
+
+    return difference.toISOString().substr(11, 8);
+  }
   expandRow(row, expand) {
     console.log(expand);
     row.append = !row.append;
@@ -239,8 +250,8 @@ export class WorkspaceJobManagerComponent extends BaseContainer
     this.jobManagerService.resumeJob(id).subscribe( (result:any) => {
       if (result) {
         console.log(result);
-        // this.savedTask.find( row => row.jobId == id).status = 'PAUSED';
-        // this.detectChanges();
+        this.savedTask.find( row => row.jobId == id).status = result.status;
+        this.detectChanges();
       }
     });
   }

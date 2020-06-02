@@ -89,6 +89,14 @@
                 </span>
               </div>
             </td>
+            <td *ngIf="col?.type === 'time'" (click)="multiSelectRow(rowData, i)">
+              <div class="td-wrapper" style="display:flex">
+<!--                <i *ngIf="col?.type === 'date'" class="icon-calendar-alt"></i>-->
+                <span [title]="rowData[col?.field]" class="text-wrapper">
+                    {{rowData[col?.field]}}
+                </span>
+              </div>
+            </td>
 
             <td *ngIf="col?.type === 'progress'" (click)="multiSelectRow(rowData, i)">
               <div class="td-wrapper status-border" style="display:flex; align-items: center">
@@ -116,7 +124,7 @@
             </td>
             <td *ngIf="col?.type === 'object'" (click)="multiSelectRow(rowData, i)">
               <div class="td-wrapper context-wrapper">
-                <span class="context-title">{{rowData.workspaceName}} - {{rowData.uwYear}}</span>
+                <span class="context-title">{{rowData.clientName}} - {{rowData.uwYear}}</span>
               </div>
             </td>
             <td *ngIf="col?.type === 'status'" (click)="multiSelectRow(rowData, i)">
