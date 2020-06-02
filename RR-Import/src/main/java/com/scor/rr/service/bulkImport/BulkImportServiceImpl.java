@@ -177,36 +177,42 @@ public class BulkImportServiceImpl implements BulkImportService {
                                 .queryParam("uwy", uwYear);
                         restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
 
-                        ResponseEntity<Object> creationResponse = restTemplate
-                                .exchange(uriBuilder.toUriString(), HttpMethod.POST, request, Object.class);
+                        try {
+                            ResponseEntity<Object> creationResponse = restTemplate
+                                    .exchange(uriBuilder.toUriString(), HttpMethod.POST, request, Object.class);
 
 //                        Object creationRes = restTemplate
 //                                .postForEntity(uriBuilder.toUriString(), request, Object.class);
 
-                        if (creationResponse.getStatusCode().equals(HttpStatus.OK)) {
-                            log.info("Project's creation has ended successfully");
+                            if (creationResponse.getStatusCode().equals(HttpStatus.OK)) {
+                                log.info("Project's creation has ended successfully");
 
-                            try {
-                                Map<String, Object> o = (LinkedHashMap<String, Object>) creationResponse.getBody();
-                                if (o != null) {
-                                    projectId = (long) (Integer) o.get("projectId");
-                                    workspaceCodeToProjectId.put(key, projectId);
-                                } else {
-                                    log.info("The project creation response is empty");
+                                try {
+                                    Map<String, Object> o = (LinkedHashMap<String, Object>) creationResponse.getBody();
+                                    if (o != null) {
+                                        projectId = (long) (Integer) o.get("projectId");
+                                        workspaceCodeToProjectId.put(key, projectId);
+                                    } else {
+                                        log.info("The project creation response is empty");
+                                        break;
+                                    }
+                                } catch (Exception ex) {
+                                    ex.printStackTrace();
+                                    log.info("Can't retrieve projectId from the response");
                                     break;
                                 }
-                            } catch (Exception ex) {
-                                ex.printStackTrace();
-                                log.info("Can't retrieve projectId from the response");
+                            } else {
+                                log.error("Project creation has failed for the following workspace {}", workspaceContextCode);
                                 break;
                             }
-                        } else {
-                            log.error("Project creation has failed for the following workspace {}", workspaceContextCode);
+
+                        } catch (RuntimeException ex) {
+                            log.error(ex.getMessage());
+                            ex.printStackTrace();
                             break;
                         }
                     } else
                         projectId = workspaceCodeToProjectId.get(key);
-
                     String instanceName = row.getCell(columns.indexOf("Instance"), Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue();
                     String type = row.getCell(columns.indexOf("Type"), Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue();
                     String dataSourceName = row.getCell(columns.indexOf("DataSourceName"), Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue();
@@ -281,12 +287,6 @@ public class BulkImportServiceImpl implements BulkImportService {
                                 imports.put(projectId, importConfig);
                             }
 
-                            imports.forEach((k, value) -> {
-                                List<Long> analysisIds = rmsService.saveAnalysisImportSelection(value.getAnalysisConfig());
-                                List<Long> portfolioIds = rmsService.savePortfolioImportSelection(value.getPortfolioConfig());
-                                ImportLossDataParams params = new ImportLossDataParams(value, analysisIds, portfolioIds);
-                                batchExecution.queueImportLossData(params.getInstanceId(), Long.valueOf(params.getProjectId()), Long.valueOf(params.getUserId()));
-                            });
                         } else {
                             log.error("The datasource type isn't one of the following (EDM,RDM)");
                             break;
@@ -296,6 +296,13 @@ public class BulkImportServiceImpl implements BulkImportService {
                         break;
                     }
                 }
+
+                imports.forEach((k, value) -> {
+                    List<Long> analysisIds = rmsService.saveAnalysisImportSelection(value.getAnalysisConfig());
+                    List<Long> portfolioIds = rmsService.savePortfolioImportSelection(value.getPortfolioConfig());
+                    ImportLossDataParams params = new ImportLossDataParams(value, analysisIds, portfolioIds);
+                    batchExecution.queueImportLossData(params.getInstanceId(), Long.valueOf(params.getProjectId()), Long.valueOf(params.getUserId()));
+                });
 
             } catch (Exception ex) {
                 ex.printStackTrace();

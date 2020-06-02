@@ -292,7 +292,8 @@ public class JobManagerImpl extends JobManagerAbstraction {
         }
     }
 
-//    public List<StepEntity> getStepsForATask(Long taskId) {
-//        List<StepEntity> steps = stepRepository.find;
-//    }
+    @Override
+    public List<StepEntity> getStepsForATask(Long taskId) {
+        return stepRepository.findByTaskId(taskId);
+    }
 }

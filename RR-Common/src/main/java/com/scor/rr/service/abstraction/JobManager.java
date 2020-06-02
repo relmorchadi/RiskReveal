@@ -49,4 +49,6 @@ public interface JobManager {
     void logTask(Long taskId, JobStatus status);
 
     void logStep(Long stepId, StepStatus status);
+
+    List<StepEntity> getStepsForATask(Long taskId);
 }
