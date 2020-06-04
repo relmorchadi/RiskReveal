@@ -17,6 +17,7 @@ import org.apache.commons.collections.keyvalue.MultiKey;
 import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -73,6 +74,22 @@ public class BulkImportServiceImpl implements BulkImportService {
     @Value(value = "${project.creation.service}")
     private String projectCalculationURL;
 
+    private static boolean isRowEmpty(Row row) {
+        boolean isEmpty = true;
+        DataFormatter dataFormatter = new DataFormatter();
+
+        if (row != null) {
+            for (Cell cell : row) {
+                if (dataFormatter.formatCellValue(cell).trim().length() > 0) {
+                    isEmpty = false;
+                    break;
+                }
+            }
+        }
+
+        return isEmpty;
+    }
+
     @Override
     public BulkImportFile uploadFile(MultipartFile file) {
         Path path = excelService.saveToDisk(file);
@@ -113,13 +130,15 @@ public class BulkImportServiceImpl implements BulkImportService {
             int rowsWithErrors = 0;
             while (rows.hasNext()) {
                 Row row = rows.next();
-                List<ValidationError> dataErrors = this.secondLevelOfValidation(columns, row, index, file);
-                if (!dataErrors.isEmpty()) {
-                    dataErrors = validationErrorRepository.saveAll(dataErrors);
-                    validationDto.addErrors(dataErrors);
-                    rowsWithErrors++;
+                if (!isRowEmpty(row)) {
+                    List<ValidationError> dataErrors = this.secondLevelOfValidation(columns, row, index, file);
+                    if (!dataErrors.isEmpty()) {
+                        dataErrors = validationErrorRepository.saveAll(dataErrors);
+                        validationDto.addErrors(dataErrors);
+                        rowsWithErrors++;
+                    }
+                    index++;
                 }
-                index++;
             }
 
             if (validationDto.getErrors() == null || validationDto.getErrors().isEmpty()) {
@@ -152,151 +171,151 @@ public class BulkImportServiceImpl implements BulkImportService {
 
                 while (rows.hasNext()) {
                     Row row = rows.next();
+                    if (!isRowEmpty(row)) {
+                        String workspaceContextCode = row.getCell(columns.indexOf("WorkspaceReference"), Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue();
+                        Integer uwYear = (int) row.getCell(columns.indexOf("UWYear"), Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getNumericCellValue();
+                        Long projectId = null;
 
-                    String workspaceContextCode = row.getCell(columns.indexOf("WorkspaceReference"), Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue();
-                    Integer uwYear = (int) row.getCell(columns.indexOf("UWYear"), Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getNumericCellValue();
-                    Long projectId = null;
+                        MultiKey key = new MultiKey(workspaceContextCode, uwYear);
 
-                    MultiKey key = new MultiKey(workspaceContextCode, uwYear);
+                        if (!workspaceCodeToProjectId.containsKey(key)) {
+                            UserRrEntity user = null;
+                            if (SecurityContextHolder.getContext().getAuthentication() != null) {
+                                user = ((UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser();
+                            }
+                            HttpHeaders requestHeaders = new HttpHeaders();
+                            requestHeaders.add("Accept", MediaType.APPLICATION_JSON_VALUE);
+                            if (user != null)
+                                requestHeaders.set("Authorization", "Bearer " + user.getJwtToken());
 
-                    if (!workspaceCodeToProjectId.containsKey(key)) {
-                        UserRrEntity user = null;
-                        if (SecurityContextHolder.getContext().getAuthentication() != null) {
-                            user = ((UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser();
-                        }
-                        HttpHeaders requestHeaders = new HttpHeaders();
-                        requestHeaders.add("Accept", MediaType.APPLICATION_JSON_VALUE);
-                        if (user != null)
-                            requestHeaders.set("Authorization", "Bearer " + user.getJwtToken());
+                            HttpEntity<ProjectEntity> request = new HttpEntity<>(new ProjectEntity("Bulk-Import " + (new Date()).toString(),
+                                    "Project used to do bulk import for the file named " + e.getFileName()), requestHeaders);
 
-                        HttpEntity<ProjectEntity> request = new HttpEntity<>(new ProjectEntity("Bulk-Import " + (new Date()).toString(),
-                                "Project used to do bulk import for the file named " + e.getFileName()), requestHeaders);
+                            UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl(projectCalculationURL)
+                                    .queryParam("wsId", workspaceContextCode)
+                                    .queryParam("uwy", uwYear);
+                            restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
 
-                        UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl(projectCalculationURL)
-                                .queryParam("wsId", workspaceContextCode)
-                                .queryParam("uwy", uwYear);
-                        restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
-
-                        try {
-                            ResponseEntity<Object> creationResponse = restTemplate
-                                    .exchange(uriBuilder.toUriString(), HttpMethod.POST, request, Object.class);
+                            try {
+                                ResponseEntity<Object> creationResponse = restTemplate
+                                        .exchange(uriBuilder.toUriString(), HttpMethod.POST, request, Object.class);
 
 //                        Object creationRes = restTemplate
 //                                .postForEntity(uriBuilder.toUriString(), request, Object.class);
 
-                            if (creationResponse.getStatusCode().equals(HttpStatus.OK)) {
-                                log.info("Project's creation has ended successfully");
+                                if (creationResponse.getStatusCode().equals(HttpStatus.OK)) {
+                                    log.info("Project's creation has ended successfully");
 
-                                try {
-                                    Map<String, Object> o = (LinkedHashMap<String, Object>) creationResponse.getBody();
-                                    if (o != null) {
-                                        projectId = (long) (Integer) o.get("projectId");
-                                        workspaceCodeToProjectId.put(key, projectId);
-                                    } else {
-                                        log.info("The project creation response is empty");
+                                    try {
+                                        Map<String, Object> o = (LinkedHashMap<String, Object>) creationResponse.getBody();
+                                        if (o != null) {
+                                            projectId = (long) (Integer) o.get("projectId");
+                                            workspaceCodeToProjectId.put(key, projectId);
+                                        } else {
+                                            log.info("The project creation response is empty");
+                                            break;
+                                        }
+                                    } catch (Exception ex) {
+                                        ex.printStackTrace();
+                                        log.info("Can't retrieve projectId from the response");
                                         break;
                                     }
-                                } catch (Exception ex) {
-                                    ex.printStackTrace();
-                                    log.info("Can't retrieve projectId from the response");
+                                } else {
+                                    log.error("Project creation has failed for the following workspace {}", workspaceContextCode);
                                     break;
                                 }
-                            } else {
-                                log.error("Project creation has failed for the following workspace {}", workspaceContextCode);
+
+                            } catch (RuntimeException ex) {
+                                log.error(ex.getMessage());
+                                ex.printStackTrace();
                                 break;
                             }
+                        } else
+                            projectId = workspaceCodeToProjectId.get(key);
+                        String instanceName = row.getCell(columns.indexOf("Instance"), Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue();
+                        String type = row.getCell(columns.indexOf("Type"), Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue();
+                        String dataSourceName = row.getCell(columns.indexOf("DataSourceName"), Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue();
+                        ModellingSystemInstanceEntity instance = modellingSystemInstanceRepository.findByName(instanceName);
+                        String instanceId = instance != null ? instance.getModellingSystemInstanceId() : "";
+                        String fp = row.getCell(columns.indexOf("FinancialPerspective"), Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue();
+                        Long objectSourceId = (long) row.getCell(columns.indexOf("ObjectSourceId"), Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getNumericCellValue();
+                        String objectSourceName = row.getCell(columns.indexOf("ObjectSourceName"), Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue();
+                        String objectSourceType = row.getCell(columns.indexOf("ObjectSourceType"), Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue();
+                        String currency = row.getCell(columns.indexOf("TargetCurrency"), Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue();
 
-                        } catch (RuntimeException ex) {
-                            log.error(ex.getMessage());
-                            ex.printStackTrace();
-                            break;
-                        }
-                    } else
-                        projectId = workspaceCodeToProjectId.get(key);
-                    String instanceName = row.getCell(columns.indexOf("Instance"), Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue();
-                    String type = row.getCell(columns.indexOf("Type"), Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue();
-                    String dataSourceName = row.getCell(columns.indexOf("DataSourceName"), Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue();
-                    ModellingSystemInstanceEntity instance = modellingSystemInstanceRepository.findByName(instanceName);
-                    String instanceId = instance != null ? instance.getModellingSystemInstanceId() : "";
-                    String fp = row.getCell(columns.indexOf("FinancialPerspective"), Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue();
-                    Long objectSourceId = (long) row.getCell(columns.indexOf("ObjectSourceId"), Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getNumericCellValue();
-                    String objectSourceName = row.getCell(columns.indexOf("ObjectSourceName"), Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue();
-                    String objectSourceType = row.getCell(columns.indexOf("ObjectSourceType"), Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue();
-                    String currency = row.getCell(columns.indexOf("TargetCurrency"), Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue();
+                        Page<DataSource> rmsDataSource = rmsService.listAvailableDataSources(instanceId, dataSourceName, 0, 1);
 
-                    Page<DataSource> rmsDataSource = rmsService.listAvailableDataSources(instanceId, dataSourceName, 0, 1);
-
-                    if (rmsDataSource != null) {
-                        RLModelDataSource dataSource = rlModelDataSourceRepository.findByProjectIdAndTypeAndInstanceIdAndRlId(projectId, type, instanceId, rmsDataSource.getContent().get(0).getRmsId());
-                        if (dataSource == null) {
-                            dataSource = new RLModelDataSource(rmsDataSource.getContent().get(0), projectId, instanceId, instanceName);
-                            dataSource = rlModelDataSourceRepository.save(dataSource);
-                        }
-
-                        String targetRap = row.getCell(columns.indexOf("PEQT_ID"), Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue();
-                        String regionPeril = row.getCell(columns.indexOf("RegionPeril"), Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue();
-                        String occurrenceBasisOverRide = row.getCell(columns.indexOf("OccurrenceBasisOverRide"), Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue();
-                        String occurrenceOverrideReason = row.getCell(columns.indexOf("OccurrenceBasisOverrideReason"), Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue();
-                        Float unitMultiplier = (float) row.getCell(columns.indexOf("UnitMultiplier"), Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getNumericCellValue();
-                        Float proportion = (float) row.getCell(columns.indexOf("ProportionPct"), Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getNumericCellValue();
-                        Integer division = (int) row.getCell(columns.indexOf("SectionDivisionId"), Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getNumericCellValue();
-
-                        if (type.equalsIgnoreCase("EDM")) {
-                            PortfolioHeader portfolioHeader = new PortfolioHeader(objectSourceId, objectSourceName, objectSourceType, currency, dataSource.getRlId(), dataSource.getName());
-                            RLPortfolio portfolio = rmsService.scanPortfolioForBulkImport(portfolioHeader, projectId, instanceId, dataSource);
-
-                            PortfolioSelectionDto portfolioSelectionDto = new PortfolioSelectionDto();
-
-                            portfolioSelectionDto.setProjectId(projectId);
-                            portfolioSelectionDto.setDivisions(Collections.singletonList(division));
-                            portfolioSelectionDto.setProportion((double) proportion);
-                            portfolioSelectionDto.setUnitMultiplier((double) unitMultiplier);
-                            portfolioSelectionDto.setTargetCurrency(currency);
-                            portfolioSelectionDto.setRlPortfolioId(portfolio.getRlPortfolioId());
-
-                            if (imports.get(projectId) != null) {
-                                imports.get(projectId).addPortfolioConfig(portfolioSelectionDto);
-                            } else {
-                                ImportParamsAndConfig importConfig = new ImportParamsAndConfig(instanceId, String.valueOf(projectId), null, new ArrayList<>()
-                                        , new ArrayList<>(Arrays.asList(portfolioSelectionDto)));
-                                imports.put(projectId, importConfig);
+                        if (rmsDataSource != null) {
+                            RLModelDataSource dataSource = rlModelDataSourceRepository.findByProjectIdAndTypeAndInstanceIdAndRlId(projectId, type, instanceId, rmsDataSource.getContent().get(0).getRmsId());
+                            if (dataSource == null) {
+                                dataSource = new RLModelDataSource(rmsDataSource.getContent().get(0), projectId, instanceId, instanceName);
+                                dataSource = rlModelDataSourceRepository.save(dataSource);
                             }
 
-                        } else if (type.equalsIgnoreCase("RDM")) {
-                            AnalysisHeader analysisHeader = new AnalysisHeader(objectSourceId, objectSourceName, dataSource.getRlId(), dataSourceName);
-                            RLAnalysis analysis = rmsService.scanAnalysisForBulkImport(analysisHeader, projectId, fp, instanceId, dataSource.getRlModelDataSourceId());
-                            ImportSelectionDto rlImportSelectionDto = new ImportSelectionDto();
+                            String targetRap = row.getCell(columns.indexOf("PEQT_ID"), Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue();
+                            String regionPeril = row.getCell(columns.indexOf("RegionPeril"), Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue();
+                            String occurrenceBasisOverRide = row.getCell(columns.indexOf("OccurrenceBasisOverRide"), Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue();
+                            String occurrenceOverrideReason = row.getCell(columns.indexOf("OccurrenceBasisOverrideReason"), Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue();
+                            Float unitMultiplier = (float) row.getCell(columns.indexOf("UnitMultiplier"), Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getNumericCellValue();
+                            Float proportion = (float) row.getCell(columns.indexOf("ProportionPct"), Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getNumericCellValue();
+                            Integer division = (int) row.getCell(columns.indexOf("SectionDivisionId"), Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getNumericCellValue();
 
-                            rlImportSelectionDto.setProjectId(projectId);
-                            rlImportSelectionDto.setFinancialPerspectives(Collections.singletonList(fp));
-                            rlImportSelectionDto.setDivisions(Collections.singletonList(division));
-                            rlImportSelectionDto.setOccurrenceBasis(occurrenceBasisOverRide);
-                            rlImportSelectionDto.setOccurrenceBasisOverrideReason(occurrenceOverrideReason);
-                            rlImportSelectionDto.setProportion(proportion);
-                            rlImportSelectionDto.setUnitMultiplier(unitMultiplier);
-                            rlImportSelectionDto.setTargetRegionPeril(regionPeril);
-                            rlImportSelectionDto.setTargetRAPCodes(Collections.singletonList(targetRap));
-                            rlImportSelectionDto.setRlAnalysisId(analysis.getRlAnalysisId());
-                            rlImportSelectionDto.setTargetCurrency(currency);
+                            if (type.equalsIgnoreCase("EDM")) {
+                                PortfolioHeader portfolioHeader = new PortfolioHeader(objectSourceId, objectSourceName, objectSourceType, currency, dataSource.getRlId(), dataSource.getName());
+                                RLPortfolio portfolio = rmsService.scanPortfolioForBulkImport(portfolioHeader, projectId, instanceId, dataSource);
 
-                            if (imports.get(projectId) != null) {
-                                imports.get(projectId).addAnalysisConfig(rlImportSelectionDto);
+                                PortfolioSelectionDto portfolioSelectionDto = new PortfolioSelectionDto();
+
+                                portfolioSelectionDto.setProjectId(projectId);
+                                portfolioSelectionDto.setDivisions(Collections.singletonList(division));
+                                portfolioSelectionDto.setProportion((double) proportion);
+                                portfolioSelectionDto.setUnitMultiplier((double) unitMultiplier);
+                                portfolioSelectionDto.setTargetCurrency(currency);
+                                portfolioSelectionDto.setRlPortfolioId(portfolio.getRlPortfolioId());
+
+                                if (imports.get(projectId) != null) {
+                                    imports.get(projectId).addPortfolioConfig(portfolioSelectionDto);
+                                } else {
+                                    ImportParamsAndConfig importConfig = new ImportParamsAndConfig(instanceId, String.valueOf(projectId), null, new ArrayList<>()
+                                            , new ArrayList<>(Arrays.asList(portfolioSelectionDto)));
+                                    imports.put(projectId, importConfig);
+                                }
+
+                            } else if (type.equalsIgnoreCase("RDM")) {
+                                AnalysisHeader analysisHeader = new AnalysisHeader(objectSourceId, objectSourceName, dataSource.getRlId(), dataSourceName);
+                                RLAnalysis analysis = rmsService.scanAnalysisForBulkImport(analysisHeader, projectId, fp, instanceId, dataSource.getRlModelDataSourceId());
+                                ImportSelectionDto rlImportSelectionDto = new ImportSelectionDto();
+
+                                rlImportSelectionDto.setProjectId(projectId);
+                                rlImportSelectionDto.setFinancialPerspectives(Collections.singletonList(fp));
+                                rlImportSelectionDto.setDivisions(Collections.singletonList(division));
+                                rlImportSelectionDto.setOccurrenceBasis(occurrenceBasisOverRide);
+                                rlImportSelectionDto.setOccurrenceBasisOverrideReason(occurrenceOverrideReason);
+                                rlImportSelectionDto.setProportion(proportion);
+                                rlImportSelectionDto.setUnitMultiplier(unitMultiplier);
+                                rlImportSelectionDto.setTargetRegionPeril(regionPeril);
+                                rlImportSelectionDto.setTargetRAPCodes(Collections.singletonList(targetRap));
+                                rlImportSelectionDto.setRlAnalysisId(analysis.getRlAnalysisId());
+                                rlImportSelectionDto.setTargetCurrency(currency);
+
+                                if (imports.get(projectId) != null) {
+                                    imports.get(projectId).addAnalysisConfig(rlImportSelectionDto);
+                                } else {
+                                    ImportParamsAndConfig importConfig = new ImportParamsAndConfig(instanceId, String.valueOf(projectId), null,
+                                            new ArrayList<>(Arrays.asList(rlImportSelectionDto)), new ArrayList<>());
+                                    imports.put(projectId, importConfig);
+                                }
+
                             } else {
-                                ImportParamsAndConfig importConfig = new ImportParamsAndConfig(instanceId, String.valueOf(projectId), null,
-                                        new ArrayList<>(Arrays.asList(rlImportSelectionDto)), new ArrayList<>());
-                                imports.put(projectId, importConfig);
+                                log.error("The datasource type isn't one of the following (EDM,RDM)");
+                                break;
                             }
-
                         } else {
-                            log.error("The datasource type isn't one of the following (EDM,RDM)");
+                            log.error("No datasource has been found for {}", dataSourceName);
                             break;
                         }
-                    } else {
-                        log.error("No datasource has been found for {}", dataSourceName);
-                        break;
                     }
                 }
-
                 imports.forEach((k, value) -> {
                     List<Long> analysisIds = rmsService.saveAnalysisImportSelection(value.getAnalysisConfig());
                     List<Long> portfolioIds = rmsService.savePortfolioImportSelection(value.getPortfolioConfig());

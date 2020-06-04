@@ -26,6 +26,7 @@ public class BulkImportResource {
             BulkImportFile bulkImportFile = bulkImportService.uploadFile(payload);
             return new ResponseEntity<>(bulkImportService.validateFile(bulkImportFile), HttpStatus.OK);
         } catch (Exception ex) {
+            ex.printStackTrace();
             return new ResponseEntity<>("upload has failed", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -37,6 +38,7 @@ public class BulkImportResource {
             bulkImportService.importFile(id);
             return new ResponseEntity<>("Operation done", HttpStatus.OK);
         } catch (Exception ex) {
+            ex.printStackTrace();
             return new ResponseEntity<>("Operation failed", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -47,6 +49,7 @@ public class BulkImportResource {
         try {
             return new ResponseEntity<>(bulkImportService.getImportHistory(page, records), HttpStatus.OK);
         } catch (Exception ex) {
+            ex.printStackTrace();
             return new ResponseEntity<>("Operation failed", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
