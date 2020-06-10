@@ -11,7 +11,7 @@ public interface BulkImportService {
 
     ValidationDto validateFile(BulkImportFile file);
 
-    void importFile(Long id);
+    void importFile(Long id, String projectName, String projectDescription, Boolean createWorkspace);
 
     Page<BulkImportFile> getImportHistory(int page, int records);
 }

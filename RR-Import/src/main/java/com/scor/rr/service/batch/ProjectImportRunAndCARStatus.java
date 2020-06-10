@@ -97,7 +97,8 @@ public class ProjectImportRunAndCARStatus {
                         log.info("No car configuration was found");
                     }
 
-                    this.generateScopeAndCompletenessData(projectConfigurationForeWriter.getCaRequestId());
+                    if (projectConfigurationForeWriter != null)
+                        this.generateScopeAndCompletenessData(projectConfigurationForeWriter.getCaRequestId());
 
                 }
             }

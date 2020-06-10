@@ -155,7 +155,7 @@ public class BulkImportServiceImpl implements BulkImportService {
     }
 
     @Override
-    public void importFile(Long id) {
+    public void importFile(Long id, String projectName, String projectDescription, Boolean createWorkspace) {
         bulkImportFileRepository.findById(id).ifPresent(e -> {
             try {
                 Path path = Paths.get(e.getFilePath() + File.separator + e.getFileName());
@@ -188,8 +188,10 @@ public class BulkImportServiceImpl implements BulkImportService {
                             if (user != null)
                                 requestHeaders.set("Authorization", "Bearer " + user.getJwtToken());
 
-                            HttpEntity<ProjectEntity> request = new HttpEntity<>(new ProjectEntity("Bulk-Import " + (new Date()).toString(),
-                                    "Project used to do bulk import for the file named " + e.getFileName()), requestHeaders);
+                            HttpEntity<ProjectEntity> request =
+                                    new HttpEntity<>(new ProjectEntity(projectName != null ? projectName : "Bulk-Import " + (new Date()).toString(),
+                                            projectDescription != null ? projectDescription : "Project used to do bulk import for the file named " + e.getFileName()),
+                                            requestHeaders);
 
                             UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl(projectCalculationURL)
                                     .queryParam("wsId", workspaceContextCode)
