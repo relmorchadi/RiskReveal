@@ -141,10 +141,15 @@ public class JobManagerImpl extends JobManagerAbstraction {
         try {
             TaskEntity task = taskRepository.findById(taskId).orElse(null);
             // If the task was already running
-            if (task != null && task.getJobExecutionId() != null && jobOperator.getRunningExecutions("importLossData").contains(task.getJobExecutionId())) {
-                jobOperator.stop(task.getJobExecutionId());
-                cancelTaskSteps(task);
-                // If the task is still in queue
+            if (task != null && task.getJobExecutionId() != null) {
+//                if(&& jobOperator.getRunningExecutions("importLossData").contains(task.getJobExecutionId()))
+                try {
+                    jobOperator.stop(task.getJobExecutionId());
+                    cancelTaskSteps(task);
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+//                // If the task is still in queue
             } else if (task != null && task.getJobExecutionId() == null) {
                 RRJob runnable = (RRJob) executor.getQueue().stream().filter(e -> ((RRJob) e).getTask().getTaskId().equals(task.getTaskId())).findFirst().orElse(null);
                 if (runnable != null)
@@ -292,7 +297,8 @@ public class JobManagerImpl extends JobManagerAbstraction {
         }
     }
 
-//    public List<StepEntity> getStepsForATask(Long taskId) {
-//        List<StepEntity> steps = stepRepository.find;
-//    }
+    @Override
+    public List<StepEntity> getStepsForATask(Long taskId) {
+        return stepRepository.findByTaskId(taskId);
+    }
 }

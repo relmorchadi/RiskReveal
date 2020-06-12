@@ -142,6 +142,47 @@ public class WorkspaceService {
         }
     }
 
+    public ResponseEntity<List<UserWorkspaceTabs>> getTabsNew(UserWorkspaceTabsRequest request) {
+
+
+        try {
+            UserRrEntity user = ( (UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser();
+
+            List<UserWorkspaceTabs> tabs = this.workspaceTabsRepository.findAllByUserCodeOrderByTabOrderAsc(user.getUserCode());
+
+            if(request.getWorkspaceUwYear() != null  && request.getWorkspaceContextCode() != null) {
+                boolean exists = false;
+
+                for(int i = 0; i < tabs.size(); i++) {
+                    UserWorkspaceTabs tab = tabs.get(i);
+                    if(tab.getSelected()) tab.setSelected(false);
+                    if(tab.getWorkspaceContextCode().equals(request.getWorkspaceContextCode()) && tab.getWorkspaceUwYear().equals(request.getWorkspaceUwYear())) {
+                        exists = true;
+                        tab.setSelected(true);
+                    }
+                }
+
+                if(!exists) {
+                    tabs.add(new UserWorkspaceTabs(
+                            null,
+                            request.getWorkspaceContextCode(),
+                            request.getWorkspaceUwYear(),
+                            user.getUserCode(),
+                            new Date(),
+                            request.getScreen(),
+                            tabs.size(),
+                            true
+                    ));
+                }
+
+                return ResponseEntity.ok(this.workspaceTabsRepository.saveAll(tabs));
+            } else return ResponseEntity.ok(tabs);
+
+        } catch(Exception e) {
+            return ResponseEntity.ok(new ArrayList<>());
+        }
+    }
+
     public ResponseEntity<List<UserWorkspaceTabs>> getTabs(UserWorkspaceTabsRequest request) {
         UserRrEntity user = ( (UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser();
 

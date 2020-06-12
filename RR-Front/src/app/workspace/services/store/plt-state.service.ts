@@ -11,9 +11,10 @@ import produce from "immer";
 import {WsApi} from "../api/workspace.api";
 import {ADJUSTMENT_TYPE, ADJUSTMENTS_ARRAY} from "../../containers/workspace-calibration/data";
 import {TagsApi} from "../api/tags.api";
-import {loadAllPlts, LoadProjectByWorkspace, LoadWS} from "../../store/actions";
+import {loadAllPlts, LoadProjectByWorkspace, LoadWS, SelectProject, UpdateWsRouting} from "../../store/actions";
 import {CloneDataApi} from "../api/cloneData.api";
 import {CloningStatus} from "../../model/CloningStatus";
+import {Navigate} from "@ngxs/router-plugin";
 
 @Injectable({
   providedIn: 'root'
@@ -657,9 +658,8 @@ export class PltStateService {
 
     return this.cloneDataApi.cloneData(payload).pipe(
         mergeMap((r => {
-
-      return ctx.dispatch(new fromPlt.CommitCloneSuccess(payload));
-    })));
+          return ctx.dispatch(new fromPlt.CommitCloneSuccess({...payload, projectId: r.length > 0 ? r[0].projectId: false}));
+        })));
 
   }
 
@@ -675,9 +675,15 @@ export class PltStateService {
     }));
 
     const state = ctx.getState();
+    console.log(payload);
     if (state.content[targetWorkspaceContextCode + '-' + targetWorkspaceUwYear]) {
-
-      return ctx.dispatch(new LoadProjectByWorkspace({wsId: targetWorkspaceContextCode, uwYear: targetWorkspaceUwYear}));
+      if (payload.projectId && payload.open)
+        return ctx.dispatch([new LoadProjectByWorkspace({wsId: targetWorkspaceContextCode, uwYear: targetWorkspaceUwYear, projectId: payload.projectId}),
+          new UpdateWsRouting(payload.targetWorkspaceContextCode + '-' + payload.targetWorkspaceUwYear, 'PltBrowser'),
+          new Navigate([`workspace/${payload.targetWorkspaceContextCode}/${payload.targetWorkspaceUwYear}/PltBrowser`])
+        ]);
+      else
+         return ctx.dispatch(new LoadProjectByWorkspace({wsId: targetWorkspaceContextCode, uwYear: targetWorkspaceUwYear, projectId: false}));
 
     }
   }

@@ -109,10 +109,9 @@ public class ImportResource {
     }
 
     @GetMapping("/view-task-details")
-    public ResponseEntity<?> taskDetails(@RequestParam Long jobId) {
+    public ResponseEntity<?> taskDetails(@RequestParam Long taskId) {
         try {
-            jobManager.pauseJob(jobId);
-            return new ResponseEntity<>("Operation done", HttpStatus.OK);
+            return new ResponseEntity<>(jobManager.getStepsForATask(taskId), HttpStatus.OK);
         } catch (Exception ex) {
             ex.printStackTrace();
             return new ResponseEntity<>("Operation failed", HttpStatus.INTERNAL_SERVER_ERROR);

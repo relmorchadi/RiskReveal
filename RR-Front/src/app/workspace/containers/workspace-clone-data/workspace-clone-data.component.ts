@@ -17,6 +17,8 @@ import {CloneDataApi} from "../../services/api/cloneData.api";
 import {LoadProjectByWorkspace} from "../../store";
 import {GeneralConfigState} from "../../../core/store/states";
 import {GetTablePreference} from "../../../core/store/actions";
+import {NotificationService} from "../../../shared/notification.service";
+import {CloningStatus} from "../../model/CloningStatus";
 
 interface SourceData {
   plts: any[];
@@ -51,6 +53,7 @@ export class WorkspaceCloneDataComponent extends BaseContainer implements OnInit
     private wsApi: WsApi,
     private cloneDataApi: CloneDataApi,
     private actions$: Actions,
+    private notificationService: NotificationService,
     _baseStore: Store, _baseRouter: Router, _baseCdr: ChangeDetectorRef
   ) {
     super(_baseRouter, _baseCdr, _baseStore);
@@ -219,8 +222,12 @@ export class WorkspaceCloneDataComponent extends BaseContainer implements OnInit
 
     this.marketChannel$.subscribe(m => this.marketChannel = m);
     this.cloningStatus$.subscribe(status => {
-
-      this.cloningStatus = status
+      this.cloningStatus = status;
+      if (status == CloningStatus.cloneSucceed) {
+        this.notificationService.createNotification('Information',
+            'The clone has been done successfully.',
+            'info', 'bottomRight', 4000);
+      }
       this.detectChanges();
     });
 
@@ -312,9 +319,9 @@ export class WorkspaceCloneDataComponent extends BaseContainer implements OnInit
           'from': ws
         });
       }
+      this.detectChanges();
     });
 
-    this.dispatch(new fromWS.SetDefaultCloneWsTarget());
     this.getCloneDataWsTarget$.subscribe(ws => {
       console.log(ws);
       if (ws == null) {
@@ -673,9 +680,10 @@ export class WorkspaceCloneDataComponent extends BaseContainer implements OnInit
 
   }
 
-  clone() {
-
+  clone(open = false) {
+    console.log(open);
     let body = {
+      open,
       pltIds: this.getFormValueByKey('from').plts.map(p => p.pltId),
       cloningType: '',
       newProjectName: '',
@@ -685,6 +693,12 @@ export class WorkspaceCloneDataComponent extends BaseContainer implements OnInit
       targetWorkspaceUwYear: this._to.value.uwYear
     };
 
+    if (body.pltIds.length < 1) {
+      this.notificationService.createNotification('Warning',
+          'No assets are selected.',
+          'info', 'bottomRight', 4000);
+      return;
+    }
 
 
     switch (this.projectsForm.value.projectStep) {
@@ -710,9 +724,9 @@ export class WorkspaceCloneDataComponent extends BaseContainer implements OnInit
         };
         break;
     }
-
     this.dispatch(new fromWS.CommitClone(body));
 
+    this._from.markAsDirty();
     if (this._projectStep.value === 0) {
       this._projectName.markAsDirty();
       this._projectDescription.markAsDirty();
@@ -725,8 +739,8 @@ export class WorkspaceCloneDataComponent extends BaseContainer implements OnInit
 
   cloneAndOpen() {
 
-    this.clone();
+    this.clone(true);
 
-    if (this.projectsForm.valid) this.navigate([`workspace/${this.getFormValueByKey('to').wsId}/${this.getFormValueByKey('to').uwYear}/PltBrowser`]);
+//    if (this.projectsForm.valid) this.navigate([`workspace/${this.getFormValueByKey('to').wsId}/${this.getFormValueByKey('to').uwYear}/PltBrowser`]);
   }
 }

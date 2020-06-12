@@ -143,6 +143,9 @@ public abstract class JobManagerAbstraction implements JobManager {
     public abstract void onTaskError(Long taskId);
 
     @Override
+    public abstract List<StepEntity> getStepsForATask(Long taskId);
+
+    @Override
     public String getJobStatus(Long jobId) {
         return jobEntityRepository.findById(jobId).map(JobEntity::getStatus).orElse(null);
     }
@@ -169,4 +172,6 @@ public abstract class JobManagerAbstraction implements JobManager {
     public void logStep(Long stepId, StepStatus status) {
         stepEntityRepository.updateStatus(stepId, status.getCode(), new Date());
     }
+
+
 }

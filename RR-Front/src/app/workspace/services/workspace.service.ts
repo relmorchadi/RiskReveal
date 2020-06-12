@@ -543,7 +543,7 @@ export class WorkspaceService {
 
               const selectedProject = state.content[wsIdentifier].projects.filter( item => item.selected);
 
-              const selectedProjectId = selectedProject.length > 0 ? selectedProject[0].projectId : 0;
+              const selectedProjectId = payload.projectId ? payload.projectId : (selectedProject.length > 0 ? selectedProject[0].projectId : 0);
 
               projects.map(prj=> {
                 prj.selected = prj.projectId === selectedProjectId;

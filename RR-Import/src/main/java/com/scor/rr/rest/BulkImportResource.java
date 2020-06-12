@@ -26,27 +26,33 @@ public class BulkImportResource {
             BulkImportFile bulkImportFile = bulkImportService.uploadFile(payload);
             return new ResponseEntity<>(bulkImportService.validateFile(bulkImportFile), HttpStatus.OK);
         } catch (Exception ex) {
+            ex.printStackTrace();
             return new ResponseEntity<>("upload has failed", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
     @PostMapping(value = "/import")
-    @ApiOperation(value = "Launch bulk import for a file")
-    public ResponseEntity<?> importFile(@RequestParam(value = "id") Long id) {
+    @ApiOperation(value = "Launch bulk import for a file with project name and description")
+    public ResponseEntity<?> importFile(@RequestParam(value = "id") Long id,
+                                        @RequestParam(value = "projectName", required = false) String projectName,
+                                        @RequestParam(value = "projectDescription", required = false) String projectDescription,
+                                        @RequestParam(value = "createWorkspace", required = false) Boolean createWorkspace) {
         try {
-            bulkImportService.importFile(id);
+            bulkImportService.importFile(id, projectName, projectDescription, createWorkspace);
             return new ResponseEntity<>("Operation done", HttpStatus.OK);
         } catch (Exception ex) {
+            ex.printStackTrace();
             return new ResponseEntity<>("Operation failed", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
     @PostMapping(value = "/history")
     @ApiOperation(value = "bulk import history")
-    public ResponseEntity<?> getImportHistory(@RequestParam int page,@RequestParam int records) {
+    public ResponseEntity<?> getImportHistory(@RequestParam int page, @RequestParam int records) {
         try {
             return new ResponseEntity<>(bulkImportService.getImportHistory(page, records), HttpStatus.OK);
         } catch (Exception ex) {
+            ex.printStackTrace();
             return new ResponseEntity<>("Operation failed", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }

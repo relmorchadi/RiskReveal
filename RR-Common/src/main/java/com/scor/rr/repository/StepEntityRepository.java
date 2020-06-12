@@ -18,5 +18,6 @@ public interface StepEntityRepository extends JpaRepository<StepEntity, Long> {
     @Transactional(transactionManager = "theTransactionManager")
     void updateStatus(@Param("stepId") Long stepId, @Param("status") String status, @Param("finishDate") Date finishDate);
 
-//    List<StepEntity> findByTask
+    @Query("FROM StepEntity s WHERE s.task.taskId=:taskId order by s.stepOrder")
+    List<StepEntity> findByTaskId(@Param("taskId") Long taskId);
 }

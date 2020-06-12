@@ -403,7 +403,10 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
         this.onSelectPlt(action.payload);
         break;
       case 'Commit clone':
-        this.clonePlt();
+        this.clonePlt(false);
+        break;
+      case 'Clone to':
+        this.clonePlt(true);
     }
   }
 
@@ -417,19 +420,21 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
     };
     console.log(this.selectedPlt);
   }
-  clonePlt() {
+  clonePlt(sendPlt: boolean) {
     this.dispatch(new SetDefaultCloneWsTarget());
     console.log(this.selectedPlt);
-    this.dispatch(new SetCloneDataWsSource({
-      plts: Object.keys(this.selectedPlt).filter(id => this.selectedPlt[id].selected).map(id => ({
-        pltId: id,
-        projectId: this.selectedPlt[id].projectId
-      })),
-      wsId: this.currentWs.workspaceContextCode,
-      uwYear: this.currentWs.uwYear,
-      detail: this.currentWs.cedantName + ' | ' + this.currentWs.workspaceName + ' | ' + this.currentWs.uwYear +
-          ' | ' + this.currentWs.wsId
-    }));
+    if (sendPlt) {
+      this.dispatch(new SetCloneDataWsSource({
+        plts: Object.keys(this.selectedPlt).filter(id => this.selectedPlt[id].selected).map(id => ({
+          pltId: id,
+          projectId: this.selectedPlt[id].projectId
+        })),
+        wsId: this.currentWs.workspaceContextCode,
+        uwYear: this.currentWs.uwYear,
+        detail: this.currentWs.cedantName + ' | ' + this.currentWs.workspaceName + ' | ' + this.currentWs.uwYear +
+            ' | ' + this.currentWs.wsId
+      }));
+    }
     const {wsId, uwYear} = this.currentWs;
     this.dispatch(
         [new UpdateWsRouting(wsId + '-' + uwYear, 'CloneData'),

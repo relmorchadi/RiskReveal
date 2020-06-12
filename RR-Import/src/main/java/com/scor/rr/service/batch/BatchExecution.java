@@ -107,6 +107,7 @@ public class BatchExecution {
                         .addLong("importSequence", Long.valueOf(params.get("importSequence")))
                         .addString("jobType", params.get("jobType"))
                         .addString("marketChannel", params.get("marketChannel"))
+                        .addString("marketChannel", params.get("projectContext"))
                         .addString("carId", params.get("carId"))
                         .addString("lob", params.get("lob"))
                         .addString("userId", importLossDataParams.getUserId())
@@ -214,8 +215,8 @@ public class BatchExecution {
         WorkspaceEntity myWorkspace = myWorkspaceOp.get();
 
         String workspaceCode = myWorkspace.getWorkspaceContextCode();
-        String projectContext = projectConfigurationForeWriter != null ? "Fac" : "Manual";
-        String workspaceMarketChannel = projectContext.equals("Manual") ? "Treaty" : "Fac";
+        String projectContext = projectConfigurationForeWriter != null ? "Car" : "Manual";
+        String workspaceMarketChannel = myWorkspace.getWorkspaceMarketChannel().equals("FAC") ? "Fac" : "Treaty";
 
 //        if (workspaceMarketChannel.equalsIgnoreCase("")) {
 //            log.error("Error. workspace market channel is not found");
@@ -286,6 +287,7 @@ public class BatchExecution {
         map.put("instanceId", instanceId);
         map.put("jobType", jobType);
         map.put("marketChannel", workspaceMarketChannel);
+        map.put("projectContext", projectContext);
         map.put("carId", carId);
         map.put("lob", lob);
 
@@ -365,7 +367,7 @@ public class BatchExecution {
                             .addString("rlPortfolioSelectionIds", params.get("rlPortfolioSelectionIds"))
                             .addString("taskId", String.valueOf(task.getTaskId()));
 
-                    if (params.get("marketChannel").equalsIgnoreCase("Treaty"))
+                    if (params.get("projectContext").equalsIgnoreCase("Manual"))
                         jobManager.submitTask(importLossDataPortfolio, JobPriority.MEDIUM, builder.toJobParameters(), task);
                     else
                         jobManager.submitTask(importLossDataPortfolioFac, JobPriority.MEDIUM, builder.toJobParameters(), task);
@@ -394,6 +396,7 @@ public class BatchExecution {
                     .addLong("importSequence", Long.valueOf(params.get("importSequence")))
                     .addString("jobType", params.get("jobType"))
                     .addString("marketChannel", params.get("marketChannel"))
+                    .addString("instanceId", params.get("projectContext"))
                     .addString("carId", params.get("carId"))
                     .addString("lob", params.get("lob"))
                     .addString("userId", params.get("userId"))
@@ -410,7 +413,7 @@ public class BatchExecution {
 
             } else if (task.getTaskType().equalsIgnoreCase(TaskType.IMPORT_PORTFOLIO.getCode())) {
 
-                if (params.get("marketChannel").equalsIgnoreCase("Treaty"))
+                if (params.get("projectContext").equalsIgnoreCase("Manual"))
                     jobManager.submitTask(importLossDataPortfolio, priority, builder.toJobParameters(), task);
                 else
                     jobManager.submitTask(importLossDataPortfolioFac, priority, builder.toJobParameters(), task);

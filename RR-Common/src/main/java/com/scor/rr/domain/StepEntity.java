@@ -30,7 +30,7 @@ public class StepEntity {
         this.stepId = stepId;
     }
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "taskId")
     @JsonBackReference
     public TaskEntity getTask() {
