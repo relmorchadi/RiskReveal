@@ -29,6 +29,7 @@ export class WorkspaceJobManagerComponent extends BaseContainer
   lastSelectedIndex = null;
   Users = 'all';
   selectedRows = [];
+  selectedTaskSteps: any = [];
 
   @ViewChild('dt') table;
   @ViewChild('cm') contextMenu;
@@ -73,16 +74,6 @@ export class WorkspaceJobManagerComponent extends BaseContainer
   savedTask: any =[];
   allTasks=[];
   tableColumn = [
-    {
-      field: 'checkbox',
-      header: '',
-      width: '25px',
-      display: true,
-      sorted: false,
-      filtered: false,
-      type: 'checkbox',
-      class: 'icon-check_24px',
-    },
     {
       field: 'status',
       header: 'State',
@@ -200,6 +191,90 @@ export class WorkspaceJobManagerComponent extends BaseContainer
   @Select(HeaderState.getJobs) jobs$;
   @Select(AuthState.getUser) user$;
   jobs: any;
+  rightMenuVisibility: any = false;
+  selectedTask: any;
+  stepsHeader: any = [
+    {
+      field: 'stepId',
+      header: 'Step ID',
+      width: '25px',
+      display: false,
+      sorted: false,
+      filtered: false,
+      type: 'text',
+      filterParam: ''
+    },
+    {
+      field: 'stepOrder',
+      header: 'Step Order',
+      width: '15px',
+      display: false,
+      sorted: false,
+      filtered: false,
+      type: 'text',
+      filterParam: ''
+    },
+    {
+      field: 'stepName',
+      header: 'Step Name',
+      width: '55px',
+      display: false,
+      sorted: false,
+      filtered: false,
+      type: 'text',
+      filterParam: ''
+    },
+    {
+      field: 'status',
+      header: 'Status',
+      width: '30px',
+      display: false,
+      sorted: false,
+      filtered: false,
+      type: 'text',
+      filterParam: ''
+    },
+    {
+      field: 'submittedDate',
+      header: 'Submitted Time',
+      width: '30px',
+      display: false,
+      sorted: false,
+      filtered: false,
+      type: 'date',
+      filterParam: ''
+    },
+    {
+      field: 'startedDate',
+      header: 'Start Time',
+      width: '30px',
+      display: false,
+      sorted: false,
+      filtered: false,
+      type: 'date',
+      filterParam: ''
+    },
+    {
+      field: 'finishedDate',
+      header: 'Completion Time',
+      width: '30px',
+      display: false,
+      sorted: false,
+      filtered: false,
+      type: 'date',
+      filterParam: ''
+    },
+    {
+      field: 'elapsedTime',
+      header: 'Elapsed Time',
+      width: '30px',
+      display: false,
+      sorted: false,
+      filtered: false,
+      type: 'time',
+      filterParam: ''
+    }
+  ];
 
   constructor(private cdref : ChangeDetectorRef,public location: Location, private _searchService: SearchService, private store: Store,private jobManagerService:JobManagerService,
               private helperService: HelperService, private route: ActivatedRoute, private router: Router) {
@@ -367,6 +442,21 @@ export class WorkspaceJobManagerComponent extends BaseContainer
   }
 
   openDetailsPanel(item: any) {
-    
+    this.rightMenuVisibility = true;
+    this.jobManagerService.getTaskGetails(item.taskId).subscribe( (result:any) => {
+      console.log(result);
+      this.selectedTaskSteps = result.map(row => ({
+        ...row,
+        elapsedTime:  '-'
+      }));
+      this.detectChanges();
+    })
+    this.selectedTask = item;
+    this.detectChanges();
+  }
+
+  closeRightMenu() {
+    this.rightMenuVisibility = false;
+    this.detectChanges();
   }
 }

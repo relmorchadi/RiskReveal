@@ -36,5 +36,8 @@ export class JobManagerService {
     }
 
 
+    getTaskGetails(taskId) {
+        return this._http.get(`${this.api}view-task-details?taskId=`+taskId, {responseType: 'json'})
+    }
 }
 

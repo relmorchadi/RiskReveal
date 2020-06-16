@@ -24,9 +24,9 @@
     <p-table [value]="savedTask" #dt
              [columns]="tableColumn" [resizableColumns]="true"
              [scrollable]="true" [scrollHeight]="'500'" [rows]="50"
-             [(contextMenuSelection)]="contextSelectedItem"
-             [contextMenu]="cm" class="table-ngPrime"
-             [loading]="loading" dataKey="id"
+             class="table-ngPrime"
+
+             [loading]="loading" dataKey="jobId"
     >
       <ng-template pTemplate="colgroup" let-columns>
         <colgroup>
@@ -192,7 +192,7 @@
 
                   </ul>
                 </nz-dropdown>
-                <div (click)="expanded = expandRow(rowData, expanded)" [pRowToggler]="rowData">
+                <div (click)="rowData.append = !rowData.append" [pRowToggler]="rowData">
                   <i [ngClass]="rowData.append ? 'pi pi-chevron-up' : 'pi pi-chevron-down'"></i>
                 </div>
               </div>
@@ -220,7 +220,8 @@
                     </div>
                   </div>
                   <div class="list-item-info">
-                    <span class="task-duration">{{item.percent}} % Completed</span>
+                    <span class="task-duration">Elapsed Time: {{calculateElapsedTime(item.finishedDate,item.startedDate)}} </span>  |
+                      <span class="task-duration">{{item.percent}} % Completed</span>
                     <a class="view-task-details" (click)="openDetailsPanel(item)">View Details</a>
 <!--                    <i *ngIf="item.percent === 100" class="icon-file-check-alt"></i>-->
 <!--                    <i *ngIf="item.percent < 100" nz-icon [nzType]="'loading'"></i>-->
@@ -240,6 +241,92 @@
       </ng-template>
     </p-table>
   </div>
+</div>
+
+<!--
+  ~job manager right menu
+  -->
+
+<div class="right-menu-container"
+     (clickOutside)="closeRightMenu()"
+     [ngClass]="{'slideInRight':rightMenuVisibility,'slideInLeft': !rightMenuVisibility}">
+    <div class="right-menu-header">
+        <div class="right-menu-title">
+            <hr>
+            <div  class="title">
+                {{selectedTask?.name}}
+            </div>
+        </div>
+        <div class="right-menu-close">
+            <i class="icon-arrow_forward_ios_24px close-button" (click)="closeRightMenu()"></i>
+        </div>
+
+    </div>
+    <div class="right-menu-content">
+
+        <div class="division-content">
+            <table>
+                <tbody>
+                <tr>
+                    <td style="min-width: 150px;padding: 5px 16px;">Task Status</td>
+                    <td style="font-weight: bold;">{{selectedTask?.status}}</td>
+                </tr>
+                <tr>
+                    <td style="min-width: 150px;padding: 5px 16px;">Submitted Time</td>
+                    <td style="font-weight: bold;">
+                        {{selectedTask?.submittedDate | rRDate: 'shortFormat' : 'date' : dateConfig}}
+                        {{selectedTask?.submittedDate | rRDate: 'longFormat' : 'time' : dateConfig}}
+                    </td>
+                </tr>
+                <tr>
+                    <td style="min-width: 150px;padding: 5px 16px;">Start Time</td>
+                    <td style="font-weight: bold;">
+                        {{selectedTask?.startedDate | rRDate: 'shortFormat' : 'date' : dateConfig}}
+                        {{selectedTask?.startedDate | rRDate: 'longFormat' : 'time' : dateConfig}}
+                    </td>
+                </tr>
+                <tr>
+                    <td style="min-width: 150px;padding: 5px 16px;">Completion Time</td>
+                    <td style="font-weight: bold;">
+                        {{selectedTask?.finishedDate | rRDate: 'shortFormat' : 'date' : dateConfig}}
+                        {{selectedTask?.finishedDate | rRDate: 'longFormat' : 'time' : dateConfig}}
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+            <p-table [value]="selectedTaskSteps"
+                     [columns]="stepsHeader"
+                     [scrollable]="true" [scrollHeight]="'600px'" [rows]="20"
+                     class="table-ngPrime">
+                <ng-template pTemplate="colgroup" let-columns>
+                    <colgroup>
+                        <col *ngFor="let col of columns; let i=index" [ngStyle]="{'width': col?.width}">
+                    </colgroup>
+                </ng-template>
+                <ng-template pTemplate="header" let-columns>
+                    <tr>
+                        <th *ngFor="let col of columns">{{col.header}}</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-rowData let-columns="columns">
+                    <tr>
+                        <ng-container *ngFor="let col of columns">
+                            <td *ngIf="col.type == 'text'" style="overflow: hidden;text-overflow: ellipsis;">{{rowData[col.field]}}</td>
+                            <td *ngIf="col.type == 'date'">
+                                {{rowData[col.field] | rRDate: 'shortFormat' : 'date' : dateConfig}}
+                                {{rowData[col.field] | rRDate: 'longFormat' : 'time' : dateConfig}}
+                            </td>
+                        </ng-container>
+
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+    </div>
+    <div class="right-menu-footer">
+
+    </div>
+
 </div>
 <ng-template #spinner>
     <div style="margin: auto">
