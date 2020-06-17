@@ -316,6 +316,13 @@
                                 {{rowData[col.field] | rRDate: 'shortFormat' : 'date' : dateConfig}}
                                 {{rowData[col.field] | rRDate: 'longFormat' : 'time' : dateConfig}}
                             </td>
+                            <td *ngIf="col?.type === 'time'">
+                                <div class="td-wrapper" style="display:flex">
+                                    <span [title]="rowData[col?.field]" class="text-wrapper">
+                                        {{rowData[col?.field]}}
+                                    </span>
+                                </div>
+                            </td>
                         </ng-container>
 
                     </tr>

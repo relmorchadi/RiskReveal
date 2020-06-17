@@ -447,7 +447,7 @@ export class WorkspaceJobManagerComponent extends BaseContainer
       console.log(result);
       this.selectedTaskSteps = result.map(row => ({
         ...row,
-        elapsedTime:  '-'
+        elapsedTime: row.finishedDate ? this.calculateElapsedTime(row.finishedDate,row.startedDate) : '-'
       }));
       this.detectChanges();
     })
