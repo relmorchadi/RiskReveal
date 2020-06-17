@@ -11,6 +11,7 @@ import {GridApi, ColumnApi, ColDef} from 'ag-grid-community';
 import {ErrorCellRenderer} from "../../../shared/components/grid/error-cell-renderer/error-cell-renderer.component";
 import {ErrorValue} from "../../types/erroValue.type";
 import {NotificationService} from "../../../shared/services/notification.service";
+import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 
 @Component({
   selector: 'app-import',
@@ -71,11 +72,18 @@ export class ImportContainer extends BaseContainer implements OnInit {
     defaultColDef: any;
   };
 
+  saveDialog: {
+    isVisible: boolean
+  };
+
+  saveForm: FormGroup
+
   constructor(
       _baseStore: Store, _baseRouter: Router, _baseCdr: ChangeDetectorRef,
       public location: Location,
       private api: BulkImportApi,
-      private notification: NotificationService
+      private notification: NotificationService,
+      private fb: FormBuilder
   ) {
     super(_baseRouter, _baseCdr, _baseStore);
     this.gridParams = {
@@ -119,9 +127,22 @@ export class ImportContainer extends BaseContainer implements OnInit {
     this.isFileRead = false;
     this.isFileValidated = false;
     this.headerErrors = [];
+    this.initFormGroup();
+    this.saveDialog = {
+      isVisible: false
+    }
   }
 
   ngOnInit() {
+  }
+
+  initFormGroup() {
+    this.saveForm = this.fb.group({
+      id: [ this.file && this.file.bulkImportFileId, Validators.required],
+      projectName: ['', Validators.required],
+      projectDescription: [ '' ],
+      createWorkspace: [ true ]
+    })
   }
 
   navigateBack() {
@@ -224,10 +245,11 @@ export class ImportContainer extends BaseContainer implements OnInit {
   }
 
   runImport() {
+    this.saveDialog = {
+      isVisible: false
+    }
     if(!this.headerErrors.length && this.isFileRead && this.isFileValidated) {
-      this.api.runImport({
-        id: this.file.bulkImportFileId
-      }).subscribe(() => {
+      this.api.runImport(this.saveForm.value).subscribe(() => {
         this.notification.createNotification(
             'Import',
             'Successfully added a JOB queue',
@@ -298,5 +320,28 @@ export class ImportContainer extends BaseContainer implements OnInit {
     this.isFileValidated = false;
     this.headerErrors = [];
     this.gridApi.setRowData([]);
+  }
+
+  openSaveConfig() {
+    if(!this.headerErrors.length && this.isFileRead && this.isFileValidated) {
+      this.initFormGroup();
+      this.saveDialog = {
+        isVisible: true
+      }
+    } else {
+      this.notification.createNotification(
+          'File',
+          'Please validate file errors then re-upload file',
+          'warning',
+          'bottomRight',
+          3500
+      )
+    }
+  }
+
+  closeSaveForm() {
+    this.saveDialog = {
+      isVisible: false
+    }
   }
 }

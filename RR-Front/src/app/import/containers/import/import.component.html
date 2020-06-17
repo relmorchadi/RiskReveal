@@ -130,9 +130,9 @@
               <button
                       [ngClass]="!headerErrors.length && isFileRead && isFileValidated ? 'a-buttons-contained' : 'a-buttons-contained-disabled'"
                       [disabled]="headerErrors.length || !isFileRead || !isFileValidated"
-                      (click)="runImport()"
+                      (click)="openSaveConfig()"
               >
-                Run
+                Config
               </button>
             </div>
           </div>
@@ -153,3 +153,69 @@
   <div>
   </div>
 </div>
+
+<!--Project Template-->
+
+<p-dialog
+        [visible]="saveDialog?.isVisible"
+        [closable]="false"
+        styleClass="m-dialog-modal"
+        appendTo="body"
+        [modal]="true"
+        [autoZIndex]="false"
+        [responsive]="true"
+>
+
+  <p-header>
+    <div class="header">
+      <h6>Configuration</h6>
+      <i style="cursor: pointer" (click)="closeSaveTemplate()" class="icon-close_24px"></i>
+    </div>
+  </p-header>
+
+  <form [formGroup]="saveForm" class="content" style="display: unset;">
+    <div class="ui-g">
+      <div class="ui-g-3">
+        <label> Project Name: </label>
+      </div>
+      <div class="ui-g-9">
+        <input
+               class="a-textfield-mini"
+               nz-input
+               formControlName="projectName"
+               style="width: 300px; !important; margin-right: 5px;"/>
+      </div>
+    </div>
+    <div class="ui-g">
+      <div class="ui-g-3">
+        <label>Project Description</label>
+      </div>
+      <div class="ui-g-9">
+        <textarea pInputTextarea formControlName="projectDescription" rows="4" style="width: 300px"></textarea>
+      </div>
+    </div>
+    <div class="ui-g">
+      <div class="ui-g-3">
+        <label> Create Workspace: </label>
+      </div>
+      <div class="ui-g-9">
+        <nz-switch
+                formControlName="createWorkspace"
+        ></nz-switch>
+      </div>
+    </div>
+  </form>
+
+  <p-footer>
+    <div class="footer">
+      <button (click)="closeSaveForm()" nz-button class="a-button-text">cancel</button>
+      <button
+              [ngClass]="saveForm.valid ? 'a-buttons-contained' : 'a-buttons-contained-disabled'"
+              [disabled]="!saveForm.valid"
+              (click)="runImport()"
+              nz-button>
+        Run
+      </button>
+    </div>
+  </p-footer>
+</p-dialog>
