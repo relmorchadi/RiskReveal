@@ -59,6 +59,9 @@ public class JobManagerImpl extends JobManagerAbstraction {
     private UserRrRepository userRrRepository;
 
     @Autowired
+    private ProjectRepository projectRepository;
+
+    @Autowired
     private WorkspaceEntityRepository workspaceEntityRepository;
 
     @PersistenceContext
@@ -242,8 +245,13 @@ public class JobManagerImpl extends JobManagerAbstraction {
             jobDto.setStartedDate((Date) job.get("startedDate"));
             jobDto.setFinishedDate((Date) job.get("finishedDate"));
 
-            workspaceEntityRepository.findByWorkspaceContextCodeAndWorkspaceUwYear(jobDto.getContractCode(),
-                    jobDto.getUwYear()).ifPresent(workspaceEntity -> jobDto.setWorkspaceId(workspaceEntity.getWorkspaceId()));
+            projectRepository.findById(jobDto.getProjectId()).ifPresent(p -> {
+                WorkspaceEntity workspace = workspaceEntityRepository.findByWorkspaceId(p.getWorkspaceId());
+                if (workspace != null)
+                    jobDto.setWorkspaceContextCode(workspace.getWorkspaceContextCode());
+                else
+                    jobDto.setWorkspaceContextCode("NOT FOUND");
+            });
 
             List<Map<String, Object>> tasks = taskRepository.getTasksByJobId(jobDto.getJobId());
 
