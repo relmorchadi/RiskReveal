@@ -92,8 +92,8 @@ public class AccLocFilesHandler extends AbstractWriter {
                 accLocFile.setEntity(1);
 
                 try {
-                    accLocFile.setAccFileName(targetPath + "/" + this.doCopy(sourceAccFileName, targetAccFileName, "", ".acc", sourcePath, targetPath) + ".txt");
-                    accLocFile.setLocFileName(targetPath + "/" + this.doCopy(sourceLocFileName, targetLocFileName, "", ".loc", sourcePath, targetPath) + ".txt");
+                    accLocFile.setAccFileName(targetPath + "/" + this.doCopy(sourceAccFileName, targetAccFileName, "", ".acc", sourcePath, targetPath));
+                    accLocFile.setLocFileName(targetPath + "/" + this.doCopy(sourceLocFileName, targetLocFileName, "", ".loc", sourcePath, targetPath));
                     projectConfigurationForeWriterFilesRepository.saveAndFlush(accLocFile);
                     jobManager.logStep(step.getStepId(), StepStatus.SUCCEEDED);
                 } catch (IOException ex) {

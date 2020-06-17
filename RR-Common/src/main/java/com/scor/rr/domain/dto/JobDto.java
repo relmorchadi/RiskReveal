@@ -26,6 +26,7 @@ public class JobDto {
     @JsonFormat(shape = JsonFormat.Shape.NUMBER)
     private Date finishedDate;
     private String jobTypeCode;
+    private String workspaceContextCode;
 
     private List<TaskDto> tasks;
     private Long percent;

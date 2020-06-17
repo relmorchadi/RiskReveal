@@ -1,6 +1,7 @@
 package com.scor.rr.domain;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
@@ -15,8 +16,11 @@ public class StepEntity {
     private String stepCode;
     private Integer stepOrder;
     private String status;
+    @JsonFormat(shape = JsonFormat.Shape.NUMBER)
     private Timestamp submittedDate;
+    @JsonFormat(shape = JsonFormat.Shape.NUMBER)
     private Timestamp startedDate;
+    @JsonFormat(shape = JsonFormat.Shape.NUMBER)
     private Timestamp finishedDate;
 
     @Id
