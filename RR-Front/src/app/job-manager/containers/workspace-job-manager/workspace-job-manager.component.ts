@@ -433,10 +433,10 @@ export class WorkspaceJobManagerComponent extends BaseContainer
 
   openSource(type: string,rowData) {
     if (type == 'in') {
-      this.router.navigate(['workspace/'+rowData.clientName+'/'+rowData.uwYear+'/RiskLink']);
+      this.router.navigate(['workspace/'+rowData.workspaceContextCode+'/'+rowData.uwYear+'/RiskLink']);
 
     }else {
-      window.open('workspace/'+rowData.clientName+'/'+rowData.uwYear+'/RiskLink')
+      window.open('workspace/'+rowData.workspaceContextCode+'/'+rowData.uwYear+'/RiskLink')
 
     }
   }
