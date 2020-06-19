@@ -25,36 +25,40 @@ import {GridColManager} from "./grid/grid-col-manager/grid-col-manager.component
 import {SearchMenuItemComponent} from "./search-menu-item/search-menu-item.component";
 import {PinComponent} from "./pin/pin.component";
 import {ErrorCellRenderer} from "./grid/error-cell-renderer/error-cell-renderer.component";
+import {DateTimeCellRenderer} from "./grid/datetime-cell-renderer/datetime-cell-renderer.component";
+import {TimeCellRenderer} from "./grid/time-cell-renderer/time-cell-renderer.component";
 
 export const COMPONENTS = [
-  SearchMenuItemComponent,
-  ChipTagComponent,
-  TableComponent,
-  PltRightMenuComponent,
-  PltMainTableComponent,
-  PltLeftMenuComponent,
-  HyperLinksComponent,
-  PltSelectionPopUpComponent,
-  ManageColumnsComponent,
-  PltDetailsPopUpItemComponent,
-  PltDetailsPopUpFullSectionComponent,
-  PltTagManagerComponent,
-  InputComponent,
-  SummaryEpMetricsComponent,
-  EpChartComponent,
-  GlobalTableComponent,
-  GlobalManageColumnsComponent,
-  CustomBooleanFloatingFilter,
-  CustomBooleanFilter,
-  StatusCellRenderer,
-  BooleanCellRenderer,
-  NumberCellRenderer,
-  DateCellRenderer,
-  PinComponent,
-  DateCellRenderer,
-  GroupedCellRenderer,
-  GridColManager,
-  ErrorCellRenderer
+    SearchMenuItemComponent,
+    ChipTagComponent,
+    TableComponent,
+    PltRightMenuComponent,
+    PltMainTableComponent,
+    PltLeftMenuComponent,
+    HyperLinksComponent,
+    PltSelectionPopUpComponent,
+    ManageColumnsComponent,
+    PltDetailsPopUpItemComponent,
+    PltDetailsPopUpFullSectionComponent,
+    PltTagManagerComponent,
+    InputComponent,
+    SummaryEpMetricsComponent,
+    EpChartComponent,
+    GlobalTableComponent,
+    GlobalManageColumnsComponent,
+    CustomBooleanFloatingFilter,
+    CustomBooleanFilter,
+    StatusCellRenderer,
+    BooleanCellRenderer,
+    NumberCellRenderer,
+    DateCellRenderer,
+    DateTimeCellRenderer,
+    TimeCellRenderer,
+    PinComponent,
+    DateCellRenderer,
+    GroupedCellRenderer,
+    GridColManager,
+    ErrorCellRenderer
 ];
 
 export * from './table/table.component';

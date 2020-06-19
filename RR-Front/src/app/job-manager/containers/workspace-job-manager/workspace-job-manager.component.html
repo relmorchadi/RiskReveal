@@ -294,40 +294,49 @@
                 </tr>
                 </tbody>
             </table>
-            <p-table [value]="selectedTaskSteps"
-                     [columns]="stepsHeader"
-                     [scrollable]="true" [scrollHeight]="'600px'" [rows]="20"
-                     class="table-ngPrime">
-                <ng-template pTemplate="colgroup" let-columns>
-                    <colgroup>
-                        <col *ngFor="let col of columns; let i=index" [ngStyle]="{'width': col?.width}">
-                    </colgroup>
-                </ng-template>
-                <ng-template pTemplate="header" let-columns>
-                    <tr>
-                        <th *ngFor="let col of columns">{{col.header}}</th>
-                    </tr>
-                </ng-template>
-                <ng-template pTemplate="body" let-rowData let-columns="columns">
-                    <tr>
-                        <ng-container *ngFor="let col of columns">
-                            <td *ngIf="col.type == 'text'" style="overflow: hidden;text-overflow: ellipsis;">{{rowData[col.field]}}</td>
-                            <td *ngIf="col.type == 'date'">
-                                {{rowData[col.field] | rRDate: 'shortFormat' : 'date' : dateConfig}}
-                                {{rowData[col.field] | rRDate: 'longFormat' : 'time' : dateConfig}}
-                            </td>
-                            <td *ngIf="col?.type === 'time'">
-                                <div class="td-wrapper" style="display:flex">
-                                    <span [title]="rowData[col?.field]" class="text-wrapper">
-                                        {{rowData[col?.field]}}
-                                    </span>
-                                </div>
-                            </td>
-                        </ng-container>
+            <ag-grid-angular #agGrid
+                             style="width: 750px; height: 700px"
+                             id="myGrid"
+                             class="ag-theme-alpine"
+                             [columnDefs]="stepsHeader"
+                             [defaultColDef]="defaultColDef"
+                             [frameworkComponents]="frameworkComponents"
+                             (gridReady)="onGridReady($event)"
+            ></ag-grid-angular>
+<!--            <p-table [value]="selectedTaskSteps"-->
+<!--                     [columns]="stepsHeader"-->
+<!--                     [scrollable]="true" [scrollHeight]="'600px'" [rows]="20"-->
+<!--                     class="table-ngPrime">-->
+<!--                <ng-template pTemplate="colgroup" let-columns>-->
+<!--                    <colgroup>-->
+<!--                        <col *ngFor="let col of columns; let i=index" [ngStyle]="{'width': col?.width}">-->
+<!--                    </colgroup>-->
+<!--                </ng-template>-->
+<!--                <ng-template pTemplate="header" let-columns>-->
+<!--                    <tr>-->
+<!--                        <th *ngFor="let col of columns">{{col.header}}</th>-->
+<!--                    </tr>-->
+<!--                </ng-template>-->
+<!--                <ng-template pTemplate="body" let-rowData let-columns="columns">-->
+<!--                    <tr>-->
+<!--                        <ng-container *ngFor="let col of columns">-->
+<!--                            <td *ngIf="col.type == 'text'" style="overflow: hidden;text-overflow: ellipsis;">{{rowData[col.field]}}</td>-->
+<!--                            <td *ngIf="col.type == 'date'">-->
+<!--                                {{rowData[col.field] | rRDate: 'shortFormat' : 'date' : dateConfig}}-->
+<!--                                {{rowData[col.field] | rRDate: 'longFormat' : 'time' : dateConfig}}-->
+<!--                            </td>-->
+<!--                            <td *ngIf="col?.type === 'time'">-->
+<!--                                <div class="td-wrapper" style="display:flex">-->
+<!--                                    <span [title]="rowData[col?.field]" class="text-wrapper">-->
+<!--                                        {{rowData[col?.field]}}-->
+<!--                                    </span>-->
+<!--                                </div>-->
+<!--                            </td>-->
+<!--                        </ng-container>-->
 
-                    </tr>
-                </ng-template>
-            </p-table>
+<!--                    </tr>-->
+<!--                </ng-template>-->
+<!--            </p-table>-->
         </div>
     </div>
     <div class="right-menu-footer">

@@ -1,7 +1,7 @@
 <div (click)="togglePopup()" >
   <nz-badge style="cursor: pointer" [nzCount]="savedTasksLocal.length" nz-popover [(nzVisible)]="visible" [nzContent]="tasksPopoverContent"
             nzPlacement="bottomRight" nzTrigger="click">
-    <nz-progress class="circular-progress-bar" [nzPercent]="completedTasks.length/allTasks.length*100"
+    <nz-progress class="circular-progress-bar" [nzPercent]="60"
                  [nzFormat]="formatter"
                  [nzStrokeWidth]="8"
                  nzType="circle" [nzWidth]="26">

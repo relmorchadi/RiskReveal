@@ -15,6 +15,15 @@ import {JobManagerService} from "../../../core/service/jobManager.service";
 import {first, map} from "rxjs/operators";
 import {AuthModel} from "../../../core/model/auth.model";
 import {BaseContainer} from "../../../shared/base";
+import {CustomBooleanFloatingFilter} from "../../../shared/components/grid/custom-boolean-floating-filter/custom-boolean-floating-filter.component";
+import {CustomBooleanFilter} from "../../../shared/components/grid/custom-boolean-filter/custom-boolean-filter.component";
+import {StatusCellRenderer} from "../../../shared/components/grid/status-cell-renderer/status-cell-renderer.component";
+import {BooleanCellRenderer} from "../../../shared/components/grid/boolean-cell-renderer/boolean-cell-renderer.component";
+import {NumberCellRenderer} from "../../../shared/components/grid/number-cell-renderer/number-cell-renderer.component";
+import {DateCellRenderer} from "../../../shared/components/grid/date-cell-renderer/date-cell-renderer.component";
+import {GroupedCellRenderer} from "../../../shared/components/grid/grouped-cell-renderer/grouped-cell-renderer.component";
+import {DateTimeCellRenderer} from "../../../shared/components/grid/datetime-cell-renderer/datetime-cell-renderer.component";
+import {TimeCellRenderer} from "../../../shared/components/grid/time-cell-renderer/time-cell-renderer.component";
 
 @Component({
   selector: 'app-workspace-job-manager',
@@ -193,88 +202,67 @@ export class WorkspaceJobManagerComponent extends BaseContainer
   jobs: any;
   rightMenuVisibility: any = false;
   selectedTask: any;
+  defaultColDef = {
+    resizable: true,
+    sortable: true,
+    columnGroupShow: 'open',
+    enableRowGroup: false,
+    floatingFilter: true,
+    filter: 'agTextColumnFilter',
+    icons: {
+      sortAscending: '<i class="icon-keyboard_arrow_up_24px"/>',
+      sortDescending: '<i class="icon-keyboard_arrow_down_24px"/>',
+    }
+  }
+  frameworkComponents= {
+    customBooleanFloatingFilter: CustomBooleanFloatingFilter,
+    customBooleanFilter: CustomBooleanFilter,
+    statusCellRenderer: StatusCellRenderer,
+    booleanCellRenderer: BooleanCellRenderer,
+    numberCellRenderer: NumberCellRenderer,
+    dateCellRenderer: DateCellRenderer,
+    groupCellRenderer: GroupedCellRenderer,
+    dateTimeCellRenderer: DateTimeCellRenderer,
+    timeCellRenderer:TimeCellRenderer
+  }
   stepsHeader: any = [
     {
       field: 'stepId',
-      header: 'Step ID',
-      width: '25px',
-      display: false,
-      sorted: false,
-      filtered: false,
-      type: 'text',
-      filterParam: ''
+
     },
     {
       field: 'stepOrder',
-      header: 'Step Order',
-      width: '15px',
-      display: false,
-      sorted: false,
-      filtered: false,
-      type: 'text',
-      filterParam: ''
+
     },
     {
       field: 'stepName',
-      header: 'Step Name',
-      width: '55px',
-      display: false,
-      sorted: false,
-      filtered: false,
-      type: 'text',
-      filterParam: ''
+
     },
     {
       field: 'status',
-      header: 'Status',
-      width: '30px',
-      display: false,
-      sorted: false,
-      filtered: false,
-      type: 'text',
-      filterParam: ''
+
     },
     {
       field: 'submittedDate',
-      header: 'Submitted Time',
-      width: '30px',
-      display: false,
-      sorted: false,
-      filtered: false,
-      type: 'date',
-      filterParam: ''
+      filter: 'agDateColumnFilter',
+      cellRenderer: 'dateTimeCellRenderer'
     },
     {
       field: 'startedDate',
-      header: 'Start Time',
-      width: '30px',
-      display: false,
-      sorted: false,
-      filtered: false,
-      type: 'date',
-      filterParam: ''
+      filter: 'agDateColumnFilter',
+      cellRenderer: 'dateTimeCellRenderer'
     },
     {
       field: 'finishedDate',
-      header: 'Completion Time',
-      width: '30px',
-      display: false,
-      sorted: false,
-      filtered: false,
-      type: 'date',
-      filterParam: ''
+      filter: 'agDateColumnFilter',
+      cellRenderer: 'dateTimeCellRenderer'
     },
     {
       field: 'elapsedTime',
-      header: 'Elapsed Time',
-      width: '30px',
-      display: false,
-      sorted: false,
-      filtered: false,
-      type: 'time',
-      filterParam: ''
     }
   ];
+  private gridApi: any;
+  private gridColumnApi: any;
 
   constructor(private cdref : ChangeDetectorRef,public location: Location, private _searchService: SearchService, private store: Store,private jobManagerService:JobManagerService,
               private helperService: HelperService, private route: ActivatedRoute, private router: Router) {
@@ -445,11 +433,11 @@ export class WorkspaceJobManagerComponent extends BaseContainer
     this.rightMenuVisibility = true;
     this.jobManagerService.getTaskGetails(item.taskId).subscribe( (result:any) => {
       console.log(result);
-      this.selectedTaskSteps = result.map(row => ({
+      this.gridApi.setRowData(result.map(row => ({
         ...row,
         elapsedTime: row.finishedDate ? this.calculateElapsedTime(row.finishedDate,row.startedDate) : '-'
-      }));
-      this.detectChanges();
+      })));
+      // this.detectChanges();
     })
     this.selectedTask = item;
     this.detectChanges();
@@ -458,5 +446,11 @@ export class WorkspaceJobManagerComponent extends BaseContainer
   closeRightMenu() {
     this.rightMenuVisibility = false;
     this.detectChanges();
+  }
+
+  onGridReady(params: any) {
+    this.gridApi = params.api;
+    this.gridColumnApi = params.columnApi;
+
   }
 }
